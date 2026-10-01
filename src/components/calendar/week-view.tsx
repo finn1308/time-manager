@@ -58,14 +58,14 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
 
   return (
     <div className="flex flex-col space-y-4">
-      {/* Calendar Navigation Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#202020] p-3.5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
-        <div className="flex items-center space-x-2">
+      {/* Calendar Navigation Bar (Rounded-2xl pill bar) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-[24px] border border-slate-200/80 dark:border-slate-800 soft-card-shadow">
+        <div className="flex items-center space-x-2.5">
           <Button
-            variant="outline"
+            variant="pill"
             size="sm"
             onClick={() => setCurrentWeekRef(new Date())}
-            className="text-xs font-semibold"
+            className="text-xs font-bold"
           >
             Hôm nay
           </Button>
@@ -73,42 +73,42 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
           <div className="flex items-center space-x-1">
             <button
               onClick={() => setCurrentWeekRef(subWeeks(currentWeekRef, 1))}
-              className="p-1.5 rounded hover:bg-[#f1f1ef] dark:hover:bg-[#2c2c2c] text-[#787774] cursor-pointer"
+              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 cursor-pointer transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setCurrentWeekRef(addWeeks(currentWeekRef, 1))}
-              className="p-1.5 rounded hover:bg-[#f1f1ef] dark:hover:bg-[#2c2c2c] text-[#787774] cursor-pointer"
+              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 cursor-pointer transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
-          <span className="font-semibold text-sm text-[#171717] dark:text-white px-2">
+          <span className="font-bold text-sm text-slate-900 dark:text-white px-2">
             Tuần: {formatVN(weekDays[0], "dd/MM")} - {formatVN(weekDays[6], "dd/MM/yyyy")}
           </span>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2.5">
           <Button
-            variant="default"
+            variant="amber"
             size="sm"
             onClick={() => setIsAiModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white space-x-1.5 shadow-xs"
+            className="space-x-1.5 shadow-sm"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>AI Tự động lập lịch</span>
           </Button>
 
           <Button
-            variant="outline"
+            variant="pill"
             size="sm"
             onClick={() => {
               setEditingEvent(null);
               setIsEventModalOpen(true);
             }}
-            className="space-x-1.5"
+            className="space-x-1.5 font-bold"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Thêm sự kiện</span>
@@ -116,8 +116,8 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
         </div>
       </div>
 
-      {/* Week Grid (7 columns) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+      {/* Week Grid (7 columns with rounded-[24px] cards) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3.5">
         {weekDays.map((day, dayIndex) => {
           const isToday = isSameDay(day, todayVN);
           const dayOfWeekNumber = (dayIndex + 1) % 7; // 1 (Mon) -> 6 (Sat), 0 (Sun)
@@ -141,28 +141,28 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
           return (
             <div
               key={dayIndex}
-              className={`flex flex-col rounded-xl border transition-all ${
+              className={`flex flex-col rounded-[24px] border transition-all soft-card-shadow ${
                 isToday
-                  ? "border-blue-400 dark:border-blue-600 bg-blue-50/20 dark:bg-blue-950/10 shadow-xs"
-                  : "border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020]"
+                  ? "border-blue-400 dark:border-blue-600 bg-blue-50/20 dark:bg-blue-950/20 ring-2 ring-blue-400/20"
+                  : "border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900"
               }`}
             >
               {/* Day Header */}
               <div
-                className={`p-3 border-b text-center ${
+                className={`p-3.5 border-b text-center rounded-t-[24px] ${
                   isToday
-                    ? "border-blue-200 dark:border-blue-800/50 bg-blue-50/60 dark:bg-blue-950/30"
-                    : "border-[#e9e9e7] dark:border-[#2e2e2e]"
+                    ? "border-blue-200 dark:border-blue-800/60 bg-blue-100/50 dark:bg-blue-950/40"
+                    : "border-slate-100 dark:border-slate-800"
                 }`}
               >
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#787774] dark:text-[#9b9a97]">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                   {dayNamesVN[dayIndex]}
                 </p>
                 <div
-                  className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold mt-1 ${
+                  className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-black mt-1 ${
                     isToday
                       ? "bg-blue-600 text-white shadow-xs"
-                      : "text-[#37352f] dark:text-[#f0f0f0]"
+                      : "text-slate-800 dark:text-white"
                   }`}
                 >
                   {formatVN(day, "d")}
@@ -170,20 +170,20 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
               </div>
 
               {/* Day Body: Events & Blocked Slots */}
-              <div className="p-2 space-y-2 flex-1 min-h-[360px]">
+              <div className="p-2.5 space-y-2.5 flex-1 min-h-[360px]">
                 {/* Blocked Slots (Locked) */}
                 {dayBlockedSlots.map((bs) => (
                   <div
                     key={bs.id}
-                    className="p-2 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 blocked-slot-pattern text-xs select-none"
+                    className="p-2.5 rounded-[16px] border border-dashed border-slate-300 dark:border-slate-700 blocked-slot-pattern text-xs select-none"
                   >
-                    <div className="flex items-center justify-between text-[#787774] dark:text-[#a0a0a0]">
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
                       <div className="flex items-center space-x-1.5 truncate">
-                        <Lock className="w-3 h-3 shrink-0 text-amber-600 dark:text-amber-500" />
-                        <span className="font-medium truncate">{bs.title}</span>
+                        <Lock className="w-3 h-3 shrink-0 text-amber-500" />
+                        <span className="font-bold truncate">{bs.title}</span>
                       </div>
                     </div>
-                    <p className="font-mono text-[10px] text-[#9b9a97] mt-0.5">
+                    <p className="font-mono text-[10px] text-slate-400 mt-0.5">
                       {bs.startTime} - {bs.endTime} (Khóa)
                     </p>
                   </div>
@@ -207,11 +207,11 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
                         });
                         setIsEventModalOpen(true);
                       }}
-                      className="group relative p-2.5 rounded-lg border border-[#e9e9e7] dark:border-[#2e2e2e] bg-[#fbfbfa] dark:bg-[#1a1a1a] hover:border-blue-400 hover:shadow-xs transition-all cursor-pointer text-xs"
+                      className="group relative p-3 rounded-[16px] border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:border-blue-400 hover:shadow-xs transition-all cursor-pointer text-xs"
                       style={{ borderLeftColor: subjectColor, borderLeftWidth: "4px" }}
                     >
                       <div className="flex items-start justify-between">
-                        <span className="font-semibold text-[#171717] dark:text-white line-clamp-2">
+                        <span className="font-bold text-slate-900 dark:text-white line-clamp-2">
                           {ev.title}
                         </span>
                         {ev.isCompleted && (
@@ -219,8 +219,8 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#e9e9e7]/60 dark:border-[#2e2e2e]/60">
-                        <span className="font-mono text-[10px] text-[#787774] dark:text-[#9b9a97]">
+                      <div className="flex items-center justify-between mt-2.5 pt-1.5 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <span className="font-mono text-[10px] font-medium text-slate-500">
                           {formatVN(ev.startTime, "HH:mm")} - {formatVN(ev.endTime, "HH:mm")}
                         </span>
 
@@ -239,9 +239,9 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
                               );
                             }}
                             title="Bắt đầu học ngay môn này"
-                            className="p-1 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 hover:bg-blue-100 cursor-pointer transition-colors"
+                            className="p-1.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 cursor-pointer transition-colors shadow-2xs"
                           >
-                            <Play className="w-2.5 h-2.5 fill-current" />
+                            <Play className="w-2.5 h-2.5 fill-current ml-0.2" />
                           </button>
                         )}
                       </div>
@@ -250,7 +250,7 @@ export function WeekView({ initialEvents, blockedSlots, subjects }: WeekViewProp
                 })}
 
                 {dayEvents.length === 0 && dayBlockedSlots.length === 0 && (
-                  <div className="text-center py-10 text-[11px] text-[#9b9a97]">
+                  <div className="text-center py-12 text-[11px] text-slate-400 font-medium">
                     Trống lịch
                   </div>
                 )}

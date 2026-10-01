@@ -2,84 +2,141 @@
 
 @layer base {
   :root {
-    --background: #fbfbfa;
+    /* Color Palette inspired by the reference design (Luyentu & The IELTS Dictionary) */
+    --background: #f7f9fc;
     --card: #ffffff;
-    --card-foreground: #2f3437;
+    --card-foreground: #1e293b;
     --popover: #ffffff;
-    --popover-foreground: #2f3437;
-    --primary: #2383e2;
+    --popover-foreground: #1e293b;
+    --primary: #2563eb;
     --primary-foreground: #ffffff;
-    --secondary: #f1f1ef;
-    --secondary-foreground: #37352f;
-    --muted: #ebebea;
-    --muted-foreground: #787774;
-    --accent: #f7f6f3;
-    --accent-foreground: #37352f;
-    --destructive: #eb5757;
+    --secondary: #f1f5f9;
+    --secondary-foreground: #334155;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #f8fafc;
+    --accent-foreground: #0f172a;
+    --destructive: #ef4444;
     --destructive-foreground: #ffffff;
-    --border: #e9e9e7;
-    --input: #e9e9e7;
-    --ring: #2383e2;
-    --radius: 0.5rem;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #3b82f6;
+
+    /* Systematic Border Radius Hierarchy */
+    --radius-xs: 8px;
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-xl: 28px;
+    --radius-2xl: 36px;
+    --radius-pill: 9999px;
+
+    /* Base Radius */
+    --radius: 22px;
   }
 
   .dark {
-    --background: #191919;
-    --card: #202020;
-    --card-foreground: #e3e2e0;
-    --popover: #252525;
-    --popover-foreground: #e3e2e0;
+    --background: #111827;
+    --card: #1f2937;
+    --card-foreground: #f3f4f6;
+    --popover: #1f2937;
+    --popover-foreground: #f3f4f6;
     --primary: #3b82f6;
     --primary-foreground: #ffffff;
-    --secondary: #2c2c2c;
-    --secondary-foreground: #d4d4d4;
-    --muted: #2c2c2c;
-    --muted-foreground: #9b9a97;
-    --accent: #2f2f2f;
+    --secondary: #374151;
+    --secondary-foreground: #e5e7eb;
+    --muted: #374151;
+    --muted-foreground: #9ca3af;
+    --accent: #1e293b;
     --accent-foreground: #ffffff;
-    --destructive: #e11d48;
+    --destructive: #f87171;
     --destructive-foreground: #ffffff;
-    --border: #2e2e2e;
-    --input: #2e2e2e;
-    --ring: #3b82f6;
+    --border: #374151;
+    --input: #374151;
+    --ring: #60a5fa;
   }
 }
 
 body {
   background-color: var(--background);
-  color: #37352f;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
-  letter-spacing: -0.011em;
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
 }
 
 .dark body {
-  color: #d4d4d4;
+  color: #f3f4f6;
 }
 
-/* Notion-style subtle scrollbar */
+/* Subtle Graph-Paper Grid Background from Reference */
+.bg-reference-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+}
+
+.dark .bg-reference-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+/* Smooth Rounded Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(120, 119, 116, 0.25);
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(120, 119, 116, 0.45);
+  background: rgba(148, 163, 184, 0.6);
 }
 
-/* Notion striped background for blocked slots */
+/* Soft Pill Shadows */
+.soft-card-shadow {
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+}
+
+.soft-card-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.soft-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
+}
+
+/* Diagonal stripe pattern for locked/blocked slots */
 .blocked-slot-pattern {
   background: repeating-linear-gradient(
     45deg,
-    rgba(160, 160, 160, 0.08),
-    rgba(160, 160, 160, 0.08) 8px,
-    rgba(160, 160, 160, 0.15) 8px,
-    rgba(160, 160, 160, 0.15) 16px
+    rgba(148, 163, 184, 0.08),
+    rgba(148, 163, 184, 0.08) 8px,
+    rgba(148, 163, 184, 0.16) 8px,
+    rgba(148, 163, 184, 0.16) 16px
   );
+}
+
+/* Speech Bubble Callout with triangle tail */
+.speech-bubble {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 28px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #ffffff;
 }

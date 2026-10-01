@@ -27,7 +27,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
         onClick={() => onOpenChange(false)}
       />
       {/* Container */}
@@ -48,14 +48,14 @@ export function DialogContent({
   return (
     <div
       className={cn(
-        "relative w-full rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] p-6 shadow-2xl transition-all animate-in zoom-in-95 duration-150",
+        "relative w-full rounded-[30px] border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-7 shadow-2xl transition-all animate-in zoom-in-95 duration-150",
         className
       )}
     >
       {onClose && (
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-md p-1 text-[#787774] hover:bg-[#f1f1ef] dark:hover:bg-[#2c2c2c] transition-colors cursor-pointer"
+          className="absolute right-5 top-5 rounded-full p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>
@@ -66,17 +66,33 @@ export function DialogContent({
 }
 
 export function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex flex-col space-y-1.5 text-left mb-4", className)} {...props} />;
+  return <div className={cn("flex flex-col space-y-1.5 text-left mb-5", className)} {...props} />;
 }
 
 export function DialogTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h2 className={cn("text-lg font-semibold tracking-tight text-[#37352f] dark:text-[#f0f0f0]", className)} {...props} />;
+  return (
+    <h2
+      className={cn(
+        "text-xl font-bold tracking-tight text-slate-900 dark:text-white",
+        className
+      )}
+      {...props}
+    />
+  );
 }
 
 export function DialogDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-[#787774] dark:text-[#9b9a97]", className)} {...props} />;
+  return <p className={cn("text-xs text-slate-500 dark:text-slate-400 leading-relaxed", className)} {...props} />;
 }
 
 export function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex items-center justify-end space-x-2 pt-4 mt-4 border-t border-[#e9e9e7] dark:border-[#2e2e2e]", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-end space-x-2.5 pt-5 mt-5 border-t border-slate-100 dark:border-slate-800",
+        className
+      )}
+      {...props}
+    />
+  );
 }

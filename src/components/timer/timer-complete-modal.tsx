@@ -62,31 +62,31 @@ export function TimerCompleteModal({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent onClose={onClose} className="max-w-md">
         <DialogHeader>
-          <div className="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 mb-1">
-            <CheckCircle className="w-5 h-5" />
-            <span className="text-xs font-semibold uppercase tracking-wider">Hoàn thành phiên học</span>
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold w-fit mb-2">
+            <CheckCircle className="w-3.5 h-3.5" />
+            <span>HOÀN THÀNH PHIÊN HỌC</span>
           </div>
           <DialogTitle>Ghi nhận tiến độ: {subject.name}</DialogTitle>
           <DialogDescription>
-            Chúc mừng bạn vừa hoàn thành một phiên tập trung học tập! Hãy lưu lại đánh giá để cập nhật báo cáo.
+            Tuyệt vời! Bạn vừa hoàn thành một phiên tập trung học tập. Hãy lưu lại đánh giá để cập nhật báo cáo.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           {/* Duration Summary */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-[#f7f6f3] dark:bg-[#252525] border border-[#e9e9e7] dark:border-[#2e2e2e]">
-            <div className="flex items-center space-x-2 text-sm text-[#787774]">
-              <Clock className="w-4 h-4" />
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+            <div className="flex items-center space-x-2.5 text-xs font-semibold text-slate-500">
+              <Clock className="w-4 h-4 text-emerald-600" />
               <span>Thời gian thực tế:</span>
             </div>
-            <div className="font-mono text-base font-bold text-[#37352f] dark:text-[#f0f0f0]">
+            <div className="font-mono text-lg font-black text-slate-900 dark:text-white">
               {minutes} phút
             </div>
           </div>
 
           {/* Productivity Rating */}
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
               Mức độ tập trung & Năng suất (1 - 5 sao):
             </label>
             <div className="flex items-center space-x-2">
@@ -95,20 +95,20 @@ export function TimerCompleteModal({
                   key={star}
                   type="button"
                   onClick={() => setProductivityScore(star)}
-                  className={`p-1.5 rounded transition-colors cursor-pointer ${
-                    star <= productivityScore ? "text-amber-400" : "text-gray-300 dark:text-gray-600"
+                  className={`p-2 rounded-full transition-transform cursor-pointer hover:scale-110 ${
+                    star <= productivityScore ? "text-amber-400" : "text-slate-200 dark:text-slate-700"
                   }`}
                 >
-                  <Star className="w-6 h-6 fill-current" />
+                  <Star className="w-7 h-7 fill-current" />
                 </button>
               ))}
-              <span className="text-xs font-medium text-[#787774] ml-2">
+              <span className="text-xs font-bold text-slate-500 ml-2">
                 {productivityScore === 5
-                  ? "Xuất sắc"
+                  ? "Xuất sắc 🔥"
                   : productivityScore === 4
-                  ? "Tốt"
+                  ? "Rất tốt ✨"
                   : productivityScore === 3
-                  ? "Bình thường"
+                  ? "Ổn định 👍"
                   : "Cần cải thiện"}
               </span>
             </div>
@@ -116,7 +116,7 @@ export function TimerCompleteModal({
 
           {/* Notes */}
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
               Ghi chú nhanh / Thu hoạch sau buổi học:
             </label>
             <textarea
@@ -124,7 +124,7 @@ export function TimerCompleteModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="VD: Đã làm xong 3 bài tập về đồ thị, cần xem lại phần định lý Bayes..."
-              className="w-full rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] p-2.5 text-sm placeholder:text-[#9b9a97] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+              className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
         </div>

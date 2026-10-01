@@ -10,8 +10,8 @@ interface EventModalProps {
   open: boolean;
   onClose: () => void;
   subjects: Array<{ id: string; name: string; code: string | null; color: string }>;
-  defaultDate?: string; // YYYY-MM-DD
-  defaultStartTime?: string; // HH:mm
+  defaultDate?: string;
+  defaultStartTime?: string;
   editingEvent?: {
     id: string;
     title: string;
@@ -113,19 +113,21 @@ export function EventModal({
         <DialogHeader>
           <DialogTitle>{editingEvent ? "Chỉnh sửa lịch học" : "Tạo lịch học mới"}</DialogTitle>
           <DialogDescription>
-            Điền thông tin buổi học. Hệ thống sẽ tự động đối chiếu các khung giờ bận.
+            Điền thông tin buổi học. Hệ thống sẽ tự động kiểm tra và tránh các khung giờ bận.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 py-2">
+        <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {errorMsg && (
-            <div className="p-2.5 rounded bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-xs text-rose-600 dark:text-rose-300">
+            <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-xs text-rose-600 dark:text-rose-300 font-medium">
               {errorMsg}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Tiêu đề buổi học *</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              Tiêu đề buổi học *
+            </label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -135,11 +137,13 @@ export function EventModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Môn học</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              Môn học
+            </label>
             <select
               value={subjectId}
               onChange={(e) => setSubjectId(e.target.value)}
-              className="w-full h-9 rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+              className="w-full h-11 rounded-[16px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm text-slate-800 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <option value="">(Không gắn môn cụ thể)</option>
               {subjects.map((sub) => (
@@ -151,9 +155,11 @@ export function EventModal({
             </select>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2.5">
             <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">Ngày *</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Ngày *
+              </label>
               <Input
                 type="date"
                 value={dateStr}
@@ -162,7 +168,9 @@ export function EventModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">Bắt đầu *</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Bắt đầu *
+              </label>
               <Input
                 type="time"
                 value={startTimeStr}
@@ -171,7 +179,9 @@ export function EventModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">Kết thúc *</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Kết thúc *
+              </label>
               <Input
                 type="time"
                 value={endTimeStr}
@@ -182,13 +192,15 @@ export function EventModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Ghi chú / Mục tiêu buổi học</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              Ghi chú mục tiêu
+            </label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Nội dung cần ôn, link tài liệu hoặc tài liệu đính kèm..."
-              className="w-full rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] p-2 text-sm placeholder:text-[#9b9a97] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+              placeholder="Nội dung cần ôn, link tài liệu hoặc bài tập..."
+              className="w-full rounded-[16px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
 
@@ -200,6 +212,7 @@ export function EventModal({
                 onClick={handleDelete}
                 disabled={isSubmitting}
                 size="sm"
+                className="font-semibold"
               >
                 Xóa lịch
               </Button>

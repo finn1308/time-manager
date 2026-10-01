@@ -49,86 +49,90 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-[#787774] dark:text-[#9b9a97]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <p className="text-xs text-slate-500 font-medium">
           Có {slots.length} khung giờ bị khóa. Thuật toán AI sẽ coi đây là vùng bất khả xâm phạm.
         </p>
 
         <Button
-          variant="default"
+          variant="amber"
           size="sm"
           onClick={() => {
             setEditingSlot(null);
             setIsModalOpen(true);
           }}
-          className="space-x-1.5 text-xs bg-amber-600 hover:bg-amber-700 text-white"
+          className="space-x-1.5 text-xs font-bold"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Khóa khung giờ mới</span>
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] shadow-xs">
+      <div className="overflow-x-auto rounded-[28px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 soft-card-shadow">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[#e9e9e7] dark:border-[#2e2e2e] bg-[#f7f6f3] dark:bg-[#252525] text-[#787774] dark:text-[#9b9a97]">
-              <th className="py-2.5 px-4 font-semibold uppercase tracking-wider">Mục đích / Tiêu đề</th>
-              <th className="py-2.5 px-4 font-semibold uppercase tracking-wider">Khung giờ (VN)</th>
-              <th className="py-2.5 px-4 font-semibold uppercase tracking-wider">Ngày lặp lại</th>
-              <th className="py-2.5 px-4 font-semibold uppercase tracking-wider text-center">Trạng thái khóa</th>
-              <th className="py-2.5 px-4 font-semibold uppercase tracking-wider text-right">Hành động</th>
+            <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider">
+              <th className="py-3.5 px-5">Mục đích / Tiêu đề</th>
+              <th className="py-3.5 px-4">Khung giờ (VN)</th>
+              <th className="py-3.5 px-4">Ngày lặp lại</th>
+              <th className="py-3.5 px-4 text-center">Trạng thái khóa</th>
+              <th className="py-3.5 px-5 text-right">Hành động</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e9e9e7] dark:divide-[#2e2e2e]">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {slots.map((slot) => (
-              <tr key={slot.id} className="hover:bg-[#fbfbfa] dark:hover:bg-[#242424] transition-colors">
-                <td className="py-3 px-4">
-                  <div className="flex items-center space-x-2">
-                    <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span className="font-semibold text-sm text-[#171717] dark:text-white">
+              <tr key={slot.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                <td className="py-4 px-5">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center shrink-0">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <span className="font-bold text-sm text-slate-900 dark:text-white">
                       {slot.title}
                     </span>
                   </div>
                 </td>
 
-                <td className="py-3 px-4 font-mono font-medium">
+                <td className="py-4 px-4 font-mono font-bold text-slate-700 dark:text-slate-300">
                   {slot.startTime} - {slot.endTime}
                 </td>
 
-                <td className="py-3 px-4 text-[#787774]">
+                <td className="py-4 px-4 text-slate-600 dark:text-slate-400 font-medium">
                   {slot.dayOfWeek !== null && slot.dayOfWeek !== undefined ? (
-                    <span className="font-medium text-[#37352f] dark:text-[#d4d4d4]">
+                    <Badge variant="secondary">
                       {DAY_LABELS[slot.dayOfWeek]}
-                    </span>
+                    </Badge>
                   ) : slot.specificDate ? (
                     <span>Ngày {new Date(slot.specificDate).toLocaleDateString("vi-VN")}</span>
                   ) : (
-                    <span>Hằng ngày</span>
+                    <Badge variant="outline">Hằng ngày</Badge>
                   )}
                 </td>
 
-                <td className="py-3 px-4 text-center">
+                <td className="py-4 px-4 text-center">
                   {slot.isLocked ? (
-                    <Badge variant="yellow">Khóa tuyệt đối (100%)</Badge>
+                    <Badge variant="yellow" className="font-bold">
+                      Khóa tuyệt đối (100%)
+                    </Badge>
                   ) : (
                     <Badge variant="secondary">Cảnh báo</Badge>
                   )}
                 </td>
 
-                <td className="py-3 px-4 text-right">
+                <td className="py-4 px-5 text-right">
                   <div className="flex items-center justify-end space-x-1.5">
                     <button
                       onClick={() => {
                         setEditingSlot(slot);
                         setIsModalOpen(true);
                       }}
-                      className="p-1.5 rounded-md hover:bg-[#f1f1ef] dark:hover:bg-[#2c2c2c] text-[#787774] transition-colors cursor-pointer"
+                      className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors cursor-pointer"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(slot.id, slot.title)}
-                      className="p-1.5 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/40 text-[#787774] hover:text-rose-600 transition-colors cursor-pointer"
+                      className="p-2 rounded-full hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -139,7 +143,7 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
 
             {slots.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-12 text-center text-sm text-[#9b9a97]">
+                <td colSpan={5} className="py-14 text-center text-sm text-slate-400">
                   Chưa có khung giờ nào bị khóa. Hãy thiết lập giờ ngủ hoặc lịch bận để AI tránh!
                 </td>
               </tr>

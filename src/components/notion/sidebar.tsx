@@ -17,7 +17,7 @@ import {
   ChevronRight,
   Menu,
   X,
-  Search,
+  Flame,
 } from "lucide-react";
 import { usePipTimer, ActiveSubject } from "../timer/pip-timer-provider";
 
@@ -44,12 +44,12 @@ export function Sidebar({ user, subjects }: SidebarProps) {
   const { startTimer, activeSubject } = usePipTimer();
 
   const navItems = [
-    { label: "Tổng quan", href: "/", icon: LayoutDashboard },
+    { label: "Trang chủ", href: "/", icon: LayoutDashboard },
     { label: "Lịch tuần & tháng", href: "/calendar", icon: Calendar },
-    { label: "Môn học & Mục tiêu", href: "/subjects", icon: BookOpen },
+    { label: "Bộ môn & Mục tiêu", href: "/subjects", icon: BookOpen },
     { label: "Khung giờ bị khóa", href: "/blocked-slots", icon: Lock },
-    { label: "Phân tích Planned vs Actual", href: "/analytics", icon: BarChart3 },
-    { label: "Cài đặt AI & Bảo mật", href: "/settings", icon: Settings },
+    { label: "Báo cáo Planned vs Actual", href: "/analytics", icon: BarChart3 },
+    { label: "Cài đặt & Bảo mật", href: "/settings", icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -61,10 +61,10 @@ export function Sidebar({ user, subjects }: SidebarProps) {
   return (
     <>
       {/* Mobile Hamburger Button */}
-      <div className="lg:hidden fixed top-3 left-3 z-50">
+      <div className="lg:hidden fixed top-3.5 left-3.5 z-50">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-md bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-sm text-[#37352f] dark:text-[#f0f0f0] cursor-pointer"
+          className="p-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-800 dark:text-white cursor-pointer"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -73,30 +73,30 @@ export function Sidebar({ user, subjects }: SidebarProps) {
       {/* Mobile Backdrop */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-xs"
+          className="lg:hidden fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-xs"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col justify-between border-r border-[#e9e9e7] dark:border-[#2e2e2e] bg-[#f7f6f3] dark:bg-[#1f1f1f] text-[#37352f] dark:text-[#d4d4d4] transition-all duration-200 ${
-          collapsed ? "w-16" : "w-64"
+        className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col justify-between border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-all duration-300 ${
+          collapsed ? "w-20" : "w-72"
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         {/* Top: Header & Workspace Title */}
         <div className="flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b border-[#e9e9e7] dark:border-[#2e2e2e]">
+          <div className="flex items-center justify-between p-5 pb-4 border-b border-slate-100 dark:border-slate-800/80">
             {!collapsed && (
-              <div className="flex items-center space-x-2.5 overflow-hidden">
-                <div className="w-7 h-7 rounded-md bg-[#2383e2] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+              <div className="flex items-center space-x-3 overflow-hidden">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-md">
                   CM
                 </div>
                 <div className="truncate">
-                  <h2 className="text-sm font-semibold tracking-tight text-[#171717] dark:text-white truncate">
+                  <h2 className="text-base font-bold tracking-tight text-slate-900 dark:text-white truncate">
                     ChronoMind
                   </h2>
-                  <p className="text-[11px] text-[#787774] dark:text-[#9b9a97] truncate">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
                     Study Operating System
                   </p>
                 </div>
@@ -104,14 +104,14 @@ export function Sidebar({ user, subjects }: SidebarProps) {
             )}
 
             {collapsed && (
-              <div className="w-7 h-7 mx-auto rounded-md bg-[#2383e2] text-white flex items-center justify-center font-bold text-xs shadow-sm">
+              <div className="w-10 h-10 mx-auto rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-black text-sm shadow-md">
                 CM
               </div>
             )}
 
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="hidden lg:flex p-1 rounded hover:bg-[#e8e8e6] dark:hover:bg-[#2c2c2c] text-[#787774] cursor-pointer"
+              className="hidden lg:flex p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition-colors"
               title={collapsed ? "Mở rộng thanh bên" : "Thu gọn"}
             >
               {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -119,7 +119,7 @@ export function Sidebar({ user, subjects }: SidebarProps) {
           </div>
 
           {/* Nav Items */}
-          <nav className="p-2 space-y-1">
+          <nav className="p-3.5 space-y-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -128,14 +128,22 @@ export function Sidebar({ user, subjects }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center space-x-2.5 px-2.5 py-2 rounded-md text-xs font-medium transition-colors ${
+                  className={`flex items-center space-x-3 px-3.5 py-3 rounded-2xl text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? "bg-[#e8e8e6] dark:bg-[#2c2c2c] text-[#171717] dark:text-white font-semibold"
-                      : "hover:bg-[#ebebea] dark:hover:bg-[#262626] text-[#5a5955] dark:text-[#a0a0a0]"
+                      ? "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold shadow-xs"
+                      : "hover:bg-slate-100/80 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                   }`}
                   title={collapsed ? item.label : undefined}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <div
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                      isActive
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </div>
                   {!collapsed && <span className="truncate">{item.label}</span>}
                 </Link>
               );
@@ -144,27 +152,27 @@ export function Sidebar({ user, subjects }: SidebarProps) {
 
           {/* Quick Start Subjects List */}
           {!collapsed && (
-            <div className="px-3 pt-4 pb-2 border-t border-[#e9e9e7] dark:border-[#2e2e2e] mt-2">
-              <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-[#787774] dark:text-[#9b9a97] mb-2 px-1">
+            <div className="px-4 pt-3 pb-2 border-t border-slate-100 dark:border-slate-800/80 mt-1">
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2.5 px-1">
                 <span>Vào học nhanh (Timer)</span>
-                <Clock className="w-3 h-3" />
+                <Clock className="w-3.5 h-3.5 text-blue-500" />
               </div>
 
-              <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
+              <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                 {subjects.map((sub) => {
                   const isCurrent = activeSubject?.id === sub.id;
                   return (
                     <div
                       key={sub.id}
-                      className={`group flex items-center justify-between px-2 py-1.5 rounded-md text-xs transition-colors ${
+                      className={`group flex items-center justify-between p-2 rounded-2xl text-xs transition-all ${
                         isCurrent
-                          ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300"
-                          : "hover:bg-[#ebebea] dark:hover:bg-[#262626] text-[#37352f] dark:text-[#d4d4d4]"
+                          ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                          : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-transparent"
                       }`}
                     >
-                      <div className="flex items-center space-x-2 truncate">
+                      <div className="flex items-center space-x-2.5 truncate">
                         <span
-                          className="w-2 h-2 rounded-full shrink-0"
+                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs"
                           style={{ backgroundColor: sub.color }}
                         />
                         <span className="truncate font-medium">
@@ -183,10 +191,10 @@ export function Sidebar({ user, subjects }: SidebarProps) {
                             icon: sub.icon,
                           })
                         }
-                        title={`Bắt đầu đếm giờ học môn ${sub.name}`}
-                        className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-600 transition-opacity cursor-pointer shrink-0"
+                        title={`Bắt đầu học môn ${sub.name}`}
+                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xs transition-all cursor-pointer shrink-0"
                       >
-                        <Play className="w-3 h-3 fill-current" />
+                        <Play className="w-3 h-3 fill-current ml-0.5" />
                       </button>
                     </div>
                   );
@@ -197,18 +205,18 @@ export function Sidebar({ user, subjects }: SidebarProps) {
         </div>
 
         {/* Bottom: User Profile & Logout */}
-        <div className="p-3 border-t border-[#e9e9e7] dark:border-[#2e2e2e]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 truncate">
-              <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="flex items-center justify-between p-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+            <div className="flex items-center space-x-2.5 truncate">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
                 {user.name ? user.name.charAt(0).toUpperCase() : "U"}
               </div>
               {!collapsed && (
                 <div className="truncate">
-                  <p className="text-xs font-medium text-[#171717] dark:text-white truncate">
-                    {user.name || "Người dùng"}
+                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                    {user.name || "Khách"}
                   </p>
-                  <p className="text-[10px] text-[#787774] dark:text-[#9b9a97] truncate">
+                  <p className="text-[10px] text-slate-400 truncate">
                     {user.email}
                   </p>
                 </div>
@@ -219,7 +227,7 @@ export function Sidebar({ user, subjects }: SidebarProps) {
               <button
                 onClick={handleLogout}
                 title="Đăng xuất"
-                className="p-1.5 rounded-md hover:bg-[#ebebea] dark:hover:bg-[#2c2c2c] text-[#787774] hover:text-rose-600 transition-colors cursor-pointer"
+                className="p-2 rounded-full hover:bg-white dark:hover:bg-slate-700 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer shadow-2xs"
               >
                 <LogOut className="w-4 h-4" />
               </button>
