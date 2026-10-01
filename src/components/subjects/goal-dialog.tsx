@@ -9,27 +9,28 @@ import { useRouter } from "next/navigation";
 interface GoalDialogProps {
   open: boolean;
   onClose: () => void;
-  subjects: Array<{ id: string; name: string; code: string | null }>;
+  subjects: Array<{ id: string; name: string; code?: string | null }>;
   editingGoal?: {
     id: string;
-    subjectId: string;
+    subjectId: string | null;
+    title: string;
+    description: string | null;
     targetHours: number;
-    startDate: string;
-    endDate: string;
-    isAutoAlloc: boolean;
-    priority: number;
-    notes: string | null;
+    deadline: string | null;
+    status: string;
   } | null;
 }
 
 export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogProps) {
   const router = useRouter();
 
-  const [subjectId, setSubjectId] = useState(editingGoal ? editingGoal.subjectId : subjects[0]?.id || "");
-  const [targetHours, setTargetHours] = useState(editingGoal ? editingGoal.targetHours.toString() : "20");
-  const [priority, setPriority] = useState(editingGoal ? editingGoal.priority : 3);
-  const [isAutoAlloc, setIsAutoAlloc] = useState(editingGoal ? editingGoal.isAutoAlloc : true);
-  const [notes, setNotes] = useState(editingGoal ? editingGoal.notes || "" : "");
+  const [title, setTitle] = useState(editingGoal ? editingGoal.title : "");
+  const [subjectId, setSubjectId] = useState(editingGoal ? editingGoal.subjectId || "" : subjects[0]?.id || "");
+  const [targetHours, setTargetHours] = useState(editingGoal ? editingGoal.targetHours.toString() : "10");
+  const [deadline, setDeadline] = useState(
+    editingGoal?.deadline ? new Date(editingGoal.deadline).toISOString().split("T")[0] : ""
+  );
+  const [description, setDescription] = useState(editingGoal ? editingGoal.description || "" : "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -40,28 +41,28 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
 
     const hours = parseFloat(targetHours);
     if (isNaN(hours) || hours <= 0) {
-      setErrorMsg("Số giờ mục tiêu phải là số dương");
+      setErrorMsg("Số giờ mục tiêu phải là số dương lớn hơn 0");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!title.trim()) {
+      setErrorMsg("Vui lòng nhập tiêu đề mục tiêu");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), now.getMonth(), 1);
-      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-
-      const res = await fetch("/api/subjects/goals", {
+      const res = await fetch("/api/goals", {
         method: editingGoal ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: editingGoal?.id,
-          subjectId,
+          title: title.trim(),
+          subjectId: subjectId || null,
           targetHours: hours,
-          priority: Number(priority),
-          isAutoAlloc,
-          notes: notes.trim() || null,
-          startDate: start.toISOString(),
-          endDate: end.toISOString(),
+          deadline: deadline ? new Date(deadline).toISOString() : null,
+          description: description.trim() || null,
         }),
       });
 
@@ -79,41 +80,61 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-md">
+      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
         <DialogHeader>
-          <DialogTitle>{editingGoal ? "Chỉnh sửa mục tiêu môn học" : "Thiết lập mục tiêu số giờ học"}</DialogTitle>
-          <DialogDescription>
-            Đặt chỉ tiêu số giờ bạn muốn hoàn thành trong kỳ/tháng này và mức độ ưu tiên để AI phân bổ.
+          <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            {editingGoal ? "Chỉnh sửa mục tiêu học tập" : "Thêm mục tiêu học tập mới"}
+          </DialogTitle>
+          <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            Đặt chỉ tiêu số giờ hoàn thành và thời hạn deadline để AI lập lịch khoa học.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {errorMsg && (
-            <div className="p-2.5 rounded bg-rose-50 text-xs text-rose-600 border border-rose-200">
+            <div className="p-3 rounded-2xl bg-[#f7ebeb] text-xs font-medium text-[#b87474] border border-[#f0c4c4]">
               {errorMsg}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Môn học *</label>
-            <select
-              value={subjectId}
-              onChange={(e) => setSubjectId(e.target.value)}
-              className="w-full h-9 rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
-              disabled={!!editingGoal}
-            >
-              {subjects.map((sub) => (
-                <option key={sub.id} value={sub.id}>
-                  {sub.code ? `[${sub.code}] ` : ""}
-                  {sub.name}
-                </option>
-              ))}
-            </select>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              Tiêu đề mục tiêu *
+            </label>
+            <Input
+              type="text"
+              placeholder="VD: Ôn luyện 20 giờ Writing & Reading IELTS"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">Số giờ mục tiêu *</label>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+                Môn học gắn kèm
+              </label>
+              <select
+                value={subjectId}
+                onChange={(e) => setSubjectId(e.target.value)}
+                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
+              >
+                <option value="">(Không gắn môn cụ thể)</option>
+                {subjects.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.code ? `[${sub.code}] ` : ""}
+                    {sub.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+                Số giờ mục tiêu *
+              </label>
               <Input
                 type="number"
                 step="0.5"
@@ -122,54 +143,52 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
                 value={targetHours}
                 onChange={(e) => setTargetHours(e.target.value)}
                 required
+                className="rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
               />
             </div>
-
-            <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">Độ ưu tiên (1 - 5)</label>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(parseInt(e.target.value))}
-                className="w-full h-9 rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
-              >
-                <option value={5}>5 (Cao nhất - Trọng tâm)</option>
-                <option value={4}>4 (Cao)</option>
-                <option value={3}>3 (Trung bình)</option>
-                <option value={2}>2 (Thấp)</option>
-                <option value={1}>1 (Tùy ý)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2.5 pt-1">
-            <input
-              type="checkbox"
-              id="isAutoAlloc"
-              checked={isAutoAlloc}
-              onChange={(e) => setIsAutoAlloc(e.target.checked)}
-              className="rounded border-[#e9e9e7] text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
-            />
-            <label htmlFor="isAutoAlloc" className="text-xs font-medium text-[#37352f] dark:text-[#d4d4d4] cursor-pointer">
-              Cho phép AI tự động phân bổ lịch học cho môn này
-            </label>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Ghi chú mục tiêu</label>
-            <textarea
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="VD: Cần hoàn thành trước kỳ thi giữa kỳ ngày 25..."
-              className="w-full rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] p-2 text-sm placeholder:text-[#9b9a97] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              Thời hạn hoàn thành (Deadline)
+            </label>
+            <Input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
             />
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+          <div>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              Ghi chú chi tiết
+            </label>
+            <textarea
+              rows={2}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="VD: Tập trung vào giải đề Cambridge và ôn từ vựng band 7.0+..."
+              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] p-3 text-xs text-[#192e22] dark:text-[#f0f7f2] placeholder:text-[#8ba393] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
+            />
+          </div>
+
+          <DialogFooter className="pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="rounded-2xl border-[#dbe7dd] text-[#526b5c]"
+            >
               Hủy
             </Button>
-            <Button type="submit" variant="default" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              variant="default"
+              disabled={isSubmitting}
+              className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold"
+            >
               {isSubmitting ? "Đang lưu..." : editingGoal ? "Cập nhật" : "Lưu mục tiêu"}
             </Button>
           </DialogFooter>

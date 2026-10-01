@@ -15,8 +15,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Mật khẩu phải có tối thiểu 6 ký tự" }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const existing = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
+      where: { email: normalizedEmail },
     });
 
     if (existing) {
@@ -27,9 +29,25 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({
       data: {
         name: name?.trim() || null,
-        email: email.toLowerCase().trim(),
+        email: normalizedEmail,
         passwordHash,
         timezone: "Asia/Ho_Chi_Minh",
+        userSettings: {
+          create: {
+            timezone: "Asia/Ho_Chi_Minh",
+            weekStartDay: 1,
+            language: "vi",
+          },
+        },
+        aiPreferences: {
+          create: {
+            preferredStudyDuration: 90,
+            preferredBreakDuration: 15,
+            preferredStudyDays: "1,2,3,4,5,6,0",
+            preferredTimeRanges: "14:00-17:00,19:00-22:30",
+            maxDailyStudyHours: 6.0,
+          },
+        },
       },
     });
 

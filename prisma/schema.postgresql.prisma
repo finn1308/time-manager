@@ -1,29 +1,11 @@
-// PostgreSQL / Supabase Schema for Production Deployment
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
-}
-
-enum Role {
-  USER
-  ADMIN
-}
-
-enum EventType {
-  STUDY
-  BUSY_BLOCKED
-  FIXED_CLASS
-  PERSONAL
-}
-
-enum AIProvider {
-  OPENAI
-  GEMINI
-  ANTHROPIC
 }
 
 model User {
@@ -33,19 +15,21 @@ model User {
   emailVerified DateTime?
   image         String?
   passwordHash  String?
-  role          Role           @default(USER)
+  role          String         @default("USER")
   timezone      String         @default("Asia/Ho_Chi_Minh")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  userApiKeys   UserApiKey[]
-  subjects      Subject[]
-  studyGoals    StudyGoal[]
-  schedules     ScheduleEvent[]
-  studyLogs     StudyLog[]
-  blockedSlots  BlockedSlot[]
+  accounts          Account[]
+  sessions          Session[]
+  userApiKeys       UserApiKey[]
+  subjects          Subject[]
+  goals             Goal[]
+  calendarEvents    CalendarEvent[]
+  studySessions     StudySession[]
+  availabilityRules AvailabilityRule[]
+  aiPreferences     AiPreferences?
+  userSettings      UserSettings?
 }
 
 model Account {
@@ -75,70 +59,61 @@ model Session {
 }
 
 model UserApiKey {
-  id             String     @id @default(cuid())
-  userId         String
-  provider       AIProvider
-  encryptedKey   String     @db.Text
-  iv             String
-  authTag        String
-  isActive       Boolean    @default(true)
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  id           String   @id @default(cuid())
+  userId       String
+  provider     String   // GEMINI, OPENAI, ANTHROPIC
+  encryptedKey String   @db.Text
+  iv           String
+  authTag      String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId, provider])
 }
 
 model Subject {
-  id          String   @id @default(cuid())
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  code           String?
+  color          String   @default("#408257")
+  description    String?  @db.Text
+  targetHours    Float    @default(10.0)
+  completedHours Float    @default(0.0)
+  priority       Int      @default(3)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goals          Goal[]
+  calendarEvents CalendarEvent[]
+  studySessions  StudySession[]
+
+  @@index([userId])
+}
+
+model Goal {
+  id          String    @id @default(cuid())
   userId      String
-  name        String
-  code        String?
-  color       String   @default("#3b82f6")
-  icon        String?
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  subjectId   String?
+  title       String
+  description String?   @db.Text
+  targetHours Float
+  deadline    DateTime?
+  status      String    @default("ACTIVE")
+  milestones  String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studyGoals  StudyGoal[]
-  schedules   ScheduleEvent[]
-  studyLogs   StudyLog[]
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
 }
 
-model StudyGoal {
-  id           String    @id @default(cuid())
-  userId       String
-  subjectId    String
-  targetHours  Float
-  startDate    DateTime
-  endDate      DateTime
-  isAutoAlloc  Boolean   @default(true)
-  priority     Int       @default(1)
-  notes        String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-}
-
-model BlockedSlot {
-  id           String    @id @default(cuid())
-  userId       String
-  title        String
-  startTime    String
-  endTime      String
-  dayOfWeek    Int?
-  specificDate DateTime?
-  isRecurring  Boolean   @default(true)
-  isLocked     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model ScheduleEvent {
+model CalendarEvent {
   id            String    @id @default(cuid())
   userId        String
   subjectId     String?
@@ -146,31 +121,86 @@ model ScheduleEvent {
   description   String?   @db.Text
   startTime     DateTime
   endTime       DateTime
-  eventType     EventType @default(STUDY)
+  timezone      String    @default("Asia/Ho_Chi_Minh")
+  type          String    @default("STUDY")
+  isLocked      Boolean   @default(false)
   isAiGenerated Boolean   @default(false)
-  isCompleted   Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject   Subject?   @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  studyLogs StudyLog[]
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  studySessions StudySession[]
+
+  @@index([userId, startTime, endTime])
 }
 
-model StudyLog {
-  id                String         @id @default(cuid())
-  userId            String
-  subjectId         String
-  scheduleEventId   String?
-  startTime         DateTime
-  endTime           DateTime
-  durationMinutes   Int
-  notes             String?        @db.Text
-  productivityScore Int?
-  source            String         @default("PIP_TIMER")
-  createdAt         DateTime       @default(now())
+model StudySession {
+  id                    String         @id @default(cuid())
+  userId                String
+  subjectId             String
+  calendarEventId       String?
+  plannedStart          DateTime?
+  plannedEnd            DateTime?
+  actualStart           DateTime
+  actualEnd             DateTime
+  actualDurationSeconds Int
+  status                String         @default("COMPLETED")
+  notes                 String?        @db.Text
+  productivityScore     Int?
+  source                String         @default("PIP_TIMER")
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  scheduleEvent ScheduleEvent? @relation(fields: [scheduleEventId], references: [id], onDelete: SetNull)
+  calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: SetNull)
+
+  @@index([userId, actualStart])
+}
+
+model AvailabilityRule {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String   @default("Giờ rảnh")
+  dayOfWeek   Int
+  startTime   String
+  endTime     String
+  isAvailable Boolean  @default(true)
+  timezone    String   @default("Asia/Ho_Chi_Minh")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, dayOfWeek])
+}
+
+model AiPreferences {
+  id                     String   @id @default(cuid())
+  userId                 String   @unique
+  preferredStudyDuration Int      @default(90)
+  preferredBreakDuration Int      @default(15)
+  preferredStudyDays     String   @default("1,2,3,4,5,6,0")
+  preferredTimeRanges    String   @default("14:00-17:00,19:00-22:30")
+  maxDailyStudyHours     Float    @default(6.0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserSettings {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  timezone               String   @default("Asia/Ho_Chi_Minh")
+  weekStartDay           Int      @default(1)
+  language               String   @default("vi")
+  weeklyStudyBudgetHours Float    @default(20.0)
+  examMode               Boolean  @default(false)
+  notificationsEnabled   Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

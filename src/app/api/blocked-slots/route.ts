@@ -6,12 +6,12 @@ export async function GET() {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const slots = await prisma.blockedSlot.findMany({
+  const rules = await prisma.availabilityRule.findMany({
     where: { userId: user.id },
-    orderBy: { startTime: "asc" },
+    orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
   });
 
-  return NextResponse.json({ slots });
+  return NextResponse.json({ rules, slots: rules });
 }
 
 export async function POST(req: Request) {
@@ -19,25 +19,26 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { title, startTime, endTime, dayOfWeek, daysToCreate, specificDate, isLocked } = await req.json();
+    const { title, startTime, endTime, dayOfWeek, daysToCreate, isAvailable } = await req.json();
 
     if (!title || !startTime || !endTime) {
-      return NextResponse.json({ error: "Thiếu thông tin bắt buộc" }, { status: 400 });
+      return NextResponse.json({ error: "Thiếu thông tin tiêu đề hoặc khung giờ" }, { status: 400 });
     }
 
+    const available = isAvailable !== undefined ? !!isAvailable : false; // Default to blocked/busy if created from blocked-slots
+
     if (daysToCreate && Array.isArray(daysToCreate) && daysToCreate.length > 0) {
-      // Batch create for all specified days of week
       await prisma.$transaction(
         daysToCreate.map((dow: number) =>
-          prisma.blockedSlot.create({
+          prisma.availabilityRule.create({
             data: {
               userId: user.id,
               title,
               startTime,
               endTime,
               dayOfWeek: dow,
-              isRecurring: true,
-              isLocked: isLocked ?? true,
+              isAvailable: available,
+              timezone: "Asia/Ho_Chi_Minh",
             },
           })
         )
@@ -45,22 +46,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true });
     }
 
-    const slot = await prisma.blockedSlot.create({
+    const rule = await prisma.availabilityRule.create({
       data: {
         userId: user.id,
         title,
         startTime,
         endTime,
-        dayOfWeek: dayOfWeek !== undefined ? dayOfWeek : null,
-        specificDate: specificDate ? new Date(specificDate) : null,
-        isRecurring: true,
-        isLocked: isLocked ?? true,
+        dayOfWeek: dayOfWeek !== undefined ? parseInt(dayOfWeek, 10) : 1,
+        isAvailable: available,
+        timezone: "Asia/Ho_Chi_Minh",
       },
     });
 
-    return NextResponse.json({ success: true, slot });
-  } catch (err) {
-    return NextResponse.json({ error: "Lỗi tạo khung giờ bận" }, { status: 500 });
+    return NextResponse.json({ success: true, rule, slot: rule });
+  } catch (err: any) {
+    console.error("Create availability rule error:", err);
+    return NextResponse.json({ error: "Lỗi tạo khung giờ khả dụng" }, { status: 500 });
   }
 }
 
@@ -70,9 +71,9 @@ export async function DELETE(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
-  if (!id) return NextResponse.json({ error: "Missing slot id" }, { status: 400 });
+  if (!id) return NextResponse.json({ error: "Missing rule id" }, { status: 400 });
 
-  await prisma.blockedSlot.delete({
+  await prisma.availabilityRule.delete({
     where: { id, userId: user.id },
   });
 

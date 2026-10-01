@@ -9,10 +9,13 @@ export async function GET() {
   const subjects = await prisma.subject.findMany({
     where: { userId: user.id },
     include: {
-      studyGoals: true,
-      studyLogs: true,
+      goals: true,
+      studySessions: {
+        orderBy: { actualStart: "desc" },
+        take: 5,
+      },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { priority: "desc" },
   });
 
   return NextResponse.json({ subjects });
@@ -23,23 +26,27 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { name, code, color, description, icon } = await req.json();
+    const { name, code, color, description, targetHours, priority } = await req.json();
 
-    if (!name) return NextResponse.json({ error: "Tên môn học không được để trống" }, { status: 400 });
+    if (!name?.trim()) {
+      return NextResponse.json({ error: "Tên môn học không được để trống" }, { status: 400 });
+    }
 
     const subject = await prisma.subject.create({
       data: {
         userId: user.id,
-        name,
-        code: code || null,
-        color: color || "#3b82f6",
-        icon: icon || null,
-        description: description || null,
+        name: name.trim(),
+        code: code?.trim() || null,
+        color: color || "#2d6a4f",
+        description: description?.trim() || null,
+        targetHours: targetHours ? parseFloat(targetHours) : 10.0,
+        priority: priority ? parseInt(priority, 10) : 3,
       },
     });
 
     return NextResponse.json({ success: true, subject });
-  } catch (err) {
+  } catch (err: any) {
+    console.error("Error creating subject:", err);
     return NextResponse.json({ error: "Lỗi tạo môn học" }, { status: 500 });
   }
 }
@@ -49,16 +56,19 @@ export async function PUT(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { id, name, code, color, description, icon } = await req.json();
+    const { id, name, code, color, description, targetHours, priority } = await req.json();
+
+    if (!id) return NextResponse.json({ error: "Thiếu ID môn học" }, { status: 400 });
 
     const subject = await prisma.subject.update({
       where: { id, userId: user.id },
       data: {
-        name,
-        code: code || null,
-        color,
-        icon,
-        description,
+        name: name?.trim(),
+        code: code?.trim() || null,
+        color: color || undefined,
+        description: description?.trim() || null,
+        targetHours: targetHours !== undefined ? parseFloat(targetHours) : undefined,
+        priority: priority !== undefined ? parseInt(priority, 10) : undefined,
       },
     });
 
@@ -74,7 +84,7 @@ export async function DELETE(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
-  if (!id) return NextResponse.json({ error: "Missing subject id" }, { status: 400 });
+  if (!id) return NextResponse.json({ error: "Thiếu ID môn học" }, { status: 400 });
 
   await prisma.subject.delete({
     where: { id, userId: user.id },

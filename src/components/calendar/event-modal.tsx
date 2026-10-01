@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
+import { Lock } from "lucide-react";
 
 interface EventModalProps {
   open: boolean;
@@ -19,14 +20,15 @@ interface EventModalProps {
     subjectId?: string | null;
     startTime: string;
     endTime: string;
-    eventType: string;
+    type?: string;
+    isLocked?: boolean;
   } | null;
 }
 
 export function EventModal({
   open,
   onClose,
-  subjects,
+  subjects = [],
   defaultDate = new Date().toISOString().split("T")[0],
   defaultStartTime = "14:00",
   editingEvent,
@@ -53,7 +55,7 @@ export function EventModal({
       ? new Date(editingEvent.endTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
       : "15:30"
   );
-  const [eventType, setEventType] = useState(editingEvent ? editingEvent.eventType : "STUDY");
+  const [isLocked, setIsLocked] = useState<boolean>(editingEvent ? !!editingEvent.isLocked : false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -70,7 +72,8 @@ export function EventModal({
         subjectId: subjectId || null,
         startTime: `${dateStr}T${startTimeStr}:00+07:00`,
         endTime: `${dateStr}T${endTimeStr}:00+07:00`,
-        eventType,
+        isLocked,
+        timezone: "Asia/Ho_Chi_Minh",
       };
 
       const res = await fetch("/api/calendar/events", {
@@ -113,19 +116,19 @@ export function EventModal({
         <DialogHeader>
           <DialogTitle>{editingEvent ? "Chỉnh sửa lịch học" : "Tạo lịch học mới"}</DialogTitle>
           <DialogDescription>
-            Điền thông tin buổi học. Hệ thống sẽ tự động kiểm tra và tránh các khung giờ bận.
+            Hệ thống sẽ chạy bộ kiểm tra conflict trên server và bảo đảm không trùng lịch.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {errorMsg && (
-            <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-xs text-rose-600 dark:text-rose-300 font-medium">
+            <div className="p-3 rounded-2xl bg-[#f7ebeb] border border-[#e8c6c6] text-xs text-[#8a3c3c] font-medium">
               {errorMsg}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
               Tiêu đề buổi học *
             </label>
             <Input
@@ -137,13 +140,13 @@ export function EventModal({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
               Môn học
             </label>
             <select
               value={subjectId}
               onChange={(e) => setSubjectId(e.target.value)}
-              className="w-full h-11 rounded-[16px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm text-slate-800 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="w-full h-11 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-4 py-2 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
             >
               <option value="">(Không gắn môn cụ thể)</option>
               {subjects.map((sub) => (
@@ -157,7 +160,7 @@ export function EventModal({
 
           <div className="grid grid-cols-3 gap-2.5">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
                 Ngày *
               </label>
               <Input
@@ -168,7 +171,7 @@ export function EventModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
                 Bắt đầu *
               </label>
               <Input
@@ -179,7 +182,7 @@ export function EventModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
                 Kết thúc *
               </label>
               <Input
@@ -191,16 +194,31 @@ export function EventModal({
             </div>
           </div>
 
+          {/* Locked Checkbox */}
+          <div className="flex items-center space-x-2.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
+            <input
+              type="checkbox"
+              id="isLockedCheck"
+              checked={isLocked}
+              onChange={(e) => setIsLocked(e.target.checked)}
+              className="w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
+            />
+            <label htmlFor="isLockedCheck" className="text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5 cursor-pointer select-none">
+              <Lock className="w-3.5 h-3.5 text-[#a3a86c]" />
+              <span className="font-semibold">Khóa sự kiện này (AI tuyệt đối không được xếp lịch đè)</span>
+            </label>
+          </div>
+
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-              Ghi chú mục tiêu
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+              Ghi chú nội dung
             </label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Nội dung cần ôn, link tài liệu hoặc bài tập..."
-              className="w-full rounded-[16px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              placeholder="Nội dung cần ôn, bài tập hoặc tài liệu..."
+              className="w-full rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
             />
           </div>
 
@@ -212,17 +230,22 @@ export function EventModal({
                 onClick={handleDelete}
                 disabled={isSubmitting}
                 size="sm"
-                className="font-semibold"
+                className="font-semibold rounded-2xl"
               >
                 Xóa lịch
               </Button>
             ) : <div />}
 
             <div className="flex items-center space-x-2">
-              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl">
                 Hủy
               </Button>
-              <Button type="submit" variant="default" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                variant="default"
+                disabled={isSubmitting}
+                className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold"
+              >
                 {isSubmitting ? "Đang lưu..." : editingEvent ? "Cập nhật" : "Tạo lịch"}
               </Button>
             </div>

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Play, Edit2, Target, Trash2, Plus, Sparkles } from "lucide-react";
+import { Play, Edit2, Target, Trash2, Plus, Sparkles, BookOpen } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { SubjectDialog } from "./subject-dialog";
 import { GoalDialog } from "./goal-dialog";
@@ -15,6 +15,9 @@ interface SubjectItem {
   code: string | null;
   color: string;
   description: string | null;
+  targetHours?: number;
+  completedHours?: number;
+  priority?: number;
   studyGoals: Array<{
     id: string;
     targetHours: number;
@@ -54,22 +57,10 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
     <div className="space-y-4">
       {/* Top Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="text-xs text-slate-500 font-medium">
+        <div className="text-xs text-[#526b5c] dark:text-[#a3bda9] font-medium">
           Danh sách {subjects.length} môn học & tiến độ hoàn thành chỉ tiêu
         </div>
         <div className="flex items-center space-x-2.5">
-          <Button
-            variant="pill"
-            size="sm"
-            onClick={() => {
-              setEditingGoal(null);
-              setIsGoalModalOpen(true);
-            }}
-            className="space-x-1.5 text-xs font-bold"
-          >
-            <Target className="w-3.5 h-3.5 text-purple-600" />
-            <span>Đặt chỉ tiêu giờ học</span>
-          </Button>
           <Button
             variant="default"
             size="sm"
@@ -77,7 +68,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
               setEditingSubject(null);
               setIsSubjectModalOpen(true);
             }}
-            className="space-x-1.5 text-xs font-bold shadow-xs"
+            className="space-x-1.5 text-xs font-semibold bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Thêm môn học</span>
@@ -85,41 +76,42 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
         </div>
       </div>
 
-      {/* Modern Rounded Table Container (rounded-[28px]) */}
-      <div className="overflow-x-auto rounded-[28px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 soft-card-shadow">
+      {/* Modern Rounded Table Container */}
+      <div className="overflow-x-auto rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 font-bold uppercase tracking-wider">
+            <tr className="border-b border-[#dbe7dd]/80 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9] font-bold uppercase tracking-wider">
               <th className="py-3.5 px-5">Môn học</th>
-              <th className="py-3.5 px-4 text-right">Mục tiêu</th>
+              <th className="py-3.5 px-4 text-right">Chỉ tiêu</th>
               <th className="py-3.5 px-4 text-right">Đã học</th>
               <th className="py-3.5 px-4 min-w-[150px]">Tiến độ</th>
-              <th className="py-3.5 px-4 text-center">Ưu tiên AI</th>
-              <th className="py-3.5 px-4 text-center">Phân bổ</th>
-              <th className="py-3.5 px-5 text-right">Hành động</th>
+              <th className="py-3.5 px-4 text-center">Ưu tiên</th>
+              <th className="py-3.5 px-5 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-[#dbe7dd]/60 dark:divide-[#263d2e]">
             {subjects.map((sub) => {
-              const activeGoal = sub.studyGoals[0];
-              const target = activeGoal ? activeGoal.targetHours : 0;
-              const loggedHours = Math.round((sub.totalLoggedMinutes / 60) * 10) / 10;
+              const target = sub.targetHours || 10;
+              const loggedHours = sub.completedHours !== undefined
+                ? sub.completedHours
+                : Math.round((sub.totalLoggedMinutes / 60) * 10) / 10;
               const percent = target > 0 ? Math.min(100, Math.round((loggedHours / target) * 100)) : 0;
+              const priority = sub.priority || 3;
 
               return (
                 <tr
                   key={sub.id}
-                  className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                  className="hover:bg-[#f8fbf8] dark:hover:bg-[#142318] transition-colors"
                 >
                   {/* Subject Name */}
                   <td className="py-4 px-5">
                     <div className="flex items-center space-x-3">
                       <span
-                        className="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs"
-                        style={{ backgroundColor: sub.color }}
+                        className="w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs"
+                        style={{ backgroundColor: sub.color || "#2d6a4f" }}
                       />
                       <div>
-                        <div className="font-bold text-sm text-slate-900 dark:text-white flex items-center space-x-2">
+                        <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
                           <span>{sub.name}</span>
                           {sub.code && (
                             <Badge variant="secondary" className="font-mono text-[10px]">
@@ -128,7 +120,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                           )}
                         </div>
                         {sub.description && (
-                          <p className="text-[11px] text-slate-400 truncate max-w-xs mt-0.5">
+                          <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] truncate max-w-xs mt-0.5">
                             {sub.description}
                           </p>
                         )}
@@ -137,28 +129,28 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                   </td>
 
                   {/* Target Hours */}
-                  <td className="py-4 px-4 text-right font-mono font-semibold text-slate-700 dark:text-slate-300">
-                    {target > 0 ? `${target}h` : <span className="text-slate-400 italic">Chưa đặt</span>}
+                  <td className="py-4 px-4 text-right font-mono font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                    {target > 0 ? `${target}h` : <span className="text-[#8ba393] italic">Chưa đặt</span>}
                   </td>
 
                   {/* Logged Hours */}
-                  <td className="py-4 px-4 text-right font-mono font-black text-emerald-600 dark:text-emerald-400">
+                  <td className="py-4 px-4 text-right font-mono font-black text-[#2d6a4f] dark:text-[#52b788]">
                     {loggedHours}h
                   </td>
 
                   {/* Progress Bar */}
                   <td className="py-4 px-4">
                     <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold">
+                      <div className="flex items-center justify-between text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-semibold">
                         <span>{percent}%</span>
                         {target > 0 && <span>còn {Math.max(0, target - loggedHours).toFixed(1)}h</span>}
                       </div>
-                      <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-[#dbe7dd] dark:bg-[#263d2e] overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all duration-300 shadow-2xs"
+                          className="h-full rounded-full transition-all duration-300"
                           style={{
                             width: `${percent}%`,
-                            backgroundColor: sub.color,
+                            backgroundColor: sub.color || "#2d6a4f",
                           }}
                         />
                       </div>
@@ -167,36 +159,20 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
                   {/* Priority */}
                   <td className="py-4 px-4 text-center">
-                    {activeGoal ? (
-                      <Badge
-                        variant={
-                          activeGoal.priority >= 4
-                            ? "red"
-                            : activeGoal.priority === 3
-                            ? "yellow"
-                            : "default"
-                        }
-                      >
-                        Ưu tiên {activeGoal.priority}/5
-                      </Badge>
-                    ) : (
-                      <span className="text-slate-300">-</span>
-                    )}
+                    <Badge
+                      variant={
+                        priority >= 4
+                          ? "green"
+                          : priority === 3
+                          ? "yellow"
+                          : "default"
+                      }
+                    >
+                      Mức {priority}/5
+                    </Badge>
                   </td>
 
-                  {/* AI Alloc Mode */}
-                  <td className="py-4 px-4 text-center">
-                    {activeGoal?.isAutoAlloc ? (
-                      <span className="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 font-bold">
-                        <Sparkles className="w-3 h-3" />
-                        <span>AI Auto</span>
-                      </span>
-                    ) : (
-                      <span className="text-[11px] text-slate-400">Thủ công</span>
-                    )}
-                  </td>
-
-                  {/* Action Buttons (Pill / Circles) */}
+                  {/* Action Buttons */}
                   <td className="py-4 px-5 text-right">
                     <div className="flex items-center justify-end space-x-1.5">
                       <button
@@ -209,7 +185,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                           })
                         }
                         title="Vào học ngay (Bật Timer)"
-                        className="p-2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 hover:bg-emerald-200 text-emerald-700 dark:text-emerald-300 transition-all cursor-pointer shadow-xs active:scale-95"
+                        className="p-2 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] hover:bg-[#b7d8c3] text-[#1b4332] dark:text-[#9cd1b1] transition-all cursor-pointer shadow-2xs active:scale-95"
                       >
                         <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                       </button>
@@ -220,7 +196,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                           setIsSubjectModalOpen(true);
                         }}
                         title="Sửa môn học"
-                        className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors cursor-pointer"
+                        className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#73927d] hover:text-[#192e22] transition-colors cursor-pointer"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -228,7 +204,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                       <button
                         onClick={() => handleDeleteSubject(sub.id, sub.name)}
                         title="Xóa môn học"
-                        className="p-2 rounded-full hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                        className="p-2 rounded-full hover:bg-[#f7ebeb] text-[#73927d] hover:text-[#b87474] transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -240,8 +216,8 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
             {subjects.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-14 text-center text-sm text-slate-400">
-                  Chưa có môn học nào. Hãy bấm "Thêm môn học" để bắt đầu!
+                <td colSpan={6} className="py-14 text-center text-sm text-[#526b5c] dark:text-[#a3bda9]">
+                  Chưa có môn học nào. Hãy bấm "Thêm môn học" để bắt đầu lập kế hoạch!
                 </td>
               </tr>
             )}
@@ -258,18 +234,6 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
             setEditingSubject(null);
           }}
           editingSubject={editingSubject}
-        />
-      )}
-
-      {isGoalModalOpen && (
-        <GoalDialog
-          open={isGoalModalOpen}
-          onClose={() => {
-            setIsGoalModalOpen(false);
-            setEditingGoal(null);
-          }}
-          subjects={subjects}
-          editingGoal={editingGoal}
         />
       )}
     </div>

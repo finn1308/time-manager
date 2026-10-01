@@ -15,7 +15,7 @@ import {
 } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Calendar } from "lucide-react";
 import { EventModal } from "./event-modal";
 
 interface MonthViewProps {
@@ -25,8 +25,8 @@ interface MonthViewProps {
     description: string | null;
     startTime: string;
     endTime: string;
-    eventType: string;
-    isCompleted: boolean;
+    type?: string;
+    isLocked?: boolean;
     subject: {
       id: string;
       name: string;
@@ -42,7 +42,7 @@ interface MonthViewProps {
   }>;
 }
 
-export function MonthView({ initialEvents, subjects }: MonthViewProps) {
+export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps) {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -69,40 +69,40 @@ export function MonthView({ initialEvents, subjects }: MonthViewProps) {
   return (
     <div className="flex flex-col space-y-4">
       {/* Month Navigation */}
-      <div className="flex items-center justify-between bg-white dark:bg-[#202020] p-3.5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+      <div className="flex items-center justify-between bg-white dark:bg-[#17261c] p-3.5 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
         <div className="flex items-center space-x-2">
           <Button
-            variant="outline"
+            variant="pill"
             size="sm"
             onClick={() => setCurrentMonth(new Date())}
-            className="text-xs font-semibold"
+            className="text-xs font-bold"
           >
             Tháng này
           </Button>
           <div className="flex items-center space-x-1">
             <button
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-              className="p-1.5 rounded hover:bg-[#f1f1ef] dark:hover:bg-[#2c2c2c] text-[#787774] cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-              className="p-1.5 rounded hover:bg-[#f1f1ef] dark:hover:bg-[#2c2c2c] text-[#787774] cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-          <span className="font-semibold text-sm text-[#171717] dark:text-white px-2">
+          <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] px-2">
             {formatVN(currentMonth, "MMMM yyyy")}
           </span>
         </div>
 
         <Button
-          variant="outline"
+          variant="pill"
           size="sm"
           onClick={() => setIsEventModalOpen(true)}
-          className="space-x-1.5"
+          className="space-x-1.5 font-bold"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Thêm sự kiện</span>
@@ -111,9 +111,9 @@ export function MonthView({ initialEvents, subjects }: MonthViewProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Month Calendar Grid */}
-        <div className="lg:col-span-3 bg-white dark:bg-[#202020] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+        <div className="lg:col-span-3 bg-white dark:bg-[#17261c] p-4 rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
           {/* Header Row */}
-          <div className="grid grid-cols-7 mb-2 text-center text-xs font-semibold text-[#787774] dark:text-[#9b9a97]">
+          <div className="grid grid-cols-7 mb-2 text-center text-xs font-bold text-[#526b5c] dark:text-[#a3bda9]">
             {dayNamesVN.map((name, i) => (
               <div key={i} className="py-1">
                 {name}
@@ -122,7 +122,7 @@ export function MonthView({ initialEvents, subjects }: MonthViewProps) {
           </div>
 
           {/* Days Grid */}
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-1.5">
             {days.map((d, index) => {
               const isCurrentMonth = isSameMonth(d, monthStart);
               const isToday = isSameDay(d, todayVN);
@@ -136,26 +136,28 @@ export function MonthView({ initialEvents, subjects }: MonthViewProps) {
                 <div
                   key={index}
                   onClick={() => setSelectedDay(d)}
-                  className={`min-h-[75px] p-1.5 rounded-lg border text-left cursor-pointer transition-all ${
+                  className={`min-h-[85px] p-2 rounded-2xl border text-left cursor-pointer transition-all ${
                     isSelected
-                      ? "border-blue-500 bg-blue-50/30 dark:bg-blue-950/20"
+                      ? "border-[#2d6a4f] bg-[#d8ebe0]/30 dark:bg-[#1d3827]/40 ring-1 ring-[#2d6a4f]"
                       : isToday
-                      ? "border-blue-300 dark:border-blue-700 bg-white dark:bg-[#222]"
+                      ? "border-[#52b788] bg-white dark:bg-[#142318]"
                       : isCurrentMonth
-                      ? "border-transparent hover:border-[#e9e9e7] dark:hover:border-[#2e2e2e] bg-[#fbfbfa] dark:bg-[#1a1a1a]"
-                      : "border-transparent opacity-40 bg-transparent"
+                      ? "border-transparent hover:border-[#dbe7dd] bg-[#f8fbf8] dark:bg-[#132217]"
+                      : "border-transparent opacity-30 bg-transparent"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-1.5">
                     <span
-                      className={`text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center ${
-                        isToday ? "bg-blue-600 text-white font-bold" : "text-[#37352f] dark:text-[#d4d4d4]"
+                      className={`text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold ${
+                        isToday
+                          ? "bg-[#2d6a4f] text-white"
+                          : "text-[#192e22] dark:text-[#f0f7f2]"
                       }`}
                     >
                       {formatVN(d, "d")}
                     </span>
                     {eventsOnDay.length > 0 && (
-                      <span className="text-[10px] text-blue-600 font-bold">
+                      <span className="text-[10px] text-[#2d6a4f] dark:text-[#52b788] font-bold">
                         {eventsOnDay.length}
                       </span>
                     )}
@@ -166,14 +168,14 @@ export function MonthView({ initialEvents, subjects }: MonthViewProps) {
                     {eventsOnDay.slice(0, 2).map((ev) => (
                       <div
                         key={ev.id}
-                        className="truncate text-[9px] px-1 py-0.5 rounded font-medium text-white truncate"
-                        style={{ backgroundColor: ev.subject?.color || "#3b82f6" }}
+                        className="truncate text-[9px] px-1.5 py-0.5 rounded-full font-medium text-white truncate shadow-2xs"
+                        style={{ backgroundColor: ev.subject?.color || "#2d6a4f" }}
                       >
                         {ev.title}
                       </div>
                     ))}
                     {eventsOnDay.length > 2 && (
-                      <div className="text-[9px] text-[#787774] pl-1 font-medium">
+                      <div className="text-[9px] text-[#526b5c] dark:text-[#a3bda9] pl-1 font-semibold">
                         +{eventsOnDay.length - 2} buổi khác
                       </div>
                     )}
@@ -185,37 +187,40 @@ export function MonthView({ initialEvents, subjects }: MonthViewProps) {
         </div>
 
         {/* Selected Day Details Panel */}
-        <div className="bg-white dark:bg-[#202020] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] flex flex-col">
-          <h3 className="font-semibold text-sm text-[#171717] dark:text-white pb-3 border-b border-[#e9e9e7] dark:border-[#2e2e2e]">
-            Chi tiết ngày: {formatVN(selectedDay, "dd/MM/yyyy")}
-          </h3>
+        <div className="bg-white dark:bg-[#17261c] p-5 rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow flex flex-col justify-between">
+          <div>
+            <h3 className="font-bold text-xs uppercase tracking-wider text-[#192e22] dark:text-[#f0f7f2] pb-3 border-b border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center space-x-2">
+              <Calendar className="w-3.5 h-3.5 text-[#2d6a4f]" />
+              <span>Ngày: {formatVN(selectedDay, "dd/MM/yyyy")}</span>
+            </h3>
 
-          <div className="py-3 flex-1 overflow-y-auto space-y-2.5 max-h-96">
-            {selectedDayEvents.map((ev) => (
-              <div
-                key={ev.id}
-                className="p-2.5 rounded-lg border border-[#e9e9e7] dark:border-[#2e2e2e] bg-[#fbfbfa] dark:bg-[#1c1c1c] text-xs"
-                style={{ borderLeftColor: ev.subject?.color || "#3b82f6", borderLeftWidth: "3px" }}
-              >
-                <div className="font-semibold text-[#171717] dark:text-white">{ev.title}</div>
-                <div className="font-mono text-[10px] text-[#787774] mt-1">
-                  {formatVN(ev.startTime, "HH:mm")} - {formatVN(ev.endTime, "HH:mm")}
+            <div className="py-3 overflow-y-auto space-y-2 max-h-96">
+              {selectedDayEvents.map((ev) => (
+                <div
+                  key={ev.id}
+                  className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs"
+                  style={{ borderLeftColor: ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
+                >
+                  <div className="font-bold text-[#192e22] dark:text-[#f0f7f2]">{ev.title}</div>
+                  <div className="font-mono text-[10px] text-[#73927d] mt-1">
+                    {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {selectedDayEvents.length === 0 && (
-              <p className="text-xs text-[#9b9a97] text-center py-8">
-                Không có buổi học nào vào ngày này.
-              </p>
-            )}
+              {selectedDayEvents.length === 0 && (
+                <p className="text-xs text-[#8ba393] text-center py-10">
+                  Không có buổi học nào vào ngày này.
+                </p>
+              )}
+            </div>
           </div>
 
           <Button
-            variant="outline"
+            variant="pill"
             size="sm"
             onClick={() => setIsEventModalOpen(true)}
-            className="w-full mt-2"
+            className="w-full mt-3 font-semibold"
           >
             Thêm buổi học cho ngày này
           </Button>

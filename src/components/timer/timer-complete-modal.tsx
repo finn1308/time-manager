@@ -23,7 +23,8 @@ export function TimerCompleteModal({
   onClose,
 }: TimerCompleteModalProps) {
   const router = useRouter();
-  const minutes = Math.max(1, Math.round(seconds / 60));
+  const minutes = Math.floor(seconds / 60);
+  const remainderSeconds = seconds % 60;
   const [productivityScore, setProductivityScore] = useState<number>(5);
   const [notes, setNotes] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,16 +32,15 @@ export function TimerCompleteModal({
   const handleSave = async () => {
     try {
       setIsSubmitting(true);
-      const res = await fetch("/api/timer/save-log", {
+      const res = await fetch("/api/timer/stop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subjectId: subject.id,
-          scheduleEventId,
-          durationMinutes: minutes,
+          calendarEventId: scheduleEventId,
+          actualDurationSeconds: seconds,
           productivityScore,
           notes: notes.trim() || null,
-          source: "PIP_TIMER",
         }),
       });
 
@@ -62,32 +62,32 @@ export function TimerCompleteModal({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent onClose={onClose} className="max-w-md">
         <DialogHeader>
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold w-fit mb-2">
-            <CheckCircle className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#d8ebe0] text-[#1b4332] text-xs font-bold w-fit mb-2">
+            <CheckCircle className="w-3.5 h-3.5 text-[#2d6a4f]" />
             <span>HOÀN THÀNH PHIÊN HỌC</span>
           </div>
-          <DialogTitle>Ghi nhận tiến độ: {subject.name}</DialogTitle>
+          <DialogTitle>Ghi nhận thời gian: {subject.name}</DialogTitle>
           <DialogDescription>
-            Tuyệt vời! Bạn vừa hoàn thành một phiên tập trung học tập. Hãy lưu lại đánh giá để cập nhật báo cáo.
+            Phiên học đã kết thúc. Thời gian thực tế chính xác sẽ được lưu vào cơ sở dữ liệu và tích lũy vào môn học.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           {/* Duration Summary */}
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
-            <div className="flex items-center space-x-2.5 text-xs font-semibold text-slate-500">
-              <Clock className="w-4 h-4 text-emerald-600" />
-              <span>Thời gian thực tế:</span>
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-[#eef5f0] dark:bg-[#1d3024] border border-[#dbe7dd] dark:border-[#263d2e]">
+            <div className="flex items-center space-x-2.5 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9]">
+              <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <span>Thời gian thực tế (Actual):</span>
             </div>
-            <div className="font-mono text-lg font-black text-slate-900 dark:text-white">
-              {minutes} phút
+            <div className="font-mono text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+              {minutes > 0 ? `${minutes} phút ` : ""}{remainderSeconds}s
             </div>
           </div>
 
           {/* Productivity Rating */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-              Mức độ tập trung & Năng suất (1 - 5 sao):
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-2">
+              Đánh giá năng suất (1 - 5 sao):
             </label>
             <div className="flex items-center space-x-2">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -95,46 +95,49 @@ export function TimerCompleteModal({
                   key={star}
                   type="button"
                   onClick={() => setProductivityScore(star)}
-                  className={`p-2 rounded-full transition-transform cursor-pointer hover:scale-110 ${
-                    star <= productivityScore ? "text-amber-400" : "text-slate-200 dark:text-slate-700"
+                  className={`p-1.5 rounded-full transition-transform cursor-pointer hover:scale-110 ${
+                    star <= productivityScore ? "text-amber-400" : "text-[#dbe7dd] dark:text-[#263d2e]"
                   }`}
                 >
-                  <Star className="w-7 h-7 fill-current" />
+                  <Star className="w-6 h-6 fill-current" />
                 </button>
               ))}
-              <span className="text-xs font-bold text-slate-500 ml-2">
+              <span className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] ml-2">
                 {productivityScore === 5
-                  ? "Xuất sắc 🔥"
-                  : productivityScore === 4
-                  ? "Rất tốt ✨"
-                  : productivityScore === 3
-                  ? "Ổn định 👍"
-                  : "Cần cải thiện"}
+                  ? "Rất tập trung 🔥"
+                  : productivityScore >= 3
+                  ? "Tốt 👍"
+                  : "Chưa tập trung"}
               </span>
             </div>
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-              Ghi chú nhanh / Thu hoạch sau buổi học:
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+              Ghi chú phiên học:
             </label>
             <textarea
               rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="VD: Đã làm xong 3 bài tập về đồ thị, cần xem lại phần định lý Bayes..."
-              className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              placeholder="VD: Đã làm xong bài tập, hiểu rõ cấu trúc bài..."
+              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
             />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
+          <Button variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl">
             Bỏ qua
           </Button>
-          <Button variant="default" onClick={handleSave} disabled={isSubmitting}>
-            {isSubmitting ? "Đang lưu..." : "Lưu vào Dashboard"}
+          <Button
+            variant="default"
+            onClick={handleSave}
+            disabled={isSubmitting}
+            className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl"
+          >
+            {isSubmitting ? "Đang lưu..." : "Lưu vào cơ sở dữ liệu"}
           </Button>
         </DialogFooter>
       </DialogContent>

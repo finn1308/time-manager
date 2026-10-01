@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
+import { Lock } from "lucide-react";
 
 interface BlockedSlotDialogProps {
   open: boolean;
@@ -15,8 +16,6 @@ interface BlockedSlotDialogProps {
     startTime: string;
     endTime: string;
     dayOfWeek: number | null;
-    specificDate: string | null;
-    isRecurring: boolean;
     isLocked: boolean;
   } | null;
 }
@@ -42,20 +41,19 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
     setErrorMsg(null);
 
     try {
-      const daysToCreate: (number | null)[] = dayOfWeek === "ALL" ? [0, 1, 2, 3, 4, 5, 6] : [parseInt(dayOfWeek)];
+      const daysToCreate: number[] = dayOfWeek === "ALL" ? [0, 1, 2, 3, 4, 5, 6] : [parseInt(dayOfWeek, 10)];
 
       const res = await fetch("/api/blocked-slots", {
-        method: editingSlot ? "PUT" : "POST",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: editingSlot?.id,
           title: title.trim(),
           startTime,
           endTime,
-          dayOfWeek: dayOfWeek === "ALL" ? null : parseInt(dayOfWeek),
+          dayOfWeek: dayOfWeek === "ALL" ? 1 : parseInt(dayOfWeek, 10),
           daysToCreate: editingSlot ? undefined : daysToCreate,
-          isRecurring: true,
-          isLocked,
+          isAvailable: !isLocked,
         }),
       });
 
@@ -83,13 +81,15 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {errorMsg && (
-            <div className="p-2.5 rounded bg-rose-50 text-xs text-rose-600 border border-rose-200">
+            <div className="p-3 rounded-2xl bg-[#f7ebeb] text-xs text-[#8a3c3c] border border-[#e8c6c6]">
               {errorMsg}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Mục đích / Tên khung giờ *</label>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              Mục đích / Tên khung giờ *
+            </label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -100,7 +100,9 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">Bắt đầu *</label>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Bắt đầu *
+              </label>
               <Input
                 type="time"
                 value={startTime}
@@ -109,7 +111,9 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">Kết thúc *</label>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Kết thúc *
+              </label>
               <Input
                 type="time"
                 value={endTime}
@@ -120,11 +124,13 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Lặp lại vào thứ:</label>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              Lặp lại vào thứ:
+            </label>
             <select
               value={dayOfWeek}
               onChange={(e) => setDayOfWeek(e.target.value)}
-              className="w-full h-9 rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+              className="w-full h-11 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 py-1 text-xs text-[#192e22] dark:text-[#f0f7f2]"
             >
               <option value="ALL">Tất cả các ngày trong tuần (Hằng ngày)</option>
               <option value="1">Thứ Hai</option>
@@ -137,24 +143,30 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
             </select>
           </div>
 
-          <div className="flex items-center space-x-2.5 pt-1">
+          <div className="flex items-center space-x-2.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
             <input
               type="checkbox"
               id="isLockedCheck"
               checked={isLocked}
               onChange={(e) => setIsLocked(e.target.checked)}
-              className="rounded border-[#e9e9e7] text-amber-600 focus:ring-amber-500 w-4 h-4 cursor-pointer"
+              className="rounded text-[#2d6a4f] focus:ring-[#52b788] w-4 h-4 cursor-pointer"
             />
-            <label htmlFor="isLockedCheck" className="text-xs font-medium text-[#37352f] dark:text-[#d4d4d4] cursor-pointer">
-              Khóa cứng (Bắt buộc AI né 100%, không được phép gợi ý đè)
+            <label htmlFor="isLockedCheck" className="text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5 cursor-pointer select-none">
+              <Lock className="w-3.5 h-3.5 text-[#a3a86c]" />
+              <span className="font-semibold">Khóa cứng (Bắt buộc AI né 100%, không được phép gợi ý đè)</span>
             </label>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl">
               Hủy
             </Button>
-            <Button type="submit" variant="default" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              variant="default"
+              disabled={isSubmitting}
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold"
+            >
               {isSubmitting ? "Đang lưu..." : editingSlot ? "Cập nhật" : "Khóa giờ bận"}
             </Button>
           </DialogFooter>

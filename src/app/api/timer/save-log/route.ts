@@ -7,38 +7,52 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { subjectId, scheduleEventId, durationMinutes, notes, productivityScore, source } = await req.json();
+    const { subjectId, scheduleEventId, calendarEventId, durationMinutes, actualDurationSeconds, notes, productivityScore, source } = await req.json();
 
-    if (!subjectId || !durationMinutes) {
-      return NextResponse.json({ error: "Thiếu dữ liệu môn học hoặc thời lượng" }, { status: 400 });
+    if (!subjectId) {
+      return NextResponse.json({ error: "Thiếu dữ liệu môn học" }, { status: 400 });
     }
 
-    const now = new Date();
-    const startTime = new Date(now.getTime() - durationMinutes * 60 * 1000);
+    const seconds = actualDurationSeconds
+      ? parseInt(actualDurationSeconds, 10)
+      : Math.round((durationMinutes || 0) * 60);
 
-    const studyLog = await prisma.studyLog.create({
+    const now = new Date();
+    const startTime = new Date(now.getTime() - seconds * 1000);
+
+    const eventId = calendarEventId || scheduleEventId || null;
+
+    const session = await prisma.studySession.create({
       data: {
         userId: user.id,
         subjectId,
-        scheduleEventId: scheduleEventId || null,
-        startTime,
-        endTime: now,
-        durationMinutes,
+        calendarEventId: eventId,
+        actualStart: startTime,
+        actualEnd: now,
+        actualDurationSeconds: seconds,
+        status: "COMPLETED",
         notes: notes || null,
         productivityScore: productivityScore || null,
         source: source || "PIP_TIMER",
       },
+      include: {
+        subject: true,
+      },
     });
 
-    // If linked to an event in the calendar, mark it as completed
-    if (scheduleEventId) {
-      await prisma.scheduleEvent.update({
-        where: { id: scheduleEventId, userId: user.id },
-        data: { isCompleted: true },
+    // Update subject completedHours
+    if (seconds > 0) {
+      await prisma.subject.update({
+        where: { id: subjectId, userId: user.id },
+        data: {
+          completedHours: {
+            increment: seconds / 3600,
+          },
+        },
       }).catch(() => null);
     }
 
-    return NextResponse.json({ success: true, studyLog });
+    return NextResponse.json({ success: true, session, studyLog: session });
   } catch (err: any) {
     console.error("Save study log error:", err);
     return NextResponse.json({ error: "Lỗi ghi nhận phiên học" }, { status: 500 });

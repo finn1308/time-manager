@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { PageHeader } from "@/components/notion/page-header";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Key, ShieldCheck, Check, Trash2, Globe, Cpu, AlertCircle } from "lucide-react";
+import { Key, ShieldCheck, Check, Trash2, Globe, Cpu, AlertCircle, RefreshCw, Zap } from "lucide-react";
 
 interface KeyRecord {
   id: string;
@@ -20,7 +19,13 @@ export default function SettingsPage() {
   const [provider, setProvider] = useState<"GEMINI" | "OPENAI" | "ANTHROPIC">("GEMINI");
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [testing, setTesting] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const [budgetInput, setBudgetInput] = useState("20");
+  const [examMode, setExamMode] = useState(false);
+  const [notifications, setNotifications] = useState(true);
+  const [savingBudget, setSavingBudget] = useState(false);
 
   const fetchKeys = async () => {
     try {
@@ -32,8 +37,25 @@ export default function SettingsPage() {
     }
   };
 
+  const fetchUserSettings = async () => {
+    try {
+      const res = await fetch("/api/settings/user");
+      const data = await res.json();
+      if (data.settings) {
+        if (data.settings.weeklyStudyBudgetHours) {
+          setBudgetInput(data.settings.weeklyStudyBudgetHours.toString());
+        }
+        setExamMode(Boolean(data.settings.examMode));
+        setNotifications(Boolean(data.settings.notificationsEnabled));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     fetchKeys();
+    fetchUserSettings();
   }, []);
 
   const handleSaveKey = async (e: React.FormEvent) => {
@@ -57,12 +79,35 @@ export default function SettingsPage() {
       if (!res.ok) throw new Error(data.error || "Không thể lưu API key");
 
       setApiKeyInput("");
-      setMessage({ type: "success", text: `Đã mã hóa AES-256-GCM và kích hoạt API Key ${provider} thành công!` });
+      setMessage({ type: "success", text: `Đã mã hóa AES-256-GCM và kích hoạt API Key ${provider} an toàn!` });
       fetchKeys();
     } catch (err: any) {
       setMessage({ type: "error", text: err.message || "Lỗi khi lưu key" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTestConnection = async (prov: string) => {
+    setTesting(prov);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/ai/test-connection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ provider: prov }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Kiểm tra kết nối thất bại");
+      }
+
+      setMessage({ type: "success", text: data.message || `Kết nối đến ${prov} hoạt động tốt!` });
+    } catch (err: any) {
+      setMessage({ type: "error", text: err.message || "Lỗi kiểm tra kết nối" });
+    } finally {
+      setTesting(null);
     }
   };
 
@@ -77,47 +122,74 @@ export default function SettingsPage() {
     }
   };
 
+  const handleSaveUserSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingBudget(true);
+    try {
+      const res = await fetch("/api/settings/user", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          weeklyStudyBudgetHours: parseFloat(budgetInput),
+          examMode,
+          notificationsEnabled: notifications,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Lỗi lưu cấu hình");
+      setMessage({ type: "success", text: "Đã cập nhật Ngân sách tuần và Tùy chọn học tập thành công!" });
+    } catch (err: any) {
+      setMessage({ type: "error", text: err.message || "Lỗi cập nhật" });
+    } finally {
+      setSavingBudget(false);
+    }
+  };
+
   return (
-    <div className="space-y-6 max-w-4xl">
-      <PageHeader
-        icon="⚙️"
-        title="Cài đặt AI & Bảo mật hệ thống"
-        description="Quản lý API Key AI cá nhân (Gemini, OpenAI, Anthropic). Mọi khóa đều được mã hóa chuẩn quân sự AES-256-GCM tại máy chủ và không bao giờ lộ ra trình duyệt."
-      />
+    <div className="space-y-6 max-w-4xl mx-auto pb-16">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2.5">
+          <Key className="w-6 h-6 text-[#2d6a4f] dark:text-[#52b788]" />
+          <span>Cài đặt AI & Bảo mật hệ thống</span>
+        </h1>
+        <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+          Quản lý API Key AI cá nhân (Gemini, OpenAI, Anthropic). Mọi khóa đều được mã hóa AES-256-GCM ở máy chủ và không bao giờ trả về client.
+        </p>
+      </div>
 
       {/* Security Architecture Callout */}
-      <div className="p-4 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/20 text-xs text-emerald-800 dark:text-emerald-300 flex items-start space-x-3">
-        <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+      <div className="p-4 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#eef5f0] dark:bg-[#1d3024] text-xs text-[#192e22] dark:text-[#d8ebe0] flex items-start space-x-3.5">
+        <ShieldCheck className="w-5 h-5 text-[#2d6a4f] dark:text-[#52b788] shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <p className="font-semibold text-sm">Kiến trúc bảo mật Zero-Client-Exposure:</p>
-          <p>
-            API Key cá nhân của bạn được mã hóa một chiều bằng khóa bí mật 32-byte (AES-GCM) trước khi ghi vào Database. Khi AI Scheduler thực thi, key chỉ được giải mã tạm thời trong RAM của máy chủ để gửi request đến AI Provider rồi giải phóng ngay lập tức. Client không bao giờ nhận lại chuỗi key gốc.
+          <p className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">Kiến trúc bảo mật Zero-Client-Exposure:</p>
+          <p className="text-[#526b5c] dark:text-[#a3bda9] leading-relaxed">
+            API Key của bạn được mã hóa AES-256-GCM với IV và AuthTag riêng trước khi lưu database. Khi thực thi lập lịch AI, key được giải mã tạm thời trên server-side trong quá trình gọi API và không bao giờ gửi về trình duyệt JavaScript.
           </p>
         </div>
       </div>
 
       {message && (
         <div
-          className={`p-3 rounded-lg text-xs flex items-center space-x-2 ${
+          className={`p-3.5 rounded-2xl text-xs flex items-center space-x-2.5 font-medium ${
             message.type === "success"
-              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-              : "bg-rose-50 text-rose-700 border border-rose-200"
+              ? "bg-[#d8ebe0] text-[#1b4332] border border-[#b7d8c3]"
+              : "bg-[#f7ebeb] text-[#8a3c3c] border border-[#e8c6c6]"
           }`}
         >
-          {message.type === "success" ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          {message.type === "success" ? <Check className="w-4 h-4 text-[#2d6a4f]" /> : <AlertCircle className="w-4 h-4 text-[#b87474]" />}
           <span>{message.text}</span>
         </div>
       )}
 
       {/* Form: Add or Update Key */}
-      <Card>
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
         <CardHeader>
-          <CardTitle className="text-base flex items-center space-x-2">
-            <Key className="w-4 h-4 text-blue-600" />
+          <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+            <Key className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
             <span>Thêm hoặc Cập nhật AI API Key</span>
           </CardTitle>
-          <CardDescription>
-            Chọn nhà cung cấp AI và nhập API Key cá nhân để sử dụng tính năng AI Study Scheduler.
+          <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+            Chọn nhà cung cấp AI và nhập API Key cá nhân để sử dụng tính năng AI Scheduler.
           </CardDescription>
         </CardHeader>
 
@@ -133,14 +205,14 @@ export default function SettingsPage() {
                     key={prov}
                     type="button"
                     onClick={() => setProvider(prov)}
-                    className={`p-3 rounded-lg border text-left cursor-pointer transition-all ${
+                    className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all ${
                       isSelected
-                        ? "border-blue-500 bg-blue-50/40 dark:bg-blue-950/40 shadow-xs"
-                        : "border-[#e9e9e7] dark:border-[#2e2e2e] bg-[#fbfbfa] dark:bg-[#202020] hover:border-gray-400"
+                        ? "border-[#2d6a4f] bg-[#d8ebe0]/30 dark:bg-[#1d3827]/40 shadow-2xs"
+                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-xs text-[#171717] dark:text-white">
+                      <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
                         {prov === "GEMINI"
                           ? "Google Gemini"
                           : prov === "OPENAI"
@@ -148,10 +220,10 @@ export default function SettingsPage() {
                           : "Anthropic Claude"}
                       </span>
                       {isConfigured && (
-                        <span className="w-2 h-2 rounded-full bg-emerald-500" title="Đã cấu hình" />
+                        <span className="w-2 h-2 rounded-full bg-[#52b788]" title="Đã cấu hình" />
                       )}
                     </div>
-                    <p className="text-[10px] text-[#787774] mt-1">
+                    <p className="text-[10px] text-[#73927d] mt-1">
                       {isConfigured ? "Đang hoạt động" : "Chưa cấu hình"}
                     </p>
                   </button>
@@ -160,7 +232,7 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#787774] mb-1">
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
                 Nhập {provider} API Key cá nhân:
               </label>
               <Input
@@ -182,62 +254,72 @@ export default function SettingsPage() {
               type="submit"
               variant="default"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs space-x-1.5"
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs space-x-1.5 rounded-2xl"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{loading ? "Đang mã hóa & lưu..." : `Mã hóa & Lưu ${provider} Key`}</span>
+              <span>{loading ? "Đang mã hóa & lưu..." : `Mã hóa & Lưu ${provider} Key (Save)`}</span>
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* Configured Keys List */}
-      <Card>
+      {/* Configured Keys List with Test Connection & Delete */}
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
         <CardHeader>
-          <CardTitle className="text-base flex items-center space-x-2">
-            <Cpu className="w-4 h-4 text-purple-600" />
-            <span>Các khóa AI đang hoạt động trong tài khoản của bạn</span>
+          <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+            <Cpu className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+            <span>Các khóa AI đang hoạt động trong tài khoản</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 pt-0">
-          <div className="space-y-2">
+        <CardContent className="p-6 pt-0">
+          <div className="space-y-2.5">
             {keys.map((k) => (
               <div
                 key={k.id}
-                className="flex items-center justify-between p-3 rounded-lg border border-[#e9e9e7] dark:border-[#2e2e2e] bg-[#fbfbfa] dark:bg-[#202020] text-xs"
+                className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs"
               >
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#52b788]" />
                   <div>
-                    <span className="font-semibold text-sm text-[#171717] dark:text-white">
+                    <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
                       {k.provider}
                     </span>
-                    <span className="font-mono text-[11px] text-[#787774] ml-2">
-                      (Đã mã hóa AES-256-GCM ••••••••)
+                    <span className="font-mono text-[11px] text-[#73927d] ml-2">
+                      (AES-256-GCM ••••••••••••••••)
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Badge variant="green">Đang hoạt động</Badge>
+                  <Button
+                    size="sm"
+                    variant="pill"
+                    onClick={() => handleTestConnection(k.provider)}
+                    disabled={testing === k.provider}
+                    className="text-xs space-x-1"
+                  >
+                    <Zap className="w-3 h-3 text-[#2d6a4f]" />
+                    <span>{testing === k.provider ? "Đang thử..." : "Test connection"}</span>
+                  </Button>
+
                   <button
                     onClick={() => handleDeleteKey(k.provider)}
-                    className="p-1 rounded text-[#787774] hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-                    title="Xóa khóa này"
+                    className="p-2 rounded-full hover:bg-[#f7ebeb] text-[#73927d] hover:text-[#b87474] transition-colors cursor-pointer"
+                    title="Xóa khóa này (Delete key)"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
             ))}
 
             {keys.length === 0 && (
-              <div className="p-4 rounded-lg bg-[#f7f6f3] dark:bg-[#222] border border-[#e9e9e7] dark:border-[#2e2e2e] text-xs text-[#787774] space-y-1">
-                <p className="font-semibold text-[#37352f] dark:text-[#e0e0e0]">
-                  Ghi chú về chế độ hoạt động:
+              <div className="p-4 rounded-2xl bg-[#eef5f0] dark:bg-[#1d3024] border border-[#dbe7dd] dark:border-[#263d2e] text-xs text-[#526b5c] dark:text-[#a3bda9] space-y-1">
+                <p className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  Chế độ hoạt động độc lập (Offline Fallback):
                 </p>
                 <p>
-                  Bạn chưa nhập API Key nào. Hệ thống ChronoMind vẫn hoạt động 100% bằng **Thuật toán Tối ưu hóa Ràng buộc Nội bộ (Local Constraint Satisfaction Engine)** để tự động xếp lịch và né mọi khung giờ bận! Khi bạn thêm Gemini hoặc OpenAI key, thuật toán sẽ tự động nâng cấp dùng LLM để phân bổ ngữ cảnh thông minh hơn.
+                  Bạn chưa nhập API Key nào. Hệ thống ChronoMind vẫn hoạt động đầy đủ bằng Thuật toán tối ưu hóa ràng buộc nội bộ (Local Constraint Satisfaction Engine) để tự động xếp lịch và né mọi khung giờ bận!
                 </p>
               </div>
             )}
@@ -245,21 +327,87 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Timezone & Localization Settings */}
-      <Card>
+      {/* Weekly Study Budget & Preferences */}
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
         <CardHeader>
-          <CardTitle className="text-base flex items-center space-x-2">
-            <Globe className="w-4 h-4 text-emerald-600" />
-            <span>Múi giờ & Định vị khu vực (Timezone)</span>
+          <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+            <Zap className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+            <span>Ngân sách học tập tuần & Tùy chọn (Study Budget)</span>
+          </CardTitle>
+          <CardDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            Đặt chỉ tiêu tổng số giờ muốn học mỗi tuần để AI kiểm soát và tính toán nợ học tập (Study Debt).
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 text-xs p-6 pt-0">
+          <form onSubmit={handleSaveUserSettings} className="space-y-3.5">
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                Ngân sách học tập hàng tuần (Giờ / tuần)
+              </label>
+              <Input
+                type="number"
+                step="1"
+                min="1"
+                max="100"
+                value={budgetInput}
+                onChange={(e) => setBudgetInput(e.target.value)}
+                className="max-w-xs rounded-2xl border-[#dbe7dd] text-xs h-10"
+                required
+              />
+            </div>
+
+            <div className="flex items-center space-x-3 pt-1">
+              <input
+                type="checkbox"
+                id="examMode"
+                checked={examMode}
+                onChange={(e) => setExamMode(e.target.checked)}
+                className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
+              />
+              <label htmlFor="examMode" className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer">
+                Kích hoạt chế độ ôn thi (Exam Mode) - Tối đa hóa ôn tập và ưu tiên các môn gần deadline
+              </label>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="notifications"
+                checked={notifications}
+                onChange={(e) => setNotifications(e.target.checked)}
+                className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
+              />
+              <label htmlFor="notifications" className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer">
+                Bật nhắc nhở trước giờ học 15 phút (Browser Notifications)
+              </label>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={savingBudget}
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs rounded-2xl h-9 px-4 mt-2"
+            >
+              {savingBudget ? "Đang lưu..." : "Lưu tùy chọn học tập"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Timezone Settings */}
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+        <CardHeader>
+          <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+            <Globe className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+            <span>Múi giờ & Định dạng chuẩn (Timezone)</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-xs">
-          <div className="flex items-center justify-between p-3 rounded-lg border border-[#e9e9e7] dark:border-[#2e2e2e] bg-[#fbfbfa] dark:bg-[#202020]">
+        <CardContent className="space-y-2 text-xs p-6 pt-0">
+          <div className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318]">
             <div>
-              <p className="font-semibold text-[#171717] dark:text-white">Múi giờ hệ thống</p>
-              <p className="text-[#787774]">Asia/Ho_Chi_Minh (UTC+07:00 - Giờ Việt Nam)</p>
+              <p className="font-bold text-[#192e22] dark:text-[#f0f7f2]">Múi giờ hệ thống</p>
+              <p className="text-[#526b5c] dark:text-[#a3bda9]">Asia/Ho_Chi_Minh (UTC+07:00 - Giờ chuẩn Việt Nam)</p>
             </div>
-            <Badge variant="blue">Mặc định chuẩn</Badge>
+            <Badge variant="green">Đã thiết lập</Badge>
           </div>
         </CardContent>
       </Card>

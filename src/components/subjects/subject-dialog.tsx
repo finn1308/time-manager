@@ -15,25 +15,29 @@ interface SubjectDialogProps {
     code: string | null;
     color: string;
     description: string | null;
+    targetHours?: number;
+    priority?: number;
   } | null;
 }
 
-const PASTEL_COLORS = [
-  "#3b82f6", // Blue
-  "#10b981", // Emerald
-  "#f59e0b", // Amber
-  "#8b5cf6", // Purple
-  "#ec4899", // Pink
-  "#06b6d4", // Cyan
-  "#f97316", // Orange
-  "#64748b", // Slate
+const PASTEL_GREEN_PALETTE = [
+  "#2d6a4f", // Deep Botanical Green
+  "#40916c", // Fresh Botanical
+  "#52b788", // Sage Green
+  "#74c69d", // Mint
+  "#95d5b2", // Light Pastel Green
+  "#a3a86c", // Soft Olive / Moss
+  "#587060", // Muted Eucalyptus
+  "#3a5a40", // Forest Green
 ];
 
 export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogProps) {
   const router = useRouter();
   const [name, setName] = useState(editingSubject ? editingSubject.name : "");
   const [code, setCode] = useState(editingSubject ? editingSubject.code || "" : "");
-  const [color, setColor] = useState(editingSubject ? editingSubject.color : PASTEL_COLORS[0]);
+  const [color, setColor] = useState(editingSubject ? editingSubject.color : PASTEL_GREEN_PALETTE[0]);
+  const [targetHours, setTargetHours] = useState(editingSubject?.targetHours ? String(editingSubject.targetHours) : "10");
+  const [priority, setPriority] = useState(editingSubject?.priority ? String(editingSubject.priority) : "3");
   const [description, setDescription] = useState(editingSubject ? editingSubject.description || "" : "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -52,6 +56,8 @@ export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogPr
           name: name.trim(),
           code: code.trim() || null,
           color,
+          targetHours: parseFloat(targetHours) || 10,
+          priority: parseInt(priority, 10) || 3,
           description: description.trim() || null,
         }),
       });
@@ -74,46 +80,83 @@ export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogPr
         <DialogHeader>
           <DialogTitle>{editingSubject ? "Chỉnh sửa môn học" : "Thêm môn học mới"}</DialogTitle>
           <DialogDescription>
-            Thiết lập tên môn, mã số và màu đại diện phong cách Notion.
+            Thiết lập tên môn, chỉ tiêu số giờ và mức độ ưu tiên để AI phân bổ thời gian.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {errorMsg && (
-            <div className="p-2.5 rounded bg-rose-50 text-xs text-rose-600 border border-rose-200">
+            <div className="p-3 rounded-2xl bg-[#f7ebeb] text-xs text-[#8a3c3c] border border-[#e8c6c6]">
               {errorMsg}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Tên môn học *</label>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              Tên môn học *
+            </label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="VD: Cấu trúc dữ liệu & Giải thuật"
+              placeholder="VD: IELTS Academic, Giải tích..."
               required
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Mã môn (Tùy chọn)</label>
-            <Input
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="VD: CS102, ENG301..."
-            />
+          <div className="grid grid-cols-3 gap-2.5">
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Mã môn
+              </label>
+              <Input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="IELTS..."
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Chỉ tiêu (giờ) *
+              </label>
+              <Input
+                type="number"
+                step="0.5"
+                min="1"
+                value={targetHours}
+                onChange={(e) => setTargetHours(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Ưu tiên (1-5)
+              </label>
+              <select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                className="w-full h-11 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+              >
+                <option value="5">5 (Cao nhất)</option>
+                <option value="4">4 (Cao)</option>
+                <option value="3">3 (Trung bình)</option>
+                <option value="2">2 (Thấp)</option>
+                <option value="1">1 (Tối thiểu)</option>
+              </select>
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1.5">Màu đại diện</label>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+              Màu đại diện (Pastel Green System)
+            </label>
             <div className="flex items-center space-x-2">
-              {PASTEL_COLORS.map((c) => (
+              {PASTEL_GREEN_PALETTE.map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setColor(c)}
                   className={`w-7 h-7 rounded-full transition-transform cursor-pointer ${
-                    color === c ? "ring-2 ring-offset-2 ring-blue-500 scale-110" : "hover:scale-105"
+                    color === c ? "ring-2 ring-offset-2 ring-[#2d6a4f] scale-110" : "hover:scale-105"
                   }`}
                   style={{ backgroundColor: c }}
                 />
@@ -122,21 +165,28 @@ export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogPr
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#787774] mb-1">Mô tả / Đề cương</label>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              Mô tả / Đề cương
+            </label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Ghi chú nội dung trọng tâm của môn học này..."
-              className="w-full rounded-md border border-[#e9e9e7] dark:border-[#2e2e2e] bg-white dark:bg-[#202020] p-2 text-sm placeholder:text-[#9b9a97] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+              className="w-full rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
             />
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl">
               Hủy
             </Button>
-            <Button type="submit" variant="default" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              variant="default"
+              disabled={isSubmitting}
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold"
+            >
               {isSubmitting ? "Đang lưu..." : editingSubject ? "Cập nhật" : "Tạo môn học"}
             </Button>
           </DialogFooter>

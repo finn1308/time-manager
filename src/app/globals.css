@@ -2,27 +2,32 @@
 
 @layer base {
   :root {
-    /* Color Palette inspired by the reference design (Luyentu & The IELTS Dictionary) */
-    --background: #f7f9fc;
-    --card: #ffffff;
-    --card-foreground: #1e293b;
-    --popover: #ffffff;
-    --popover-foreground: #1e293b;
-    --primary: #2563eb;
-    --primary-foreground: #ffffff;
-    --secondary: #f1f5f9;
-    --secondary-foreground: #334155;
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
-    --accent: #f8fafc;
-    --accent-foreground: #0f172a;
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    --border: #e2e8f0;
-    --input: #e2e8f0;
-    --ring: #3b82f6;
+    /* 100% Pastel Green / Sage / Mint Design System */
+    --background: #f4f8f5;
+    --surface: #ffffff;
+    --surface-secondary: #eef5f0;
+    --primary: #2d6a4f;
+    --primary-light: #d8ebe0;
+    --primary-dark: #1b4332;
+    --accent: #52b788;
+    --text-primary: #192e22;
+    --text-secondary: #526b5c;
+    --border: #dbe7dd;
+    --success: #40916c;
+    --warning: #a3a86c;
+    --danger: #b87474;
 
-    /* Systematic Border Radius Hierarchy */
+    /* Shadcn/Standard compatibility mapping */
+    --card: var(--surface);
+    --card-foreground: var(--text-primary);
+    --popover: var(--surface);
+    --popover-foreground: var(--text-primary);
+    --muted: var(--surface-secondary);
+    --muted-foreground: var(--text-secondary);
+    --input: var(--border);
+    --ring: var(--primary);
+
+    /* Consistent Border Radius Hierarchy */
     --radius-xs: 8px;
     --radius-sm: 12px;
     --radius-md: 16px;
@@ -30,60 +35,59 @@
     --radius-xl: 28px;
     --radius-2xl: 36px;
     --radius-pill: 9999px;
-
-    /* Base Radius */
-    --radius: 22px;
+    --radius: 20px;
   }
 
   .dark {
-    --background: #111827;
-    --card: #1f2937;
-    --card-foreground: #f3f4f6;
-    --popover: #1f2937;
-    --popover-foreground: #f3f4f6;
-    --primary: #3b82f6;
-    --primary-foreground: #ffffff;
-    --secondary: #374151;
-    --secondary-foreground: #e5e7eb;
-    --muted: #374151;
-    --muted-foreground: #9ca3af;
-    --accent: #1e293b;
-    --accent-foreground: #ffffff;
-    --destructive: #f87171;
-    --destructive-foreground: #ffffff;
-    --border: #374151;
-    --input: #374151;
-    --ring: #60a5fa;
+    --background: #101c14;
+    --surface: #17261c;
+    --surface-secondary: #1d3024;
+    --primary: #52b788;
+    --primary-light: #243e2f;
+    --primary-dark: #74c69d;
+    --accent: #40916c;
+    --text-primary: #f0f7f2;
+    --text-secondary: #a3bda9;
+    --border: #263d2e;
+    --success: #52b788;
+    --warning: #c2c97a;
+    --danger: #c97f7f;
+
+    --card: var(--surface);
+    --card-foreground: var(--text-primary);
+    --popover: var(--surface);
+    --popover-foreground: var(--text-primary);
+    --muted: var(--surface-secondary);
+    --muted-foreground: var(--text-secondary);
+    --input: var(--border);
+    --ring: var(--primary);
   }
 }
 
 body {
   background-color: var(--background);
-  color: #1e293b;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
   letter-spacing: -0.015em;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
-.dark body {
-  color: #f3f4f6;
-}
-
-/* Subtle Graph-Paper Grid Background from Reference */
-.bg-reference-grid {
+/* Subtle Mint Grid Background */
+.bg-pastel-grid {
   background-size: 32px 32px;
   background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(45, 106, 79, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(45, 106, 79, 0.05) 1px, transparent 1px);
 }
 
-.dark .bg-reference-grid {
+.dark .bg-pastel-grid {
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(82, 183, 136, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(82, 183, 136, 0.06) 1px, transparent 1px);
 }
 
-/* Smooth Rounded Scrollbars */
+/* Smooth Rounded Scrollbars in Pastel Green */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
@@ -92,16 +96,16 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.35);
+  background: rgba(82, 183, 136, 0.28);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.6);
+  background: rgba(82, 183, 136, 0.55);
 }
 
-/* Soft Pill Shadows */
+/* Soft Notion/Linear Card Shadows */
 .soft-card-shadow {
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(45, 106, 79, 0.04), 0 2px 6px -1px rgba(45, 106, 79, 0.02);
 }
 
 .soft-card-hover {
@@ -109,34 +113,29 @@ body {
 }
 .soft-card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 10px 25px -4px rgba(45, 106, 79, 0.08), 0 4px 10px -2px rgba(45, 106, 79, 0.03);
 }
 
-/* Diagonal stripe pattern for locked/blocked slots */
+/* Diagonal stripe pattern for locked/blocked slots (Pastel Olive/Sage) */
 .blocked-slot-pattern {
   background: repeating-linear-gradient(
     45deg,
-    rgba(148, 163, 184, 0.08),
-    rgba(148, 163, 184, 0.08) 8px,
-    rgba(148, 163, 184, 0.16) 8px,
-    rgba(148, 163, 184, 0.16) 16px
+    rgba(82, 112, 92, 0.08),
+    rgba(82, 112, 92, 0.08) 8px,
+    rgba(82, 112, 92, 0.15) 8px,
+    rgba(82, 112, 92, 0.15) 16px
   );
 }
 
-/* Speech Bubble Callout with triangle tail */
-.speech-bubble {
-  position: relative;
-  background: #ffffff;
-  border-radius: 20px;
+/* Pastel Green Glassmorphism */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
 }
-.speech-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  right: 28px;
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 8px solid #ffffff;
+
+.dark .glass-panel {
+  background: rgba(23, 38, 28, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
 }

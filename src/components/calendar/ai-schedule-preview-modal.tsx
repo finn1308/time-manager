@@ -28,7 +28,7 @@ interface AiSchedulePreviewModalProps {
 export function AiSchedulePreviewModal({
   open,
   onClose,
-  subjects,
+  subjects = [],
 }: AiSchedulePreviewModalProps) {
   const router = useRouter();
 
@@ -124,13 +124,13 @@ export function AiSchedulePreviewModal({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent onClose={onClose} className="max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold w-fit mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#d8ebe0] text-[#1b4332] text-xs font-bold w-fit mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-[#2d6a4f]" />
             <span>AI STUDY SCHEDULER</span>
           </div>
           <DialogTitle>Tự động phân bổ lịch học thông minh</DialogTitle>
           <DialogDescription>
-            AI sẽ đọc mục tiêu môn học, tính số giờ còn thiếu và tự động né 100% các khung giờ bị khóa / lịch bận cố định.
+            AI đọc mục tiêu môn học, tính số giờ còn thiếu và tự động né 100% các khung giờ bị khóa và lịch bận cố định.
           </DialogDescription>
         </DialogHeader>
 
@@ -138,7 +138,7 @@ export function AiSchedulePreviewModal({
         {!results && (
           <div className="space-y-4 py-2">
             {errorMsg && (
-              <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-xs text-rose-600 dark:text-rose-300 flex items-center space-x-2 font-medium">
+              <div className="p-3.5 rounded-2xl bg-[#f7ebeb] border border-[#e8c6c6] text-xs text-[#8a3c3c] flex items-center space-x-2 font-medium">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>{errorMsg}</span>
               </div>
@@ -146,44 +146,49 @@ export function AiSchedulePreviewModal({
 
             <div className="grid grid-cols-2 gap-3.5">
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Từ ngày (VN):
+                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                  Từ ngày:
                 </label>
                 <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Đến ngày (VN):
+                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                  Đến ngày:
                 </label>
                 <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
                 Yêu cầu bổ sung cho AI (Tùy chọn):
               </label>
               <textarea
                 rows={3}
                 value={customInstructions}
                 onChange={(e) => setCustomInstructions(e.target.value)}
-                placeholder="VD: Tuần này tôi cần tập trung ôn tập môn Cấu trúc dữ liệu trước, ưu tiên khung giờ tối sau 19h..."
-                className="w-full rounded-[18px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3.5 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                placeholder="VD: Tuần này tôi cần ưu tiên học IELTS 2 tiếng mỗi ngày, mỗi buổi 90 phút..."
+                className="w-full rounded-[18px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3.5 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
               />
             </div>
 
-            <div className="p-4 rounded-[20px] bg-blue-50 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/40 text-xs text-blue-800 dark:text-blue-300 flex items-start space-x-3">
-              <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5 text-blue-600" />
+            <div className="p-4 rounded-[20px] bg-[#eef5f0] dark:bg-[#1d3024] border border-[#dbe7dd] dark:border-[#263d2e] text-xs text-[#192e22] dark:text-[#d8ebe0] flex items-start space-x-3">
+              <ShieldCheck className="w-5 h-5 shrink-0 mt-0.5 text-[#2d6a4f] dark:text-[#52b788]" />
               <div>
-                <span className="font-bold">Bảo đảm an toàn lịch trình:</span> Mọi khung giờ như giờ ngủ đêm (23:30 - 06:30), giờ học trên giảng đường, hoặc lịch bận bạn đã khóa sẽ được bảo vệ tuyệt đối.
+                <span className="font-bold">Quy tắc chống xung đột lịch nghiêm ngặt:</span> Server sẽ chạy bộ kiểm tra deterministic collision, bảo đảm không bao giờ xếp trùng với sự kiện lịch hiện có, giờ ngủ hay khung giờ bận.
               </div>
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={onClose} disabled={isLoading}>
+              <Button variant="outline" onClick={onClose} disabled={isLoading} className="rounded-2xl">
                 Đóng
               </Button>
-              <Button variant="amber" onClick={handleGenerate} disabled={isLoading} className="space-x-2">
+              <Button
+                variant="default"
+                onClick={handleGenerate}
+                disabled={isLoading}
+                className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl space-x-2 font-semibold"
+              >
                 <Sparkles className="w-4 h-4" />
                 <span>{isLoading ? "AI đang tính toán..." : "Bắt đầu phân bổ"}</span>
               </Button>
@@ -194,19 +199,19 @@ export function AiSchedulePreviewModal({
         {/* Results Preview */}
         {results && (
           <div className="flex flex-col flex-1 overflow-hidden space-y-3.5 pt-2">
-            <div className="p-4 rounded-[22px] bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-                <span className="font-bold text-slate-900 dark:text-white">Chiến lược phân bổ:</span>
+            <div className="p-4 rounded-[22px] bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
+              <div className="flex items-center justify-between text-xs text-[#526b5c] dark:text-[#a3bda9] mb-1.5">
+                <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">Chiến lược phân bổ:</span>
                 <Badge variant="pill-active" className="text-[10px]">
                   {results.providerUsed}
                 </Badge>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] leading-relaxed">
                 {results.summary}
               </p>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-slate-500 px-1 font-medium">
+            <div className="flex items-center justify-between text-xs text-[#526b5c] dark:text-[#a3bda9] px-1 font-medium">
               <span>Đã chọn {selectedIndices.size} / {results.proposedEvents.length} buổi học</span>
               <button
                 onClick={() => {
@@ -217,7 +222,7 @@ export function AiSchedulePreviewModal({
                     setSelectedIndices(all);
                   }
                 }}
-                className="text-blue-600 dark:text-blue-400 font-bold hover:underline cursor-pointer"
+                className="text-[#2d6a4f] dark:text-[#52b788] font-bold hover:underline cursor-pointer"
               >
                 {selectedIndices.size === results.proposedEvents.length ? "Bỏ chọn tất cả" : "Chọn tất cả"}
               </button>
@@ -235,8 +240,8 @@ export function AiSchedulePreviewModal({
                     onClick={() => toggleSelect(idx)}
                     className={`p-3.5 rounded-[20px] border text-xs cursor-pointer transition-all ${
                       isSelected
-                        ? "bg-white dark:bg-slate-800 border-blue-500 dark:border-blue-400 shadow-sm ring-2 ring-blue-500/10"
-                        : "bg-slate-50/60 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 opacity-60"
+                        ? "bg-white dark:bg-[#17261c] border-[#2d6a4f] dark:border-[#52b788] shadow-sm ring-1 ring-[#52b788]/20"
+                        : "bg-[#f8fbf8] dark:bg-[#142318] border-[#dbe7dd] dark:border-[#263d2e] opacity-60"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -244,8 +249,8 @@ export function AiSchedulePreviewModal({
                         <div
                           className={`w-5 h-5 rounded-full mt-0.5 flex items-center justify-center shrink-0 border transition-colors ${
                             isSelected
-                              ? "bg-blue-600 border-blue-600 text-white"
-                              : "border-slate-300 bg-white"
+                              ? "bg-[#2d6a4f] border-[#2d6a4f] text-white"
+                              : "border-[#dbe7dd] bg-white"
                           }`}
                         >
                           {isSelected && <Check className="w-3.5 h-3.5" />}
@@ -255,27 +260,27 @@ export function AiSchedulePreviewModal({
                             {subject && (
                               <span
                                 className="w-2.5 h-2.5 rounded-full"
-                                style={{ backgroundColor: subject.color }}
+                                style={{ backgroundColor: subject.color || "#2d6a4f" }}
                               />
                             )}
-                            <span className="font-bold text-sm text-slate-900 dark:text-white">
+                            <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
                               {event.title}
                             </span>
                           </div>
-                          <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                          <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1 leading-relaxed">
                             {event.description}
                           </p>
-                          <div className="text-[11px] text-blue-600 dark:text-blue-400 mt-1.5 font-medium">
-                            💡 {event.reasoning}
+                          <div className="text-[11px] text-[#2d6a4f] dark:text-[#52b788] mt-1.5 font-medium">
+                            🌿 {event.reasoning}
                           </div>
                         </div>
                       </div>
 
                       <div className="text-right shrink-0">
-                        <div className="flex items-center space-x-1 font-mono font-bold text-slate-700 dark:text-slate-200">
-                          <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <div className="flex items-center space-x-1 font-mono font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                          <Clock className="w-3.5 h-3.5 text-[#73927d]" />
                           <span>
-                            {formatVN(event.startTime, "dd/MM HH:mm")} - {formatVN(event.endTime, "HH:mm")}
+                            {formatVN(new Date(event.startTime), "dd/MM HH:mm")} - {formatVN(new Date(event.endTime), "HH:mm")}
                           </span>
                         </div>
                         <Badge variant="secondary" className="mt-1 font-mono text-[10px]">
@@ -289,11 +294,16 @@ export function AiSchedulePreviewModal({
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setResults(null)} disabled={isCommitting}>
-                Lập lại cấu hình
+              <Button variant="outline" onClick={() => setResults(null)} disabled={isCommitting} className="rounded-2xl">
+                Cấu hình lại
               </Button>
-              <Button variant="default" onClick={handleCommit} disabled={isCommitting} className="font-bold">
-                {isCommitting ? "Đang lưu..." : `Lưu ${selectedIndices.size} buổi học vào Lịch`}
+              <Button
+                variant="default"
+                onClick={handleCommit}
+                disabled={isCommitting}
+                className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-bold"
+              >
+                {isCommitting ? "Đang lưu..." : `Lưu ${selectedIndices.size} buổi học vào Lịch (Apply Schedule)`}
               </Button>
             </DialogFooter>
           </div>
