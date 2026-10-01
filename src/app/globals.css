@@ -1,26 +1,85 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fbfbfa;
+    --card: #ffffff;
+    --card-foreground: #2f3437;
+    --popover: #ffffff;
+    --popover-foreground: #2f3437;
+    --primary: #2383e2;
+    --primary-foreground: #ffffff;
+    --secondary: #f1f1ef;
+    --secondary-foreground: #37352f;
+    --muted: #ebebea;
+    --muted-foreground: #787774;
+    --accent: #f7f6f3;
+    --accent-foreground: #37352f;
+    --destructive: #eb5757;
+    --destructive-foreground: #ffffff;
+    --border: #e9e9e7;
+    --input: #e9e9e7;
+    --ring: #2383e2;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: #191919;
+    --card: #202020;
+    --card-foreground: #e3e2e0;
+    --popover: #252525;
+    --popover-foreground: #e3e2e0;
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    --secondary: #2c2c2c;
+    --secondary-foreground: #d4d4d4;
+    --muted: #2c2c2c;
+    --muted-foreground: #9b9a97;
+    --accent: #2f2f2f;
+    --accent-foreground: #ffffff;
+    --destructive: #e11d48;
+    --destructive-foreground: #ffffff;
+    --border: #2e2e2e;
+    --input: #2e2e2e;
+    --ring: #3b82f6;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: #37352f;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dark body {
+  color: #d4d4d4;
+}
+
+/* Notion-style subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 119, 116, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 119, 116, 0.45);
+}
+
+/* Notion striped background for blocked slots */
+.blocked-slot-pattern {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(160, 160, 160, 0.08),
+    rgba(160, 160, 160, 0.08) 8px,
+    rgba(160, 160, 160, 0.15) 8px,
+    rgba(160, 160, 160, 0.15) 16px
+  );
 }
