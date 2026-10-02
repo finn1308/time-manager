@@ -193,20 +193,39 @@ export function WeekView({
       if (!raw) return;
       const eventItem = JSON.parse(raw);
 
+      // Phase 19: Check if locked or school event
+      if (eventItem.isLocked || eventItem.type === "SCHOOL" || eventItem.type === "EXAM") {
+        if (!confirm(`Sự kiện "${eventItem.title}" đang bị KHÓA (Hard constraint). Bạn có chắc chắn muốn dời lịch sang ngày khác không?`)) {
+          return;
+        }
+      }
+
       // Keep exact hour and minute in Vietnam timezone, only change calendar date
       const startHM = formatVN(eventItem.startTime, "HH:mm");
       const endHM = formatVN(eventItem.endTime, "HH:mm");
       const newStart = makeVNDate(targetDateKey, startHM);
       const newEnd = makeVNDate(targetDateKey, endHM);
 
+      const isRecurring = Boolean(eventItem.recurrence && eventItem.recurrence !== "NONE") || eventItem.id.includes("_");
+      const cleanId = eventItem.id.includes("_") ? eventItem.id.split("_")[0] : eventItem.id;
+      const dateKey = eventItem.id.includes("_") ? eventItem.id.split("_")[1] : formatVN(eventItem.startTime, "yyyy-MM-dd");
+
+      const payload: any = {
+        id: eventItem.id,
+        startTime: newStart.toISOString(),
+        endTime: newEnd.toISOString(),
+      };
+
+      if (isRecurring) {
+        payload.updateMode = "SINGLE";
+        payload.originalId = cleanId;
+        payload.exceptionDate = dateKey;
+      }
+
       const res = await fetch("/api/calendar/events", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: eventItem.id,
-          startTime: newStart.toISOString(),
-          endTime: newEnd.toISOString(),
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {

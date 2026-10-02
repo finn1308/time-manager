@@ -198,6 +198,13 @@ export function DayView({
     const ev = dayEvents.find((e) => e.id === eventId);
     if (!ev) return;
 
+    // Phase 19: Check if locked or school/exam event
+    if (ev.isLocked || ev.type === "SCHOOL" || ev.type === "EXAM") {
+      if (!confirm(`Sự kiện "${ev.title}" đang bị KHÓA (Hard constraint). Bạn có chắc chắn muốn dời khung giờ không?`)) {
+        return;
+      }
+    }
+
     const durationMins = Math.round(
       (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000
     );
@@ -205,15 +212,27 @@ export function DayView({
     const newStart = makeVNDate(currentDateKey, targetPeriod.defaultStart);
     const newEnd = new Date(newStart.getTime() + durationMins * 60000);
 
+    const isRecurring = Boolean(ev.recurrence && ev.recurrence !== "NONE") || ev.id.includes("_");
+    const cleanId = ev.id.includes("_") ? ev.id.split("_")[0] : ev.id;
+    const dateKey = ev.id.includes("_") ? ev.id.split("_")[1] : currentDateKey;
+
+    const payload: any = {
+      id: eventId,
+      startTime: newStart.toISOString(),
+      endTime: newEnd.toISOString(),
+    };
+
+    if (isRecurring) {
+      payload.updateMode = "SINGLE";
+      payload.originalId = cleanId;
+      payload.exceptionDate = dateKey;
+    }
+
     try {
       const res = await fetch("/api/calendar/events", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: eventId,
-          startTime: newStart.toISOString(),
-          endTime: newEnd.toISOString(),
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
