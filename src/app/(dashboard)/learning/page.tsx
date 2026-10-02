@@ -165,6 +165,28 @@ export default function LearningHubPage() {
         </div>
       </div>
 
+      {/* Notification Banner */}
+      {notification && (
+        <div
+          className={`p-3.5 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-xs transition-all ${
+            notification.type === "success"
+              ? "bg-[#eef7ee] dark:bg-[#1a3322] text-[#2d6a4f] dark:text-[#7fc498] border border-[#b7d8c3] dark:border-[#2d6a4f]"
+              : "bg-[#fef2f2] dark:bg-[#331c1c] text-[#dc2626] dark:text-[#f87171] border border-[#fecaca] dark:border-[#522222]"
+          }`}
+        >
+          <div className="flex items-center space-x-2">
+            <span>{notification.type === "success" ? "✅" : "⚠️"}</span>
+            <span>{notification.message}</span>
+          </div>
+          <button
+            onClick={() => setNotification(null)}
+            className="cursor-pointer opacity-70 hover:opacity-100 text-xs px-2"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Main Content Area */}
       {loading ? (
         <div className="py-24 text-center space-y-3">
@@ -223,7 +245,8 @@ export default function LearningHubPage() {
                 userXp={userXp}
                 streakDays={streakDays}
                 onSelectQuiz={handleSelectQuiz}
-                onResetRoadmap={() => handleDeleteRoadmap(activeRoadmap.id)}
+                onDeleteSuccess={handleDeleteSuccess}
+                onDeleteError={handleDeleteError}
               />
             )}
           </div>
