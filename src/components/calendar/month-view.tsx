@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight, Plus, Calendar, Trash2, FolderOpen } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { useRouter } from "next/navigation";
+import { getEventTypeConfig } from "@/lib/calendar/event-types";
 
 interface MonthViewProps {
   initialEvents: Array<{
