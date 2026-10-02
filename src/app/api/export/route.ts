@@ -22,8 +22,11 @@ export async function GET(req: NextRequest) {
     const dateStr = getDateKeyVN(new Date());
 
     if (format === "json") {
-      // Export full JSON database dump for user
+      // Export full JSON database dump for user including 4-year Academic & Career OS
       const [
+        degreeProgram,
+        academicYears,
+        semesters,
         subjects,
         goals,
         tasks,
@@ -32,8 +35,24 @@ export async function GET(req: NextRequest) {
         notes,
         habits,
         flashcardDecks,
+        skills,
+        projects,
+        certificates,
+        careerApplications,
       ] = await Promise.all([
-        prisma.subject.findMany({ where: { userId: user.id } }),
+        prisma.degreeProgram.findUnique({ where: { userId: user.id } }),
+        prisma.academicYear.findMany({
+          where: { userId: user.id },
+          include: { semesters: true },
+        }),
+        prisma.semester.findMany({
+          where: { userId: user.id },
+          include: { subjects: true },
+        }),
+        prisma.subject.findMany({
+          where: { userId: user.id },
+          include: { semester: true },
+        }),
         prisma.goal.findMany({
           where: { userId: user.id },
           include: { milestoneRecords: true },
@@ -56,11 +75,18 @@ export async function GET(req: NextRequest) {
           where: { userId: user.id },
           include: { flashcards: true },
         }),
+        prisma.skill.findMany({ where: { userId: user.id } }),
+        prisma.project.findMany({
+          where: { userId: user.id },
+          include: { skills: true },
+        }),
+        prisma.certificate.findMany({ where: { userId: user.id } }),
+        prisma.careerApplication.findMany({ where: { userId: user.id } }),
       ]);
 
       const backupData = {
-        version: "1.0",
-        app: "ChronoMind",
+        version: "2.0",
+        app: "ChronoMind University OS",
         exportedAt: new Date().toISOString(),
         user: {
           id: user.id,
@@ -68,6 +94,9 @@ export async function GET(req: NextRequest) {
           email: user.email,
         },
         data: {
+          degreeProgram,
+          academicYears,
+          semesters,
           subjects,
           goals,
           tasks,
@@ -76,6 +105,10 @@ export async function GET(req: NextRequest) {
           notes,
           habits,
           flashcardDecks,
+          skills,
+          projects,
+          certificates,
+          careerApplications,
         },
       };
 
@@ -83,11 +116,77 @@ export async function GET(req: NextRequest) {
       return new NextResponse(jsonStr, {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Content-Disposition": `attachment; filename="chronomind-backup-${dateStr}.json"`,
+          "Content-Disposition": `attachment; filename="chronomind-academic-backup-${dateStr}.json"`,
         },
       });
     } else if (format === "csv") {
-      if (entity === "events") {
+      if (entity === "courses" || entity === "subjects") {
+        const subjects = await prisma.subject.findMany({
+          where: { userId: user.id },
+          include: { semester: { include: { academicYear: true } } },
+          orderBy: [{ createdAt: "desc" }],
+        });
+
+        const rows = [
+          ["Mã môn", "Tên môn", "Số tín chỉ", "Học kỳ", "Năm học", "Điểm hệ 10", "Điểm chữ", "Điểm hệ 4", "Trạng thái", "Giảng viên"].join(","),
+        ];
+
+        for (const sub of subjects) {
+          rows.push(
+            [
+              escapeCSV(sub.code || ""),
+              escapeCSV(sub.name),
+              escapeCSV(sub.credits),
+              escapeCSV(sub.semester?.name || "Chung"),
+              escapeCSV(sub.semester?.academicYear?.name || ""),
+              escapeCSV(sub.courseGrade !== null ? sub.courseGrade : ""),
+              escapeCSV(sub.letterGrade || ""),
+              escapeCSV(sub.gradePoints !== null ? sub.gradePoints : ""),
+              escapeCSV(sub.status),
+              escapeCSV(sub.lecturer || ""),
+            ].join(",")
+          );
+        }
+
+        return new NextResponse("\uFEFF" + rows.join("\r\n"), {
+          headers: {
+            "Content-Type": "text/csv; charset=utf-8",
+            "Content-Disposition": `attachment; filename="chronomind-courses-${dateStr}.csv"`,
+          },
+        });
+      } else if (entity === "career") {
+        const apps = await prisma.careerApplication.findMany({
+          where: { userId: user.id },
+          orderBy: { createdAt: "desc" },
+        });
+
+        const rows = [
+          ["ID", "Công ty", "Vị trí", "Loại hình", "Trạng thái", "Địa điểm", "Mức lương", "Ngày nộp", "Hạn chót"].join(","),
+        ];
+
+        for (const app of apps) {
+          rows.push(
+            [
+              escapeCSV(app.id),
+              escapeCSV(app.company),
+              escapeCSV(app.role),
+              escapeCSV(app.type),
+              escapeCSV(app.status),
+              escapeCSV(app.location || ""),
+              escapeCSV(app.salary || ""),
+              escapeCSV(app.appliedDate ? app.appliedDate.toISOString() : ""),
+              escapeCSV(app.deadline ? app.deadline.toISOString() : ""),
+            ].join(",")
+          );
+        }
+
+        return new NextResponse("\uFEFF" + rows.join("\r\n"), {
+          headers: {
+            "Content-Type": "text/csv; charset=utf-8",
+            "Content-Disposition": `attachment; filename="chronomind-career-${dateStr}.csv"`,
+          },
+        });
+      } else if (entity === "events") {
         const events = await prisma.calendarEvent.findMany({
           where: { userId: user.id },
           include: { subject: true },
