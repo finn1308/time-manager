@@ -14,6 +14,8 @@ export interface ExpandedEvent {
   endTime: Date;
   timezone: string;
   type: string;
+  location?: string | null;
+  taskId?: string | null;
   isLocked: boolean;
   isAiGenerated: boolean;
   recurrence: string;
@@ -21,6 +23,7 @@ export interface ExpandedEvent {
   isException: boolean;
   isCancelled: boolean;
   subject?: any;
+  studySessions?: any[];
 }
 
 /**
