@@ -89,6 +89,14 @@ export function formatVN(
   return formatInTimeZone(d, VIETNAM_TIMEZONE, formatStr);
 }
 
+export function formatTimeVN(date: Date | string | number): string {
+  return formatVN(date, "HH:mm");
+}
+
+export function formatDateVN(date: Date | string | number): string {
+  return formatVN(date, "dd/MM/yyyy");
+}
+
 /**
  * Get the current Date in Vietnam timezone
  */
