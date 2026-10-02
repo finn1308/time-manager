@@ -55,7 +55,7 @@ async function runLuyenTuTests() {
     const a1Course = await prisma.vocabCourse.findUnique({
       where: { slug: "a1-0-3-0" },
       include: {
-        sets: {
+        wordSets: {
           orderBy: { orderNumber: "asc" },
           include: {
             _count: { select: { words: true } },
@@ -66,31 +66,31 @@ async function runLuyenTuTests() {
 
     assert(Boolean(a1Course), "Database: Course 'A1 (0-3.0)' exists in database");
     assert(a1Course?.slug === "a1-0-3-0", "Database: Course slug matches 'a1-0-3-0'");
-    assert((a1Course?.sets.length || 0) >= 6, "Database: Course has at least 6 word sets");
+    assert((a1Course?.wordSets.length || 0) >= 6, "Database: Course has at least 6 word sets");
 
     // Verify Set 1: "Lời chào hỏi" (Unlocked, 9 words)
-    const set1 = a1Course?.sets.find((s) => s.orderNumber === 1);
+    const set1 = a1Course?.wordSets.find((s) => s.orderNumber === 1);
     assert(Boolean(set1), "Database: Set #1 exists");
     assert(set1?.title === "Lời chào hỏi", "Database: Set #1 title is 'Lời chào hỏi'");
     assert(set1?.isPro === false, "Database: Set #1 is free / unlocked (matching Screenshot 1)");
     assert(set1?._count.words === 9, "Database: Set #1 has exactly 9 words (matching Screenshot 1 & 2 '9/9 từ')");
 
     // Verify Set 2 to 6: PRO status
-    const set2 = a1Course?.sets.find((s) => s.orderNumber === 2);
+    const set2 = a1Course?.wordSets.find((s) => s.orderNumber === 2);
     assert(Boolean(set2), "Database: Set #2 exists");
     assert(set2?.title === "Số đếm", "Database: Set #2 title is 'Số đếm'");
     assert(set2?.isPro === true, "Database: Set #2 has PRO lock badge (matching Screenshot 1)");
 
-    const set3 = a1Course?.sets.find((s) => s.orderNumber === 3);
+    const set3 = a1Course?.wordSets.find((s) => s.orderNumber === 3);
     assert(set3?.title === "Màu sắc" && set3?.isPro === true, "Database: Set #3 'Màu sắc' is PRO");
 
-    const set4 = a1Course?.sets.find((s) => s.orderNumber === 4);
+    const set4 = a1Course?.wordSets.find((s) => s.orderNumber === 4);
     assert(set4?.title === "Ngày trong tuần" && set4?.isPro === true, "Database: Set #4 'Ngày trong tuần' is PRO");
 
-    const set5 = a1Course?.sets.find((s) => s.orderNumber === 5);
+    const set5 = a1Course?.wordSets.find((s) => s.orderNumber === 5);
     assert(set5?.title === "Tháng trong năm" && set5?.isPro === true, "Database: Set #5 'Tháng trong năm' is PRO");
 
-    const set6 = a1Course?.sets.find((s) => s.orderNumber === 6);
+    const set6 = a1Course?.wordSets.find((s) => s.orderNumber === 6);
     assert(set6?.title === "Thời tiết" && set6?.isPro === true, "Database: Set #6 'Thời tiết' is PRO");
 
     // -------------------------------------------------------------
