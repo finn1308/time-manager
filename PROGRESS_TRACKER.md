@@ -81,10 +81,10 @@
   - [x] Trình soạn thảo ghi chú dạng khối (Headings, bold/italic, checklists, quotes, code, links)
   - [x] Liên kết linh hoạt Note với Môn học, Goal, Task, PDF
 
-- [ ] **Tác vụ 14: Global Search (Cmd+K), Tag System & Quick Capture** (Phần 26, 27, 28)
-  - [ ] Command Palette (⌘K) tìm kiếm toàn cục xuyên suốt Tasks, Notes, Subjects, Goals, Events, Flashcards
-  - [ ] Hệ thống `#Tags` lọc toàn bộ ứng dụng
-  - [ ] Quick Capture menu tạo nhanh Task, Note, Event, Session, Goal
+- [x] **Tác vụ 14: Global Search (Cmd+K), Tag System & Quick Capture** (Phần 26, 27, 28)
+  - [x] Command Palette (⌘K) tìm kiếm toàn cục xuyên suốt Tasks, Notes, Subjects, Goals, Events, Flashcards
+  - [x] Hệ thống `#Tags` lọc toàn bộ ứng dụng
+  - [x] Quick Capture menu tạo nhanh Task, Note, Event, Session, Goal
 
 - [ ] **Tác vụ 15: Gamification & Habit Tracker** (Phần 29, 30)
   - [ ] Hệ thống XP, Level, Streak, Thành tích dựa trên hành động thực tế
