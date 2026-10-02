@@ -474,7 +474,8 @@ export default async function DashboardPage() {
 
             <CardContent className="p-6 pt-0 space-y-4">
               {subjects.map((sub) => {
-                const targetH = sub.goals?.find((g) => g.status === "ACTIVE")?.targetHours || sub.targetHours || 10;
+                const baseTargetH = sub.goals?.find((g) => g.status === "ACTIVE")?.targetHours || sub.targetHours;
+                const targetH = baseTargetH; // can be null/undefined
                 const totalSecs = sub.studySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
                 const actualH = Math.round((totalSecs / 3600) * 10) / 10;
 
@@ -487,8 +488,8 @@ export default async function DashboardPage() {
                   }, 0);
                 const plannedH = Math.round((plannedSecs / 3600) * 10) / 10;
 
-                const remainingH = Math.max(0, Math.round((targetH - actualH) * 10) / 10);
-                const percentActual = targetH > 0 ? Math.min(100, Math.round((actualH / targetH) * 100)) : 0;
+                const remainingH = targetH ? Math.max(0, Math.round((targetH - actualH) * 10) / 10) : 0;
+                const percentActual = targetH ? Math.min(100, Math.round((actualH / targetH) * 100)) : 0;
 
                 return (
                   <div
@@ -513,16 +514,18 @@ export default async function DashboardPage() {
                       </div>
 
                       <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] shrink-0">
-                        {percentActual}% mục tiêu
+                        {targetH ? `${percentActual}% mục tiêu` : "Không bắt buộc mục tiêu"}
                       </span>
                     </div>
 
-                    {/* 4 Core Metrics Grid (Requirement 5) */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">🎯 Mục tiêu tuần</div>
-                        <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] mt-0.5">{targetH}h</div>
-                      </div>
+                    {/* Core Metrics Grid */}
+                    <div className={`grid gap-2 text-xs ${targetH ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2"}`}>
+                      {targetH && (
+                        <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                          <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">🎯 Mục tiêu tuần</div>
+                          <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] mt-0.5">{targetH}h</div>
+                        </div>
+                      )}
 
                       <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
                         <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">📅 Đã lên lịch</div>
@@ -534,10 +537,12 @@ export default async function DashboardPage() {
                         <div className="font-bold text-sm text-[#1b4332] dark:text-[#74c69d] mt-0.5">{actualH}h</div>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">⏳ Còn thiếu</div>
-                        <div className="font-bold text-sm text-[#b87474] dark:text-[#f3a4a4] mt-0.5">{remainingH}h</div>
-                      </div>
+                      {targetH && (
+                        <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                          <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">⏳ Còn thiếu</div>
+                          <div className="font-bold text-sm text-[#b87474] dark:text-[#f3a4a4] mt-0.5">{remainingH}h</div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Planned vs Actual Comparison Bar */}
@@ -548,15 +553,17 @@ export default async function DashboardPage() {
                           {plannedH > 0 ? `${Math.round((actualH / plannedH) * 100)}% bám sát lịch` : "Chưa có lịch"}
                         </span>
                       </div>
-                      <div className="w-full h-2.5 rounded-full bg-[#eef5f0] dark:bg-[#263d2e] overflow-hidden flex">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{
-                            width: `${percentActual}%`,
-                            backgroundColor: sub.color || "#2d6a4f",
-                          }}
-                        />
-                      </div>
+                      {targetH && (
+                        <div className="w-full h-2.5 rounded-full bg-[#eef5f0] dark:bg-[#263d2e] overflow-hidden flex">
+                          <div
+                            className="h-full rounded-full transition-all duration-500"
+                            style={{
+                              width: `${percentActual}%`,
+                              backgroundColor: sub.color || "#2d6a4f",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
