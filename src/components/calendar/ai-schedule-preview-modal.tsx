@@ -12,6 +12,7 @@ import { addDays, parseISO } from "date-fns";
 
 interface ProposedEvent {
   subjectId: string;
+  taskId?: string | null;
   title: string;
   description: string;
   startTime: string;
