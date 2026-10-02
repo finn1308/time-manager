@@ -76,11 +76,17 @@ export async function POST(req: Request) {
       }).catch((e) => console.error("Error updating subject completedHours:", e));
     }
 
+    // Award XP based on study duration (min 10 XP, +1 XP per minute)
+    const xpEarned = Math.max(10, Math.round(durationSeconds / 60));
+    const { awardUserXp } = await import("@/lib/gamification/engine");
+    await awardUserXp(user.id, xpEarned, `Hoàn thành phiên học ${Math.round(durationSeconds / 60)} phút`);
+
     return NextResponse.json({
       success: true,
       session,
       actualDurationSeconds: durationSeconds,
       actualDurationMinutes: Math.round(durationSeconds / 60),
+      xpEarned,
     });
   } catch (err: any) {
     console.error("Timer stop error:", err);
