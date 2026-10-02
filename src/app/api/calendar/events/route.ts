@@ -2,10 +2,20 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { detectSlotConflict } from "@/lib/scheduling/conflict-detector";
+import { expandRecurringEvents } from "@/lib/scheduling/recurrence";
+import { parseISO, subMonths, addMonths } from "date-fns";
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { searchParams } = new URL(req.url);
+  const startStr = searchParams.get("start");
+  const endStr = searchParams.get("end");
+
+  const now = new Date();
+  const rangeStart = startStr ? parseISO(startStr) : subMonths(now, 2);
+  const rangeEnd = endStr ? parseISO(endStr) : addMonths(now, 6);
 
   const events = await prisma.calendarEvent.findMany({
     where: { userId: user.id },
@@ -16,7 +26,9 @@ export async function GET() {
     orderBy: { startTime: "asc" },
   });
 
-  return NextResponse.json({ events });
+  const expanded = expandRecurringEvents(events, rangeStart, rangeEnd);
+
+  return NextResponse.json({ events: expanded });
 }
 
 export async function POST(req: Request) {
@@ -24,7 +36,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { title, description, subjectId, startTime, endTime, type, isLocked, timezone } = await req.json();
+    const { title, description, subjectId, startTime, endTime, type, isLocked, timezone, recurrence, recurrenceRule, recurrenceEnd } = await req.json();
 
     if (!title?.trim()) {
       return NextResponse.json({ error: "Tiêu đề sự kiện không được để trống" }, { status: 400 });
@@ -81,6 +93,9 @@ export async function POST(req: Request) {
         isLocked: !!isLocked,
         timezone: timezone || "Asia/Ho_Chi_Minh",
         isAiGenerated: false,
+        recurrence: recurrence || "NONE",
+        recurrenceRule: recurrenceRule || null,
+        recurrenceEnd: recurrenceEnd ? new Date(recurrenceEnd) : null,
       },
       include: {
         subject: true,
@@ -99,7 +114,7 @@ export async function PUT(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { id, title, description, subjectId, startTime, endTime, type, isLocked } = await req.json();
+    const { id, title, description, subjectId, startTime, endTime, type, isLocked, recurrence, recurrenceRule, recurrenceEnd, originalId, exceptionDate, updateMode } = await req.json();
 
     if (!id) return NextResponse.json({ error: "Thiếu ID sự kiện" }, { status: 400 });
 
@@ -110,26 +125,39 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Thời gian kết thúc phải sau thời gian bắt đầu" }, { status: 400 });
     }
 
-    // Check collision with other events if time is modified
-    if (start && end) {
-      const otherEvents = await prisma.calendarEvent.findMany({
-        where: { userId: user.id, id: { not: id } },
-        select: { startTime: true, endTime: true, title: true, isLocked: true },
+    // Determine the actual record to update
+    let targetId = id;
+    let isException = false;
+    let parentId = null;
+
+    if (originalId && id !== originalId && updateMode === "SINGLE") {
+      // It's a generated occurrence, we need to create an exception instead of updating
+      const exceptionEvent = await prisma.calendarEvent.create({
+        data: {
+          userId: user.id,
+          title: title?.trim(),
+          description: description !== undefined ? description?.trim() || null : null,
+          subjectId: subjectId !== undefined ? subjectId : null,
+          startTime: start!,
+          endTime: end!,
+          type: type || "STUDY",
+          isLocked: isLocked !== undefined ? !!isLocked : false,
+          timezone: "Asia/Ho_Chi_Minh",
+          parentId: originalId,
+          exceptionDate: exceptionDate,
+          isException: true,
+        },
+        include: { subject: true }
       });
+      return NextResponse.json({ success: true, event: exceptionEvent });
+    }
 
-      const conflictResult = detectSlotConflict(
-        start,
-        end,
-        otherEvents.map((e) => ({ start: e.startTime, end: e.endTime, title: e.title, isLocked: e.isLocked }))
-      );
-
-      if (conflictResult.hasConflict) {
-        return NextResponse.json({ error: conflictResult.reason }, { status: 400 });
-      }
+    if (updateMode === "ALL" && originalId) {
+       targetId = originalId; // update the master event
     }
 
     const event = await prisma.calendarEvent.update({
-      where: { id, userId: user.id },
+      where: { id: targetId, userId: user.id },
       data: {
         title: title?.trim(),
         description: description !== undefined ? description?.trim() || null : undefined,
@@ -138,6 +166,9 @@ export async function PUT(req: Request) {
         endTime: end,
         type: type !== undefined ? type : undefined,
         isLocked: isLocked !== undefined ? !!isLocked : undefined,
+        recurrence: recurrence !== undefined ? recurrence : undefined,
+        recurrenceRule: recurrenceRule !== undefined ? recurrenceRule : undefined,
+        recurrenceEnd: recurrenceEnd !== undefined ? (recurrenceEnd ? new Date(recurrenceEnd) : null) : undefined,
       },
       include: {
         subject: true,
@@ -157,11 +188,33 @@ export async function DELETE(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
+  const originalId = searchParams.get("originalId");
+  const exceptionDate = searchParams.get("exceptionDate");
+  const deleteMode = searchParams.get("deleteMode"); // SINGLE, ALL
+
   if (!id) return NextResponse.json({ error: "Thiếu ID sự kiện" }, { status: 400 });
 
-  await prisma.calendarEvent.delete({
-    where: { id, userId: user.id },
-  });
+  if (deleteMode === "SINGLE" && originalId && exceptionDate) {
+    // Create a cancellation exception
+    await prisma.calendarEvent.create({
+      data: {
+        userId: user.id,
+        title: "Cancelled",
+        startTime: new Date(),
+        endTime: new Date(),
+        parentId: originalId,
+        exceptionDate: exceptionDate,
+        isException: true,
+        isCancelled: true,
+      }
+    });
+  } else {
+    // Delete all (or just standard single event)
+    const targetId = originalId || id;
+    await prisma.calendarEvent.delete({
+      where: { id: targetId, userId: user.id },
+    });
+  }
 
   return NextResponse.json({ success: true });
 }

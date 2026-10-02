@@ -7,6 +7,8 @@ import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { Sparkles, AlertTriangle, CheckCircle2, ArrowRight, HelpCircle, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { addDays, parseISO } from "date-fns";
+import { getDateKeyVN, getDayOfWeekVN, makeVNDate } from "@/lib/date-utils";
 
 interface WhatIfSimulatorModalProps {
   open: boolean;
@@ -14,6 +16,7 @@ interface WhatIfSimulatorModalProps {
   subjects: Array<{ id: string; name: string; color: string; targetHours?: number; completedHours?: number }>;
   weeklyBudgetHours?: number;
   weeklyActualHours?: number;
+  onSuccess?: () => void;
 }
 
 export function WhatIfSimulatorModal({
@@ -22,6 +25,7 @@ export function WhatIfSimulatorModal({
   subjects,
   weeklyBudgetHours = 20,
   weeklyActualHours = 12,
+  onSuccess,
 }: WhatIfSimulatorModalProps) {
   const router = useRouter();
 
