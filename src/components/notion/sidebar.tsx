@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Sparkles,
   Calendar,
+  Flame,
   BookOpen,
   Target,
   History,
@@ -47,8 +48,9 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
 
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
-    { label: "Study Quest & Quiz", href: "/learning", icon: Sparkles },
     { label: "Calendar", href: "/calendar", icon: Calendar },
+    { label: "Deadlines & Tasks", href: "/deadlines", icon: Flame },
+    { label: "Study Quest & Quiz", href: "/learning", icon: Sparkles },
     { label: "Subjects", href: "/subjects", icon: BookOpen },
     { label: "Goals", href: "/goals", icon: Target },
     { label: "Study Sessions", href: "/study-sessions", icon: History },

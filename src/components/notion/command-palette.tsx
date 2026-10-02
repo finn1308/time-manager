@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Calendar,
+  Flame,
   BookOpen,
   Target,
   History,
@@ -48,6 +49,16 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       icon: Calendar,
       run: () => {
         router.push("/calendar");
+        onClose();
+      },
+    },
+    {
+      id: "deadlines",
+      title: "Quản lý Deadline & Bài tập (Anti-Cramming)",
+      category: "Điều hướng",
+      icon: Flame,
+      run: () => {
+        router.push("/deadlines");
         onClose();
       },
     },
