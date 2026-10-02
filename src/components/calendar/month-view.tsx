@@ -258,7 +258,10 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                   <div
                     key={ev.id}
                     onClick={() => {
-                      setEditingEvent(ev);
+                      setEditingEvent({
+                        ...ev,
+                        originalId: (ev as any).originalId || ev.id,
+                      });
                       setIsEventModalOpen(true);
                     }}
                     className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#52b788] transition-all cursor-pointer group"
@@ -270,7 +273,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                         style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
                       >
                         <TypeIcon className="w-2.5 h-2.5 shrink-0" />
-                        <span>{typeCfg.label}</span>
+                        <span>{typeCfg.shortLabel || typeCfg.label}</span>
                       </span>
                       {ev.subject && (
                         <span
@@ -294,6 +297,14 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
+
+                    {(ev as any).location && (
+                      <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-1 truncate">
+                        <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                        <span className="truncate">{(ev as any).location}</span>
+                      </div>
+                    )}
+
                     <div className="font-mono text-[10px] text-[#73927d] mt-1">
                       {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
                     </div>

@@ -16,11 +16,12 @@ import {
   Lock,
   ChevronRight,
   Filter,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { VIETNAM_TIMEZONE, formatVN } from "@/lib/date-utils";
-import { getEventTypeConfig, ALL_EVENT_TYPES, CalendarEventType } from "@/lib/calendar/event-types";
+import { getEventTypeConfig, ALL_EVENT_TYPES, CalendarEventType, canStartStudyTimer } from "@/lib/calendar/event-types";
 import { usePipTimer } from "@/components/timer/pip-timer-provider";
 import { EventModal } from "./event-modal";
 
