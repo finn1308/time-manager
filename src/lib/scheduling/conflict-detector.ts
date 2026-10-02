@@ -1,4 +1,10 @@
 import { areIntervalsOverlapping } from "date-fns";
+import {
+  getDayOfWeekVN,
+  getMinuteOfDayVN,
+  isSameDayVN,
+  formatVN,
+} from "../date-utils";
 
 export interface TimeSlot {
   start: Date;
@@ -40,7 +46,7 @@ export interface ConflictCheckResult {
  * Checks whether [proposedStart, proposedEnd) collides with:
  * 1. Invalid duration (start >= end)
  * 2. Existing calendar events (especially locked events)
- * 3. Unavailable / sleeping time windows from AvailabilityRules
+ * 3. Unavailable / sleeping time windows from AvailabilityRules (in Vietnam timezone)
  */
 export function detectSlotConflict(
   proposedStart: Date,
@@ -58,13 +64,11 @@ export function detectSlotConflict(
 
   // 2. Overlap check with existing calendar events
   for (const event of existingEvents) {
-    // areIntervalsOverlapping uses inclusive by default, but calendar slots are half-open [start, end)
-    // Overlap exists if proposedStart < event.end && proposedEnd > event.start
     const isOverlapped = proposedStart < event.end && proposedEnd > event.start;
     if (isOverlapped) {
       return {
         hasConflict: true,
-        reason: `Xung đột lịch với "${event.title || 'Sự kiện hiện có'}" (${formatHHmm(event.start)} - ${formatHHmm(event.end)})`,
+        reason: `Xung đột lịch với "${event.title || 'Sự kiện hiện có'}" (${formatVN(event.start, "HH:mm")} - ${formatVN(event.end, "HH:mm")})`,
         conflictingSlot: {
           title: event.title || "Sự kiện hiện có",
           start: event.start,
@@ -75,11 +79,11 @@ export function detectSlotConflict(
     }
   }
 
-  // 3. Availability Rules check
+  // 3. Availability Rules check in Vietnam timezone
   // Day of week: 0 (Sun) -> 6 (Sat)
-  const dayOfWeek = proposedStart.getDay();
-  const proposedStartMins = proposedStart.getHours() * 60 + proposedStart.getMinutes();
-  const proposedEndMins = proposedEnd.getHours() * 60 + proposedEnd.getMinutes();
+  const dayOfWeek = getDayOfWeekVN(proposedStart);
+  const proposedStartMins = getMinuteOfDayVN(proposedStart);
+  const proposedEndMins = getMinuteOfDayVN(proposedEnd);
 
   const rulesForDay = availabilityRules.filter((r) => r.dayOfWeek === dayOfWeek);
 
@@ -118,23 +122,22 @@ export function validateProposedSchedule(
   proposedSessions: ProposedSession[],
   existingEvents: TimeSlot[],
   availabilityRules: AvailabilityRuleItem[] = [],
-  minBreakMinutes: number = 0
+  minBreakMinutes: number = 15
 ): {
   validSessions: ProposedSession[];
-  rejectedSessions: { session: ProposedSession; reason: string }[];
+  rejectedSessions: Array<{ session: ProposedSession; reason: string }>;
   totalValidHours: number;
 } {
   const validSessions: ProposedSession[] = [];
-  const rejectedSessions: { session: ProposedSession; reason: string }[] = [];
-  let runningEvents: TimeSlot[] = [...existingEvents];
+  const rejectedSessions: Array<{ session: ProposedSession; reason: string }> = [];
+  const runningEvents: TimeSlot[] = [...existingEvents];
 
   for (const session of proposedSessions) {
-    const start = new Date(session.startTime);
-    const end = new Date(session.endTime);
+    const start = typeof session.startTime === "string" ? new Date(session.startTime) : session.startTime;
+    const end = typeof session.endTime === "string" ? new Date(session.endTime) : session.endTime;
 
-    // Conflict check against both existing events and previously validated AI sessions
+    // Run deterministic conflict check
     const check = detectSlotConflict(start, end, runningEvents, availabilityRules);
-
     if (check.hasConflict) {
       rejectedSessions.push({
         session,
@@ -149,8 +152,8 @@ export function validateProposedSchedule(
       const lastEnd = new Date(lastSession.endTime);
       const diffMinutes = (start.getTime() - lastEnd.getTime()) / (1000 * 60);
 
-      // If on the same day and diff is between 0 and minBreakMinutes, adjust or flag
-      if (start.toDateString() === lastEnd.toDateString() && diffMinutes > 0 && diffMinutes < minBreakMinutes) {
+      // If on the same calendar day in VN and diff is between 0 and minBreakMinutes, adjust or flag
+      if (isSameDayVN(start, lastEnd) && diffMinutes > 0 && diffMinutes < minBreakMinutes) {
         rejectedSessions.push({
           session,
           reason: `Không đủ thời gian nghỉ (${Math.round(diffMinutes)} phút < ${minBreakMinutes} phút tối thiểu)`,
@@ -180,8 +183,4 @@ export function validateProposedSchedule(
     rejectedSessions,
     totalValidHours: Math.round((totalValidMinutes / 60) * 10) / 10,
   };
-}
-
-function formatHHmm(date: Date): string {
-  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
