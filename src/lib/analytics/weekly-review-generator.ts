@@ -45,7 +45,7 @@ export async function generateWeeklyReview(userId: string, weekStartDate: string
     }),
     prisma.goal.findMany({
       where: { userId },
-      include: { milestones: true },
+      include: { milestoneRecords: true },
     }),
     prisma.task.count({
       where: {
@@ -122,8 +122,8 @@ export async function generateWeeklyReview(userId: string, weekStartDate: string
   let aiInsights: any = null;
 
   let apiKey: string | undefined = undefined;
-  if (userApiKeyRecord?.encryptedKey && userApiKeyRecord?.iv) {
-    apiKey = decryptApiKey(userApiKeyRecord.encryptedKey, userApiKeyRecord.iv);
+  if (userApiKeyRecord?.encryptedKey && userApiKeyRecord?.iv && userApiKeyRecord?.authTag) {
+    apiKey = decryptApiKey(userApiKeyRecord.encryptedKey, userApiKeyRecord.iv, userApiKeyRecord.authTag);
   } else if (process.env.GEMINI_API_KEY) {
     apiKey = process.env.GEMINI_API_KEY;
   }
@@ -151,12 +151,16 @@ YÊU CẦU: Trả về ĐÚNG ĐỊNH DẠNG JSON (không bọc markdown, không
   "recommendedHoursNextWeek": ${Math.max(10, Math.round(actualHours * 1.1))}
 }`;
 
-      const aiResponseText = await callGeminiGenerate(apiKey, prompt, {
-        temperature: 0.4,
-        maxTokens: 1000,
+      const res = await callGeminiGenerate({
+        apiKey,
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 1000,
+        },
       });
 
-      const cleaned = aiResponseText.replace(/```json/g, "").replace(/```/g, "").trim();
+      const cleaned = res.text.replace(/```json/g, "").replace(/```/g, "").trim();
       aiInsights = JSON.parse(cleaned);
     } catch (err) {
       console.warn("AI generation failed, fallback to rule-based insights:", err);
