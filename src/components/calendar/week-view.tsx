@@ -371,6 +371,9 @@ export function WeekView({
                     (r) => r.type === "MEETING" || ["ZOOM", "MEET", "TEAMS"].includes(r.subType || "")
                   );
 
+                  const typeCfg = getEventTypeConfig(ev.type);
+                  const TypeIcon = typeCfg.icon;
+
                   return (
                     <div
                       key={ev.id}
@@ -394,19 +397,22 @@ export function WeekView({
                         setIsEventModalOpen(true);
                       }}
                       className="group relative p-2.5 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs transition-all cursor-pointer text-xs"
-                      style={{ borderLeftColor: subjectColor, borderLeftWidth: "4px" }}
+                      style={{ borderLeftColor: typeCfg.borderLeftColor || subjectColor, borderLeftWidth: "4px" }}
                     >
-                      {/* Top Header on Card */}
-                      <div className="flex items-start justify-between">
-                        <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] line-clamp-2 text-[11px] flex-1">
-                          {ev.title}
+                      {/* Event Type & Lock header */}
+                      <div className="flex items-center justify-between mb-1">
+                        <span
+                          className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md"
+                          style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
+                        >
+                          <TypeIcon className="w-2.5 h-2.5 shrink-0" />
+                          <span>{typeCfg.label}</span>
                         </span>
 
-                        <div className="flex items-center space-x-1 shrink-0 ml-1">
+                        <div className="flex items-center space-x-1 shrink-0">
                           {ev.isLocked && (
                             <Lock className="w-3 h-3 text-[#a3a86c]" />
                           )}
-                          {/* Quick Delete Trash Button */}
                           <button
                             type="button"
                             onClick={(e) => handleQuickDelete(e, ev)}
@@ -416,6 +422,13 @@ export function WeekView({
                             <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
+                      </div>
+
+                      {/* Title on Card */}
+                      <div className="flex items-start justify-between">
+                        <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] line-clamp-2 text-[11px] flex-1">
+                          {ev.title}
+                        </span>
                       </div>
 
                       {/* Resource Badges */}
@@ -498,26 +511,45 @@ export function WeekView({
                           {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
                         </span>
 
-                        {ev.subject && (
+                        <div className="flex items-center space-x-1">
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              startTimer(
-                                {
-                                  id: ev.subject!.id,
-                                  name: ev.subject!.name,
-                                  code: ev.subject!.code,
-                                  color: ev.subject!.color,
-                                },
-                                ev.id
-                              );
-                            }}
-                            title="Bắt đầu học ngay môn này"
-                            className="p-1 rounded-full bg-[#d8ebe0] text-[#1b4332] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
+                            type="button"
+                            onClick={(e) => handleQuickResize(e, ev, -15)}
+                            title="Giảm 15 phút"
+                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[#526b5c] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[#dbe7dd]/60"
                           >
-                            <Play className="w-2.5 h-2.5 fill-current ml-0.2" />
+                            -15m
                           </button>
-                        )}
+                          <button
+                            type="button"
+                            onClick={(e) => handleQuickResize(e, ev, 15)}
+                            title="Tăng 15 phút"
+                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[#2d6a4f] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[#dbe7dd]/60"
+                          >
+                            +15m
+                          </button>
+
+                          {ev.subject && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startTimer(
+                                  {
+                                    id: ev.subject!.id,
+                                    name: ev.subject!.name,
+                                    code: ev.subject!.code,
+                                    color: ev.subject!.color,
+                                  },
+                                  ev.id
+                                );
+                              }}
+                              title="Bắt đầu học ngay môn này"
+                              className="p-1 rounded-full bg-[#d8ebe0] text-[#1b4332] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
+                            >
+                              <Play className="w-2.5 h-2.5 fill-current ml-0.2" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
