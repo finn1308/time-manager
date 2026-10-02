@@ -14,6 +14,7 @@ import {
   BarChart3,
   Settings,
   CheckSquare,
+  CheckCircle2,
   TrendingUp,
   Brain,
   FileText,

@@ -1,4 +1,5 @@
-"use client";
+…"use client";
+…
 
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "../ui/dialog";
@@ -125,16 +126,6 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       icon: History,
       run: () => {
         router.push("/study-sessions");
-        onClose();
-      },
-    },
-    {
-      id: "habits",
-      title: "Thói quen & Thành tích XP (Habits & Badges)",
-      category: "Điều hướng",
-      icon: Flame,
-      run: () => {
-        router.push("/habits");
         onClose();
       },
     },
@@ -316,19 +307,17 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
                 key={item.id}
                 onClick={item.run}
                 onMouseEnter={() => setSelectedIndex(idx)}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-2xl cursor-pointer text-xs transition-colors ${
-                  isSelected
-                    ? "bg-[#d8ebe0] dark:bg-[#1d3827] text-[#192e22] dark:text-[#f0f7f2]"
-                    : "text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f8fbf8] dark:hover:bg-[#142318]"
-                }`}
+                className={`flex items-center justify-between px-3 py-2.5 rounded-2xl cursor-pointer text-xs transition-colors ${isSelected
+                  ? "bg-[#d8ebe0] dark:bg-[#1d3827] text-[#192e22] dark:text-[#f0f7f2]"
+                  : "text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f8fbf8] dark:hover:bg-[#142318]"
+                  }`}
               >
                 <div className="flex items-center space-x-3 truncate">
                   <div
-                    className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
-                      isSelected
-                        ? "bg-[#2d6a4f] text-white"
-                        : "bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f]"
-                    }`}
+                    className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${isSelected
+                      ? "bg-[#2d6a4f] text-white"
+                      : "bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f]"
+                      }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
                   </div>
