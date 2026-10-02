@@ -38,6 +38,8 @@ export function expandRecurringEvents(
   const exceptions = events.filter((e) => e.parentId || e.isException);
 
   for (const master of masterEvents) {
+    if (master.isCancelled) continue;
+
     const effectiveRule =
       master.recurrenceRule ||
       (master.recurrence && master.recurrence !== "NONE" ? `FREQ=${master.recurrence}` : null);
