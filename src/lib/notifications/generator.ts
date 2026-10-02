@@ -98,7 +98,9 @@ export async function checkAndGenerateNotifications(userId: string) {
         gte: past24Hours,
         lte: now,
       },
-      studySession: null,
+      studySessions: {
+        none: { status: "COMPLETED" },
+      },
     },
     include: { subject: true },
     take: 3,
