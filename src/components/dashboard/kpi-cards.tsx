@@ -6,6 +6,9 @@ interface KpiCardsProps {
   plannedHours: number;
   completionRate: number;
   streakDays: number;
+  schoolHours?: number;
+  personalHours?: number;
+  scheduledHours?: number;
 }
 
 export function KpiCards({
@@ -13,6 +16,9 @@ export function KpiCards({
   plannedHours,
   completionRate,
   streakDays,
+  schoolHours,
+  personalHours,
+  scheduledHours,
 }: KpiCardsProps) {
   const daysOfWeek = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
   const currentDayIndex = (new Date().getDay() + 6) % 7; // Monday = 0, Sunday = 6

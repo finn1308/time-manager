@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { formatVN } from "@/lib/date-utils";
-import { Sparkles, Search, Plus, Bot, Calendar, BookOpen, Target, Play } from "lucide-react";
+import { Sparkles, Search, Plus, Bot, Calendar, BookOpen, Target, Play, Zap } from "lucide-react";
 import { Button } from "../ui/button";
 import { CommandPalette } from "./command-palette";
 import { AiStudyCoachModal } from "../ai/ai-study-coach-modal";
+import { QuickCaptureModal } from "./quick-capture-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
 interface TopBarProps {
@@ -20,15 +21,23 @@ export function TopBar({ user }: TopBarProps) {
   const [now] = useState(new Date());
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isCoachOpen, setIsCoachOpen] = useState(false);
+  const [isQuickCaptureOpen, setIsQuickCaptureOpen] = useState(false);
   const [isQuickAddMenuOpen, setIsQuickAddMenuOpen] = useState(false);
   const { startTimer } = usePipTimer();
 
-  // Global keyboard shortcut: Cmd+K or Ctrl+K
+  // Global keyboard shortcut: Cmd+K or Ctrl+K, and 'c' for Quick Capture
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      // Don't trigger 'c' if typing in input/textarea
+      const target = e.target as HTMLElement;
+      const isInput = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setIsCommandOpen((prev) => !prev);
+      } else if (!isInput && !e.metaKey && !e.ctrlKey && !e.altKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        setIsQuickCaptureOpen(true);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -81,6 +90,19 @@ export function TopBar({ user }: TopBarProps) {
             </Button>
           </Link>
 
+          {/* Quick Capture Pill Button (Zap) */}
+          <button
+            onClick={() => setIsQuickCaptureOpen(true)}
+            className="flex items-center space-x-1.5 h-8 px-2.5 sm:px-3 rounded-full bg-[#f4f8f5] dark:bg-[#1d3024] hover:bg-[#d8ebe0] dark:hover:bg-[#254231] text-[#2d6a4f] dark:text-[#52b788] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+            title="Ghi nhận nhanh (Nhấn C)"
+          >
+            <Zap className="w-3.5 h-3.5 fill-current" />
+            <span className="hidden sm:inline">Ghi nhanh</span>
+            <kbd className="hidden md:inline text-[9px] font-mono px-1 py-0.2 rounded bg-white dark:bg-[#17261c] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]">
+              C
+            </kbd>
+          </button>
+
           {/* Quick Add Menu (+) (Section 42) */}
           <div className="relative">
             <button
@@ -98,6 +120,17 @@ export function TopBar({ user }: TopBarProps) {
                   onClick={() => setIsQuickAddMenuOpen(false)}
                 />
                 <div className="absolute right-0 mt-2 w-48 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-1.5 shadow-xl z-50 text-xs font-semibold space-y-0.5">
+                  <button
+                    onClick={() => {
+                      setIsQuickAddMenuOpen(false);
+                      setIsQuickCaptureOpen(true);
+                    }}
+                    className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] text-[#192e22] dark:text-[#f0f7f2] cursor-pointer"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                    <span>Ghi nhận nhanh (C)</span>
+                  </button>
+
                   <Link
                     href="/calendar"
                     onClick={() => setIsQuickAddMenuOpen(false)}
@@ -157,6 +190,12 @@ export function TopBar({ user }: TopBarProps) {
         open={isCommandOpen}
         onClose={() => setIsCommandOpen(false)}
         onOpenCoach={() => setIsCoachOpen(true)}
+      />
+
+      {/* Quick Capture Modal (C) */}
+      <QuickCaptureModal
+        open={isQuickCaptureOpen}
+        onClose={() => setIsQuickCaptureOpen(false)}
       />
 
       {/* AI Study Coach Modal */}
