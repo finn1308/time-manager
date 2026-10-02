@@ -21,12 +21,15 @@ import {
   Zap,
   Flame,
   Check,
+  Plus,
 } from "lucide-react";
 import {
   InteractiveStudyModal,
   StudyMode,
   StudyWord,
 } from "@/components/vocab/interactive-study-modal";
+import { AddWordsModal } from "@/components/vocab/add-words-modal";
+import { SpecialModesModal } from "@/components/vocab/special-modes-modal";
 
 interface WordItem extends StudyWord {
   status: string;
