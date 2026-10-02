@@ -27,12 +27,14 @@ export async function generateAutoSchedule(params: {
     isLocked: e.isLocked,
   }));
 
-  const ruleItems: AvailabilityRuleItem[] = context.availabilityRules.map((r) => ({
-    dayOfWeek: r.dayOfWeek,
-    startTime: r.startTime,
-    endTime: r.endTime,
-    isAvailable: r.isAvailable,
-  }));
+  const ruleItems: AvailabilityRuleItem[] = context.availabilityRules
+    .filter((r) => r.dayOfWeek !== null && r.dayOfWeek !== undefined)
+    .map((r) => ({
+      dayOfWeek: r.dayOfWeek as number,
+      startTime: r.startTime,
+      endTime: r.endTime,
+      isAvailable: r.isAvailable,
+    }));
 
   const minBreakMinutes = context.preferences.minBreakBetweenSessions || 15;
 
