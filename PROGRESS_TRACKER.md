@@ -16,18 +16,18 @@
   - [x] Kiểm tra Calendar, PIP Timer, PDF extractor, Quiz, Roadmap, Dashboard
   - [x] Lập file theo dõi tiến độ `PROGRESS_TRACKER.md`
 
-- [ ] **Tác vụ 2: Mở rộng Prisma Schema & Đồng bộ Database Supabase** (Phần 40, 4, 7, 8, 15, 20, 21, 23, 24, 27, 30, 31, 34)
-  - [ ] Mở rộng User & UserSettings với Study Preferences (maxSessionDuration, pomodoroDuration, breakDuration, preferredHours, unwantedHours, maxDailyHours, restDays, morningEveningPref, minBreak)
-  - [ ] Tạo Model Task & TaskDependency (Inbox, Todo, In Progress, Done, Cancelled, priority, deadline, estimatedMinutes, dependencies, tags, liên kết Goal & Milestone & Subject)
-  - [ ] Cập nhật Goal & Milestone chi tiết
-  - [ ] Cập nhật CalendarEvent types (STUDY, PERSONAL, EXAM, DEADLINE, MEETING, BLOCKED, OTHER)
-  - [ ] Cập nhật StudySession status (PLANNED, IN_PROGRESS, COMPLETED, PARTIAL, MISSED, CANCELLED) & liên kết Task/Goal
-  - [ ] Tạo Model Note (Notion-style rich notes liên kết Subject, Goal, Task, PDF, Quiz)
-  - [ ] Tạo Model Tag & liên kết đa hình
-  - [ ] Tạo Model Habit & HabitLog (daily/weekly tracking, streaks)
-  - [ ] Tạo Model FlashcardReview (Spaced repetition: interval, easeFactor, repetitions, nextReview)
-  - [ ] Tạo Model Notification & WeeklyReview
-  - [ ] Chạy `prisma db push` lên Supabase PostgreSQL và `prisma generate`
+- [x] **Tác vụ 2: Mở rộng Prisma Schema & Đồng bộ Database Supabase** (Phần 40, 4, 7, 8, 15, 20, 21, 23, 24, 27, 30, 31, 34)
+  - [x] Mở rộng User & UserSettings với Study Preferences (maxSessionDuration, pomodoroDuration, breakDuration, preferredHours, unwantedHours, maxDailyHours, restDays, morningEveningPref, minBreak)
+  - [x] Tạo Model Task & TaskDependency (Inbox, Todo, In Progress, Done, Cancelled, priority, deadline, estimatedMinutes, dependencies, tags, liên kết Goal & Milestone & Subject)
+  - [x] Cập nhật Goal & Milestone chi tiết
+  - [x] Cập nhật CalendarEvent types (STUDY, PERSONAL, EXAM, DEADLINE, MEETING, BLOCKED, OTHER)
+  - [x] Cập nhật StudySession status (PLANNED, IN_PROGRESS, COMPLETED, PARTIAL, MISSED, CANCELLED) & liên kết Task/Goal
+  - [x] Tạo Model Note (Notion-style rich notes liên kết Subject, Goal, Task, PDF, Quiz)
+  - [x] Tạo Model Tag & liên kết đa hình
+  - [x] Tạo Model Habit & HabitLog (daily/weekly tracking, streaks)
+  - [x] Tạo Model FlashcardReview (Spaced repetition: interval, easeFactor, repetitions, nextReview)
+  - [x] Tạo Model Notification & WeeklyReview
+  - [x] Chạy `prisma db push` lên Supabase PostgreSQL và `prisma generate` thành công 100%
 
 - [ ] **Tác vụ 3: Hoàn thiện User Study Preferences & Quản lý AI BYOK Key** (Phần 2, 3, 4)
   - [ ] Giao diện & API cấu hình sở thích học tập chi tiết (Pomodoro, max hours/day, preferred time, rest days)
