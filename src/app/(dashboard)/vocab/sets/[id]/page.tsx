@@ -73,6 +73,10 @@ export default function WordSetDetailPage() {
 
   // Interactive Study Modal state
   const [activeStudyMode, setActiveStudyMode] = useState<StudyMode | null>(null);
+  const [showSpecialModesModal, setShowSpecialModesModal] = useState(false);
+  const [showAddWordsModal, setShowAddWordsModal] = useState(false);
+  const [userCoins, setUserCoins] = useState(150);
+  const [isPro, setIsPro] = useState(false);
 
   const fetchSetData = useCallback(async () => {
     if (!setId) return;
@@ -86,14 +90,23 @@ export default function WordSetDetailPage() {
         sort: orderFilter,
       });
 
-      const res = await fetch(`/api/vocab/sets/${setId}?${queryParams.toString()}`);
-      const data = await res.json();
+      const [res, shopRes] = await Promise.all([
+        fetch(`/api/vocab/sets/${setId}?${queryParams.toString()}`),
+        fetch("/api/vocab/shop").catch(() => null),
+      ]);
 
+      const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Không thể tải bộ từ");
 
       setSetDetails(data.set);
       setAllWords(data.words);
       setFilteredWords(data.filteredWords);
+
+      if (shopRes && shopRes.ok) {
+        const shopData = await shopRes.json();
+        if (shopData.userCoins !== undefined) setUserCoins(shopData.userCoins);
+        if (shopData.isPro !== undefined) setIsPro(Boolean(shopData.isPro));
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Đã xảy ra lỗi");
