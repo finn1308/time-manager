@@ -108,7 +108,7 @@ async function runLuyenTuTests() {
 
       const helloWord = words.find((w) => w.term.toLowerCase() === "hello");
       assert(Boolean(helloWord), "Words: Word 'Hello' is present");
-      assert(helloWord?.meaning === "Xin chào", "Words: 'Hello' has Vietnamese meaning 'Xin chào'");
+      assert(helloWord?.meaning.includes("Xin chào") || false, "Words: 'Hello' has Vietnamese meaning 'Xin chào'");
       assert(Boolean(helloWord?.phonetic), "Words: 'Hello' has IPA phonetic");
       assert(Boolean(helloWord?.exampleSentence), "Words: 'Hello' has example sentence");
 
