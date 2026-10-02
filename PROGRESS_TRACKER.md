@@ -29,10 +29,10 @@
   - [x] Tạo Model Notification & WeeklyReview
   - [x] Chạy `prisma db push` lên Supabase PostgreSQL và `prisma generate` thành công 100%
 
-- [ ] **Tác vụ 3: Hoàn thiện User Study Preferences & Quản lý AI BYOK Key** (Phần 2, 3, 4)
-  - [ ] Giao diện & API cấu hình sở thích học tập chi tiết (Pomodoro, max hours/day, preferred time, rest days)
-  - [ ] Quản lý BYOK API key: Mã hóa AES-256-GCM, ẩn key ở client, nút test connection, hiển thị trạng thái Connected/Invalid/Not configured
-  - [ ] Đảm bảo timezone Asia/Ho_Chi_Minh chuẩn toàn hệ thống, không hard-code UTC
+- [x] **Tác vụ 3: Hoàn thiện User Study Preferences & Quản lý AI BYOK Key** (Phần 2, 3, 4)
+  - [x] Giao diện & API cấu hình sở thích học tập chi tiết (Pomodoro, max hours/day, preferred time, rest days, min break, schedule flexibility)
+  - [x] Quản lý BYOK API key: Mã hóa AES-256-GCM, ẩn key ở client, nút test connection, hiển thị trạng thái Connected/Invalid/Not configured
+  - [x] Đảm bảo timezone Asia/Ho_Chi_Minh chuẩn toàn hệ thống, không hard-code UTC
 
 - [ ] **Tác vụ 4: Nâng cấp Subject Management & Goal Hierarchy** (Phần 6, 7)
   - [ ] Quản lý môn học: target score, deadline, difficulty, estimated workload, archive
