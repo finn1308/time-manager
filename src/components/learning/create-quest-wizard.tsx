@@ -501,45 +501,104 @@ export function CreateQuestWizard({
         <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
           <div className="text-center space-y-1">
             <h2 className="text-xl font-extrabold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
-              🐰 Thiết lập Thời gian & Mục tiêu Điểm số
+              🐰 Thiết lập Thời gian & Định hướng Học tập
             </h2>
             <p className="text-xs text-[#526b5c] dark:text-[#8aa693]">
               Lộ trình sẽ phân bổ đều đặn toàn bộ các chương đã phát hiện trong tài liệu.
             </p>
           </div>
 
+          {/* Lựa chọn Mục đích học: Tự học đam mê vs Ôn thi */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              Mục đích học tập của bạn:
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setStudyPurpose("PASSION");
+                  setTargetGrade("Hiểu & Ứng dụng");
+                }}
+                className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all ${
+                  studyPurpose === "PASSION"
+                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <span className="text-base">🌱</span>
+                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    Chỉ thích học (Không thi)
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 font-medium">
+                  Học vì đam mê, nâng cao chuyên môn, không áp lực thi cử hay ngày hạn
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setStudyPurpose("EXAM");
+                  setTargetGrade("A");
+                }}
+                className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all ${
+                  studyPurpose === "EXAM"
+                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <span className="text-base">🎯</span>
+                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    Có kỳ thi / Mục tiêu điểm số
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 font-medium">
+                  Chuẩn bị thi chứng chỉ, kiểm tra học kỳ hoặc thi tuyển
+                </p>
+              </button>
+            </div>
+          </div>
+
           {/* Preset Days Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {DURATION_PRESETS.map((p) => {
-              const isSelected = !isCustomDays && targetDays === p.days;
-              return (
-                <button
-                  key={p.days}
-                  type="button"
-                  onClick={() => {
-                    setIsCustomDays(false);
-                    setTargetDays(p.days);
-                  }}
-                  className={`p-4 rounded-[22px] border text-left cursor-pointer transition-all ${
-                    isSelected
-                      ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] shadow-xs ring-1 ring-[#2d6a4f]"
-                      : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-base text-[#192e22] dark:text-[#f0f7f2]">
-                      {p.label}
-                    </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#d8ebe0] dark:bg-[#203b29] text-[#1b4332] dark:text-[#7fc498] font-bold">
-                      {p.workload}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-1 font-medium">
-                    {p.note}
-                  </p>
-                </button>
-              );
-            })}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              Thời lượng lộ trình:
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {DURATION_PRESETS.map((p) => {
+                const isSelected = !isCustomDays && targetDays === p.days;
+                return (
+                  <button
+                    key={p.days}
+                    type="button"
+                    onClick={() => {
+                      setIsCustomDays(false);
+                      setTargetDays(p.days);
+                    }}
+                    className={`p-4 rounded-[22px] border text-left cursor-pointer transition-all ${
+                      isSelected
+                        ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] shadow-xs ring-1 ring-[#2d6a4f]"
+                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-extrabold text-base text-[#192e22] dark:text-[#f0f7f2]">
+                        {p.label}
+                      </span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#d8ebe0] dark:bg-[#203b29] text-[#1b4332] dark:text-[#7fc498] font-bold">
+                        {p.workload}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-1 font-medium">
+                      {p.note}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Custom Days Input */}
@@ -573,31 +632,57 @@ export function CreateQuestWizard({
             </div>
           </div>
 
-          {/* Target Grade Selector */}
+          {/* Target Grade / Goal Selector */}
           <div className="space-y-2 pt-2 border-t border-[#dbe7dd] dark:border-[#263d2e]">
             <div className="flex items-center justify-between text-[11px] font-semibold text-[#73927d] px-1">
-              <span>Mục tiêu điểm số:</span>
-              <span className="text-[#2d6a4f] font-bold">Điểm {targetGrade}</span>
+              <span>{studyPurpose === "PASSION" ? "Mục tiêu nắm bắt kiến thức:" : "Mục tiêu điểm số:"}</span>
+              <span className="text-[#2d6a4f] font-bold">{targetGrade}</span>
             </div>
-            <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
-              {TARGET_GRADES.map((g) => {
-                const isSelected = targetGrade === g.id;
-                return (
-                  <button
-                    key={g.id}
-                    type="button"
-                    onClick={() => setTargetGrade(g.id)}
-                    className={`p-3 rounded-2xl border text-center font-extrabold text-sm transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-md scale-105"
-                        : "bg-[#f8fbf8] dark:bg-[#142318] border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] hover:border-[#74a882]"
-                    }`}
-                  >
-                    {g.label}
-                  </button>
-                );
-              })}
-            </div>
+
+            {studyPurpose === "PASSION" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {PASSION_LEARNING_GOALS.map((g) => {
+                  const isSelected = targetGrade === g.id;
+                  return (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => setTargetGrade(g.id)}
+                      className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-md scale-102"
+                          : "bg-[#f8fbf8] dark:bg-[#142318] border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] hover:border-[#74a882]"
+                      }`}
+                    >
+                      <div className="font-extrabold text-xs">{g.label}</div>
+                      <div className={`text-[10px] mt-1 ${isSelected ? "text-[#d8ebe0]" : "text-[#526b5c] dark:text-[#8aa693]"}`}>
+                        {g.desc}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                {TARGET_GRADES.map((g) => {
+                  const isSelected = targetGrade === g.id;
+                  return (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => setTargetGrade(g.id)}
+                      className={`p-3 rounded-2xl border text-center font-extrabold text-sm transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-md scale-105"
+                          : "bg-[#f8fbf8] dark:bg-[#142318] border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] hover:border-[#74a882]"
+                      }`}
+                    >
+                      {g.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-between pt-2">

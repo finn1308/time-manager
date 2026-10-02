@@ -437,7 +437,7 @@ export default function GoalsPage() {
 
             <div>
               <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1">
-                Thời hạn hoàn thành (Deadline)
+                Thời hạn hoàn thành / Deadline (Tùy chọn - để trống nếu học tự do)
               </label>
               <Input
                 type="date"
