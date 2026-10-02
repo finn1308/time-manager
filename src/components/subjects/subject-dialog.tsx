@@ -18,29 +18,51 @@ interface SubjectDialogProps {
     targetHours?: number;
     priority?: number;
   } | null;
+  usedColors: string[];
 }
 
-const PASTEL_GREEN_PALETTE = [
+const DIVERSE_PASTEL_PALETTE = [
   "#2d6a4f", // Deep Botanical Green
-  "#40916c", // Fresh Botanical
-  "#52b788", // Sage Green
-  "#74c69d", // Mint
-  "#95d5b2", // Light Pastel Green
-  "#a3a86c", // Soft Olive / Moss
-  "#587060", // Muted Eucalyptus
-  "#3a5a40", // Forest Green
+  "#82a3ff", // Pastel Blue
+  "#87ceeb", // Pastel Sky
+  "#b19cd9", // Pastel Purple
+  "#e6e6fa", // Pastel Lavender
+  "#ffb6c1", // Pastel Pink
+  "#ffc0cb", // Pastel Rose
+  "#ffdab9", // Pastel Peach
+  "#fdfd96", // Pastel Yellow
+  "#98ff98", // Pastel Mint
+  "#e0ffff", // Pastel Cyan
+  "#79d2c0", // Pastel Teal
+  "#ff9999", // Pastel Red/Orange
 ];
 
-export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogProps) {
+export function SubjectDialog({ open, onClose, editingSubject, usedColors }: SubjectDialogProps) {
   const router = useRouter();
+  
+  // Find an unused color for new subjects
+  const getUnusedColor = () => {
+    const available = DIVERSE_PASTEL_PALETTE.filter(c => !usedColors.includes(c));
+    return available.length > 0 ? available[0] : DIVERSE_PASTEL_PALETTE[Math.floor(Math.random() * DIVERSE_PASTEL_PALETTE.length)];
+  };
+
   const [name, setName] = useState(editingSubject ? editingSubject.name : "");
   const [code, setCode] = useState(editingSubject ? editingSubject.code || "" : "");
-  const [color, setColor] = useState(editingSubject ? editingSubject.color : PASTEL_GREEN_PALETTE[0]);
-  const [targetHours, setTargetHours] = useState(editingSubject?.targetHours ? String(editingSubject.targetHours) : "10");
+  const [color, setColor] = useState(editingSubject ? editingSubject.color : getUnusedColor());
+  const [targetHours, setTargetHours] = useState(editingSubject?.targetHours ? String(editingSubject.targetHours) : "");
   const [priority, setPriority] = useState(editingSubject?.priority ? String(editingSubject.priority) : "3");
   const [description, setDescription] = useState(editingSubject ? editingSubject.description || "" : "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleColorSelect = (c: string) => {
+    if (usedColors.includes(c) && (!editingSubject || editingSubject.color !== c)) {
+      if (!confirm("Màu này đã được môn học khác sử dụng. Bạn có chắc muốn dùng lại màu này không?")) {
+        return;
+      }
+    }
+    setColor(c);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +78,7 @@ export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogPr
           name: name.trim(),
           code: code.trim() || null,
           color,
-          targetHours: parseFloat(targetHours) || 10,
+          targetHours: parseFloat(targetHours) || null,
           priority: parseInt(priority, 10) || 3,
           description: description.trim() || null,
         }),
@@ -116,7 +138,7 @@ export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogPr
             </div>
             <div>
               <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
-                Chỉ tiêu (giờ) *
+                Chỉ tiêu (giờ)
               </label>
               <Input
                 type="number"
@@ -124,7 +146,7 @@ export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogPr
                 min="1"
                 value={targetHours}
                 onChange={(e) => setTargetHours(e.target.value)}
-                required
+                placeholder="VD: 10 (Không bắt buộc)"
               />
             </div>
             <div>
@@ -147,20 +169,24 @@ export function SubjectDialog({ open, onClose, editingSubject }: SubjectDialogPr
 
           <div>
             <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-              Màu đại diện (Pastel Green System)
+              Màu đại diện (Pastel Palette)
             </label>
-            <div className="flex items-center space-x-2">
-              {PASTEL_GREEN_PALETTE.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setColor(c)}
-                  className={`w-7 h-7 rounded-full transition-transform cursor-pointer ${
-                    color === c ? "ring-2 ring-offset-2 ring-[#2d6a4f] scale-110" : "hover:scale-105"
-                  }`}
-                  style={{ backgroundColor: c }}
-                />
-              ))}
+            <div className="flex flex-wrap gap-2">
+              {DIVERSE_PASTEL_PALETTE.map((c) => {
+                const isUsed = usedColors.includes(c) && (!editingSubject || editingSubject.color !== c);
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => handleColorSelect(c)}
+                    title={isUsed ? "Đã sử dụng" : "Có sẵn"}
+                    className={`w-7 h-7 rounded-full transition-transform cursor-pointer ${
+                      color === c ? "ring-2 ring-offset-2 ring-[#2d6a4f] scale-110" : "hover:scale-105"
+                    } ${isUsed ? "opacity-30 grayscale" : ""}`}
+                    style={{ backgroundColor: c }}
+                  />
+                );
+              })}
             </div>
           </div>
 
