@@ -22,6 +22,8 @@ import {
   Target,
   History,
   TrendingUp,
+  GraduationCap,
+  Briefcase,
 } from "lucide-react";
 import { subDays, parseISO } from "date-fns";
 import {
