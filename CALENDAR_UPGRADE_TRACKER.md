@@ -14,8 +14,8 @@ Tài liệu này theo dõi chi tiết từng hạng mục nâng cấp Calendar t
 - [ ] Self Study có thể Start Timer
 - [ ] School không Start Study Timer
 - [ ] Personal không Start Study Timer
-- [ ] School Time không tính Self Study Hours
-- [ ] Personal Time không tính Study Hours
+- [x] School Time không tính Self Study Hours
+- [x] Personal Time không tính Study Hours
 - [ ] AI Scheduler hiểu Event Type
 - [ ] Recurring Event
 - [ ] Delete single occurrence
