@@ -31,16 +31,19 @@ import {
   CheckCircle2,
   Calendar,
   AlertCircle,
+  MapPin,
 } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
+import { getEventTypeConfig, canStartStudyTimer, isSelfStudyEvent, isSchoolEvent, isPersonalEvent } from "@/lib/calendar/event-types";
 
 interface DayViewProps {
   initialEvents: Array<{
     id: string;
     title: string;
     description: string | null;
+    location?: string | null;
     startTime: string;
     endTime: string;
     type?: string;
