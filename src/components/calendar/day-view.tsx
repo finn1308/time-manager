@@ -708,76 +708,105 @@ export function DayView({
                 </div>
               </div>
 
-              {/* Timer Control Bar inside Modal */}
-              <div className="p-4 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">PIP Floating Timer:</span>
-                  {isEventActiveTimer(selectedSessionEvent.id) ? (
-                    <Badge variant="green" className="animate-pulse">
-                      Đang chạy: {formatTime(secondsElapsed)}
-                    </Badge>
-                  ) : (
-                    <span className="text-[11px] text-[#73927d]">Chưa kích hoạt</span>
+              {/* Contextual Info for Non-SelfStudy Events */}
+              {!canStartStudyTimer(selectedSessionEvent.type) && (
+                <div className="p-4 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-base">{getEventTypeConfig(selectedSessionEvent.type).emoji}</span>
+                    <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                      {getEventTypeConfig(selectedSessionEvent.type).label}
+                    </span>
+                  </div>
+                  {selectedSessionEvent.location && (
+                    <div className="flex items-center space-x-1.5 text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                      <MapPin className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                      <span>Địa điểm: <strong>{selectedSessionEvent.location}</strong></span>
+                    </div>
                   )}
+                  <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                    {isSchoolEvent(selectedSessionEvent.type)
+                      ? "Lịch đi học cố định tại trường. Không tạo Study Session và không tính giờ tự học."
+                      : isPersonalEvent(selectedSessionEvent.type)
+                      ? "Hoạt động cá nhân / đi chơi. AI xem đây là thời gian bận và không xếp lịch học."
+                      : selectedSessionEvent.type === "EXAM"
+                      ? "Lịch thi cử quan trọng. AI xem đây là mốc ưu tiên để xếp lịch ôn tập trước ngày thi."
+                      : "Sự kiện được hiển thị trên Calendar."}
+                  </p>
                 </div>
+              )}
 
-                <div className="flex items-center gap-2">
-                  {!isEventActiveTimer(selectedSessionEvent.id) ? (
-                    <Button
-                      onClick={() => {
-                        if (selectedSessionEvent.subject) {
-                          startTimer(
-                            {
-                              id: selectedSessionEvent.subject.id,
-                              name: selectedSessionEvent.subject.name,
-                              code: selectedSessionEvent.subject.code,
-                              color: selectedSessionEvent.subject.color,
-                            },
-                            selectedSessionEvent.id
-                          );
-                        }
-                      }}
-                      className="flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs space-x-1.5"
-                    >
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>▶ Start (Bắt đầu học)</span>
-                    </Button>
-                  ) : (
-                    <>
-                      {isRunning && !isPaused ? (
-                        <Button
-                          onClick={pauseTimer}
-                          variant="outline"
-                          className="flex-1 rounded-2xl border-[#dbe7dd] text-xs font-semibold space-x-1"
-                        >
-                          <Pause className="w-3.5 h-3.5" />
-                          <span>⏸ Pause (Tạm dừng)</span>
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={resumeTimer}
-                          className="flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold space-x-1"
-                        >
-                          <Play className="w-3.5 h-3.5 fill-current" />
-                          <span>▶ Resume (Tiếp tục)</span>
-                        </Button>
-                      )}
+              {/* Timer Control Bar inside Modal - ONLY for SELF_STUDY */}
+              {canStartStudyTimer(selectedSessionEvent.type) && (
+                <div className="p-4 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">PIP Floating Timer:</span>
+                    {isEventActiveTimer(selectedSessionEvent.id) ? (
+                      <Badge variant="green" className="animate-pulse">
+                        Đang chạy: {formatTime(secondsElapsed)}
+                      </Badge>
+                    ) : (
+                      <span className="text-[11px] text-[#73927d]">Chưa kích hoạt</span>
+                    )}
+                  </div>
 
+                  <div className="flex items-center gap-2">
+                    {!isEventActiveTimer(selectedSessionEvent.id) ? (
                       <Button
                         onClick={() => {
-                          stopTimer();
-                          setSelectedSessionEvent(null);
+                          if (selectedSessionEvent.subject) {
+                            startTimer(
+                              {
+                                id: selectedSessionEvent.subject.id,
+                                name: selectedSessionEvent.subject.name,
+                                code: selectedSessionEvent.subject.code,
+                                color: selectedSessionEvent.subject.color,
+                              },
+                              selectedSessionEvent.id
+                            );
+                          }
                         }}
-                        variant="destructive"
-                        className="rounded-2xl text-xs font-semibold space-x-1 px-4"
+                        className="flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs space-x-1.5"
                       >
-                        <Square className="w-3.5 h-3.5 fill-current" />
-                        <span>⏹ Finish</span>
+                        <Play className="w-3.5 h-3.5 fill-current" />
+                        <span>▶ Start (Bắt đầu học)</span>
                       </Button>
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        {isRunning && !isPaused ? (
+                          <Button
+                            onClick={pauseTimer}
+                            variant="outline"
+                            className="flex-1 rounded-2xl border-[#dbe7dd] text-xs font-semibold space-x-1"
+                          >
+                            <Pause className="w-3.5 h-3.5" />
+                            <span>⏸ Pause (Tạm dừng)</span>
+                          </Button>
+                        ) : (
+                          <Button
+                            onClick={resumeTimer}
+                            className="flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold space-x-1"
+                          >
+                            <Play className="w-3.5 h-3.5 fill-current" />
+                            <span>▶ Resume (Tiếp tục)</span>
+                          </Button>
+                        )}
+
+                        <Button
+                          onClick={() => {
+                            stopTimer();
+                            setSelectedSessionEvent(null);
+                          }}
+                          variant="destructive"
+                          className="rounded-2xl text-xs font-semibold space-x-1 px-4"
+                        >
+                          <Square className="w-3.5 h-3.5 fill-current" />
+                          <span>⏹ Finish</span>
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Change Period Dropdown Selector */}
               <div className="flex items-center justify-between pt-1">
