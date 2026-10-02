@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Play, Edit2, Target, Trash2, Plus, Sparkles, BookOpen, FolderOpen } from "lucide-react";
+import { Play, Edit2, Trash2, Plus, FolderOpen, Calendar, Award } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { SubjectDialog } from "./subject-dialog";
-import { GoalDialog } from "./goal-dialog";
 import { ResourceManager } from "../study/resource-manager";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog";
 import { useRouter } from "next/navigation";
+import { formatVN } from "@/lib/date-utils";
 
 interface SubjectItem {
   id: string;
@@ -20,6 +20,11 @@ interface SubjectItem {
   targetHours?: number | null;
   completedHours?: number;
   priority?: number;
+  targetScore?: string | null;
+  deadline?: string | Date | null;
+  difficulty?: string;
+  estimatedWorkload?: number | null;
+  isArchived?: boolean;
   studyGoals: Array<{
     id: string;
     targetHours: number;
@@ -41,9 +46,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
   const { startTimer } = usePipTimer();
 
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
-  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<any | null>(null);
-  const [editingGoal, setEditingGoal] = useState<any | null>(null);
   const [selectedResourceSubject, setSelectedResourceSubject] = useState<any | null>(null);
 
   const handleDeleteSubject = async (id: string, name: string) => {
@@ -85,19 +88,21 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
           <thead>
             <tr className="border-b border-[#dbe7dd]/80 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9] font-bold uppercase tracking-wider">
               <th className="py-3.5 px-5">Môn học</th>
+              <th className="py-3.5 px-4 text-center">Mục tiêu</th>
               <th className="py-3.5 px-4 text-right">Chỉ tiêu</th>
               <th className="py-3.5 px-4 text-right">Đã học</th>
-              <th className="py-3.5 px-4 min-w-[150px]">Tiến độ</th>
+              <th className="py-3.5 px-4 min-w-[140px]">Tiến độ</th>
               <th className="py-3.5 px-4 text-center">Ưu tiên</th>
               <th className="py-3.5 px-5 text-right">Thao tác</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#dbe7dd]/60 dark:divide-[#263d2e]">
             {subjects.map((sub) => {
-              const target = sub.targetHours; // can be null/undefined
-              const loggedHours = sub.completedHours !== undefined
-                ? sub.completedHours
-                : Math.round((sub.totalLoggedMinutes / 60) * 10) / 10;
+              const target = sub.targetHours;
+              const loggedHours =
+                sub.completedHours !== undefined
+                  ? sub.completedHours
+                  : Math.round((sub.totalLoggedMinutes / 60) * 10) / 10;
               const percent = target ? Math.min(100, Math.round((loggedHours / target) * 100)) : 0;
               const priority = sub.priority || 3;
 
@@ -106,7 +111,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                   key={sub.id}
                   className="hover:bg-[#f8fbf8] dark:hover:bg-[#142318] transition-colors"
                 >
-                  {/* Subject Name */}
+                  {/* Subject Name & Details */}
                   <td className="py-4 px-5">
                     <div className="flex items-center space-x-3">
                       <span
@@ -121,19 +126,42 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                               {sub.code}
                             </Badge>
                           )}
+                          {sub.difficulty && (
+                            <span className="text-[10px] text-[#73927d] dark:text-[#8ba393]">
+                              • {sub.difficulty === "HARD" ? "Khó" : sub.difficulty === "EASY" ? "Dễ" : "Vừa"}
+                            </span>
+                          )}
                         </div>
                         {sub.description && (
                           <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] truncate max-w-xs mt-0.5">
                             {sub.description}
                           </p>
                         )}
+                        {sub.deadline && (
+                          <div className="flex items-center space-x-1 text-[10px] text-amber-700 dark:text-amber-400 mt-1 font-semibold">
+                            <Calendar className="w-3 h-3" />
+                            <span>Hạn: {formatVN(new Date(sub.deadline), "dd/MM/yyyy")}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </td>
 
+                  {/* Target Score */}
+                  <td className="py-4 px-4 text-center">
+                    {sub.targetScore ? (
+                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#9cd1b1] text-[10px] font-bold">
+                        <Award className="w-3 h-3" />
+                        <span>{sub.targetScore}</span>
+                      </span>
+                    ) : (
+                      <span className="text-[#8ba393] text-[11px]">—</span>
+                    )}
+                  </td>
+
                   {/* Target Hours */}
                   <td className="py-4 px-4 text-right font-mono font-semibold text-[#192e22] dark:text-[#f0f7f2]">
-                    {target ? `${target}h` : <span className="text-[#8ba393] italic text-[11px]">Không đặt chỉ tiêu</span>}
+                    {target ? `${target}h` : <span className="text-[#8ba393] italic text-[11px]">—</span>}
                   </td>
 
                   {/* Logged Hours */}
@@ -160,7 +188,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                         </div>
                       </div>
                     ) : (
-                      <span className="text-[#8ba393] text-[11px] italic">Không yêu cầu tiến độ</span>
+                      <span className="text-[#8ba393] text-[11px] italic">Không giới hạn</span>
                     )}
                   </td>
 
@@ -231,7 +259,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
             {subjects.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-14 text-center text-sm text-[#526b5c] dark:text-[#a3bda9]">
+                <td colSpan={7} className="py-14 text-center text-sm text-[#526b5c] dark:text-[#a3bda9]">
                   Chưa có môn học nào. Hãy bấm "Thêm môn học" để bắt đầu lập kế hoạch!
                 </td>
               </tr>
@@ -249,7 +277,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
             setEditingSubject(null);
           }}
           editingSubject={editingSubject}
-          usedColors={subjects.map(s => s.color)}
+          usedColors={subjects.map((s) => s.color)}
         />
       )}
 
