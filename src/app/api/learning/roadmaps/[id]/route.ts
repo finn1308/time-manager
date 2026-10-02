@@ -65,13 +65,46 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const { id } = await params;
 
   try {
-    await prisma.learningRoadmap.delete({
+    // 1. Verify existence & strict ownership
+    const roadmap = await prisma.learningRoadmap.findFirst({
       where: { id, userId: user.id },
+      include: {
+        stages: {
+          select: { id: true },
+        },
+      },
     });
 
-    return NextResponse.json({ success: true, message: "Đã xóa lộ trình thành công" });
+    if (!roadmap) {
+      return NextResponse.json(
+        { error: "Unable to delete this roadmap. Roadmap not found or unauthorized." },
+        { status: 404 }
+      );
+    }
+
+    const stageIds = roadmap.stages.map((s) => s.id);
+
+    // 2. Cascade delete dependent Flashcard Decks attached to these stages
+    if (stageIds.length > 0) {
+      await prisma.flashcardDeck.deleteMany({
+        where: { stageId: { in: stageIds }, userId: user.id },
+      });
+    }
+
+    // 3. Delete roadmap (cascades to stages -> quizzes -> questions & attempts -> answers)
+    await prisma.learningRoadmap.delete({
+      where: { id: roadmap.id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Learning roadmap deleted successfully.",
+    });
   } catch (err: any) {
     console.error("Delete roadmap error:", err);
-    return NextResponse.json({ error: "Lỗi xóa lộ trình" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Unable to delete this roadmap. Please try again." },
+      { status: 500 }
+    );
   }
 }
