@@ -9,13 +9,21 @@ export async function GET() {
   const subjects = await prisma.subject.findMany({
     where: { userId: user.id },
     include: {
-      goals: true,
+      goals: {
+        include: {
+          milestoneRecords: true,
+        },
+      },
+      tasks: {
+        where: { isCompleted: false },
+        take: 10,
+      },
       studySessions: {
         orderBy: { actualStart: "desc" },
         take: 5,
       },
     },
-    orderBy: { priority: "desc" },
+    orderBy: [{ isArchived: "asc" }, { priority: "desc" }],
   });
 
   return NextResponse.json({ subjects });
@@ -26,7 +34,18 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { name, code, color, description, targetHours, priority } = await req.json();
+    const {
+      name,
+      code,
+      color,
+      description,
+      targetHours,
+      priority,
+      targetScore,
+      deadline,
+      difficulty,
+      estimatedWorkload,
+    } = await req.json();
 
     if (!name?.trim()) {
       return NextResponse.json({ error: "Tên môn học không được để trống" }, { status: 400 });
@@ -41,6 +60,11 @@ export async function POST(req: Request) {
         description: description?.trim() || null,
         targetHours: targetHours ? parseFloat(targetHours) : null,
         priority: priority ? parseInt(priority, 10) : 3,
+        targetScore: targetScore?.trim() || null,
+        deadline: deadline ? new Date(deadline) : null,
+        difficulty: difficulty || "MEDIUM",
+        estimatedWorkload: estimatedWorkload ? parseFloat(estimatedWorkload) : null,
+        isArchived: false,
       },
     });
 
@@ -56,7 +80,20 @@ export async function PUT(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { id, name, code, color, description, targetHours, priority } = await req.json();
+    const {
+      id,
+      name,
+      code,
+      color,
+      description,
+      targetHours,
+      priority,
+      targetScore,
+      deadline,
+      difficulty,
+      estimatedWorkload,
+      isArchived,
+    } = await req.json();
 
     if (!id) return NextResponse.json({ error: "Thiếu ID môn học" }, { status: 400 });
 
@@ -69,6 +106,11 @@ export async function PUT(req: Request) {
         description: description !== undefined ? (description?.trim() || null) : undefined,
         targetHours: targetHours !== undefined ? (targetHours ? parseFloat(targetHours) : null) : undefined,
         priority: priority !== undefined ? parseInt(priority, 10) : undefined,
+        targetScore: targetScore !== undefined ? (targetScore?.trim() || null) : undefined,
+        deadline: deadline !== undefined ? (deadline ? new Date(deadline) : null) : undefined,
+        difficulty: difficulty !== undefined ? difficulty : undefined,
+        estimatedWorkload: estimatedWorkload !== undefined ? (estimatedWorkload ? parseFloat(estimatedWorkload) : null) : undefined,
+        isArchived: isArchived !== undefined ? Boolean(isArchived) : undefined,
       },
     });
 
