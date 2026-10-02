@@ -23,17 +23,30 @@ import {
   History,
   TrendingUp,
 } from "lucide-react";
-import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays, format } from "date-fns";
+import { subDays, parseISO } from "date-fns";
+import {
+  formatVN,
+  getDateKeyVN,
+  getDayRangeVN,
+  getWeekDaysInVN,
+  getMinuteOfDayVN,
+  formatMinutesVN,
+  formatHoursVN,
+  VIETNAM_TIMEZONE,
+} from "@/lib/date-utils";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) return null;
 
-  const now = new Date();
-  const todayStart = startOfDay(now);
-  const todayEnd = endOfDay(now);
-  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
-  const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+  // Exact Vietnam timezone dates
+  const todayKey = getDateKeyVN(new Date());
+  const todayBase = parseISO(todayKey);
+  const todayRange = getDayRangeVN(todayKey);
+
+  const weekDays = getWeekDaysInVN(todayBase);
+  const weekStartUTC = getDayRangeVN(weekDays[0]).startUTC;
+  const weekEndUTC = getDayRangeVN(weekDays[6]).endUTC;
 
   // 1. Fetch User Settings for Budget
   const userSettings = await prisma.userSettings.findUnique({
@@ -82,9 +95,9 @@ export default async function DashboardPage() {
       ? 100
       : 0;
 
-  // This Week Budget & Actual
+  // This Week Budget & Actual (in Vietnam timezone week)
   const thisWeekSessions = allSessions.filter(
-    (s) => s.actualStart >= weekStart && s.actualStart <= weekEnd
+    (s) => s.actualStart >= weekStartUTC && s.actualStart <= weekEndUTC
   );
   const weeklyActualSeconds = thisWeekSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const weeklyActualHours = Math.round((weeklyActualSeconds / 3600) * 10) / 10;
@@ -104,56 +117,53 @@ export default async function DashboardPage() {
   }
   const weeklySubjectsBreakdown = Object.values(subjectWeekMap);
 
-  // Real Consecutive Streak
+  // Real Consecutive Streak (calculated on Vietnam calendar days)
   const uniqueStudyDays = new Set(
     allSessions
       .filter((s) => s.actualDurationSeconds > 60)
-      .map((s) => format(s.actualStart, "yyyy-MM-dd"))
+      .map((s) => getDateKeyVN(s.actualStart))
   );
 
   let streak = 0;
-  let checkDate = new Date();
-  const todayKey = format(checkDate, "yyyy-MM-dd");
-  const yesterdayKey = format(subDays(checkDate, 1), "yyyy-MM-dd");
+  const yesterdayKey = getDateKeyVN(subDays(todayBase, 1));
 
   if (uniqueStudyDays.has(todayKey)) {
     streak = 1;
-    let d = subDays(checkDate, 1);
-    while (uniqueStudyDays.has(format(d, "yyyy-MM-dd"))) {
+    let d = subDays(todayBase, 1);
+    while (uniqueStudyDays.has(getDateKeyVN(d))) {
       streak++;
       d = subDays(d, 1);
     }
   } else if (uniqueStudyDays.has(yesterdayKey)) {
     streak = 1;
-    let d = subDays(checkDate, 2);
-    while (uniqueStudyDays.has(format(d, "yyyy-MM-dd"))) {
+    let d = subDays(todayBase, 2);
+    while (uniqueStudyDays.has(getDateKeyVN(d))) {
       streak++;
       d = subDays(d, 1);
     }
   }
 
-  // Today's events
+  // Today's events in Vietnam timezone
   const todayEvents = allEvents.filter(
-    (ev) => ev.startTime >= todayStart && ev.startTime <= todayEnd
+    (ev) => getDateKeyVN(ev.startTime) === todayKey
   );
 
   // Recent 5 Sessions
   const recentSessions = allSessions.slice(0, 5);
 
-  // Chart data for last 7 days
+  // Chart data for last 7 days aligned with Vietnam days
   const chartData = [];
   for (let i = 6; i >= 0; i--) {
-    const d = subDays(now, i);
-    const dStart = startOfDay(d);
-    const dEnd = endOfDay(d);
-    const dayLabel = format(d, "EEE (dd/MM)");
+    const dKey = getDateKeyVN(subDays(todayBase, i));
+    const dRange = getDayRangeVN(dKey);
+    const dayLabel = formatVN(dRange.startUTC, "EEE (dd/MM)");
 
     const p = allEvents
-      .filter((e) => e.startTime >= dStart && e.startTime <= dEnd)
-      .reduce((acc, e) => acc + (e.endTime.getTime() - e.startTime.getTime()) / (1000 * 3600), 0);
+      .filter((e) => getDateKeyVN(e.startTime) === dKey)
+      .reduce((acc, e) => acc + (new Date(e.endTime).getTime() - new Date(e.startTime).getTime()) / (1000 * 3600), 0);
 
     const a = allSessions
-      .filter((s) => s.actualStart >= dStart && s.actualStart <= dEnd)
+      .filter((s) => getDateKeyVN(s.actualStart) === dKey)
       .reduce((acc, s) => acc + s.actualDurationSeconds / 3600, 0);
 
     chartData.push({
@@ -163,23 +173,23 @@ export default async function DashboardPage() {
     });
   }
 
-  // Personal Scheduling DNA Analysis (Section 37)
-  let bestFocusTimeSlot = "Buổi tối (19:00 - 22:30)";
+  // Personal Scheduling DNA Analysis based on Vietnam minute of day
   let morningCount = 0;
   let afternoonCount = 0;
   let eveningCount = 0;
 
   for (const s of allSessions) {
-    const h = s.actualStart.getHours();
-    if (h >= 5 && h < 12) morningCount++;
-    else if (h >= 12 && h < 18) afternoonCount++;
+    const minute = getMinuteOfDayVN(s.actualStart);
+    if (minute >= 5 * 60 && minute < 12 * 60) morningCount++;
+    else if (minute >= 12 * 60 && minute < 18 * 60) afternoonCount++;
     else eveningCount++;
   }
 
+  let bestFocusTimeSlot = "Buổi tối (18:00 - 23:59)";
   if (morningCount > afternoonCount && morningCount > eveningCount) {
-    bestFocusTimeSlot = "Buổi sáng (07:00 - 11:30)";
+    bestFocusTimeSlot = "Buổi sáng (05:00 - 11:59)";
   } else if (afternoonCount > morningCount && afternoonCount > eveningCount) {
-    bestFocusTimeSlot = "Buổi chiều (13:30 - 17:30)";
+    bestFocusTimeSlot = "Buổi chiều (14:00 - 17:59)";
   }
 
   const averageSessionMinutes =
@@ -210,14 +220,14 @@ export default async function DashboardPage() {
             </h1>
 
             <p className="text-[#d8ebe0] text-xs sm:text-sm leading-relaxed">
-              Quản lý mục tiêu môn học, xếp lịch tự động không xung đột và ghi nhận thời gian thực tế với Picture-in-Picture Timer.
+              Quản lý mục tiêu môn học, xếp lịch 4 buổi không xung đột và ghi nhận thời gian thực tế với Picture-in-Picture Timer.
             </p>
 
             <div className="pt-2 flex flex-wrap gap-2.5">
               <Link href="/calendar">
                 <Button variant="pill" size="default" className="font-bold text-[#1b4332] shadow-sm space-x-2 hover:bg-[#eef5f0]">
                   <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
-                  <span>AI Tự động lập lịch tuần →</span>
+                  <span>Mở lịch học & Day View →</span>
                 </Button>
               </Link>
             </div>
@@ -244,7 +254,7 @@ export default async function DashboardPage() {
         streakDays={streak}
       />
 
-      {/* Study Budget & Debt Card (Section 30 & 31) */}
+      {/* Study Budget & Debt Card */}
       <StudyBudgetCard
         weeklyBudgetHours={weeklyBudgetHours}
         weeklyActualHours={weeklyActualHours}
@@ -266,86 +276,96 @@ export default async function DashboardPage() {
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
-                    Lịch học tuần
+                    Lịch học 4 buổi
                   </h3>
-                  <p className="text-[10px] text-[#73927d]">Xem & xếp lịch AI</p>
+                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                    Day • Week • Month
+                  </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-1 group-hover:text-[#2d6a4f] transition-all" />
+              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
 
           <Link href="/subjects" className="group">
             <div className="p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow soft-card-hover flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#40916c] dark:text-[#74c69d] flex items-center justify-center shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#192f20] text-[#40916c] flex items-center justify-center shadow-2xs">
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
-                    Môn học & Chỉ tiêu
+                    Môn học & Mục tiêu
                   </h3>
-                  <p className="text-[10px] text-[#73927d]">Số giờ cần đạt</p>
+                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                    {subjects.length} môn đang học
+                  </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-1 group-hover:text-[#2d6a4f] transition-all" />
+              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
 
-          <Link href="/goals" className="group">
+          <Link href="/blocked-slots" className="group">
             <div className="p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow soft-card-hover flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#e2ede7] dark:bg-[#203328] text-[#2c473a] dark:text-[#a3c9b4] flex items-center justify-center shadow-2xs">
-                  <Target className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-2xl bg-[#fbf9f1] dark:bg-[#201d14] text-[#a3a86c] flex items-center justify-center shadow-2xs">
+                  <Lock className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
-                    Mục tiêu & Deadline
+                    Khung giờ khóa
                   </h3>
-                  <p className="text-[10px] text-[#73927d]">Thời hạn hoàn thành</p>
+                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                    Lịch bận & Giờ ngủ
+                  </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-1 group-hover:text-[#2d6a4f] transition-all" />
+              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
 
-          <Link href="/study-sessions" className="group">
+          <Link href="/learning" className="group">
             <div className="p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow soft-card-hover flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#edf0dc] dark:bg-[#2b301c] text-[#595e2b] dark:text-[#d3d89e] flex items-center justify-center shadow-2xs">
-                  <History className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-2xl bg-[#e8f4ec] dark:bg-[#172d1f] text-[#2d6a4f] flex items-center justify-center shadow-2xs">
+                  <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
-                    Nhật ký học tập
+                    Learning Hub & Quiz
                   </h3>
-                  <p className="text-[10px] text-[#73927d]">Thời gian thực tế</p>
+                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                    AI Giáo trình & Lộ trình
+                  </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-1 group-hover:text-[#2d6a4f] transition-all" />
+              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
         </div>
       </div>
 
-      {/* Planned vs Actual Recharts Chart */}
-      <PlannedVsActualChart data={chartData} />
+      {/* Main Charts & Deep Insights */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
+          <PlannedVsActualChart data={chartData} />
+        </div>
 
-      {/* Study Activity Heatmap with Day Intelligence (Sections 20-27) */}
-      <StudyHeatmap
-        subjects={subjects.map((s) => ({ id: s.id, name: s.name, color: s.color }))}
-      />
+        <div className="lg:col-span-4">
+          <SchedulingDna
+            bestFocusTimeSlot={bestFocusTimeSlot}
+            averageSessionMinutes={averageSessionMinutes}
+            estimationVariancePercent={estimationVariancePercent}
+            topSubjectName={topSubjectName}
+          />
+        </div>
+      </div>
 
-      {/* Personal Scheduling DNA (Section 37) */}
-      <SchedulingDna
-        totalSessionsCount={allSessions.length}
-        averageSessionMinutes={averageSessionMinutes}
-        bestFocusTimeSlot={bestFocusTimeSlot}
-        estimationVariancePercent={estimationVariancePercent}
-        topSubjectName={topSubjectName}
-      />
+      {/* Heatmap Section */}
+      <StudyHeatmap sessions={allSessions} />
 
-      {/* Main Grid: Today's Schedule & Recent Sessions */}
+      {/* 2-Column Schedule & Subjects Deep Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Today's Schedule + Subject Progress (8 Cols) */}
         <div className="lg:col-span-8 space-y-6">
@@ -357,18 +377,18 @@ export default async function DashboardPage() {
                   <div className="w-8 h-8 rounded-xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] flex items-center justify-center">
                     <CalendarIcon className="w-4 h-4" />
                   </div>
-                  <span>Lịch học hôm nay</span>
+                  <span>Lịch học hôm nay ({formatVN(todayBase, "dd/MM")})</span>
                 </CardTitle>
                 <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
                   {todayEvents.length > 0
-                    ? `Có ${todayEvents.length} buổi học đã được lên kế hoạch hôm nay`
+                    ? `Có ${todayEvents.length} buổi học đã lên kế hoạch hôm nay`
                     : "Chưa có lịch học"}
                 </p>
               </div>
 
               <Link href="/calendar">
                 <Button variant="outline" size="sm" className="text-xs space-x-1 font-semibold rounded-2xl">
-                  <span>Mở lịch tuần</span>
+                  <span>Mở Day View</span>
                   <ArrowRight className="w-3 h-3" />
                 </Button>
               </Link>
@@ -401,7 +421,7 @@ export default async function DashboardPage() {
                       )}
                       <span>•</span>
                       <span className="font-mono font-medium">
-                        {format(ev.startTime, "HH:mm")} - {format(ev.endTime, "HH:mm")}
+                        {formatVN(new Date(ev.startTime), "HH:mm")} – {formatVN(new Date(ev.endTime), "HH:mm")}
                       </span>
                     </div>
                   </div>
@@ -409,7 +429,7 @@ export default async function DashboardPage() {
                   <Link href="/calendar">
                     <Button variant="outline" size="sm" className="font-semibold space-x-1 rounded-xl">
                       <Play className="w-3 h-3 fill-current" />
-                      <span>Xem</span>
+                      <span>Chi tiết</span>
                     </Button>
                   </Link>
                 </div>
@@ -428,55 +448,114 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Subject Progress */}
+          {/* Subject Progress & Statistics (Requirements 2, 4, 5) */}
           <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <div className="w-8 h-8 rounded-xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#40916c] flex items-center justify-center">
-                  <BookOpen className="w-4 h-4" />
-                </div>
-                <span>Tiến độ các môn học</span>
-              </CardTitle>
+              <div>
+                <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+                  <div className="w-8 h-8 rounded-xl bg-[#eef5f0] dark:bg-[#1d3827] text-[#40916c] flex items-center justify-center">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <span>Thống kê môn học (Mục tiêu • Planned • Actual)</span>
+                </CardTitle>
+                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                  Phân biệt rõ ràng giữa thời gian đã lên lịch và giờ thực tế bấm giờ
+                </p>
+              </div>
+
               <Link href="/subjects">
                 <Button variant="ghost" size="sm" className="text-xs text-[#2d6a4f] dark:text-[#52b788] font-semibold space-x-1">
-                  <span>Quản lý môn học</span>
+                  <span>Quản lý môn</span>
                   <ArrowRight className="w-3 h-3" />
                 </Button>
               </Link>
             </CardHeader>
 
-            <CardContent className="p-6 pt-0 space-y-3">
+            <CardContent className="p-6 pt-0 space-y-4">
               {subjects.map((sub) => {
+                const targetH = sub.goals?.find((g) => g.status === "ACTIVE")?.targetHours || sub.targetHours || 10;
                 const totalSecs = sub.studySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
                 const actualH = Math.round((totalSecs / 3600) * 10) / 10;
-                const targetH = sub.targetHours || 10;
-                const percent = Math.min(100, Math.round((actualH / targetH) * 100));
+
+                // Planned hours from all calendar events for this subject
+                const plannedSecs = allEvents
+                  .filter((e) => e.subjectId === sub.id)
+                  .reduce((acc, e) => {
+                    const diff = (new Date(e.endTime).getTime() - new Date(e.startTime).getTime()) / 1000;
+                    return acc + Math.max(0, diff);
+                  }, 0);
+                const plannedH = Math.round((plannedSecs / 3600) * 10) / 10;
+
+                const remainingH = Math.max(0, Math.round((targetH - actualH) * 10) / 10);
+                const percentActual = targetH > 0 ? Math.min(100, Math.round((actualH / targetH) * 100)) : 0;
 
                 return (
                   <div
                     key={sub.id}
-                    className="space-y-1.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e]"
+                    className="p-4 rounded-[22px] bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] space-y-3"
                   >
-                    <div className="flex items-center justify-between text-xs">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2.5 truncate">
                         <span
-                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs"
+                          className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
                           style={{ backgroundColor: sub.color || "#2d6a4f" }}
                         />
-                        <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
+                        <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] truncate">
                           {sub.name}
                         </span>
+                        {sub.code && (
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-[#dbe7dd]">
+                            {sub.code}
+                          </Badge>
+                        )}
                       </div>
-                      <span className="font-mono text-[#526b5c] dark:text-[#a3bda9] font-semibold shrink-0">
-                        {actualH} / {targetH}h ({percent}%)
+
+                      <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] shrink-0">
+                        {percentActual}% mục tiêu
                       </span>
                     </div>
 
-                    <div className="w-full h-2 rounded-full bg-[#dbe7dd] dark:bg-[#263d2e] overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-300"
-                        style={{ width: `${percent}%`, backgroundColor: sub.color || "#2d6a4f" }}
-                      />
+                    {/* 4 Core Metrics Grid (Requirement 5) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">🎯 Mục tiêu tuần</div>
+                        <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] mt-0.5">{targetH}h</div>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">📅 Đã lên lịch</div>
+                        <div className="font-bold text-sm text-[#2d6a4f] dark:text-[#52b788] mt-0.5">{plannedH}h</div>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">⏱ Thực tế học</div>
+                        <div className="font-bold text-sm text-[#1b4332] dark:text-[#74c69d] mt-0.5">{actualH}h</div>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">⏳ Còn thiếu</div>
+                        <div className="font-bold text-sm text-[#b87474] dark:text-[#f3a4a4] mt-0.5">{remainingH}h</div>
+                      </div>
+                    </div>
+
+                    {/* Planned vs Actual Comparison Bar */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                        <span>So sánh: <strong>{actualH}h thực tế</strong> / <strong>{plannedH}h đã lên lịch</strong></span>
+                        <span className="font-semibold">
+                          {plannedH > 0 ? `${Math.round((actualH / plannedH) * 100)}% bám sát lịch` : "Chưa có lịch"}
+                        </span>
+                      </div>
+                      <div className="w-full h-2.5 rounded-full bg-[#eef5f0] dark:bg-[#263d2e] overflow-hidden flex">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{
+                            width: `${percentActual}%`,
+                            backgroundColor: sub.color || "#2d6a4f",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
@@ -507,7 +586,7 @@ export default async function DashboardPage() {
                 <span>Phiên học gần đây</span>
               </CardTitle>
               <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
-                Ghi nhận thực tế từng giây qua Timer
+                Ghi nhận thực tế từng giây qua PIP Timer
               </p>
             </CardHeader>
 
@@ -535,7 +614,7 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] text-[#73927d]">
-                      <span>{format(session.actualStart, "dd/MM HH:mm")}</span>
+                      <span>{formatVN(session.actualStart, "dd/MM HH:mm")}</span>
                       {session.productivityScore && (
                         <span className="text-amber-500 font-bold">
                           ★ {session.productivityScore}/5
