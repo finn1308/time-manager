@@ -302,10 +302,14 @@ export function EventModal({
               <div className="py-2">
                 <ResourceManager
                   calendarEventId={editingEvent.id}
-                  subjectId={editingEvent.subjectId || subjectId}
+                  subjectId={subjectId || editingEvent.subjectId}
                   subjectName={selectedSubject?.name || "Môn học"}
                   sessionTitle={title || editingEvent.title}
                   timeFormatted={`${startTimeStr} - ${endTimeStr}`}
+                  allSubjects={subjects}
+                  onSubjectChange={(newSubId) => {
+                    setSubjectId(newSubId);
+                  }}
                   onRefreshCalendar={onSuccess}
                 />
                 <div className="flex justify-between items-center pt-4 border-t border-[#dbe7dd] dark:border-[#263d2e] mt-4">

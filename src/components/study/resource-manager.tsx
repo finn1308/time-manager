@@ -22,9 +22,12 @@ import {
   Check,
   X,
   Lock,
+  BookOpen,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatVN } from "@/lib/date-utils";
 
 function YoutubeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -53,12 +56,32 @@ export interface NoteItem {
   createdAt: string;
 }
 
+export interface SubjectOption {
+  id: string;
+  name: string;
+  code?: string | null;
+  color?: string;
+}
+
+export interface EventOption {
+  id: string;
+  title: string;
+  startTime: string | Date;
+  endTime: string | Date;
+  subjectId?: string | null;
+  subject?: { id: string; name: string } | null;
+}
+
 interface ResourceManagerProps {
   calendarEventId?: string;
   subjectId?: string | null;
   subjectName?: string;
   sessionTitle?: string;
   timeFormatted?: string;
+  allSubjects?: SubjectOption[];
+  allEvents?: EventOption[];
+  onSubjectChange?: (newSubjectId: string) => void;
+  onEventChange?: (newEventId: string) => void;
   onClose?: () => void;
   onRefreshCalendar?: () => void;
 }
@@ -69,10 +92,23 @@ export function ResourceManager({
   subjectName = "Chung",
   sessionTitle = "Buổi học",
   timeFormatted,
+  allSubjects = [],
+  allEvents = [],
+  onSubjectChange,
+  onEventChange,
   onClose,
   onRefreshCalendar,
 }: ResourceManagerProps) {
   const [activeTab, setActiveTab] = useState<"resources" | "notes">("resources");
+
+  // Dynamic Selected Subject and Event states (User can freely switch to ANY subject and ANY event)
+  const [curSubjectId, setCurSubjectId] = useState<string>(subjectId || "");
+  const [curEventId, setCurEventId] = useState<string>(
+    calendarEventId ? (calendarEventId.includes("_") ? calendarEventId.split("_")[0] : calendarEventId) : ""
+  );
+
+  const [subjectsList, setSubjectsList] = useState<SubjectOption[]>(allSubjects);
+  const [eventsList, setEventsList] = useState<EventOption[]>(allEvents);
 
   // Resources state
   const [resources, setResources] = useState<ResourceItem[]>([]);
@@ -111,13 +147,47 @@ export function ResourceManager({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Clean event ID
-  const cleanEventId = calendarEventId?.includes("_")
-    ? calendarEventId.split("_")[0]
-    : calendarEventId;
+  // Sync props on changes
+  useEffect(() => {
+    if (subjectId !== undefined) {
+      setCurSubjectId(subjectId || "");
+    }
+  }, [subjectId]);
 
-  // 1. Fetch initial data
-  const fetchData = async () => {
+  useEffect(() => {
+    if (calendarEventId) {
+      const clean = calendarEventId.includes("_") ? calendarEventId.split("_")[0] : calendarEventId;
+      setCurEventId(clean);
+    }
+  }, [calendarEventId]);
+
+  // Fetch subjects or events if not supplied by parent
+  useEffect(() => {
+    async function loadMeta() {
+      try {
+        if (subjectsList.length === 0) {
+          const res = await fetch("/api/subjects");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.subjects) setSubjectsList(data.subjects);
+          }
+        }
+        if (eventsList.length === 0) {
+          const res = await fetch("/api/calendar/events");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.events) setEventsList(data.events);
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load subjects/events metadata:", e);
+      }
+    }
+    loadMeta();
+  }, []);
+
+  // Fetch resources and notes for currently selected Subject & Event
+  const fetchData = async (eventId = curEventId, subId = curSubjectId) => {
     setLoading(true);
     try {
       // Fetch Drive status
@@ -129,8 +199,8 @@ export function ResourceManager({
 
       // Fetch resources
       const params = new URLSearchParams();
-      if (cleanEventId) params.set("calendarEventId", cleanEventId);
-      if (subjectId) params.set("subjectId", subjectId);
+      if (eventId) params.set("calendarEventId", eventId);
+      if (subId) params.set("subjectId", subId);
 
       const [resResponse, notesResponse] = await Promise.all([
         fetch(`/api/resources?${params.toString()}`),
@@ -153,8 +223,52 @@ export function ResourceManager({
   };
 
   useEffect(() => {
-    fetchData();
-  }, [cleanEventId, subjectId]);
+    fetchData(curEventId, curSubjectId);
+  }, [curEventId, curSubjectId]);
+
+  // Resolve currently active display titles
+  const activeSubject = subjectsList.find((s) => s.id === curSubjectId);
+  const activeSubjectName = activeSubject?.name || subjectName || "Chung";
+
+  const activeEvent = eventsList.find(
+    (e) => (e.id.includes("_") ? e.id.split("_")[0] : e.id) === curEventId
+  );
+  const activeSessionTitle = activeEvent?.title || (curEventId ? sessionTitle : "Tài nguyên chung");
+
+  // Filter events by selected subject if subject is selected
+  const availableEvents = curSubjectId
+    ? eventsList.filter((e) => e.subjectId === curSubjectId || e.subject?.id === curSubjectId)
+    : eventsList;
+
+  // Handle user switching Subject
+  const handleSelectSubject = (newSubId: string) => {
+    setCurSubjectId(newSubId);
+    if (onSubjectChange) onSubjectChange(newSubId);
+
+    // If current event does not belong to new subject, clear or switch event
+    if (newSubId && curEventId) {
+      const ev = eventsList.find((e) => (e.id.includes("_") ? e.id.split("_")[0] : e.id) === curEventId);
+      if (ev && ev.subjectId !== newSubId && ev.subject?.id !== newSubId) {
+        setCurEventId("");
+        if (onEventChange) onEventChange("");
+      }
+    }
+  };
+
+  // Handle user switching Event/Session
+  const handleSelectEvent = (newEventId: string) => {
+    setCurEventId(newEventId);
+    if (onEventChange) onEventChange(newEventId);
+
+    if (newEventId) {
+      const ev = eventsList.find((e) => (e.id.includes("_") ? e.id.split("_")[0] : e.id) === newEventId);
+      const evSubId = ev?.subjectId || ev?.subject?.id;
+      if (evSubId && evSubId !== curSubjectId) {
+        setCurSubjectId(evSubId);
+        if (onSubjectChange) onSubjectChange(evSubId);
+      }
+    }
+  };
 
   // Connect Google Drive
   const handleConnectDrive = async () => {
@@ -204,8 +318,8 @@ export function ResourceManager({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           text: aiLinkText.trim(),
-          currentCalendarEventId: cleanEventId,
-          currentSubjectId: subjectId,
+          currentCalendarEventId: curEventId || null,
+          currentSubjectId: curSubjectId || null,
           autoSave: true,
         }),
       });
@@ -220,7 +334,7 @@ export function ResourceManager({
         type: "success",
       });
       setAiLinkText("");
-      fetchData();
+      fetchData(curEventId, curSubjectId);
       if (onRefreshCalendar) onRefreshCalendar();
     } catch (err: any) {
       setAiMessage({
@@ -233,13 +347,16 @@ export function ResourceManager({
   };
 
   // Upload file to Google Drive
-  const handleFileUpload = async (files: FileList | null, duplicateAction: "check" | "use_existing" | "upload_anyway" = "check", specificFile?: File) => {
+  const handleFileUpload = async (
+    files: FileList | null,
+    duplicateAction: "check" | "use_existing" | "upload_anyway" = "check",
+    specificFile?: File
+  ) => {
     if (!files && !specificFile) return;
 
     const fileList = specificFile ? [specificFile] : Array.from(files || []);
     if (fileList.length === 0) return;
 
-    // Check Drive connection
     if (!driveStatus.connected) {
       setShowDriveConnectModal(true);
       return;
@@ -255,10 +372,10 @@ export function ResourceManager({
       try {
         const formData = new FormData();
         formData.append("file", file);
-        if (cleanEventId) formData.append("calendarEventId", cleanEventId);
-        if (subjectId) formData.append("subjectId", subjectId);
-        formData.append("subjectName", subjectName);
-        formData.append("sessionTitle", sessionTitle);
+        if (curEventId) formData.append("calendarEventId", curEventId);
+        if (curSubjectId) formData.append("subjectId", curSubjectId);
+        formData.append("subjectName", activeSubjectName);
+        formData.append("sessionTitle", activeSessionTitle);
         formData.append("duplicateAction", duplicateAction);
 
         const res = await fetch("/api/drive/upload", {
@@ -295,7 +412,7 @@ export function ResourceManager({
 
     setUploadProgress(null);
     setUploading(false);
-    fetchData();
+    fetchData(curEventId, curSubjectId);
     if (onRefreshCalendar) onRefreshCalendar();
   };
 
@@ -323,8 +440,8 @@ export function ResourceManager({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: newNoteText.trim(),
-          calendarEventId: cleanEventId,
-          subjectId,
+          calendarEventId: curEventId || null,
+          subjectId: curSubjectId || null,
         }),
       });
       if (res.ok) {
@@ -369,7 +486,7 @@ export function ResourceManager({
     }
   };
 
-  // Helper for resource icon
+  // Helpers
   const getResourceIcon = (subType?: string | null, type?: string) => {
     switch (subType) {
       case "ZOOM":
@@ -419,22 +536,84 @@ export function ResourceManager({
 
   return (
     <div className="flex flex-col space-y-4 text-[#192e22] dark:text-[#f0f7f2]">
-      {/* Header Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-[#dbe7dd] dark:border-[#263d2e] gap-2">
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-sm sm:text-base text-[#192e22] dark:text-[#f0f7f2]">
-              {sessionTitle}
-            </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#a3bda9] font-medium">
-              {subjectName}
-            </span>
+      {/* 1. Dynamic Subject & Schedule Switcher Bar */}
+      <div className="p-3 sm:p-3.5 rounded-2xl bg-[#f0f6f2] dark:bg-[#15251b] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#2d6a4f] dark:text-[#74c69d] flex items-center space-x-1.5">
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Chọn Môn học & Buổi học để quản lý</span>
+          </span>
+          <span className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+            Tự do chuyển đổi mọi môn & lịch
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {/* Subject Dropdown Selector */}
+          <div>
+            <label className="block text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+              Môn học:
+            </label>
+            <select
+              value={curSubjectId}
+              onChange={(e) => handleSelectSubject(e.target.value)}
+              className="w-full h-9 rounded-xl border border-[#b7d8c3] dark:border-[#263d2e] bg-white dark:bg-[#1a2e21] px-2.5 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+            >
+              <option value="">-- Tất cả các môn học --</option>
+              {subjectsList.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} {s.code ? `(${s.code})` : ""}
+                </option>
+              ))}
+            </select>
           </div>
-          {timeFormatted && (
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5 font-mono">
-              {timeFormatted}
+
+          {/* Schedule/Session Dropdown Selector */}
+          <div>
+            <label className="block text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+              Lịch học / Buổi học:
+            </label>
+            <select
+              value={curEventId}
+              onChange={(e) => handleSelectEvent(e.target.value)}
+              className="w-full h-9 rounded-xl border border-[#b7d8c3] dark:border-[#263d2e] bg-white dark:bg-[#1a2e21] px-2.5 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+            >
+              <option value="">-- Tài nguyên chung (Toàn môn) --</option>
+              {availableEvents.map((ev) => {
+                const sTime = formatVN(new Date(ev.startTime), "HH:mm");
+                const eTime = formatVN(new Date(ev.endTime), "HH:mm");
+                const dKey = formatVN(new Date(ev.startTime), "dd/MM");
+                const cleanId = ev.id.includes("_") ? ev.id.split("_")[0] : ev.id;
+                return (
+                  <option key={ev.id} value={cleanId}>
+                    {ev.title} ({dKey} • {sTime}-{eTime})
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Target Context Display & Google Drive Status Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-[#dbe7dd] dark:border-[#263d2e] gap-2">
+        <div className="flex items-center space-x-2">
+          <div className="p-2 rounded-xl bg-[#d8ebe0] dark:bg-[#1d3d28] text-[#1b4332] dark:text-[#74c69d]">
+            <FolderOpen className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                {activeSessionTitle}
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#a3bda9] font-medium">
+                {activeSubjectName}
+              </span>
+            </div>
+            <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+              Thư mục Google Drive: <code>Study Manager/{activeSubjectName}/{activeSessionTitle}</code>
             </p>
-          )}
+          </div>
         </div>
 
         {/* Google Drive Status Bar */}
@@ -568,7 +747,7 @@ export function ResourceManager({
                 <span>📁 Tải tài liệu lên Google Drive</span>
               </label>
               <span className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
-                Tự động lưu: Study Manager/{subjectName}/{sessionTitle}
+                Tự động lưu: Study Manager/{activeSubjectName}/{activeSessionTitle}
               </span>
             </div>
 
@@ -633,7 +812,7 @@ export function ResourceManager({
               <div className="py-6 text-center text-xs text-[#8ba393]">Đang tải tài liệu...</div>
             ) : resources.length === 0 ? (
               <div className="py-8 text-center rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e] bg-[#f9faf9] dark:bg-[#142318] text-xs text-[#8ba393]">
-                Chưa có tài liệu hoặc link cho buổi học này.
+                Chưa có tài liệu hoặc link cho mục này.
                 <div className="mt-2">
                   <Button
                     size="sm"
@@ -885,7 +1064,7 @@ export function ResourceManager({
                 Website cần quyền để làm gì?
               </p>
               <ul className="list-disc list-inside space-y-1 pl-1">
-                <li>Tạo thư mục cấu trúc: <code>Study Manager/{subjectName}/{sessionTitle}</code></li>
+                <li>Tạo thư mục cấu trúc: <code>Study Manager/{activeSubjectName}/{activeSessionTitle}</code></li>
                 <li>Tải tài liệu PDF, ảnh học tập trực tiếp vào Drive của bạn</li>
                 <li>Tạo link xem nhanh cho bạn (không public tài liệu nếu chưa bật Auto-share)</li>
                 <li>Phạm vi (Scope): <code>drive.file</code> - chỉ quản lý file do website tạo ra, KHÔNG đọc các file khác của bạn</li>
