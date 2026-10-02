@@ -102,10 +102,10 @@
 - [x] **Tác vụ 18: Data Export & Backup** (Phần 37)
   - [x] Xuất dữ liệu cá nhân ra JSON, CSV (Lịch học, phiên học, ghi chú)
 
-- [ ] **Tác vụ 19: Responsive Mobile UI, Polish & Security** (Phần 38, 39, 41, 42, 43, 44)
-  - [ ] Tối ưu hiển thị di động, bottom navigation, drawer
-  - [ ] Giao diện Notion-inspired màu pastel green, empty states, skeletons
-  - [ ] Bảo mật server-side validation, chống IDOR, kiểm soát quyền truy cập tài liệu
+- [x] **Tác vụ 19: Responsive Mobile UI, Polish & Security** (Phần 38, 39, 41, 42, 43, 44)
+  - [x] Tối ưu hiển thị di động, bottom navigation, drawer
+  - [x] Giao diện Notion-inspired màu pastel green, empty states, skeletons
+  - [x] Bảo mật server-side validation, chống IDOR, kiểm soát quyền truy cập tài liệu
 
 - [ ] **Tác vụ 20: Kiểm thử toàn diện & Build Production** (Phần 48, 49, 50, 54, 55)
   - [ ] Chạy kiểm tra TypeScript strict (`tsc --noEmit`)
