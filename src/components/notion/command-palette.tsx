@@ -75,6 +75,16 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       },
     },
     {
+      id: "flashcards",
+      title: "Flashcards & Spaced Repetition (Anki SM-2)",
+      category: "Điều hướng",
+      icon: Brain,
+      run: () => {
+        router.push("/flashcards");
+        onClose();
+      },
+    },
+    {
       id: "subjects",
       title: "Quản lý môn học (Subjects)",
       category: "Điều hướng",
