@@ -146,11 +146,11 @@ async function runLuyenTuTests() {
     const shopItems = await prisma.shopItem.findMany();
     assert(shopItems.length >= 2, "Shop: Shop items exist in database for purchasing");
 
-    const proItem = shopItems.find((i) => i.itemType === "PRO_PASS");
-    assert(Boolean(proItem), "Shop: PRO_PASS item exists");
-    assert((proItem?.priceCoins || 0) > 0, "Shop: PRO_PASS has positive coin price");
+    const proItem = shopItems.find((i) => i.type === "PRO_UNLOCK");
+    assert(Boolean(proItem), "Shop: PRO_UNLOCK item exists");
+    assert((proItem?.costCoins || 0) > 0, "Shop: PRO_UNLOCK has positive coin price");
 
-    const freezeItem = shopItems.find((i) => i.itemType === "STREAK_FREEZE");
+    const freezeItem = shopItems.find((i) => i.type === "STREAK_FREEZE");
     assert(Boolean(freezeItem), "Shop: STREAK_FREEZE item exists");
 
     console.log(`\n======================================================`);
