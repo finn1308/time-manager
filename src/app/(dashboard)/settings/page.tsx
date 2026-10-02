@@ -905,6 +905,174 @@ export default function SettingsPage() {
           </Card>
         </div>
       )}
+
+      {/* TAB 4: SAO LƯU & XUẤT DỮ LIỆU (DATA & BACKUP) */}
+      {activeTab === "BACKUP" && (
+        <div className="space-y-6">
+          {restoreMessage && (
+            <div
+              className={`p-4 rounded-2xl text-xs flex items-center space-x-2.5 font-medium transition-all ${
+                restoreMessage.type === "success"
+                  ? "bg-[#d8ebe0] text-[#1b4332] border border-[#b7d8c3]"
+                  : "bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300"
+              }`}
+            >
+              {restoreMessage.type === "success" ? (
+                <CheckCircle2 className="w-4 h-4 text-[#2d6a4f] shrink-0" />
+              ) : (
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              )}
+              <span>{restoreMessage.text}</span>
+            </div>
+          )}
+
+          {/* Full JSON Export Card */}
+          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] shadow-2xs">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+                <Database className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+                <span>Sao lưu toàn bộ dữ liệu (Full JSON Backup)</span>
+              </CardTitle>
+              <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+                Tải về toàn bộ Môn học, Mục tiêu, Nhiệm vụ, Lịch học, Phiên học, Ghi chú và Thói quen thành một tệp JSON duy nhất.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 p-6 pt-0">
+              <div className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                    Bản sao lưu chuẩn ChronoMind (.json)
+                  </p>
+                  <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                    Phù hợp để lưu trữ ngoại tuyến, chuyển đổi máy tính hoặc khôi phục khi cần.
+                  </p>
+                </div>
+
+                <a href="/api/export?format=json" download>
+                  <Button className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 shadow-2xs shrink-0 cursor-pointer">
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Tải bản sao lưu JSON</span>
+                  </Button>
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* CSV Export Card */}
+          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] shadow-2xs">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Xuất dữ liệu bảng tính (Excel / Google Sheets CSV)</span>
+              </CardTitle>
+              <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+                Xuất từng phần dữ liệu độc lập sang định dạng CSV để phân tích dữ liệu bằng Excel hoặc Google Sheets.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Events CSV */}
+                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Lịch học (Calendar)</p>
+                    <p className="text-[10px] text-[#73927d]">Tiêu đề, Bắt đầu, Kết thúc, Môn</p>
+                  </div>
+                  <a href="/api/export?format=csv&entity=events" download>
+                    <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
+                      <Download className="w-3 h-3" />
+                      <span>CSV</span>
+                    </Button>
+                  </a>
+                </div>
+
+                {/* Sessions CSV */}
+                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Phiên học (Sessions)</p>
+                    <p className="text-[10px] text-[#73927d]">Môn, Thời lượng, Điểm năng suất</p>
+                  </div>
+                  <a href="/api/export?format=csv&entity=sessions" download>
+                    <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
+                      <Download className="w-3 h-3" />
+                      <span>CSV</span>
+                    </Button>
+                  </a>
+                </div>
+
+                {/* Tasks CSV */}
+                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Nhiệm vụ (Tasks)</p>
+                    <p className="text-[10px] text-[#73927d]">Trạng thái, Ưu tiên, Hạn chót</p>
+                  </div>
+                  <a href="/api/export?format=csv&entity=tasks" download>
+                    <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
+                      <Download className="w-3 h-3" />
+                      <span>CSV</span>
+                    </Button>
+                  </a>
+                </div>
+
+                {/* Notes CSV */}
+                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Ghi chú (Notes)</p>
+                    <p className="text-[10px] text-[#73927d]">Tiêu đề, Môn học, Ngày tạo</p>
+                  </div>
+                  <a href="/api/export?format=csv&entity=notes" download>
+                    <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
+                      <Download className="w-3 h-3" />
+                      <span>CSV</span>
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Restore / Import Card */}
+          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] shadow-2xs">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+                <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span>Khôi phục dữ liệu từ bản sao lưu JSON</span>
+              </CardTitle>
+              <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+                Tải lên tệp sao lưu `.json` đã xuất trước đó để khôi phục lại các môn học, nhiệm vụ, lịch và thói quen.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 p-6 pt-0">
+              <div className="p-6 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border-2 border-dashed border-[#dbe7dd] dark:border-[#263d2e] text-center space-y-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] flex items-center justify-center mx-auto">
+                  <Upload className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    Chọn file sao lưu ChronoMind (.json)
+                  </p>
+                  <p className="text-[11px] text-[#73927d] mt-0.5">
+                    Hệ thống sẽ tự động ghép nối và nhập dữ liệu vào tài khoản của bạn.
+                  </p>
+                </div>
+
+                <div className="flex justify-center pt-1">
+                  <label className="inline-flex items-center space-x-2 px-4 py-2 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold cursor-pointer transition-colors shadow-2xs">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{restoring ? "Đang khôi phục..." : "Chọn file và Khôi phục ngay"}</span>
+                    <input
+                      type="file"
+                      accept=".json,application/json"
+                      disabled={restoring}
+                      onChange={handleRestoreFile}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
