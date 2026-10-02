@@ -198,6 +198,14 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                       </button>
 
                       <button
+                        onClick={() => setSelectedResourceSubject(sub)}
+                        title="Tài liệu & Link môn học"
+                        className="p-2 rounded-full hover:bg-[#d8ebe0] text-[#73927d] hover:text-[#1b4332] transition-colors cursor-pointer"
+                      >
+                        <FolderOpen className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
                         onClick={() => {
                           setEditingSubject(sub);
                           setIsSubjectModalOpen(true);
@@ -243,6 +251,31 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
           editingSubject={editingSubject}
           usedColors={subjects.map(s => s.color)}
         />
+      )}
+
+      {selectedResourceSubject && (
+        <Dialog open={!!selectedResourceSubject} onOpenChange={(open) => !open && setSelectedResourceSubject(null)}>
+          <DialogContent onClose={() => setSelectedResourceSubject(null)} className="max-w-xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
+                <FolderOpen className="w-5 h-5 text-[#2d6a4f]" />
+                <span>Tài liệu & Link môn học: {selectedResourceSubject.name}</span>
+              </DialogTitle>
+              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                Tự động tổ chức trong Google Drive: Study Manager / {selectedResourceSubject.name} / Chung
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="py-3">
+              <ResourceManager
+                subjectId={selectedResourceSubject.id}
+                subjectName={selectedResourceSubject.name}
+                sessionTitle="Chung"
+                onClose={() => setSelectedResourceSubject(null)}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
