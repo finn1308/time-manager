@@ -6,6 +6,7 @@ import { MonthView } from "@/components/calendar/month-view";
 import { DayView } from "@/components/calendar/day-view";
 import { AgendaView } from "@/components/calendar/agenda-view";
 import { WhatIfSimulatorModal } from "@/components/calendar/what-if-simulator-modal";
+import { RescheduleRecoveryModal } from "@/components/calendar/reschedule-recovery-modal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,10 +49,8 @@ export default function CalendarPage() {
   // What-If Simulator State (Section 35)
   const [isWhatIfOpen, setIsWhatIfOpen] = useState(false);
 
-  // Smart Reschedule State (Section 16)
+  // Smart Reschedule & Recovery Modal (Section 16)
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
-  const [rescheduleData, setRescheduleData] = useState<any | null>(null);
-  const [isLoadingReschedule, setIsLoadingReschedule] = useState(false);
 
   const loadData = async () => {
     try {
@@ -129,45 +128,8 @@ export default function CalendarPage() {
     }
   };
 
-  const handleTriggerReschedule = async () => {
+  const handleTriggerReschedule = () => {
     setIsRescheduleOpen(true);
-    setIsLoadingReschedule(true);
-    try {
-      const res = await fetch("/api/ai/reschedule", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ durationMinutes: 90 }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Lỗi tìm lịch bù");
-      setRescheduleData(data);
-    } catch (err: any) {
-      alert(err.message || "Lỗi tìm lịch bù");
-    } finally {
-      setIsLoadingReschedule(false);
-    }
-  };
-
-  const handleApplyRescheduleSlot = async (slot: any) => {
-    try {
-      const res = await fetch("/api/calendar/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: rescheduleData?.missedTitle || "Buổi học bù",
-          startTime: slot.startTime,
-          endTime: slot.endTime,
-          type: "STUDY",
-        }),
-      });
-
-      if (!res.ok) throw new Error("Không thể thêm lịch bù");
-      setIsRescheduleOpen(false);
-      setRescheduleData(null);
-      await loadData();
-    } catch (err: any) {
-      alert(err.message || "Lỗi thêm lịch");
-    }
   };
 
   return (
@@ -404,76 +366,12 @@ export default function CalendarPage() {
         </Dialog>
       )}
 
-      {/* Smart Reschedule Modal (Section 16) */}
-      {isRescheduleOpen && (
-        <Dialog open={isRescheduleOpen} onOpenChange={(open) => !open && setIsRescheduleOpen(false)}>
-          <DialogContent onClose={() => setIsRescheduleOpen(false)} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
-            <DialogHeader>
-              <div className="flex items-center space-x-2 text-xs font-semibold text-[#2d6a4f] dark:text-[#52b788] mb-1">
-                <RefreshCw className="w-4 h-4" />
-                <span>AI Smart Reschedule</span>
-              </div>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
-                Tìm thời gian học bù trống trong tuần
-              </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
-                Tự động quét các khung giờ rảnh và đề xuất buổi học thay thế không lo xung đột.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-3 py-3 text-xs">
-              {isLoadingReschedule ? (
-                <div className="py-8 text-center text-xs text-[#526b5c] animate-pulse">
-                  Đang tìm kiếm các slot thời gian trống phù hợp...
-                </div>
-              ) : rescheduleData?.proposedSlots?.length > 0 ? (
-                <div className="space-y-2">
-                  <p className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
-                    Đề xuất cho: <strong>{rescheduleData.missedTitle}</strong> ({rescheduleData.durationMinutes} phút)
-                  </p>
-                  {rescheduleData.proposedSlots.map((slot: any, idx: number) => (
-                    <div
-                      key={idx}
-                      className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] flex items-center justify-between"
-                    >
-                      <div>
-                        <div className="font-bold text-[#2d6a4f] dark:text-[#52b788]">
-                          {slot.formattedTime}
-                        </div>
-                        <div className="text-[11px] text-[#73927d] dark:text-[#8ba393] mt-0.5">
-                          {slot.reason}
-                        </div>
-                      </div>
-                      <Button
-                        size="sm"
-                        onClick={() => handleApplyRescheduleSlot(slot)}
-                        className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold h-8"
-                      >
-                        Chọn slot này
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-6 text-center text-xs text-[#526b5c]">
-                  Không tìm thấy khoảng trống phù hợp trong 5 ngày tới.
-                </div>
-              )}
-            </div>
-
-            <DialogFooter className="pt-2">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setIsRescheduleOpen(false)}
-                className="rounded-2xl text-[#526b5c] text-xs"
-              >
-                Đóng
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Smart Reschedule & Recovery Modal (Section 16) */}
+      <RescheduleRecoveryModal
+        open={isRescheduleOpen}
+        onClose={() => setIsRescheduleOpen(false)}
+        onSuccess={loadData}
+      />
 
       {/* What-If Simulator Modal (Section 35) */}
       <WhatIfSimulatorModal

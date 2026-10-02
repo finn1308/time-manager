@@ -137,10 +137,14 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                             {sub.description}
                           </p>
                         )}
-                        {sub.deadline && (
+                        {sub.deadline ? (
                           <div className="flex items-center space-x-1 text-[10px] text-amber-700 dark:text-amber-400 mt-1 font-semibold">
                             <Calendar className="w-3 h-3" />
-                            <span>Hạn: {formatVN(new Date(sub.deadline), "dd/MM/yyyy")}</span>
+                            <span>Thi: {formatVN(new Date(sub.deadline), "dd/MM/yyyy")}</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-1 text-[10px] text-[#2d6a4f] dark:text-[#7fc498] mt-1 font-medium">
+                            <span>🌱 Tự học (Không thi)</span>
                           </div>
                         )}
                       </div>

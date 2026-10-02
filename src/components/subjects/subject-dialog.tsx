@@ -57,6 +57,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
   const [color, setColor] = useState(editingSubject ? editingSubject.color : getUnusedColor());
   const [targetHours, setTargetHours] = useState(editingSubject?.targetHours ? String(editingSubject.targetHours) : "");
   const [priority, setPriority] = useState(editingSubject?.priority ? String(editingSubject.priority) : "3");
+  const [hasExam, setHasExam] = useState<boolean>(Boolean(editingSubject?.deadline));
   const [targetScore, setTargetScore] = useState(editingSubject?.targetScore || "");
   const [deadline, setDeadline] = useState(
     editingSubject?.deadline ? new Date(editingSubject.deadline).toISOString().split("T")[0] : ""
@@ -68,6 +69,29 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
   const [description, setDescription] = useState(editingSubject ? editingSubject.description || "" : "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Sync state when editingSubject or open dialog changes
+  React.useEffect(() => {
+    if (open) {
+      setName(editingSubject ? editingSubject.name : "");
+      setCode(editingSubject ? editingSubject.code || "" : "");
+      setColor(editingSubject ? editingSubject.color : getUnusedColor());
+      setTargetHours(editingSubject?.targetHours ? String(editingSubject.targetHours) : "");
+      setPriority(editingSubject?.priority ? String(editingSubject.priority) : "3");
+      setTargetScore(editingSubject?.targetScore || "");
+      const dl = editingSubject?.deadline
+        ? new Date(editingSubject.deadline).toISOString().split("T")[0]
+        : "";
+      setDeadline(dl);
+      setHasExam(Boolean(dl));
+      setDifficulty(editingSubject?.difficulty || "MEDIUM");
+      setEstimatedWorkload(
+        editingSubject?.estimatedWorkload ? String(editingSubject.estimatedWorkload) : ""
+      );
+      setDescription(editingSubject ? editingSubject.description || "" : "");
+      setErrorMsg(null);
+    }
+  }, [open, editingSubject]);
 
   const handleColorSelect = (c: string) => {
     if (usedColors.includes(c) && (!editingSubject || editingSubject.color !== c)) {
@@ -95,7 +119,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
           targetHours: parseFloat(targetHours) || null,
           priority: parseInt(priority, 10) || 3,
           targetScore: targetScore.trim() || null,
-          deadline: deadline || null,
+          deadline: hasExam && deadline ? deadline : null,
           difficulty,
           estimatedWorkload: parseFloat(estimatedWorkload) || null,
           description: description.trim() || null,
@@ -120,7 +144,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
         <DialogHeader>
           <DialogTitle>{editingSubject ? "Chỉnh sửa môn học" : "Thêm môn học mới"}</DialogTitle>
           <DialogDescription>
-            Thiết lập tên môn, mục tiêu điểm số, chỉ tiêu số giờ, độ khó và hạn chót.
+            Thiết lập tên môn, hình thức học, chỉ tiêu số giờ và lịch thi (nếu có).
           </DialogDescription>
         </DialogHeader>
 
@@ -138,7 +162,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="VD: IELTS Academic, Giải tích 1..."
+              placeholder="VD: IELTS Academic, Giải tích 1, Lập trình Python..."
               required
               className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
             />
@@ -188,19 +212,8 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
             </div>
           </div>
 
-          {/* Target Score & Difficulty & Workload (Phần 6) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
-                Mục tiêu điểm số
-              </label>
-              <Input
-                value={targetScore}
-                onChange={(e) => setTargetScore(e.target.value)}
-                placeholder="VD: 6.5, A+, 9.0"
-                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
-              />
-            </div>
+          {/* Difficulty & Workload */}
+          <div className="grid grid-cols-2 gap-2.5">
             <div>
               <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
                 Độ khó (Difficulty)
@@ -231,17 +244,95 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
-              Thời hạn / Ngày thi môn học (Deadline)
+          {/* LỰA CHỌN KẾ HOẠCH THI CỬ vs CHỈ THÍCH HỌC */}
+          <div className="space-y-2 pt-1 pb-1">
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0]">
+              Kế hoạch thi cử (Tùy chọn)
             </label>
-            <Input
-              type="date"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
-            />
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setHasExam(false);
+                  setDeadline("");
+                }}
+                className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                  !hasExam
+                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882]"
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <span className="text-base">🌱</span>
+                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    Chỉ thích học
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 line-clamp-2">
+                  Học vì đam mê & sở thích, không có kỳ thi hay hạn nộp
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setHasExam(true)}
+                className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                  hasExam
+                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882]"
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <span className="text-base">🎯</span>
+                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    Có kỳ thi / Deadline
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 line-clamp-2">
+                  Có ngày thi chứng chỉ, kiểm tra hoặc hạn chót hoàn thành
+                </p>
+              </button>
+            </div>
           </div>
+
+          {/* Giao diện tương ứng với lựa chọn */}
+          {!hasExam ? (
+            <div className="p-3 rounded-2xl bg-[#f4f9f5] dark:bg-[#15271b] border border-[#dbe7dd] dark:border-[#203a27] text-xs text-[#2d6a4f] dark:text-[#7fc498] flex items-center space-x-2.5">
+              <span className="text-base shrink-0">✨</span>
+              <span className="leading-relaxed">
+                <strong>Chế độ tự học không áp lực:</strong> Bạn không cần thi môn này. AI sẽ tự động phân bổ lịch học đều đặn mỗi tuần theo chỉ tiêu của bạn mà không đếm ngược hay dồn ép kỳ thi.
+              </span>
+            </div>
+          ) : (
+            <div className="space-y-3 p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#15241a] border border-[#dbe7dd] dark:border-[#263d2e] transition-all">
+              <div>
+                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                  📅 Thời gian thi / Ngày thi môn học (Exam Date / Deadline) *
+                </label>
+                <Input
+                  type="date"
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
+                  className="rounded-2xl border-[#dbe7dd] h-10 text-xs bg-white dark:bg-[#17261c]"
+                />
+                <p className="text-[10px] text-[#526b5c] dark:text-[#8aa693] mt-1">
+                  AI sẽ ưu tiên tăng tốc độ ôn luyện và gửi cảnh báo chuẩn bị trước ngày thi.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                  Mục tiêu điểm số (Target Score - Tùy chọn)
+                </label>
+                <Input
+                  value={targetScore}
+                  onChange={(e) => setTargetScore(e.target.value)}
+                  placeholder="VD: 7.5 IELTS, A+, 9.0, Pass..."
+                  className="rounded-2xl border-[#dbe7dd] h-10 text-xs bg-white dark:bg-[#17261c]"
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
