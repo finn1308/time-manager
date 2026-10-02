@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         code: code?.trim() || null,
         color: color || "#2d6a4f",
         description: description?.trim() || null,
-        targetHours: targetHours ? parseFloat(targetHours) : 10.0,
+        targetHours: targetHours ? parseFloat(targetHours) : null,
         priority: priority ? parseInt(priority, 10) : 3,
       },
     });
@@ -66,8 +66,8 @@ export async function PUT(req: Request) {
         name: name?.trim(),
         code: code?.trim() || null,
         color: color || undefined,
-        description: description?.trim() || null,
-        targetHours: targetHours !== undefined ? parseFloat(targetHours) : undefined,
+        description: description !== undefined ? (description?.trim() || null) : undefined,
+        targetHours: targetHours !== undefined ? (targetHours ? parseFloat(targetHours) : null) : undefined,
         priority: priority !== undefined ? parseInt(priority, 10) : undefined,
       },
     });
