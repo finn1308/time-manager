@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { formatVN, VIETNAM_TIMEZONE } from "@/lib/date-utils";
+import { formatVN, getDateKeyVN, VIETNAM_TIMEZONE } from "@/lib/date-utils";
 import {
   startOfMonth,
   endOfMonth,
@@ -11,9 +11,7 @@ import {
   addMonths,
   subMonths,
   isSameMonth,
-  isSameDay,
 } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight, Plus, Calendar } from "lucide-react";
 import { EventModal } from "./event-modal";
@@ -40,9 +38,10 @@ interface MonthViewProps {
     code: string | null;
     color: string;
   }>;
+  onEventsChange?: () => void;
 }
 
-export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps) {
+export function MonthView({ initialEvents = [], subjects = [], onEventsChange }: MonthViewProps) {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -59,11 +58,12 @@ export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps)
     day = addDays(day, 1);
   }
 
-  const todayVN = toZonedTime(new Date(), VIETNAM_TIMEZONE);
+  const todayKeyVN = getDateKeyVN(new Date());
+  const selectedDayKey = getDateKeyVN(selectedDay);
   const dayNamesVN = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
-  const selectedDayEvents = initialEvents.filter((ev) =>
-    isSameDay(toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE), selectedDay)
+  const selectedDayEvents = initialEvents.filter(
+    (ev) => getDateKeyVN(ev.startTime) === selectedDayKey
   );
 
   return (
@@ -74,7 +74,11 @@ export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps)
           <Button
             variant="pill"
             size="sm"
-            onClick={() => setCurrentMonth(new Date())}
+            onClick={() => {
+              const now = new Date();
+              setCurrentMonth(now);
+              setSelectedDay(now);
+            }}
             className="text-xs font-bold"
           >
             Tháng này
@@ -94,7 +98,7 @@ export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps)
             </button>
           </div>
           <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] px-2">
-            {formatVN(currentMonth, "MMMM yyyy")}
+            Tháng {formatVN(currentMonth, "MM/yyyy")}
           </span>
         </div>
 
@@ -124,12 +128,13 @@ export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps)
           {/* Days Grid */}
           <div className="grid grid-cols-7 gap-1.5">
             {days.map((d, index) => {
+              const dKey = getDateKeyVN(d);
               const isCurrentMonth = isSameMonth(d, monthStart);
-              const isToday = isSameDay(d, todayVN);
-              const isSelected = isSameDay(d, selectedDay);
+              const isToday = dKey === todayKeyVN;
+              const isSelected = dKey === selectedDayKey;
 
-              const eventsOnDay = initialEvents.filter((ev) =>
-                isSameDay(toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE), d)
+              const eventsOnDay = initialEvents.filter(
+                (ev) => getDateKeyVN(ev.startTime) === dKey
               );
 
               return (
@@ -191,7 +196,7 @@ export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps)
           <div>
             <h3 className="font-bold text-xs uppercase tracking-wider text-[#192e22] dark:text-[#f0f7f2] pb-3 border-b border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center space-x-2">
               <Calendar className="w-3.5 h-3.5 text-[#2d6a4f]" />
-              <span>Ngày: {formatVN(selectedDay, "dd/MM/yyyy")}</span>
+              <span>Ngày: {formatVN(selectedDay, "EEEE, dd/MM/yyyy")}</span>
             </h3>
 
             <div className="py-3 overflow-y-auto space-y-2 max-h-96">
@@ -232,7 +237,8 @@ export function MonthView({ initialEvents = [], subjects = [] }: MonthViewProps)
           open={isEventModalOpen}
           onClose={() => setIsEventModalOpen(false)}
           subjects={subjects}
-          defaultDate={selectedDay.toISOString().split("T")[0]}
+          defaultDate={selectedDayKey}
+          onSuccess={onEventsChange}
         />
       )}
     </div>
