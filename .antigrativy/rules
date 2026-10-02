@@ -1,0 +1,8 @@
+# Execution Rules for Multi-task Requests
+
+1. Khi người dùng đưa ra nhiều yêu cầu/tính năng cùng lúc:
+   - KHÔNG ĐƯỢC làm dồn dập tất cả trong một lần sinh code.
+   - BẮT BUỘC phải liệt kê lại danh sách các tác vụ dưới dạng số thứ tự (1, 2, 3...) trước khi bắt đầu.
+   - Chỉ thực hiện lần lượt từng tác vụ một.
+   - Sau khi hoàn thành một tác vụ, phải thông báo: "Đã hoàn thành mục X, đang tiếp tục mục Y..." hoặc chờ người dùng xác nhận.
+2. Tuyệt đối không được bỏ qua bất kỳ yêu cầu nào trong danh sách người dùng đã gửi.
