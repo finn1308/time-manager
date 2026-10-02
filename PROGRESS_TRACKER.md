@@ -43,10 +43,10 @@
   - [x] Quản lý bài tập, deadline thi cử với estimated time, priority
   - [x] Thuật toán phân bổ tự động chia nhỏ deadline thành các study session cách đều trước ngày hạn
 
-- [ ] **Tác vụ 6: Nâng cấp Calendar đa chế độ & Phân loại sự kiện** (Phần 9)
-  - [ ] Bổ sung chế độ xem Agenda view (bên cạnh Day, Week, Month)
-  - [ ] Phân biệt màu sắc & icon: Study, Personal, Exam, Deadline, Meeting, Blocked, Other
-  - [ ] Drag & Drop, resize, tạo/sửa/xóa sự kiện, bảo toàn lịch cũ khi AI generate
+- [x] **Tác vụ 6: Nâng cấp Calendar đa chế độ & Phân loại sự kiện** (Phần 9)
+  - [x] Bổ sung chế độ xem Agenda view (bên cạnh Day, Week, Month)
+  - [x] Phân biệt màu sắc & icon: Study, Personal, Exam, Deadline, Meeting, Blocked, Other
+  - [x] Drag & Drop, resize, tạo/sửa/xóa sự kiện, bảo toàn lịch cũ khi AI generate
 
 - [ ] **Tác vụ 7: Nâng cấp AI Context Engine & Auto Scheduler** (Phần 10, 45, 46, 47)
   - [ ] Context Builder tích hợp toàn diện: User + Settings + Availability + Calendar + Subjects + Goals + Milestones + Tasks + Deadlines + Exams + History + Planned vs Actual + Missed sessions
