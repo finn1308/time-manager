@@ -1,6 +1,7 @@
 import { prisma } from "../prisma";
 import { executeAIScheduling, ProposedEvent, AISchedulerResponse } from "./client-factory";
 import { validateProposedSchedule, TimeSlot, AvailabilityRuleItem } from "../scheduling/conflict-detector";
+import { makeVNDate } from "../date-utils";
 
 export async function generateAutoSchedule(params: {
   userId: string;
@@ -47,9 +48,9 @@ export async function generateAutoSchedule(params: {
     where: { userId },
   });
 
-  // 3. Fetch existing Calendar Events in the target window
-  const startWindow = new Date(`${startDate}T00:00:00Z`);
-  const endWindow = new Date(`${endDate}T23:59:59Z`);
+  // 3. Fetch existing Calendar Events in the target window (strictly Asia/Ho_Chi_Minh)
+  const startWindow = makeVNDate(startDate, "00:00");
+  const endWindow = makeVNDate(endDate, "23:59");
 
   const existingCalendarEvents = await prisma.calendarEvent.findMany({
     where: {

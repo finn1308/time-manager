@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { addDays, setHours, setMinutes, startOfDay, endOfDay, format } from "date-fns";
+import { addDays, parseISO } from "date-fns";
 import { detectSlotConflict } from "@/lib/scheduling/conflict-detector";
+import {
+  getDateKeyVN,
+  makeVNDate,
+  formatVN,
+  getDayNameVN,
+  DAY_PERIODS,
+} from "@/lib/date-utils";
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -33,10 +40,12 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Fetch existing calendar events for the next 7 days
-    const now = new Date();
-    const rangeStart = now;
-    const rangeEnd = addDays(now, 7);
+    // 2. Fetch existing calendar events for the next 7 days in Vietnam timezone
+    const todayKey = getDateKeyVN(new Date());
+    const todayBase = parseISO(todayKey);
+    const rangeStart = makeVNDate(todayKey, "00:00");
+    const endKey = getDateKeyVN(addDays(todayBase, 7));
+    const rangeEnd = makeVNDate(endKey, "23:59");
 
     const existingEvents = await prisma.calendarEvent.findMany({
       where: {
@@ -57,32 +66,29 @@ export async function POST(req: Request) {
       where: { userId: user.id },
     });
 
-    // 4. Candidate search for open conflict-free slots
+    // 4. Candidate search across 4 Buổi (Sáng, Trưa, Chiều, Tối) for open conflict-free slots
     const candidateSlots: Array<{
       start: Date;
       end: Date;
       reason: string;
     }> = [];
 
-    // Check candidate intervals for each of the next 5 days
-    // Candidate slots: Morning (09:00 - 10:30), Afternoon (14:30 - 16:00), Evening (19:30 - 21:00)
+    const timeWindows = [
+      { time: "19:30", label: "Tối", emoji: "🌙" },
+      { time: "14:30", label: "Chiều", emoji: "🌤️" },
+      { time: "09:00", label: "Sáng", emoji: "🌅" },
+      { time: "12:30", label: "Trưa", emoji: "☀️" },
+    ];
+
     for (let dayOffset = 1; dayOffset <= 5; dayOffset++) {
-      if (candidateSlots.length >= 3) break;
+      if (candidateSlots.length >= 4) break;
 
-      const targetDay = addDays(now, dayOffset);
-      const dayOfWeek = targetDay.getDay();
-
-      const timeWindows = [
-        { startH: 19, startM: 30, label: "Tối" },
-        { startH: 14, startM: 30, label: "Chiều" },
-        { startH: 9, startM: 0, label: "Sáng" },
-      ];
+      const targetDateKey = getDateKeyVN(addDays(todayBase, dayOffset));
 
       for (const win of timeWindows) {
-        const slotStart = setMinutes(setHours(startOfDay(targetDay), win.startH), win.startM);
+        const slotStart = makeVNDate(targetDateKey, win.time);
         const slotEnd = new Date(slotStart.getTime() + durationMinutes * 60000);
 
-        // Check conflicts using deterministic conflict engine
         const conflict = detectSlotConflict(
           slotStart,
           slotEnd,
@@ -92,16 +98,23 @@ export async function POST(req: Request) {
             start: e.startTime,
             end: e.endTime,
             isLocked: e.isLocked,
+          })),
+          availabilityRules.map((r) => ({
+            dayOfWeek: r.dayOfWeek,
+            startTime: r.startTime,
+            endTime: r.endTime,
+            isAvailable: r.isAvailable,
           }))
         );
 
         if (!conflict.hasConflict) {
+          const dayName = getDayNameVN(slotStart);
           candidateSlots.push({
             start: slotStart,
             end: slotEnd,
-            reason: `Khung giờ trống vào ${win.label} ${format(targetDay, "EEEE (dd/MM)")}, không xung đột với bất kỳ lịch nào.`,
+            reason: `Khung giờ trống vào Buổi ${win.label} (${win.emoji}) ${dayName}, ${formatVN(slotStart, "dd/MM")}, không xung đột với lịch bận.`,
           });
-          if (candidateSlots.length >= 3) break;
+          if (candidateSlots.length >= 4) break;
         }
       }
     }
@@ -114,7 +127,7 @@ export async function POST(req: Request) {
       proposedSlots: candidateSlots.map((s) => ({
         startTime: s.start.toISOString(),
         endTime: s.end.toISOString(),
-        formattedTime: `${format(s.start, "HH:mm")} - ${format(s.end, "HH:mm, dd/MM")}`,
+        formattedTime: `${formatVN(s.start, "HH:mm")} - ${formatVN(s.end, "HH:mm, dd/MM/yyyy")}`,
         reason: s.reason,
       })),
     });

@@ -3,7 +3,15 @@ import { decryptApiKey } from "../crypto";
 import { AI_SCHEDULER_SYSTEM_PROMPT, buildSchedulerUserPrompt } from "./prompts";
 import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 import { addDays, parseISO } from "date-fns";
-import { VIETNAM_TIMEZONE, timeStringToDateOnDay, collidesWithBlockedSlot, isOverlapping } from "../date-utils";
+import {
+  VIETNAM_TIMEZONE,
+  timeStringToDateOnDay,
+  collidesWithBlockedSlot,
+  isOverlapping,
+  makeVNDate,
+  getDateKeyVN,
+  DAY_PERIODS,
+} from "../date-utils";
 
 export interface ProposedEvent {
   subjectId: string;

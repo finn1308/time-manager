@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { addDays, nextDay, setHours, setMinutes, format } from "date-fns";
+import {
+  formatVN,
+  makeVNDate,
+  getDateKeyVN,
+  getDayOfWeekVN,
+  VIETNAM_TIMEZONE,
+} from "@/lib/date-utils";
+import { addDays, parseISO } from "date-fns";
 import { detectSlotConflict } from "@/lib/scheduling/conflict-detector";
 
 export async function POST(req: Request) {
@@ -33,39 +40,49 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. Extract Duration (e.g. 90 phút, 2 tiếng, 1 giờ, 2h)
+    // 3. Extract Duration (e.g. 90 phút, 2 tiếng, 1 giờ, 2h, 1h30)
     let durationMinutes = 60;
+    const hourMinuteCombo = lower.match(/(\d+)\s*(?:tiếng|giờ|h)\s*(\d+)\s*(?:phút|p|m)?/);
     const minuteMatch = lower.match(/(\d+)\s*(phút|mins?|m\b)/);
     const hourMatch = lower.match(/(\d+(\.\d+)?)\s*(tiếng|giờ|h\b)/);
 
-    if (minuteMatch) {
+    if (hourMinuteCombo) {
+      durationMinutes = parseInt(hourMinuteCombo[1], 10) * 60 + parseInt(hourMinuteCombo[2], 10);
+    } else if (minuteMatch) {
       durationMinutes = parseInt(minuteMatch[1], 10);
     } else if (hourMatch) {
       durationMinutes = Math.round(parseFloat(hourMatch[1]) * 60);
     }
 
-    // 4. Extract Target Day
-    const now = new Date();
-    let targetDate = new Date(now);
+    // 4. Extract Target Day in Vietnam Timezone
+    // Current date key in VN: "YYYY-MM-DD"
+    const todayKeyVN = getDateKeyVN(new Date());
+    const todayBase = parseISO(todayKeyVN);
+    let targetDayKey = todayKeyVN;
 
-    if (lower.includes("ngày mai") || lower.includes("mai")) {
-      targetDate = addDays(now, 1);
+    // Map day strings to JS day of week (0 = Sun, 1 = Mon ... 6 = Sat)
+    let requestedDow: number | null = null;
+    if (lower.includes("thứ 2") || lower.includes("thứ hai")) requestedDow = 1;
+    else if (lower.includes("thứ 3") || lower.includes("thứ ba")) requestedDow = 2;
+    else if (lower.includes("thứ 4") || lower.includes("thứ tư")) requestedDow = 3;
+    else if (lower.includes("thứ 5") || lower.includes("thứ năm")) requestedDow = 4;
+    else if (lower.includes("thứ 6") || lower.includes("thứ sáu")) requestedDow = 5;
+    else if (lower.includes("thứ 7") || lower.includes("thứ bảy")) requestedDow = 6;
+    else if (lower.includes("chủ nhật") || lower.includes("cn")) requestedDow = 0;
+
+    if (requestedDow !== null) {
+      const todayDow = getDayOfWeekVN(new Date());
+      let diff = requestedDow - todayDow;
+      if (diff <= 0) {
+        diff += 7; // Next occurrence of this day of week
+      }
+      targetDayKey = getDateKeyVN(addDays(todayBase, diff));
+    } else if (lower.includes("ngày mai") || lower.includes("hôm sau") || lower.includes("mai")) {
+      targetDayKey = getDateKeyVN(addDays(todayBase, 1));
     } else if (lower.includes("ngày kia")) {
-      targetDate = addDays(now, 2);
-    } else if (lower.includes("thứ 2") || lower.includes("thứ hai")) {
-      targetDate = nextDay(now, 1);
-    } else if (lower.includes("thứ 3") || lower.includes("thứ ba")) {
-      targetDate = nextDay(now, 2);
-    } else if (lower.includes("thứ 4") || lower.includes("thứ tư")) {
-      targetDate = nextDay(now, 3);
-    } else if (lower.includes("thứ 5") || lower.includes("thứ năm")) {
-      targetDate = nextDay(now, 4);
-    } else if (lower.includes("thứ 6") || lower.includes("thứ sáu")) {
-      targetDate = nextDay(now, 5);
-    } else if (lower.includes("thứ 7") || lower.includes("thứ bảy")) {
-      targetDate = nextDay(now, 6);
-    } else if (lower.includes("chủ nhật") || lower.includes("cn")) {
-      targetDate = nextDay(now, 0);
+      targetDayKey = getDateKeyVN(addDays(todayBase, 2));
+    } else if (lower.includes("hôm nay")) {
+      targetDayKey = todayKeyVN;
     }
 
     // 5. Extract Time of Day (e.g. 7 giờ tối, 19:00, 8h sáng, 14h)
@@ -88,11 +105,12 @@ export async function POST(req: Request) {
       startHour = parseInt(morningHourMatch[1], 10);
     } else if (generalHourMatch) {
       let h = parseInt(generalHourMatch[1], 10);
-      if (h <= 6) h += 12; // e.g. 7h or 8h
+      if (h <= 6) h += 12; // e.g. 7h or 8h -> 19h or 20h
       startHour = h;
     }
 
-    const startTime = setMinutes(setHours(targetDate, startHour), startMinute);
+    const timeStr = `${String(startHour).padStart(2, "0")}:${String(startMinute).padStart(2, "0")}`;
+    const startTime = makeVNDate(targetDayKey, timeStr);
     const endTime = new Date(startTime.getTime() + durationMinutes * 60000);
 
     // 6. Check conflicts against database
@@ -141,8 +159,8 @@ export async function POST(req: Request) {
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         durationMinutes,
-        formattedDate: format(startTime, "EEEE, dd/MM/yyyy"),
-        formattedTime: `${format(startTime, "HH:mm")} - ${format(endTime, "HH:mm")}`,
+        formattedDate: formatVN(startTime, "EEEE, dd/MM/yyyy"),
+        formattedTime: `${formatVN(startTime, "HH:mm")} - ${formatVN(endTime, "HH:mm")}`,
         hasConflict: conflict.hasConflict,
         conflictReason: conflict.reason || null,
       },

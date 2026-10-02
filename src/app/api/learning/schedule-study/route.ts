@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { addMinutes, setHours, setMinutes, addDays } from "date-fns";
+import { addMinutes, addDays, parseISO } from "date-fns";
+import { getDateKeyVN, makeVNDate } from "@/lib/date-utils";
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -19,12 +20,14 @@ export async function POST(req: Request) {
     let start = startTime ? new Date(startTime) : null;
 
     if (!start || isNaN(start.getTime())) {
-      // Pick a prime study slot tonight or tomorrow evening
-      const now = new Date();
-      start = setMinutes(setHours(now, 19), 30);
-      if (start <= now) {
-        start = setMinutes(setHours(addDays(now, 1), 19), 30);
+      // Pick a prime study slot tonight (19:30 VN) or tomorrow evening (19:30 VN)
+      const todayKey = getDateKeyVN(new Date());
+      let candidateStart = makeVNDate(todayKey, "19:30");
+      if (candidateStart <= new Date()) {
+        const tomorrowKey = getDateKeyVN(addDays(parseISO(todayKey), 1));
+        candidateStart = makeVNDate(tomorrowKey, "19:30");
       }
+      start = candidateStart;
     }
 
     const end = addMinutes(start, durationMinutes);
@@ -39,6 +42,7 @@ export async function POST(req: Request) {
         endTime: end,
         type: "STUDY",
         isAiGenerated: true,
+        timezone: "Asia/Ho_Chi_Minh",
       },
       include: {
         subject: {
