@@ -67,13 +67,13 @@ async function testDeleteRoadmap() {
           },
         ],
       },
-      include: {
-        stages: {
-          include: {
-            quizzes: {
-              include: {
-                questions: true,
-              },
+    },
+    include: {
+      stages: {
+        include: {
+          quizzes: {
+            include: {
+              questions: true,
             },
           },
         },
