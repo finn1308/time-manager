@@ -72,24 +72,24 @@ export async function calculateProgressForecast(userId: string): Promise<SystemF
     },
     include: {
       subject: true,
-      milestones: true,
+      milestoneRecords: true,
       tasks: true,
     },
-    orderBy: { targetDate: "asc" },
+    orderBy: { deadline: "asc" },
   });
 
   const forecastItems: GoalForecastItem[] = [];
 
   for (const goal of activeGoals) {
-    const targetDate = goal.targetDate ? new Date(goal.targetDate) : null;
+    const targetDate = goal.deadline ? new Date(goal.deadline) : null;
     const daysRemaining = targetDate
       ? Math.max(1, Math.ceil((targetDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
       : 30; // default 30 days if unspecified
 
-    // Estimate total required hours (from milestones or subject, default 20 hours per goal)
-    const targetHours = (goal as any).targetHours || Math.max(10, goal.milestones.length * 4);
-    const completedMilestones = goal.milestones.filter((m) => m.isCompleted).length;
-    const milestoneRatio = goal.milestones.length > 0 ? completedMilestones / goal.milestones.length : 0;
+    // Estimate total required hours (from milestones or targetHours, default 20 hours per goal)
+    const targetHours = goal.targetHours || Math.max(10, goal.milestoneRecords.length * 4);
+    const completedMilestones = goal.milestoneRecords.filter((m) => m.isCompleted).length;
+    const milestoneRatio = goal.milestoneRecords.length > 0 ? completedMilestones / goal.milestoneRecords.length : 0;
     const completedHours = Math.round(targetHours * milestoneRatio * 10) / 10;
     const remainingHours = Math.max(0.5, Math.round((targetHours - completedHours) * 10) / 10);
 
