@@ -8,7 +8,7 @@ import {
   Layers,
   Plus,
   ExternalLink,
-  Github,
+  GitBranch,
   Calendar,
   Building,
   DollarSign,
@@ -497,7 +497,7 @@ export default function CareerHubPage() {
                           className="p-1.5 rounded-lg text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
                           title="Source Code"
                         >
-                          <Github className="w-4 h-4" />
+                          <GitBranch className="w-4 h-4" />
                         </a>
                       )}
                       {proj.demoUrl && (
