@@ -209,6 +209,7 @@ model Goal {
   milestoneRecords Milestone[]
   tasks            Task[]
   studySessions    StudySession[]
+  calendarEvents   CalendarEvent[]
   notes            Note[]
 
   @@index([userId])
@@ -309,9 +310,12 @@ model CalendarEvent {
   type          String   @default("OTHER") // SCHOOL, SELF_STUDY, PERSONAL, EXAM, DEADLINE, OTHER (also supports legacy STUDY, MEETING, BLOCKED)
   location      String?  @db.Text
   isLocked      Boolean  @default(false)
+  isFlexible    Boolean  @default(false)
+  trackStudyTime Boolean @default(true)
   isAiGenerated Boolean  @default(false)
 
   // Recurring support
+  seriesId       String?
   recurrence     String          @default("NONE") // NONE, DAILY, WEEKLY, MONTHLY, YEARLY
   recurrenceRule String?         @db.Text
   recurrenceEnd  DateTime?
@@ -320,12 +324,15 @@ model CalendarEvent {
   isException    Boolean         @default(false)
   isCancelled    Boolean         @default(false)
 
+  goalId        String?
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject       Subject?        @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   task          Task?           @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  goal          Goal?           @relation(fields: [goalId], references: [id], onDelete: SetNull)
   studySessions StudySession[]
   parent        CalendarEvent?  @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
   exceptions    CalendarEvent[] @relation("EventExceptions")
@@ -335,6 +342,7 @@ model CalendarEvent {
   @@index([userId, startTime, endTime])
   @@index([parentId])
   @@index([taskId])
+  @@index([goalId])
 }
 
 model AvailabilityRule {
