@@ -15,8 +15,13 @@ interface SubjectDialogProps {
     code: string | null;
     color: string;
     description: string | null;
-    targetHours?: number;
+    targetHours?: number | null;
     priority?: number;
+    targetScore?: string | null;
+    deadline?: string | Date | null;
+    difficulty?: string;
+    estimatedWorkload?: number | null;
+    isArchived?: boolean;
   } | null;
   usedColors: string[];
 }
@@ -39,11 +44,12 @@ const DIVERSE_PASTEL_PALETTE = [
 
 export function SubjectDialog({ open, onClose, editingSubject, usedColors }: SubjectDialogProps) {
   const router = useRouter();
-  
-  // Find an unused color for new subjects
+
   const getUnusedColor = () => {
-    const available = DIVERSE_PASTEL_PALETTE.filter(c => !usedColors.includes(c));
-    return available.length > 0 ? available[0] : DIVERSE_PASTEL_PALETTE[Math.floor(Math.random() * DIVERSE_PASTEL_PALETTE.length)];
+    const available = DIVERSE_PASTEL_PALETTE.filter((c) => !usedColors.includes(c));
+    return available.length > 0
+      ? available[0]
+      : DIVERSE_PASTEL_PALETTE[Math.floor(Math.random() * DIVERSE_PASTEL_PALETTE.length)];
   };
 
   const [name, setName] = useState(editingSubject ? editingSubject.name : "");
@@ -51,6 +57,14 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
   const [color, setColor] = useState(editingSubject ? editingSubject.color : getUnusedColor());
   const [targetHours, setTargetHours] = useState(editingSubject?.targetHours ? String(editingSubject.targetHours) : "");
   const [priority, setPriority] = useState(editingSubject?.priority ? String(editingSubject.priority) : "3");
+  const [targetScore, setTargetScore] = useState(editingSubject?.targetScore || "");
+  const [deadline, setDeadline] = useState(
+    editingSubject?.deadline ? new Date(editingSubject.deadline).toISOString().split("T")[0] : ""
+  );
+  const [difficulty, setDifficulty] = useState(editingSubject?.difficulty || "MEDIUM");
+  const [estimatedWorkload, setEstimatedWorkload] = useState(
+    editingSubject?.estimatedWorkload ? String(editingSubject.estimatedWorkload) : ""
+  );
   const [description, setDescription] = useState(editingSubject ? editingSubject.description || "" : "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -80,6 +94,10 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
           color,
           targetHours: parseFloat(targetHours) || null,
           priority: parseInt(priority, 10) || 3,
+          targetScore: targetScore.trim() || null,
+          deadline: deadline || null,
+          difficulty,
+          estimatedWorkload: parseFloat(estimatedWorkload) || null,
           description: description.trim() || null,
         }),
       });
@@ -98,15 +116,15 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-md">
+      <DialogContent onClose={onClose} className="max-w-md max-h-[90vh] overflow-y-auto rounded-[28px]">
         <DialogHeader>
           <DialogTitle>{editingSubject ? "Chỉnh sửa môn học" : "Thêm môn học mới"}</DialogTitle>
           <DialogDescription>
-            Thiết lập tên môn, chỉ tiêu số giờ và mức độ ưu tiên để AI phân bổ thời gian.
+            Thiết lập tên môn, mục tiêu điểm số, chỉ tiêu số giờ, độ khó và hạn chót.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 py-2">
+        <form onSubmit={handleSubmit} className="space-y-3.5 py-2">
           {errorMsg && (
             <div className="p-3 rounded-2xl bg-[#f7ebeb] text-xs text-[#8a3c3c] border border-[#e8c6c6]">
               {errorMsg}
@@ -120,12 +138,13 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="VD: IELTS Academic, Giải tích..."
+              placeholder="VD: IELTS Academic, Giải tích 1..."
               required
+              className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             <div>
               <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
                 Mã môn
@@ -134,29 +153,31 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="IELTS..."
+                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
-                Chỉ tiêu (giờ)
+                Chỉ tiêu (giờ/tuần)
               </label>
               <Input
                 type="number"
                 step="0.5"
-                min="1"
+                min="0.5"
                 value={targetHours}
                 onChange={(e) => setTargetHours(e.target.value)}
-                placeholder="VD: 10 (Không bắt buộc)"
+                placeholder="VD: 8"
+                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
-                Ưu tiên (1-5)
+                Độ ưu tiên (1-5)
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full h-11 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2]"
               >
                 <option value="5">5 (Cao nhất)</option>
                 <option value="4">4 (Cao)</option>
@@ -165,6 +186,61 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
                 <option value="1">1 (Tối thiểu)</option>
               </select>
             </div>
+          </div>
+
+          {/* Target Score & Difficulty & Workload (Phần 6) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Mục tiêu điểm số
+              </label>
+              <Input
+                value={targetScore}
+                onChange={(e) => setTargetScore(e.target.value)}
+                placeholder="VD: 6.5, A+, 9.0"
+                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Độ khó (Difficulty)
+              </label>
+              <select
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+              >
+                <option value="EASY">Dễ (Easy)</option>
+                <option value="MEDIUM">Trung bình</option>
+                <option value="HARD">Khó (Hard)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                Ước tính tải (giờ)
+              </label>
+              <Input
+                type="number"
+                step="1"
+                min="1"
+                value={estimatedWorkload}
+                onChange={(e) => setEstimatedWorkload(e.target.value)}
+                placeholder="VD: 50h"
+                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              Thời hạn / Ngày thi môn học (Deadline)
+            </label>
+            <Input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+            />
           </div>
 
           <div>
@@ -199,19 +275,19 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Ghi chú nội dung trọng tâm của môn học này..."
-              className="w-full rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
+              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
             />
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl">
+          <DialogFooter className="pt-2">
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl text-xs">
               Hủy
             </Button>
             <Button
               type="submit"
               variant="default"
               disabled={isSubmitting}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold"
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold text-xs h-10 px-5"
             >
               {isSubmitting ? "Đang lưu..." : editingSubject ? "Cập nhật" : "Tạo môn học"}
             </Button>
