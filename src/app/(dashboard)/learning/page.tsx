@@ -72,6 +72,8 @@ export default function LearningHubPage() {
 
   const activeRoadmap = roadmaps.find((r) => r.id === selectedRoadmapId) || roadmaps[0];
 
+  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
   const handleQuestCreated = async (newRoadmapId: string) => {
     await fetchData();
     setSelectedRoadmapId(newRoadmapId);
@@ -82,15 +84,17 @@ export default function LearningHubPage() {
     router.push(`/learning/quiz/${quizId}`);
   };
 
-  const handleDeleteRoadmap = async (id: string) => {
-    if (!confirm("Bạn có chắc chắn muốn xóa lộ trình học tập này?")) return;
-    try {
-      await fetch(`/api/learning/roadmaps/${id}`, { method: "DELETE" });
-      await fetchData();
-      setSelectedRoadmapId(null);
-    } catch {
-      alert("Không thể xóa lộ trình");
-    }
+  const handleDeleteSuccess = async (message: string) => {
+    setNotification({ type: "success", message });
+    await fetchData();
+    setSelectedRoadmapId(null);
+    router.replace("/learning");
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  const handleDeleteError = (error: string) => {
+    setNotification({ type: "error", message: error });
+    setTimeout(() => setNotification(null), 5000);
   };
 
   return (

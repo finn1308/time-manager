@@ -414,6 +414,9 @@ export function RoadmapTimeline({
               )}
             </div>
           </div>
+        </div>
+      )}
+
       {/* ================= DELETE CONFIRMATION MODAL ================= */}
       <DeleteRoadmapModal
         open={showDeleteModal}
