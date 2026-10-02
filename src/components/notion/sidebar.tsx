@@ -1,9 +1,6 @@
-"use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
 import {
   LayoutDashboard,
   Sparkles,
@@ -100,6 +97,8 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
     router.refresh();
   };
 
+  const currentItems = isVocab ? vocabNavItems : navItems;
+
   return (
     <>
       {/* Sidebar Container */}
@@ -113,23 +112,44 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
           <div className="flex items-center justify-between p-4 pb-3 border-b border-[#dbe7dd]/80 dark:border-[#263d2e]">
             {!collapsed && (
               <div className="flex items-center space-x-3 overflow-hidden">
-                <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
-                  CM
-                </div>
-                <div className="truncate">
-                  <h2 className="text-sm font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] truncate">
-                    ChronoMind
-                  </h2>
-                  <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-medium truncate">
-                    Study Operating System
-                  </p>
-                </div>
+                {isVocab ? (
+                  <>
+                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-green-400 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                      LT
+                    </div>
+                    <div className="truncate">
+                      <h2 className="text-sm font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] truncate flex items-center gap-1.5">
+                        LUYENTU
+                        <span className="text-[9px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-1.5 py-0.5 rounded-full font-bold">
+                          PRO
+                        </span>
+                      </h2>
+                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-medium truncate">
+                        Học từ vựng thông minh
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+                      CM
+                    </div>
+                    <div className="truncate">
+                      <h2 className="text-sm font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] truncate">
+                        ChronoMind
+                      </h2>
+                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-medium truncate">
+                        Study Operating System
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
             {collapsed && (
               <div className="w-9 h-9 mx-auto rounded-2xl bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white flex items-center justify-center font-bold text-xs shadow-sm">
-                CM
+                {isVocab ? "LT" : "CM"}
               </div>
             )}
 
@@ -142,11 +162,14 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
             </button>
           </div>
 
-          {/* Nav Items */}
-          <nav className="p-3 space-y-1">
-            {navItems.map((item) => {
+          {/* Navigation Items */}
+          <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-280px)]">
+            {currentItems.map((item: any) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || (item.href !== "/vocab" && item.href !== "/" && pathname.startsWith(item.href));
+              const iconColor = item.iconColor;
+              const isHighlight = item.highlight;
+
               return (
                 <Link
                   key={item.href}
@@ -155,6 +178,8 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
                   className={`flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-medium transition-all duration-150 ${
                     isActive
                       ? "bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#9cd1b1] font-bold shadow-2xs"
+                      : isHighlight
+                      ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-semibold border border-emerald-200/60 dark:border-emerald-800/40"
                       : "hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
                   }`}
                   title={collapsed ? item.label : undefined}
@@ -163,19 +188,55 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
                     className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                       isActive
                         ? "bg-[#2d6a4f] text-white shadow-2xs"
-                        : "bg-white dark:bg-[#17261c] text-[#526b5c] border border-[#dbe7dd]/60 dark:border-[#263d2e]"
+                        : "bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]"
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : iconColor || "text-[#526b5c]"}`} />
                   </div>
-                  {!collapsed && <span className="truncate">{item.label}</span>}
+                  {!collapsed && (
+                    <div className="flex items-center justify-between flex-1 min-w-0">
+                      <span className="truncate">{item.label}</span>
+                      {isHighlight && (
+                        <span className="text-[9px] bg-emerald-600 text-white px-1.5 py-0.5 rounded-full font-bold">
+                          HOT
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </Link>
               );
             })}
+
+            {/* Quick Switch to ChronoMind / LUYENTU */}
+            <div className="pt-2">
+              {isVocab ? (
+                <Link
+                  href="/"
+                  className="flex items-center space-x-2.5 px-3 py-2 rounded-2xl text-xs font-semibold text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all border border-dashed border-slate-200 dark:border-slate-800"
+                  title="Quay lại ChronoMind OS"
+                >
+                  <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 text-slate-600">
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </div>
+                  {!collapsed && <span className="truncate">Về ChronoMind OS</span>}
+                </Link>
+              ) : (
+                <Link
+                  href="/vocab"
+                  className="flex items-center space-x-2.5 px-3 py-2 rounded-2xl text-xs font-semibold text-emerald-700 bg-emerald-50/70 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:text-emerald-300 transition-all border border-dashed border-emerald-300 dark:border-emerald-700"
+                  title="Mở LUYENTU Luyện Từ"
+                >
+                  <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 text-[10px] font-bold">
+                    LT
+                  </div>
+                  {!collapsed && <span className="truncate">Mở LUYENTU App</span>}
+                </Link>
+              )}
+            </div>
           </nav>
 
-          {/* Quick Start Subjects List */}
-          {!collapsed && (
+          {/* Quick Start Subjects List (Only in ChronoMind mode) */}
+          {!isVocab && !collapsed && (
             <div className="px-3 pt-3 pb-2 border-t border-[#dbe7dd]/80 dark:border-[#263d2e] mt-1">
               <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#73927d] dark:text-[#8ba393] mb-2 px-1">
                 <span>Vào học nhanh</span>
@@ -194,7 +255,7 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
+                <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
                   {subjects.map((sub) => {
                     const isCurrent = activeSubject?.id === sub.id;
                     return (
