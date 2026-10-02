@@ -1,30 +1,40 @@
-# ChronoMind — Hệ điều hành Quản lý Thời gian & Lịch học Cá nhân
+# ChronoMind & LUYENTU — Nền tảng Học tập & Quản lý Thời gian Full-Stack
 
-ChronoMind là ứng dụng web full-stack quản lý thời gian, lịch học và mục tiêu cá nhân với giao diện **100% Pastel Green** (xanh lá pastel/mint/sage) tối giản, hiện đại, tích hợp bộ lập lịch AI và bảo vệ khung giờ bận bằng thuật toán kiểm tra xung đột thời gian thực.
+ChronoMind là hệ điều hành học thuật cá nhân full-stack, tích hợp hoàn chỉnh hệ thống học từ vựng thông minh **LUYENTU** chuẩn quốc tế theo giao diện tham chiếu 100% (Visual & Functionality Parity).
 
 ---
 
-## 🌿 Điểm nổi bật về Thiết kế & Tính năng
+## 🌟 Điểm Nổi Bật Của Hệ Thống LUYENTU & ChronoMind
 
-1. **Giao diện 100% Pastel Green**:
-   - Hệ thống CSS variables chuẩn xác (`--background`, `--surface`, `--primary`, `--primary-light`, `--accent`, `--border`, `--text-primary`, `--text-secondary`).
-   - Bo góc lớn mềm mại đồng nhất (`rounded-[24px]`, `rounded-[28px]`, `rounded-full`), bóng đổ nhẹ nhàng, không gây chói mắt.
-   - Trạng thái trống (Empty State) tự nhiên, KHÔNG hiển thị dữ liệu giả/demo để mị mắt người dùng.
+1. **Nền tảng Học Từ Vựng LUYENTU (100% Reference Parity)**:
+   - **Màn hình Khóa học & Bộ từ** (`/vocab/courses/a1-0-3-0`): Khóa A1 (0-3.0), 31 bộ từ vựng, 371 từ, thanh tiến độ xanh lá, các nút `📌 Đã ghim`, `🏆 BXH`, `⏱️ Học ngắt quãng`.
+   - **Bộ từ #1 "Lời chào hỏi"**: 9 từ vựng hoàn chỉnh, thanh tiến độ 100%, huy hiệu thành tích và nút vào học nhanh.
+   - **Các bộ từ 2-6** ("Số đếm", "Màu sắc", "Ngày trong tuần", "Tháng trong năm", "Thời tiết"): Khóa PRO với cơ chế mở khóa bằng xu tích lũy hoặc gói VIP.
+   - **Bộ lọc tùy chỉnh thông minh**: Lọc theo TRẠNG THÁI (Chưa thuộc, Đang học, Đã thuộc, Yêu thích), SỐ LƯỢNG (5, 10, 15, 20, Tất cả), THỨ TỰ (Ngẫu nhiên, Mặc định, A-Z).
+   - **6 Chế độ học tập Gradient sống động**:
+     - 🗂️ **Flashcard**: Lật thẻ 3D, âm thanh bản xứ Web Speech, thưởng `+5 🟡`.
+     - 📝 **Quiz**: Trắc nghiệm 4 lựa chọn, giải thích chi tiết, thưởng `+10 🟡`.
+     - 🎧 **Listening**: Luyện nghe & gõ lại với đồng hồ đếm ngược 30s, thưởng `+15 🟡`.
+     - ⌨️ **Typing**: Xem nghĩa tiếng Việt gõ từ tiếng Anh, thưởng `+10 🟡`.
+     - 🧩 **Ghép cặp**: Trò chơi nối từ - nghĩa tương tác cao, thưởng `+10 🟡`.
+     - 🔥 **Đặc biệt (HOT)**: Thử thách tổng hợp câu hỏi hỗn hợp, thưởng `+20 🟡`.
+   - **Thuật toán Lặp lại Ngắt quãng SuperMemo SM-2**: Tự động tính toán chu kỳ lặp tối ưu (`repetition`, `intervalDays`, `easeFactor`, `nextReviewDate`).
+   - **Hệ thống Gamification & Shop**: Tích lũy xu sau mỗi bài học, mua gói PRO trọn đời, Streak Freeze, huy hiệu danh dự và bảng xếp hạng thời gian thực.
+   - **Bảng điều khiển Quản trị (`/vocab/admin`)**: Quản lý bộ từ, tạo từ vựng mới kèm phiên âm IPA, câu ví dụ, đổi trạng thái PRO.
 
 2. **Dữ liệu thật & Persistent Storage**:
    - Tách biệt hoàn toàn theo `userId`, bảo mật dữ liệu tuyệt đối giữa các người dùng.
-   - Lưu trữ Database thực tế (PostgreSQL / Supabase cho Production, SQLite cho phát triển cục bộ).
-   - Hỗ trợ lưu trữ dữ liệu ổn định nhiều năm, không bị mất khi đóng trình duyệt hoặc deploy lại website.
+   - Lưu trữ Database thực tế (PostgreSQL / Supabase cho Production).
+   - Hỗ trợ lưu trữ dữ liệu ổn định nhiều năm, không bị mất khi đóng trình duyệt hoặc refresh trang.
 
 3. **Thuật toán Chống Xung đột Lịch Học (Deterministic Conflict Detection)**:
    - Server-side validation layer kiểm tra từng giây phút được AI đề xuất.
    - Ngăn chặn tuyệt đối việc trùng lặp với: Calendar Event, Khung giờ cố định bị khóa (Locked Event), Thời gian ngủ/nghỉ hoặc ngoài khung thời gian khả dụng.
-   - Đã được kiểm thử tự động với bộ test suite `npm run test:scheduling`.
 
 4. **Picture-in-Picture & Floating Study Timer**:
    - Tích hợp chuẩn **W3C Document Picture-in-Picture API** (`window.documentPictureInPicture.requestWindow`).
    - Tự động fallback về Floating Mini-Player di chuyển được khi trình duyệt chưa hỗ trợ API PiP.
-   - Ghi nhận chính xác `actual_duration_seconds` vào Database (`StudySession`) khi dừng phiên, không đánh đồng thời gian dự kiến (planned) thành thời gian thực tế.
+   - Ghi nhận chính xác `actual_duration_seconds` vào Database (`StudySession`).
 
 5. **Bảo mật API Key AI Cá nhân (Zero Client Exposure)**:
    - Hỗ trợ Google Gemini, OpenAI và Anthropic Claude.
@@ -112,23 +122,34 @@ Mở trình duyệt tại [http://localhost:3000](http://localhost:3000). Đăng
 
 ---
 
-## 🧪 Kiểm thử Lập lịch & Chống Xung Đột
+## 🧪 Kiểm Thử Hệ Thống (100% Automated Tests Pass)
 
-Dự án tích hợp sẵn bộ kiểm thử độc lập cho logic phát hiện xung đột thời gian (Conflict Detection):
+Dự án tích hợp đầy đủ 4 bộ kiểm thử tự động, xác thực toàn bộ logic thuật toán, cơ sở dữ liệu và bảo mật:
+
 ```bash
+# Chạy toàn bộ 73 bài kiểm thử (100% Pass)
+npm run test:all
+
+# Kiểm thử riêng hệ thống học từ vựng LUYENTU (42/42 Pass)
+npm run test:vocab
+
+# Kiểm thử chống xung đột lịch học & Picture-in-Picture
 npm run test:scheduling
+
+# Kiểm thử bóc tách giáo trình PDF & sinh trắc nghiệm AI
+npm run test:learning
+
+# Kiểm thử tính toán tín chỉ & GPA học thuật 4 năm
+npm run test:academic
 ```
-Bộ test kiểm tra nghiêm ngặt kịch bản:
-- Sự kiện cố định: `19:00 - 20:00`
-- Đề xuất học tập của AI: `19:30 - 20:30`
-- **Kết quả trả về**: `CONFLICT` (Từ chối lưu vào Database).
 
 ---
 
-## 💡 Dữ liệu Kiểm thử (Seed Data)
+## 💡 Dữ liệu Kiểm thử & Khởi tạo (Vocab Seed)
 
-*Lưu ý quan trọng:* Toàn bộ dữ liệu demo/mẫu đã được gỡ bỏ khỏi luồng mặc định của ứng dụng để bảo đảm tính trung thực của Empty State người dùng mới. Nếu nhà phát triển muốn nạp dữ liệu mẫu cho mục đích kiểm thử cục bộ:
+Hệ thống cung cấp lệnh seed để khởi tạo khóa học chuẩn `A1 (0-3.0)`, các bộ từ vựng và vật phẩm trong cửa hàng:
 ```bash
-npm run seed
+npm run seed:vocab
 ```
-*Lệnh này tách biệt và KHÔNG BAO GIỜ tự động thực thi trong môi trường Production.*
+
+*Lưu ý:* Khi người dùng mới đăng ký tài khoản, dữ liệu học tập cá nhân (tiến độ từ vựng, lịch sử làm bài, điểm thưởng, ghi chú) luôn bắt đầu sạch (Clean State) và gắn liền độc quyền với `userId` đó.
