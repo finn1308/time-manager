@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractTextFromPDF, cleanText } from "@/lib/pdf/extractor";
+import { analyzeDocumentFull } from "@/lib/ai/document-analyzer";
+import { parseDocumentTextToPages } from "@/lib/ai/learning-generator";
 import crypto from "crypto";
 
 export const runtime = "nodejs";
@@ -26,9 +28,18 @@ export async function POST(req: Request) {
         );
       }
 
+      let subjectName: string | undefined;
+      if (subjectId) {
+        const sub = await prisma.subject.findFirst({
+          where: { id: subjectId, userId: user.id },
+          select: { name: true },
+        });
+        if (sub) subjectName = sub.name;
+      }
+
       const cleaned = cleanText(text);
       const contentHash = crypto.createHash("sha256").update(cleaned).digest("hex");
-      const docTitle = title?.trim() || "Tài liệu học tập tự nhập";
+      const docTitle = title?.trim() || subjectName || "Tài liệu học tập tự nhập";
 
       const doc = await prisma.document.create({
         data: {
@@ -44,13 +55,17 @@ export async function POST(req: Request) {
         },
       });
 
+      const pages = parseDocumentTextToPages(cleaned);
+      const analysisReport = analyzeDocumentFull(pages, subjectName || docTitle);
+
       return NextResponse.json({
         success: true,
         documentId: doc.id,
         filename: doc.filename,
         fileType: doc.fileType,
-        pageCount: 1,
+        pageCount: analysisReport.totalPages,
         characterCount: cleaned.length,
+        analysisReport,
         sampleText: cleaned.slice(0, 300) + "...",
       });
     }
@@ -63,6 +78,15 @@ export async function POST(req: Request) {
 
       if (!file) {
         return NextResponse.json({ error: "Vui lòng chọn file tải lên" }, { status: 400 });
+      }
+
+      let subjectName: string | undefined;
+      if (subjectId) {
+        const sub = await prisma.subject.findFirst({
+          where: { id: subjectId, userId: user.id },
+          select: { name: true },
+        });
+        if (sub) subjectName = sub.name;
       }
 
       const fileBuffer = Buffer.from(await file.arrayBuffer());
@@ -116,14 +140,19 @@ export async function POST(req: Request) {
         },
       });
 
+      // Perform full document structure analysis across all pages
+      const pages = parseDocumentTextToPages(extractedText);
+      const analysisReport = analyzeDocumentFull(pages, subjectName);
+
       return NextResponse.json({
         success: true,
         documentId: doc.id,
         filename: doc.filename,
         fileType: doc.fileType,
-        pageCount,
+        pageCount: analysisReport.totalPages,
         characterCount: extractedText.length,
         headings,
+        analysisReport,
         sampleText: extractedText.slice(0, 300) + "...",
       });
     }
