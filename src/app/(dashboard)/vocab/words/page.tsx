@@ -12,7 +12,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Filter,
+  Plus,
 } from "lucide-react";
+import { AddWordsModal } from "@/components/vocab/add-words-modal";
 
 interface WordItem {
   id: string;
