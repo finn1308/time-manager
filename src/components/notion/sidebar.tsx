@@ -14,7 +14,7 @@ import {
   BarChart3,
   Settings,
   CheckSquare,
-  CheckCircle2,
+  TrendingUp,
   Brain,
   FileText,
   Clock,
@@ -62,6 +62,7 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
     { label: "Goals", href: "/goals", icon: Target },
     { label: "Habits & XP", href: "/habits", icon: CheckCircle2 },
     { label: "Study Sessions", href: "/study-sessions", icon: History },
+    { label: "Weekly Review", href: "/weekly-review", icon: TrendingUp },
     { label: "Statistics", href: "/analytics", icon: BarChart3 },
     { label: "Settings", href: "/settings", icon: Settings },
   ];
