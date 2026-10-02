@@ -64,29 +64,11 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile Hamburger Button */}
-      <div className="lg:hidden fixed top-3.5 left-3.5 z-50">
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2.5 rounded-full bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-sm text-[#192e22] dark:text-[#f0f7f2] cursor-pointer"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {/* Mobile Backdrop */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-40 bg-[#101c14]/40 backdrop-blur-xs"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col justify-between border-r border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#132217] text-[#192e22] dark:text-[#f0f7f2] transition-all duration-300 ${
+        className={`hidden lg:flex fixed top-0 bottom-0 left-0 z-40 flex-col justify-between border-r border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#132217] text-[#192e22] dark:text-[#f0f7f2] transition-all duration-300 ${
           collapsed ? "w-20" : "w-64"
-        } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        }`}
       >
         {/* Top: Header & Brand */}
         <div className="flex flex-col">
