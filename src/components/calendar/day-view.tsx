@@ -212,7 +212,8 @@ export function DayView({
     const newStart = makeVNDate(currentDateKey, targetPeriod.defaultStart);
     const newEnd = new Date(newStart.getTime() + durationMins * 60000);
 
-    const isRecurring = Boolean(ev.recurrence && ev.recurrence !== "NONE") || ev.id.includes("_");
+    const evAny = ev as any;
+    const isRecurring = Boolean(evAny.recurrence && evAny.recurrence !== "NONE") || ev.id.includes("_");
     const cleanId = ev.id.includes("_") ? ev.id.split("_")[0] : ev.id;
     const dateKey = ev.id.includes("_") ? ev.id.split("_")[1] : currentDateKey;
 
