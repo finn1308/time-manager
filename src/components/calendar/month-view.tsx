@@ -13,7 +13,7 @@ import {
   isSameMonth,
 } from "date-fns";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Plus, Calendar, Trash2, FolderOpen } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Calendar, Trash2, FolderOpen, MapPin } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { useRouter } from "next/navigation";
 import { getEventTypeConfig } from "@/lib/calendar/event-types";
@@ -23,6 +23,7 @@ interface MonthViewProps {
     id: string;
     title: string;
     description: string | null;
+    location?: string | null;
     startTime: string;
     endTime: string;
     type?: string;
