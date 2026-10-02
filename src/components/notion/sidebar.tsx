@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
+  Sparkles,
   Calendar,
   BookOpen,
   Target,
@@ -46,6 +47,7 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
 
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
+    { label: "Study Quest & Quiz", href: "/learning", icon: Sparkles },
     { label: "Calendar", href: "/calendar", icon: Calendar },
     { label: "Subjects", href: "/subjects", icon: BookOpen },
     { label: "Goals", href: "/goals", icon: Target },
