@@ -15,6 +15,7 @@ import {
 
 export interface ProposedEvent {
   subjectId: string;
+  taskId?: string | null;
   title: string;
   description: string;
   startTime: string; // ISO
@@ -34,7 +35,11 @@ export async function executeAIScheduling(
   params: {
     startDate: string;
     endDate: string;
+    preferences?: any;
     subjects: Array<{ id: string; name: string; code?: string | null; targetHours: number; loggedHours: number; remainingHours: number; priority: number }>;
+    goals?: any[];
+    activeTasks?: any[];
+    historySummary?: any;
     blockedSlots: Array<{ title: string; startTime: string; endTime: string; dayOfWeek?: number | null; specificDate?: string | null; isLocked: boolean }>;
     existingEvents: Array<{ title: string; startTime: string; endTime: string }>;
     customInstructions?: string;
@@ -172,7 +177,11 @@ async function callAnthropicAPI(apiKey: string, userPrompt: string): Promise<AIS
 export function runLocalHeuristicScheduler(params: {
   startDate: string;
   endDate: string;
+  preferences?: any;
   subjects: Array<{ id: string; name: string; code?: string | null; targetHours: number; loggedHours: number; remainingHours: number; priority: number }>;
+  goals?: any[];
+  activeTasks?: any[];
+  historySummary?: any;
   blockedSlots: Array<{ title: string; startTime: string; endTime: string; dayOfWeek?: number | null; specificDate?: string | null; isLocked: boolean }>;
   existingEvents: Array<{ title: string; startTime: string; endTime: string }>;
   customInstructions?: string;
@@ -182,14 +191,41 @@ export function runLocalHeuristicScheduler(params: {
   const startDay = parseISO(params.startDate);
   const endDay = parseISO(params.endDate);
 
-  // Candidate study windows across the 4 BUỔI in Vietnam timezone
-  const candidateWindows = [
+  const timePref = params.preferences?.timePreference || "BALANCED";
+  const restDays: number[] = params.preferences?.restDays || [0];
+  const maxDailyMinutes = Math.round((params.preferences?.maxDailyStudyHours || 6.0) * 60);
+
+  // Candidate study windows across the 4 BUỔI in Vietnam timezone, ordered by preference
+  let candidateWindows = [
     { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
-    { start: "12:30", end: "13:30", duration: 60, label: "Trưa", emoji: "☀️", period: "noon" },
     { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
     { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+    { start: "12:30", end: "13:30", duration: 60, label: "Trưa", emoji: "☀️", period: "noon" },
     { start: "21:15", end: "22:45", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
   ];
+
+  if (timePref === "MORNING") {
+    candidateWindows = [
+      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
+      { start: "10:15", end: "11:45", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
+      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
+      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+    ];
+  } else if (timePref === "EVENING") {
+    candidateWindows = [
+      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+      { start: "21:15", end: "22:45", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
+      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
+    ];
+  } else if (timePref === "AFTERNOON") {
+    candidateWindows = [
+      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
+      { start: "16:15", end: "17:45", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
+      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
+      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+    ];
+  }
 
   // Sort subjects by priority desc, remaining hours desc
   const sortedSubjects = [...params.subjects].sort((a, b) => {
@@ -197,16 +233,33 @@ export function runLocalHeuristicScheduler(params: {
     return b.remainingHours - a.remainingHours;
   });
 
+  // Track daily minutes planned
+  const dailyMinutesMap: { [dateKey: string]: number } = {};
+
   let curDay = new Date(startDay);
   let subjectIdx = 0;
 
   while (curDay <= endDay) {
     const curDateKey = getDateKeyVN(curDay);
+    const dayOfWeek = curDay.getDay();
+
+    // Respect rest days unless specifically instructed
+    const isRestDay = restDays.includes(dayOfWeek);
+    if (isRestDay && !params.customInstructions?.toLowerCase().includes("chủ nhật")) {
+      curDay = addDays(curDay, 1);
+      continue;
+    }
+
+    dailyMinutesMap[curDateKey] = 0;
 
     for (const win of candidateWindows) {
       if (sortedSubjects.length === 0) break;
+      if (dailyMinutesMap[curDateKey] >= maxDailyMinutes) break;
 
       const sub = sortedSubjects[subjectIdx % sortedSubjects.length];
+
+      // Find any linked active task for this subject
+      const linkedTask = params.activeTasks?.find((t) => t.subjectId === sub.id);
 
       const candStart = makeVNDate(curDateKey, win.start);
       const candEnd = makeVNDate(curDateKey, win.end);
@@ -232,16 +285,26 @@ export function runLocalHeuristicScheduler(params: {
       if (alreadyProposedCollision) continue;
 
       // Found a safe, conflict-free slot!
+      const sessionTitle = linkedTask
+        ? `[Nhiệm vụ] ${linkedTask.title} (${sub.name})`
+        : `Ôn tập & Luyện chuyên sâu: ${sub.name}`;
+
+      const sessionDesc = linkedTask
+        ? `Tập trung hoàn thành bài tập trước hạn (${linkedTask.deadline ? `Hạn: ${linkedTask.deadline}` : "Ưu tiên cao"})`
+        : `Giải bài tập và củng cố kiến thức trọng tâm cho môn ${sub.code || sub.name} (Độ ưu tiên ${sub.priority}/5)`;
+
       proposedEvents.push({
         subjectId: sub.id,
-        title: `Ôn tập & Luyện chuyên sâu: ${sub.name}`,
-        description: `Giải bài tập và củng cố kiến thức trọng tâm cho môn ${sub.code || sub.name} (Độ ưu tiên ${sub.priority}/5)`,
+        taskId: linkedTask?.id || null,
+        title: sessionTitle,
+        description: sessionDesc,
         startTime: candStart.toISOString(),
         endTime: candEnd.toISOString(),
         durationMinutes: win.duration,
-        reasoning: `Buổi ${win.label} (${win.emoji} ${win.start} - ${win.end}) hoàn toàn khả dụng, không vướng giờ bận/khóa, phân bổ tối ưu theo độ ưu tiên ${sub.priority}/5.`,
+        reasoning: `Buổi ${win.label} (${win.emoji} ${win.start} - ${win.end}) khả dụng, tôn trọng sở thích (${timePref}), phân bổ độ ưu tiên ${sub.priority}/5.`,
       });
 
+      dailyMinutesMap[curDateKey] += win.duration;
       subjectIdx++;
     }
 
@@ -250,7 +313,7 @@ export function runLocalHeuristicScheduler(params: {
 
   return {
     proposedEvents,
-    summary: `Đã tự động tính toán và phân bổ ${proposedEvents.length} buổi học tối ưu qua 4 Buổi (Sáng, Trưa, Chiều, Tối), tránh hoàn toàn mọi khung giờ bị khóa và lịch bận cố định.`,
+    summary: `Đã tự động tính toán và phân bổ ${proposedEvents.length} buổi học tối ưu qua 4 Buổi (Sáng, Trưa, Chiều, Tối), tôn trọng ngày nghỉ, thời điểm ưa thích (${timePref}) và tránh hoàn toàn mọi khung giờ bị khóa.`,
     providerUsed: "ChronoMind Local Constraint Satisfaction Engine (4-Period Aware)",
   };
 }
