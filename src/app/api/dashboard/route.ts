@@ -129,8 +129,8 @@ export async function GET() {
   const subjectProgress = subjects.map((sub) => {
     const totalActualSeconds = sub.studySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
     const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
-    const targetHours = sub.targetHours || 10;
-    const progressPercent = Math.min(100, Math.round((actualHours / targetHours) * 100));
+    const targetHours = sub.targetHours;
+    const progressPercent = targetHours ? Math.min(100, Math.round((actualHours / targetHours) * 100)) : null;
 
     return {
       id: sub.id,
