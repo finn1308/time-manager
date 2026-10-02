@@ -306,7 +306,8 @@ model CalendarEvent {
   startTime     DateTime
   endTime       DateTime
   timezone      String   @default("Asia/Ho_Chi_Minh")
-  type          String   @default("STUDY") // STUDY, PERSONAL, EXAM, DEADLINE, MEETING, BLOCKED, OTHER
+  type          String   @default("OTHER") // SCHOOL, SELF_STUDY, PERSONAL, EXAM, DEADLINE, OTHER (also supports legacy STUDY, MEETING, BLOCKED)
+  location      String?  @db.Text
   isLocked      Boolean  @default(false)
   isAiGenerated Boolean  @default(false)
 

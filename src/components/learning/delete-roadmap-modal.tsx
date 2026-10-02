@@ -75,9 +75,11 @@ export function DeleteRoadmapModal({
             <li>Quizzes & Quiz questions</li>
             <li>Flashcards & Flashcard decks</li>
             <li>Learning progress & Quiz attempts</li>
-            <li>Study sessions liên quan</li>
-            <li>AI-generated content liên quan</li>
+            <li>AI-generated quizzes & content liên quan</li>
           </ul>
+          <p className="text-[11px] text-[#2d6a4f] dark:text-[#52b788] font-semibold pt-1">
+            ✓ Nhật ký thời gian học thực tế (Study Sessions) đã tích lũy vẫn được bảo toàn an toàn.
+          </p>
         </div>
 
         <p className="text-xs font-extrabold text-[#dc2626] dark:text-[#f87171] flex items-center space-x-1.5">

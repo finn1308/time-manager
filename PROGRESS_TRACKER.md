@@ -68,10 +68,10 @@
   - [x] Quick Inbox NLP Parser (e.g. "Mai học Physics chương 3 1 tiếng")
   - [x] Kiểm soát thứ tự Task Dependency (Task A -> Task B -> Task C)
 
-- [ ] **Tác vụ 11: PDF Knowledge Extraction & AI Learning Roadmap** (Phần 16, 17)
-  - [ ] PDF Upload & Text Extractor với phân tích Chapter/Section chính xác
-  - [ ] AI Learning Roadmap Generator theo ngày, mục tiêu, tài liệu
-  - [ ] Nút "Delete Roadmap" với modal xác nhận xóa an toàn không ảnh hưởng Study Session
+- [x] **Tác vụ 11: PDF Knowledge Extraction & AI Learning Roadmap** (Phần 16, 17)
+  - [x] PDF Upload & Text Extractor với phân tích Chapter/Section chính xác
+  - [x] AI Learning Roadmap Generator theo ngày, mục tiêu, tài liệu
+  - [x] Nút "Delete Roadmap" với modal xác nhận xóa an toàn không ảnh hưởng Study Session
 
 - [ ] **Tác vụ 12: AI Quiz & Spaced Repetition Flashcards** (Phần 18, 19, 20)
   - [ ] AI Quiz generator bám sát nội dung tài liệu, quiz attempt tracker & review history
