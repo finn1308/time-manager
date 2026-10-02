@@ -88,3 +88,41 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Lỗi ghi nhận phiên học" }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Thiếu ID phiên học" }, { status: 400 });
+
+    const session = await prisma.studySession.findUnique({
+      where: { id, userId: user.id },
+    });
+
+    if (!session) return NextResponse.json({ error: "Không tìm thấy phiên học" }, { status: 404 });
+
+    await prisma.studySession.delete({
+      where: { id },
+    });
+
+    if (session.actualDurationSeconds > 0 && session.subjectId) {
+      const decHours = session.actualDurationSeconds / 3600;
+      await prisma.subject.update({
+        where: { id: session.subjectId, userId: user.id },
+        data: {
+          completedHours: {
+            decrement: decHours,
+          },
+        },
+      }).catch((e) => console.error("Error decrementing subject completedHours:", e));
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    console.error("Delete study session error:", err);
+    return NextResponse.json({ error: "Lỗi xóa phiên học" }, { status: 500 });
+  }
+}
