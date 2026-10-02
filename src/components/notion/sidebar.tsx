@@ -13,6 +13,7 @@ import {
   History,
   BarChart3,
   Settings,
+  CheckSquare,
   Clock,
   Play,
   LogOut,
@@ -49,7 +50,8 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Calendar", href: "/calendar", icon: Calendar },
-    { label: "Deadlines & Tasks", href: "/deadlines", icon: Flame },
+    { label: "Tasks & Inbox", href: "/tasks", icon: CheckSquare },
+    { label: "Deadlines", href: "/deadlines", icon: Flame },
     { label: "Study Quest & Quiz", href: "/learning", icon: Sparkles },
     { label: "Subjects", href: "/subjects", icon: BookOpen },
     { label: "Goals", href: "/goals", icon: Target },
