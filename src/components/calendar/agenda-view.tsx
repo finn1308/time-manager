@@ -264,7 +264,10 @@ export function AgendaView({
                     <div
                       key={ev.id}
                       onClick={() => {
-                        setEditingEvent(ev);
+                        setEditingEvent({
+                          ...ev,
+                          originalId: (ev as any).originalId || ev.id,
+                        });
                         setIsEventModalOpen(true);
                       }}
                       className="group relative p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882] hover:shadow-2xs transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
@@ -292,7 +295,7 @@ export function AgendaView({
                               style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
                             >
                               <Icon className="w-3 h-3" />
-                              <span>{typeCfg.label}</span>
+                              <span>{typeCfg.shortLabel || typeCfg.label}</span>
                             </span>
 
                             {/* Subject Badge */}
@@ -317,6 +320,13 @@ export function AgendaView({
                             {ev.title}
                           </h4>
 
+                          {(ev as any).location && (
+                            <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+                              <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                              <span className="truncate">{(ev as any).location}</span>
+                            </div>
+                          )}
+
                           {ev.description && (
                             <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] line-clamp-1">
                               {ev.description}
@@ -327,19 +337,21 @@ export function AgendaView({
 
                       {/* Right: Quick Action Controls */}
                       <div className="flex items-center space-x-1.5 shrink-0 self-end sm:self-center" onClick={(e) => e.stopPropagation()}>
-                        {/* Play Timer Button */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (ev.subject) {
-                              startTimer(ev.subject);
-                            }
-                          }}
-                          title="Bắt đầu học ngay với PIP Timer"
-                          className="p-1.5 rounded-xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#2d6a4f] hover:text-white transition-colors cursor-pointer"
-                        >
-                          <Play className="w-3.5 h-3.5 fill-current" />
-                        </button>
+                        {/* Play Timer Button - ONLY for SELF_STUDY */}
+                        {canStartStudyTimer(ev.type) && ev.subject && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (ev.subject) {
+                                startTimer(ev.subject, ev.id);
+                              }
+                            }}
+                            title="Bắt đầu tự học ngay với PIP Timer"
+                            className="p-1.5 rounded-xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#2d6a4f] hover:text-white transition-colors cursor-pointer"
+                          >
+                            <Play className="w-3.5 h-3.5 fill-current" />
+                          </button>
+                        )}
 
                         {/* Quick Resize +/- 15m */}
                         <button

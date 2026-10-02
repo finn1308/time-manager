@@ -15,6 +15,7 @@ import {
   Sparkles,
   CheckSquare,
   Brain,
+  FileText,
   Plus,
   Search,
   ArrowRight,
@@ -81,6 +82,16 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       icon: Brain,
       run: () => {
         router.push("/flashcards");
+        onClose();
+      },
+    },
+    {
+      id: "notes",
+      title: "Ghi chú & Wiki bài học (Notion Notes)",
+      category: "Điều hướng",
+      icon: FileText,
+      run: () => {
+        router.push("/notes");
         onClose();
       },
     },
