@@ -181,27 +181,38 @@ export default function WordSetDetailPage() {
     <div className="space-y-6 max-w-6xl mx-auto pb-16 animate-in fade-in duration-300">
       {/* Top Header Card matching Image 2 */}
       <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-sm space-y-4">
-        <div className="flex items-center space-x-3.5">
-          <Link
-            href={`/vocab/courses/${setDetails.course?.slug || "a1-0-3-0"}`}
-            className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center transition-colors shadow-xs shrink-0"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-3.5">
+            <Link
+              href={`/vocab/courses/${setDetails.course?.slug || "a1-0-3-0"}`}
+              className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center transition-colors shadow-xs shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
 
-          <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-              {setDetails.orderNumber}. {setDetails.title}
-            </h1>
-            <div className="flex items-center space-x-2 mt-1">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                {setDetails.totalWords} từ vựng
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
-                {setDetails.learnedWordsCount}/{setDetails.totalWords} đã học ({setDetails.progressPercent}%)
-              </span>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+                {setDetails.orderNumber}. {setDetails.title}
+              </h1>
+              <div className="flex items-center space-x-2 mt-1">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                  {setDetails.totalWords} từ vựng
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+                  {setDetails.learnedWordsCount}/{setDetails.totalWords} đã học ({setDetails.progressPercent}%)
+                </span>
+              </div>
             </div>
           </div>
+
+          {/* Add Words Button */}
+          <button
+            onClick={() => setShowAddWordsModal(true)}
+            className="px-4 py-2.5 rounded-full bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold shadow-sm hover:shadow transition-all flex items-center space-x-1.5 self-start sm:self-center cursor-pointer active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Thêm từ vựng</span>
+          </button>
         </div>
 
         {/* Full-width bright green progress bar matching Image 2 */}
