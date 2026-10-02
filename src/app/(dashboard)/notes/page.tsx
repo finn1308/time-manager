@@ -62,6 +62,19 @@ export default function NotesPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const selectNote = (note: any) => {
+    setSelectedNoteId(note.id);
+    setTitle(note.title || "");
+    setContent(note.content || "");
+    setSubjectId(note.subjectId || "");
+    setGoalId(note.goalId || "");
+    setTaskId(note.taskId || "");
+    setDocumentId(note.documentId || "");
+    setIsPinned(Boolean(note.isPinned));
+    setTags((note.tags || []).map((t: any) => t.tag?.name).filter(Boolean));
+    setSaveStatus("saved");
+  };
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -92,19 +105,6 @@ export default function NotesPage() {
   useEffect(() => {
     loadData();
   }, []);
-
-  const selectNote = (note: any) => {
-    setSelectedNoteId(note.id);
-    setTitle(note.title || "");
-    setContent(note.content || "");
-    setSubjectId(note.subjectId || "");
-    setGoalId(note.goalId || "");
-    setTaskId(note.taskId || "");
-    setDocumentId(note.documentId || "");
-    setIsPinned(Boolean(note.isPinned));
-    setTags((note.tags || []).map((t: any) => t.tag?.name).filter(Boolean));
-    setSaveStatus("saved");
-  };
 
   const handleCreateNewNote = async () => {
     try {

@@ -173,11 +173,12 @@ export default function TasksPage() {
   ];
 
   // Stats
+  const nowTimestamp = useMemo(() => new Date().getTime(), [tasks]);
   const inboxCount = tasks.filter((t) => t.status === "INBOX").length;
   const inProgressCount = tasks.filter((t) => t.status === "IN_PROGRESS").length;
   const doneCount = tasks.filter((t) => t.isCompleted || t.status === "DONE").length;
   const overdueCount = tasks.filter(
-    (t) => t.deadline && !t.isCompleted && new Date(t.deadline).getTime() < Date.now()
+    (t) => t.deadline && !t.isCompleted && new Date(t.deadline).getTime() < nowTimestamp
   ).length;
 
   return (
