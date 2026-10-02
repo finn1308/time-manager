@@ -234,6 +234,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
             setEditingSubject(null);
           }}
           editingSubject={editingSubject}
+          usedColors={subjects.map(s => s.color)}
         />
       )}
     </div>
