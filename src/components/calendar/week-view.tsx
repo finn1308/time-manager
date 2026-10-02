@@ -10,10 +10,12 @@ import {
 } from "@/lib/date-utils";
 import { addWeeks, subWeeks } from "date-fns";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play, Trash2, Video, FolderOpen, FileText } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { AiSchedulePreviewModal } from "./ai-schedule-preview-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
+import { AiResourceReminderBanner } from "../study/ai-resource-reminder-banner";
+import { useRouter } from "next/navigation";
 
 interface WeekViewProps {
   initialEvents: Array<{
@@ -25,6 +27,21 @@ interface WeekViewProps {
     type?: string;
     isLocked?: boolean;
     isAiGenerated?: boolean;
+    recurrence?: string;
+    recurrenceRule?: string | null;
+    originalId?: string;
+    resources?: Array<{
+      id: string;
+      title: string;
+      type: string;
+      subType?: string | null;
+      url: string;
+    }>;
+    studyNotes?: Array<{
+      id: string;
+      content: string;
+      isPinned: boolean;
+    }>;
     subject: {
       id: string;
       name: string;
@@ -55,8 +72,10 @@ export function WeekView({
   subjects = [],
   onEventsChange,
 }: WeekViewProps) {
+  const router = useRouter();
   const [currentWeekRef, setCurrentWeekRef] = useState<Date>(new Date());
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [modalInitialTab, setModalInitialTab] = useState<"schedule" | "resources">("schedule");
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [modalDefaultDate, setModalDefaultDate] = useState<string>(getDateKeyVN(new Date()));
   const [editingEvent, setEditingEvent] = useState<any | null>(null);
@@ -64,6 +83,67 @@ export function WeekView({
   const { startTimer } = usePipTimer();
 
   const weekDays = getWeekDaysDetailedVN(currentWeekRef);
+
+  // Quick delete directly from card
+  const handleQuickDelete = async (e: React.MouseEvent, ev: any) => {
+    e.stopPropagation();
+    const isRecurring = Boolean(ev.recurrence && ev.recurrence !== "NONE");
+
+    if (isRecurring) {
+      setEditingEvent({
+        id: ev.id,
+        originalId: ev.originalId || ev.id,
+        title: ev.title,
+        description: ev.description,
+        subjectId: ev.subject?.id || null,
+        startTime: ev.startTime,
+        endTime: ev.endTime,
+        type: ev.type,
+        isLocked: ev.isLocked,
+        recurrence: ev.recurrence,
+        recurrenceRule: ev.recurrenceRule,
+      });
+      setModalInitialTab("schedule");
+      setIsEventModalOpen(true);
+      return;
+    }
+
+    if (!confirm(`Bạn có chắc muốn xóa lịch "${ev.title}" không?`)) return;
+
+    try {
+      const cleanId = ev.id.includes("_") ? ev.id.split("_")[0] : ev.id;
+      const res = await fetch(`/api/calendar/events?id=${cleanId}&deleteMode=SINGLE`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Không thể xóa sự kiện");
+      }
+      if (onEventsChange) onEventsChange();
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Lỗi xóa lịch học");
+    }
+  };
+
+  // Open resource manager directly
+  const handleOpenResources = (calendarEventId: string, title: string, subjectName: string) => {
+    const cleanId = calendarEventId.includes("_") ? calendarEventId.split("_")[0] : calendarEventId;
+    const ev = initialEvents.find((e) => (e.id.includes("_") ? e.id.split("_")[0] : e.id) === cleanId);
+    if (ev) {
+      setEditingEvent(ev);
+    } else {
+      setEditingEvent({
+        id: calendarEventId,
+        title,
+        subject: { name: subjectName, id: "", code: null, color: "#2d6a4f" },
+        startTime: new Date().toISOString(),
+        endTime: new Date().toISOString(),
+      });
+    }
+    setModalInitialTab("resources");
+    setIsEventModalOpen(true);
+  };
 
   // Drag and drop handlers to move events between days
   const handleDragStart = (e: React.DragEvent, eventItem: any) => {
@@ -113,6 +193,9 @@ export function WeekView({
 
   return (
     <div className="flex flex-col space-y-4">
+      {/* AI Proactive Reminder Banner */}
+      <AiResourceReminderBanner onOpenResourceManager={handleOpenResources} />
+
       {/* Calendar Navigation Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#17261c] p-4 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
         <div className="flex items-center space-x-2.5">
@@ -140,52 +223,51 @@ export function WeekView({
             </button>
           </div>
 
-          <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] px-2">
-            Tuần: {weekDays[0].dayOfMonth}/{weekDays[0].monthStr} – {weekDays[6].dayOfMonth}/{weekDays[6].monthStr}
+          <span className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            {weekDays[0].formattedDate} – {weekDays[6].formattedDate}
           </span>
         </div>
 
-        <div className="flex items-center space-x-2.5">
+        <div className="flex items-center space-x-2">
           <Button
-            size="sm"
             onClick={() => setIsAiModalOpen(true)}
-            className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl space-x-1.5 shadow-2xs font-semibold"
+            size="sm"
+            className="bg-linear-to-r from-[#2d6a4f] to-[#40916c] hover:opacity-90 text-white rounded-full font-semibold text-xs shadow-2xs cursor-pointer flex items-center space-x-1.5"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>AI Tự động lập lịch</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#d8ebe0]" />
+            <span>AI Xếp Lịch Tự Động</span>
           </Button>
 
           <Button
-            variant="pill"
-            size="sm"
             onClick={() => {
               setEditingEvent(null);
               setModalDefaultDate(getDateKeyVN(new Date()));
+              setModalInitialTab("schedule");
               setIsEventModalOpen(true);
             }}
-            className="space-x-1.5 font-bold"
+            size="sm"
+            variant="outline"
+            className="rounded-full text-xs font-semibold cursor-pointer border-[#b7d8c3] text-[#1b4332] dark:text-[#74c69d]"
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Thêm sự kiện</span>
+            <Plus className="w-3.5 h-3.5 mr-1" />
+            <span>Thêm Lịch</span>
           </Button>
         </div>
       </div>
 
-      {/* Week Grid (7 columns: Thứ 2 -> Chủ Nhật strictly aligned to Vietnam timezone) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3.5">
+      {/* Week Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
         {weekDays.map((day) => {
-          // Strictly match events by Vietnam calendar date key
-          const dayEvents = initialEvents.filter(
-            (ev) => getDateKeyVN(ev.startTime) === day.dateKey
-          );
-
-          // Blocked slots matching dayOfWeek (0 = Sun, 1 = Mon ... 6 = Sat)
-          const dayBlockedSlots = blockedSlots.filter((bs) => {
-            if (bs.dayOfWeek !== null && bs.dayOfWeek !== undefined) {
-              return bs.dayOfWeek === day.dayOfWeek;
-            }
-            return false;
+          // Filter events for this day strictly by dateKey in VN timezone
+          const dayEvents = initialEvents.filter((ev) => {
+            const evStartVN = getDateKeyVN(ev.startTime);
+            return evStartVN === day.dateKey;
           });
+
+          // Blocked slots for this day of week
+          const dayBlockedSlots = blockedSlots.filter(
+            (bs) => bs.dayOfWeek === day.dayOfWeek
+          );
 
           return (
             <div
@@ -214,6 +296,7 @@ export function WeekView({
                     onClick={() => {
                       setEditingEvent(null);
                       setModalDefaultDate(day.dateKey);
+                      setModalInitialTab("schedule");
                       setIsEventModalOpen(true);
                     }}
                     title={`Thêm lịch cho ${day.dayName}`}
@@ -254,6 +337,11 @@ export function WeekView({
                 {/* Study Events */}
                 {dayEvents.map((ev) => {
                   const subjectColor = ev.subject?.color || "#2d6a4f";
+                  const resourceCount = ev.resources?.length || 0;
+                  const hasMeeting = ev.resources?.some(
+                    (r) => r.type === "MEETING" || ["ZOOM", "MEET", "TEAMS"].includes(r.subType || "")
+                  );
+
                   return (
                     <div
                       key={ev.id}
@@ -273,20 +361,109 @@ export function WeekView({
                           recurrence: (ev as any).recurrence,
                           recurrenceRule: (ev as any).recurrenceRule,
                         });
+                        setModalInitialTab("schedule");
                         setIsEventModalOpen(true);
                       }}
                       className="group relative p-2.5 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs transition-all cursor-pointer text-xs"
                       style={{ borderLeftColor: subjectColor, borderLeftWidth: "4px" }}
                     >
+                      {/* Top Header on Card */}
                       <div className="flex items-start justify-between">
-                        <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] line-clamp-2 text-[11px]">
+                        <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] line-clamp-2 text-[11px] flex-1">
                           {ev.title}
                         </span>
-                        {ev.isLocked && (
-                          <Lock className="w-3 h-3 text-[#a3a86c] shrink-0 ml-1" />
+
+                        <div className="flex items-center space-x-1 shrink-0 ml-1">
+                          {ev.isLocked && (
+                            <Lock className="w-3 h-3 text-[#a3a86c]" />
+                          )}
+                          {/* Quick Delete Trash Button */}
+                          <button
+                            type="button"
+                            onClick={(e) => handleQuickDelete(e, ev)}
+                            title="Xóa lịch này"
+                            className="opacity-70 group-hover:opacity-100 p-1 text-gray-400 hover:text-rose-600 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all cursor-pointer"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Resource Badges */}
+                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        {hasMeeting && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const meet = ev.resources?.find(
+                                (r) => r.type === "MEETING" || ["ZOOM", "MEET", "TEAMS"].includes(r.subType || "")
+                              );
+                              if (meet?.url) window.open(meet.url, "_blank");
+                            }}
+                            title="Mở phòng học trực tuyến"
+                            className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-[10px] font-semibold hover:bg-emerald-200 transition-colors"
+                          >
+                            <Video className="w-2.5 h-2.5" />
+                            <span>Meeting</span>
+                          </span>
+                        )}
+
+                        {resourceCount > 0 ? (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingEvent({
+                                id: ev.id,
+                                originalId: (ev as any).originalId,
+                                title: ev.title,
+                                description: ev.description,
+                                subjectId: ev.subject?.id || null,
+                                startTime: ev.startTime,
+                                endTime: ev.endTime,
+                                type: ev.type,
+                                isLocked: ev.isLocked,
+                                recurrence: (ev as any).recurrence,
+                                recurrenceRule: (ev as any).recurrenceRule,
+                              });
+                              setModalInitialTab("resources");
+                              setIsEventModalOpen(true);
+                            }}
+                            title="Xem tài liệu & link buổi học"
+                            className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-[#d8ebe0] dark:bg-[#1c3826] text-[#1b4332] dark:text-[#a3bda9] text-[10px] font-medium hover:bg-[#b7d8c3] transition-colors"
+                          >
+                            <FolderOpen className="w-2.5 h-2.5" />
+                            <span>{resourceCount} files</span>
+                          </span>
+                        ) : (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingEvent({
+                                id: ev.id,
+                                originalId: (ev as any).originalId,
+                                title: ev.title,
+                                description: ev.description,
+                                subjectId: ev.subject?.id || null,
+                                startTime: ev.startTime,
+                                endTime: ev.endTime,
+                                type: ev.type,
+                                isLocked: ev.isLocked,
+                                recurrence: (ev as any).recurrence,
+                                recurrenceRule: (ev as any).recurrenceRule,
+                              });
+                              setModalInitialTab("resources");
+                              setIsEventModalOpen(true);
+                            }}
+                            title="Thêm tài liệu hoặc Zoom vào buổi học này"
+                            className="inline-flex items-center space-x-0.5 px-1 py-0.5 rounded-md border border-dashed border-[#b7d8c3] text-[#526b5c] dark:text-[#a3bda9] text-[9px] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-colors"
+                          >
+                            <Plus className="w-2 h-2" />
+                            <span>Resource</span>
+                          </span>
                         )}
                       </div>
 
+                      {/* Time and Quick Start Study Timer */}
                       <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
                         <span className="font-mono text-[10px] font-medium text-[#73927d]">
                           {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
@@ -329,27 +506,26 @@ export function WeekView({
       </div>
 
       {/* Modals */}
-      {isEventModalOpen && (
-        <EventModal
-          open={isEventModalOpen}
-          onClose={() => {
-            setIsEventModalOpen(false);
-            setEditingEvent(null);
-          }}
-          subjects={subjects}
-          defaultDate={modalDefaultDate}
-          editingEvent={editingEvent}
-          onSuccess={onEventsChange}
-        />
-      )}
+      <EventModal
+        open={isEventModalOpen}
+        onClose={() => setIsEventModalOpen(false)}
+        subjects={subjects}
+        defaultDate={modalDefaultDate}
+        editingEvent={editingEvent}
+        initialTab={modalInitialTab}
+        onSuccess={() => {
+          if (onEventsChange) onEventsChange();
+        }}
+      />
 
-      {isAiModalOpen && (
-        <AiSchedulePreviewModal
-          open={isAiModalOpen}
-          onClose={() => setIsAiModalOpen(false)}
-          subjects={subjects}
-        />
-      )}
+      <AiSchedulePreviewModal
+        open={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        subjects={subjects}
+        onScheduleCommitted={() => {
+          if (onEventsChange) onEventsChange();
+        }}
+      />
     </div>
   );
 }
