@@ -23,6 +23,14 @@ import {
   Play,
   GraduationCap,
   Briefcase,
+  Home,
+  LayoutGrid,
+  PlaySquare,
+  ShoppingBag,
+  Award,
+  Languages,
+  ShieldCheck,
+  ArrowLeft,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
@@ -32,14 +40,24 @@ export function BottomNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { startTimer } = usePipTimer();
 
-  const navItems = [
+  const isVocab = pathname.startsWith("/vocab");
+
+  const defaultNavItems = [
     { label: "Tổng quan", href: "/", icon: LayoutDashboard },
     { label: "Lịch học", href: "/calendar", icon: Calendar },
     { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare },
     { label: "Thói quen", href: "/habits", icon: Flame },
   ];
 
-  const drawerItems = [
+  const vocabNavItems = [
+    { label: "Trang chủ", href: "/vocab", icon: Home },
+    { label: "Bộ từ", href: "/vocab/courses/a1-0-3-0", icon: LayoutGrid },
+    { label: "Học ngắt", href: "/vocab/spaced-repetition", icon: PlaySquare },
+    { label: "Cửa hàng", href: "/vocab/shop", icon: ShoppingBag },
+  ];
+
+  const defaultDrawerItems = [
+    { label: "LUYENTU (Học từ vựng)", href: "/vocab", icon: Languages, highlight: true },
     { label: "Học thuật & GPA 4 năm", href: "/academic", icon: GraduationCap },
     { label: "Hồ sơ & Nghề nghiệp", href: "/career", icon: Briefcase },
     { label: "Môn học (Subjects)", href: "/subjects", icon: BookOpen },
@@ -53,6 +71,20 @@ export function BottomNav() {
     { label: "Thống kê (Analytics)", href: "/analytics", icon: BarChart3 },
     { label: "Cài đặt & Sao lưu", href: "/settings", icon: Settings },
   ];
+
+  const vocabDrawerItems = [
+    { label: "Trang chủ Vocab", href: "/vocab", icon: Home },
+    { label: "Các bộ từ (A1)", href: "/vocab/courses/a1-0-3-0", icon: LayoutGrid },
+    { label: "Kho từ vựng", href: "/vocab/words", icon: BookOpen },
+    { label: "Học ngắt quãng", href: "/vocab/spaced-repetition", icon: PlaySquare },
+    { label: "Cửa hàng phần thưởng", href: "/vocab/shop", icon: ShoppingBag },
+    { label: "Bảng xếp hạng", href: "/vocab/leaderboard", icon: Award },
+    { label: "Quản trị nội dung", href: "/vocab/admin", icon: ShieldCheck },
+    { label: "Quay về ChronoMind OS", href: "/", icon: ArrowLeft, highlight: true },
+  ];
+
+  const navItems = isVocab ? vocabNavItems : defaultNavItems;
+  const drawerItems = isVocab ? vocabDrawerItems : defaultDrawerItems;
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
