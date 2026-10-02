@@ -34,10 +34,10 @@
   - [x] Quản lý BYOK API key: Mã hóa AES-256-GCM, ẩn key ở client, nút test connection, hiển thị trạng thái Connected/Invalid/Not configured
   - [x] Đảm bảo timezone Asia/Ho_Chi_Minh chuẩn toàn hệ thống, không hard-code UTC
 
-- [ ] **Tác vụ 4: Nâng cấp Subject Management & Goal Hierarchy** (Phần 6, 7)
-  - [ ] Quản lý môn học: target score, deadline, difficulty, estimated workload, archive
-  - [ ] Hệ thống phân cấp: Goal -> Milestone -> Task -> Study Session
-  - [ ] API CRUD & validation cho Goals, Milestones, Tasks
+- [x] **Tác vụ 4: Nâng cấp Subject Management & Goal Hierarchy** (Phần 6, 7)
+  - [x] Quản lý môn học: target score, deadline, difficulty, estimated workload, archive
+  - [x] Hệ thống phân cấp: Goal -> Milestone -> Task -> Study Session
+  - [x] API CRUD & validation cho Goals, Milestones, Tasks
 
 - [ ] **Tác vụ 5: Deadline & Assignment Engine** (Phần 8)
   - [ ] Quản lý bài tập, deadline thi cử với estimated time, priority

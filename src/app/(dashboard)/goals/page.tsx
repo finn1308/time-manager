@@ -96,7 +96,6 @@ export default function GoalsPage() {
     }
   };
 
-  return (
   const handleToggleMilestone = async (milestoneId: string, currentCompleted: boolean) => {
     try {
       // Optimistic update
