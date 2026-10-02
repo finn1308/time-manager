@@ -224,7 +224,7 @@ export async function seedVocabData() {
             phonetic: w.phonetic,
             partOfSpeech: w.partOfSpeech,
             meaning: w.meaning,
-            explanation: w.explanation || null,
+            explanation: (w as any).explanation || null,
             exampleSentence: w.exampleSentence || null,
             exampleMeaning: w.exampleMeaning || null,
             order: i + 1,
