@@ -1,14 +1,35 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
-import { Lock, Repeat, FolderOpen, Calendar as CalendarIcon } from "lucide-react";
+import {
+  Lock,
+  Repeat,
+  FolderOpen,
+  Calendar as CalendarIcon,
+  MapPin,
+  Play,
+  Trash2,
+  Clock,
+  AlertTriangle,
+  Sparkles,
+  BookOpen,
+} from "lucide-react";
 import { formatVN, getDateKeyVN, makeVNDate } from "@/lib/date-utils";
 import { ResourceManager } from "@/components/study/resource-manager";
-import { getEventTypeConfig, ALL_EVENT_TYPES, CalendarEventType } from "@/lib/calendar/event-types";
+import {
+  getEventTypeConfig,
+  PRIMARY_EVENT_TYPES,
+  CalendarEventType,
+  canStartStudyTimer,
+  isSelfStudyEvent,
+  isSchoolEvent,
+  isPersonalEvent,
+} from "@/lib/calendar/event-types";
+import { usePipTimer } from "../timer/pip-timer-provider";
 
 interface EventModalProps {
   open: boolean;
@@ -17,6 +38,7 @@ interface EventModalProps {
   defaultDate?: string;
   defaultStartTime?: string;
   defaultEndTime?: string;
+  defaultType?: CalendarEventType;
   onSuccess?: () => void;
   initialTab?: "schedule" | "resources";
   editingEvent?: {
@@ -24,13 +46,17 @@ interface EventModalProps {
     originalId?: string;
     title: string;
     description?: string | null;
+    location?: string | null;
     subjectId?: string | null;
+    taskId?: string | null;
     startTime: string | Date;
     endTime: string | Date;
     type?: string;
     isLocked?: boolean;
     recurrence?: string;
     recurrenceRule?: string | null;
+    recurrenceEnd?: string | Date | null;
+    subject?: { id: string; name: string; code: string | null; color: string } | null;
   } | null;
 }
 
@@ -41,22 +67,27 @@ export function EventModal({
   defaultDate = getDateKeyVN(new Date()),
   defaultStartTime = "08:00",
   defaultEndTime = "09:30",
+  defaultType = "SELF_STUDY",
   onSuccess,
   initialTab = "schedule",
   editingEvent,
 }: EventModalProps) {
   const router = useRouter();
+  const { startTimer } = usePipTimer();
 
   const [activeModalTab, setActiveModalTab] = useState<"schedule" | "resources">("schedule");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
   const [subjectId, setSubjectId] = useState<string>("");
-  const [eventType, setEventType] = useState<CalendarEventType>("STUDY");
+  const [taskId, setTaskId] = useState<string>("");
+  const [tasks, setTasks] = useState<Array<{ id: string; title: string; subjectId?: string | null }>>([]);
+  const [eventType, setEventType] = useState<CalendarEventType>(defaultType);
   const [dateStr, setDateStr] = useState<string>(defaultDate);
   const [startTimeStr, setStartTimeStr] = useState<string>(defaultStartTime);
   const [endTimeStr, setEndTimeStr] = useState<string>(defaultEndTime);
   const [isLocked, setIsLocked] = useState<boolean>(false);
-  
+
   // Recurrence state
   const [recurrence, setRecurrence] = useState<string>("NONE");
   const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
@@ -65,28 +96,70 @@ export function EventModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Edit/Delete mode (Single vs All)
-  const [showEditModePrompt, setShowEditModePrompt] = useState(false);
-  const [pendingAction, setPendingAction] = useState<"SAVE" | "DELETE" | null>(null);
+  // Recurring delete modal states
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [deleteModeChoice, setDeleteModeChoice] = useState<"SINGLE" | "ALL" | "FUTURE">("SINGLE");
+
+  // Fetch tasks for dropdown
+  useEffect(() => {
+    async function loadTasks() {
+      try {
+        const res = await fetch("/api/tasks");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.tasks) setTasks(data.tasks);
+        }
+      } catch (e) {
+        console.warn("Failed to load tasks:", e);
+      }
+    }
+    loadTasks();
+  }, []);
 
   // Sync state whenever editingEvent or open changes
   useEffect(() => {
     if (editingEvent) {
       setTitle(editingEvent.title || "");
       setDescription(editingEvent.description || "");
-      setSubjectId(editingEvent.subjectId || subjects[0]?.id || "");
-      setEventType(((editingEvent.type?.toUpperCase() || "STUDY") as CalendarEventType) || "STUDY");
+      setLocation(editingEvent.location || "");
+      setSubjectId(editingEvent.subjectId || "");
+      setTaskId(editingEvent.taskId || "");
+
+      const normalizedType = ((editingEvent.type?.toUpperCase() || "OTHER") as CalendarEventType);
+      setEventType(normalizedType);
+
       setDateStr(formatVN(editingEvent.startTime, "yyyy-MM-dd"));
       setStartTimeStr(formatVN(editingEvent.startTime, "HH:mm"));
       setEndTimeStr(formatVN(editingEvent.endTime, "HH:mm"));
       setIsLocked(!!editingEvent.isLocked);
       setRecurrence(editingEvent.recurrence && editingEvent.recurrence !== "NONE" ? editingEvent.recurrence : "NONE");
+
+      // Parse weekly days from recurrenceRule if present
+      if (editingEvent.recurrenceRule && editingEvent.recurrenceRule.includes("BYDAY=")) {
+        const byDayPart = editingEvent.recurrenceRule.split("BYDAY=")[1]?.split(";")[0];
+        if (byDayPart) {
+          const dayMap: { [key: string]: number } = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+          const parsedDays = byDayPart.split(",").map((code) => dayMap[code.trim()]).filter((d) => d !== undefined);
+          setWeeklyDays(parsedDays);
+        }
+      } else {
+        setWeeklyDays([]);
+      }
+
+      if (editingEvent.recurrenceEnd) {
+        setRecurrenceEndDate(formatVN(editingEvent.recurrenceEnd, "yyyy-MM-dd"));
+      } else {
+        setRecurrenceEndDate("");
+      }
+
       setActiveModalTab(initialTab);
     } else {
       setTitle("");
       setDescription("");
+      setLocation("");
       setSubjectId(subjects[0]?.id || "");
-      setEventType("STUDY");
+      setTaskId("");
+      setEventType(defaultType);
       setDateStr(defaultDate);
       setStartTimeStr(defaultStartTime);
       setEndTimeStr(defaultEndTime);
@@ -97,18 +170,47 @@ export function EventModal({
       setActiveModalTab("schedule");
     }
     setErrorMsg(null);
-    setShowEditModePrompt(false);
-    setPendingAction(null);
-  }, [editingEvent, open, defaultDate, defaultStartTime, defaultEndTime, initialTab]);
+    setShowDeleteConfirmModal(false);
+  }, [editingEvent, open, defaultDate, defaultStartTime, defaultEndTime, defaultType, initialTab, subjects]);
 
-  const selectedSubject = subjects.find((s) => s.id === subjectId);
+  const selectedSubject = subjects.find((s) => s.id === subjectId) || editingEvent?.subject;
+
+  // Filter tasks belonging to current selected subject (or all if no subject)
+  const availableTasks = useMemo(() => {
+    if (!subjectId) return tasks;
+    return tasks.filter((t) => !t.subjectId || t.subjectId === subjectId);
+  }, [tasks, subjectId]);
+
+  // Event countdown string
+  const countdownText = useMemo(() => {
+    if (!editingEvent) return null;
+    const now = new Date().getTime();
+    const eventTime = new Date(editingEvent.startTime).getTime();
+    const diffMs = eventTime - now;
+
+    if (diffMs <= 0) {
+      const eventEndTime = new Date(editingEvent.endTime).getTime();
+      if (now < eventEndTime) {
+        return "Đang diễn ra";
+      }
+      return "Đã kết thúc";
+    }
+
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `Bắt đầu sau ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  }, [editingEvent]);
 
   const buildRRule = () => {
     if (recurrence === "NONE") return null;
     let rule = `FREQ=${recurrence}`;
     if (recurrence === "WEEKLY" && weeklyDays.length > 0) {
       const days = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
-      const byDay = weeklyDays.map(d => days[d]).join(",");
+      const byDay = weeklyDays.map((d) => days[d]).join(",");
       rule += `;BYDAY=${byDay}`;
     }
     if (recurrenceEndDate) {
@@ -124,7 +226,8 @@ export function EventModal({
     setIsSubmitting(true);
 
     try {
-      if (!dateStr) throw new Error("Vui lòng chọn ngày học");
+      if (!title.trim()) throw new Error("Vui lòng nhập tiêu đề sự kiện");
+      if (!dateStr) throw new Error("Vui lòng chọn ngày");
       if (!startTimeStr || !endTimeStr) throw new Error("Vui lòng nhập giờ bắt đầu và kết thúc");
 
       const startUTC = makeVNDate(dateStr, startTimeStr);
@@ -141,7 +244,9 @@ export function EventModal({
         updateMode: mode,
         title: title.trim(),
         description: description.trim() || null,
+        location: location.trim() || null,
         subjectId: subjectId || null,
+        taskId: taskId || null,
         startTime: startUTC.toISOString(),
         endTime: endUTC.toISOString(),
         type: eventType,
@@ -168,36 +273,32 @@ export function EventModal({
       setErrorMsg(err.message || "Đã xảy ra lỗi");
     } finally {
       setIsSubmitting(false);
-      setShowEditModePrompt(false);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const isRecurring = Boolean(editingEvent?.recurrence && editingEvent.recurrence !== "NONE");
-    if (editingEvent?.originalId && isRecurring) {
-      setPendingAction("SAVE");
-      setShowEditModePrompt(true);
-    } else {
-      handleSaveAction("SINGLE");
-    }
+    handleSaveAction("SINGLE");
   };
 
-  const executeDelete = async (mode: "SINGLE" | "ALL") => {
+  const executeDelete = async (mode: "SINGLE" | "ALL" | "FUTURE") => {
+    if (!editingEvent) return;
     try {
       setIsSubmitting(true);
-      const isRecurring = Boolean(editingEvent?.recurrence && editingEvent.recurrence !== "NONE");
-      const cleanId = editingEvent!.id.includes("_") ? editingEvent!.id.split("_")[0] : editingEvent!.id;
-      const cleanOriginalId = editingEvent!.originalId
-        ? (editingEvent!.originalId.includes("_") ? editingEvent!.originalId.split("_")[0] : editingEvent!.originalId)
+      const isRecurring = Boolean(editingEvent.recurrence && editingEvent.recurrence !== "NONE");
+      const cleanId = editingEvent.id.includes("_") ? editingEvent.id.split("_")[0] : editingEvent.id;
+      const cleanOriginalId = editingEvent.originalId
+        ? editingEvent.originalId.includes("_")
+          ? editingEvent.originalId.split("_")[0]
+          : editingEvent.originalId
         : cleanId;
-      const exDate = getDateKeyVN(editingEvent!.startTime);
-      
+      const exDate = getDateKeyVN(editingEvent.startTime);
+
       let url = `/api/calendar/events?id=${cleanId}&deleteMode=${mode}`;
       if (isRecurring && cleanOriginalId && exDate) {
         url += `&originalId=${cleanOriginalId}&exceptionDate=${exDate}`;
       }
-      
+
       const res = await fetch(url, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) {
@@ -205,72 +306,244 @@ export function EventModal({
       }
       if (onSuccess) onSuccess();
       router.refresh();
+      setShowDeleteConfirmModal(false);
       onClose();
     } catch (e: any) {
       alert(e.message || "Không thể xóa sự kiện");
     } finally {
       setIsSubmitting(false);
-      setShowEditModePrompt(false);
     }
   };
 
-  const handleDelete = () => {
+  const handleDeleteClick = () => {
     if (!editingEvent) return;
     const isRecurring = Boolean(editingEvent.recurrence && editingEvent.recurrence !== "NONE");
     if (isRecurring) {
-      setPendingAction("DELETE");
-      setShowEditModePrompt(true);
+      setDeleteModeChoice("SINGLE");
+      setShowDeleteConfirmModal(true);
     } else {
-      if (confirm("Bạn có chắc chắn muốn xóa lịch học này không?")) {
+      if (confirm(`Bạn có chắc chắn muốn xóa lịch "${editingEvent.title}" không?`)) {
         executeDelete("SINGLE");
       }
     }
   };
 
+  const handleStartTimer = () => {
+    if (!editingEvent) return;
+    if (!canStartStudyTimer(eventType)) {
+      alert("Chỉ lịch Tự học (SELF_STUDY) mới có thể bấm giờ học!");
+      return;
+    }
+    const cleanId = editingEvent.id.includes("_") ? editingEvent.id.split("_")[0] : editingEvent.id;
+    const targetSub = selectedSubject || {
+      id: "general",
+      name: "Tự học",
+      code: null,
+      color: "#2d6a4f",
+    };
+
+    startTimer(
+      {
+        id: targetSub.id,
+        name: targetSub.name,
+        code: targetSub.code,
+        color: targetSub.color,
+      },
+      {
+        scheduleEventId: cleanId,
+        taskId: taskId || null,
+      }
+    );
+    onClose();
+  };
+
   const toggleDay = (dayIndex: number) => {
     if (weeklyDays.includes(dayIndex)) {
-      setWeeklyDays(weeklyDays.filter(d => d !== dayIndex));
+      setWeeklyDays(weeklyDays.filter((d) => d !== dayIndex));
     } else {
       setWeeklyDays([...weeklyDays, dayIndex].sort());
     }
   };
 
+  const currentTypeConfig = getEventTypeConfig(eventType);
+  const TypeIcon = currentTypeConfig.icon;
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent onClose={onClose} className="max-w-xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl max-h-[92vh] overflow-y-auto">
-        
-        {showEditModePrompt ? (
-          <div className="space-y-4">
+        {/* DELETE CONFIRMATION MODAL (Sections 17-20) */}
+        {showDeleteConfirmModal && editingEvent ? (
+          <div className="space-y-4 py-2">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
-                Thay đổi lịch lặp
+              <DialogTitle className="text-lg font-bold text-rose-600 dark:text-rose-400 flex items-center space-x-2">
+                <AlertTriangle className="w-5 h-5" />
+                <span>Xác nhận xóa lịch "{editingEvent.title}"</span>
               </DialogTitle>
-              <DialogDescription className="text-sm">
-                Sự kiện này thuộc một chuỗi lịch lặp. Bạn muốn áp dụng thay đổi cho:
+              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                Sự kiện này thuộc chuỗi lịch lặp:{" "}
+                <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                  {editingEvent.recurrence === "WEEKLY"
+                    ? "Lặp hàng tuần"
+                    : editingEvent.recurrence === "DAILY"
+                    ? "Lặp hàng ngày"
+                    : "Lặp định kỳ"}
+                </span>
               </DialogDescription>
             </DialogHeader>
-            <div className="flex flex-col space-y-2 mt-4">
-              <Button onClick={() => pendingAction === "SAVE" ? handleSaveAction("SINGLE") : executeDelete("SINGLE")} variant="outline" className="justify-start h-12 rounded-2xl">
-                Chỉ sự kiện này
-              </Button>
-              <Button onClick={() => pendingAction === "SAVE" ? handleSaveAction("ALL") : executeDelete("ALL")} variant="outline" className="justify-start h-12 rounded-2xl text-rose-600 hover:text-rose-700">
-                Toàn bộ chuỗi sự kiện
-              </Button>
+
+            <div className="p-3.5 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 text-xs space-y-1">
+              <p className="font-semibold text-rose-800 dark:text-rose-300">
+                Buổi đang chọn: {formatVN(editingEvent.startTime, "EEEE, dd/MM/yyyy (HH:mm - ")}
+                {formatVN(editingEvent.endTime, "HH:mm)")}
+              </p>
+              <p className="text-[#526b5c] dark:text-[#a3bda9]">
+                Bạn muốn áp dụng việc xóa cho:
+              </p>
             </div>
-            <div className="flex justify-end mt-4">
-              <Button variant="ghost" onClick={() => setShowEditModePrompt(false)}>Hủy</Button>
+
+            <div className="space-y-2.5 pt-1">
+              <label
+                onClick={() => setDeleteModeChoice("SINGLE")}
+                className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
+                  deleteModeChoice === "SINGLE"
+                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] ring-1 ring-[#2d6a4f]"
+                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="deleteMode"
+                  checked={deleteModeChoice === "SINGLE"}
+                  onChange={() => setDeleteModeChoice("SINGLE")}
+                  className="mt-0.5 text-[#2d6a4f] focus:ring-[#52b788]"
+                />
+                <div>
+                  <div className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                    Chỉ xóa lịch này
+                  </div>
+                  <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                    Chỉ hủy occurrence vào ngày {formatVN(editingEvent.startTime, "dd/MM/yyyy")}. Các buổi học khác trong chuỗi vẫn giữ nguyên vẹn.
+                  </div>
+                </div>
+              </label>
+
+              <label
+                onClick={() => setDeleteModeChoice("ALL")}
+                className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
+                  deleteModeChoice === "ALL"
+                    ? "border-rose-600 bg-rose-50 dark:bg-rose-950/40 ring-1 ring-rose-600"
+                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="deleteMode"
+                  checked={deleteModeChoice === "ALL"}
+                  onChange={() => setDeleteModeChoice("ALL")}
+                  className="mt-0.5 text-rose-600 focus:ring-rose-500"
+                />
+                <div>
+                  <div className="font-bold text-xs text-rose-700 dark:text-rose-300">
+                    Xóa tất cả lịch trong chuỗi
+                  </div>
+                  <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                    Xóa toàn bộ chuỗi sự kiện này (các buổi học đã diễn ra có StudySession thực tế vẫn được bảo toàn dữ liệu lịch sử).
+                  </div>
+                </div>
+              </label>
+
+              <label
+                onClick={() => setDeleteModeChoice("FUTURE")}
+                className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
+                  deleteModeChoice === "FUTURE"
+                    ? "border-amber-600 bg-amber-50 dark:bg-amber-950/40 ring-1 ring-amber-600"
+                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="deleteMode"
+                  checked={deleteModeChoice === "FUTURE"}
+                  onChange={() => setDeleteModeChoice("FUTURE")}
+                  className="mt-0.5 text-amber-600 focus:ring-amber-500"
+                />
+                <div>
+                  <div className="font-bold text-xs text-amber-800 dark:text-amber-300">
+                    Xóa từ lịch này trở đi
+                  </div>
+                  <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                    Dừng chuỗi lặp lại từ ngày {formatVN(editingEvent.startTime, "dd/MM/yyyy")}. Các buổi trước ngày này vẫn giữ nguyên.
+                  </div>
+                </div>
+              </label>
             </div>
+
+            <DialogFooter className="flex justify-between items-center pt-3 border-t border-[#dbe7dd] dark:border-[#263d2e] mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowDeleteConfirmModal(false)}
+                disabled={isSubmitting}
+                className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+              >
+                Hủy
+              </Button>
+
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => executeDelete(deleteModeChoice)}
+                disabled={isSubmitting}
+                className="rounded-2xl font-semibold text-xs h-9 bg-rose-600 hover:bg-rose-700"
+              >
+                {isSubmitting ? "Đang xóa..." : "Xác nhận xóa"}
+              </Button>
+            </DialogFooter>
           </div>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
-                {editingEvent ? "Chi tiết lịch học" : "Tạo lịch học mới"}
-              </DialogTitle>
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
+                  <span className="text-xl">{currentTypeConfig.emoji}</span>
+                  <span>{editingEvent ? "Chi tiết sự kiện" : "Tạo lịch mới"}</span>
+                </DialogTitle>
+
+                {countdownText && (
+                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#eef5f0] text-[#2d6a4f] dark:bg-[#1b3426] dark:text-[#74c69d] flex items-center space-x-1">
+                    <Clock className="w-3 h-3" />
+                    <span>{countdownText}</span>
+                  </span>
+                )}
+              </div>
               <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
-                Múi giờ chuẩn: Asia/Ho_Chi_Minh. Kiểm tra xung đột & gắn tài nguyên thông minh.
+                Múi giờ Asia/Ho_Chi_Minh. Phân biệt rõ lịch học ngoài đời, tự học, cá nhân và thi cử.
               </DialogDescription>
             </DialogHeader>
+
+            {/* Quick Action Banner for SELF_STUDY: Start Timer Button */}
+            {editingEvent && isSelfStudyEvent(eventType) && (
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-[#eef5f0] to-[#d8ebe0] dark:from-[#1b3426] dark:to-[#17261c] border border-[#b7d8c3] dark:border-[#263d2e] my-3">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-[#1b4332] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#2d6a4f] dark:text-[#52b788]" />
+                    <span>Phiên tự học tại nhà</span>
+                  </span>
+                  <p className="text-[11px] text-[#408257] dark:text-[#a3bda9]">
+                    Bấm giờ để ghi nhận thời gian học thực tế vào Study Hours & Dashboard
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={handleStartTimer}
+                  size="sm"
+                  className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl text-xs font-bold space-x-1.5 shadow-2xs"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>Start Study Timer</span>
+                </Button>
+              </div>
+            )}
 
             {/* Mode Tabs if Editing Existing Event */}
             {editingEvent && (
@@ -285,7 +558,7 @@ export function EventModal({
                   }`}
                 >
                   <CalendarIcon className="w-3.5 h-3.5" />
-                  <span>Cài đặt giờ & môn</span>
+                  <span>Cài đặt sự kiện</span>
                 </button>
                 <button
                   type="button"
@@ -312,16 +585,14 @@ export function EventModal({
                   sessionTitle={title || editingEvent.title}
                   timeFormatted={`${startTimeStr} - ${endTimeStr}`}
                   allSubjects={subjects}
-                  onSubjectChange={(newSubId) => {
-                    setSubjectId(newSubId);
-                  }}
+                  onSubjectChange={(newSubId) => setSubjectId(newSubId)}
                   onRefreshCalendar={onSuccess}
                 />
                 <div className="flex justify-between items-center pt-4 border-t border-[#dbe7dd] dark:border-[#263d2e] mt-4">
                   <Button
                     type="button"
                     variant="destructive"
-                    onClick={handleDelete}
+                    onClick={handleDeleteClick}
                     disabled={isSubmitting}
                     size="sm"
                     className="font-semibold rounded-2xl"
@@ -339,7 +610,7 @@ export function EventModal({
                 </div>
               </div>
             ) : (
-              /* TAB CONTENT: SCHEDULE EDIT FORM */
+              /* TAB CONTENT: CONTEXTUAL FORM */
               <form onSubmit={handleSubmit} className="space-y-4 py-2">
                 {errorMsg && (
                   <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-xs text-rose-700 dark:text-rose-300">
@@ -347,73 +618,153 @@ export function EventModal({
                   </div>
                 )}
 
+                {/* 1. Event Type Selector (Section 8) */}
                 <div>
                   <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                    Tiêu đề buổi học <span className="text-rose-500">*</span>
+                    Loại lịch sự kiện <span className="text-rose-500">*</span>
                   </label>
-                  <Input
-                    required
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Ví dụ: Ôn tập Unit 3 - Giải đề thi..."
-                    className="rounded-2xl h-10 text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                    Môn học
-                  </label>
-                  <select
-                    value={subjectId}
-                    onChange={(e) => setSubjectId(e.target.value)}
-                    className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
-                  >
-                    <option value="">-- Không gắn môn (Lịch tự do) --</option>
-                    {subjects.map((sub) => (
-                      <option key={sub.id} value={sub.id}>
-                        {sub.name} {sub.code ? `(${sub.code})` : ""}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                    Phân loại sự kiện
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {ALL_EVENT_TYPES.map((t) => {
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {PRIMARY_EVENT_TYPES.map((t) => {
                       const cfg = getEventTypeConfig(t);
                       const Icon = cfg.icon;
-                      const isSelected = eventType === t;
+                      const isSelected = eventType === t || (t === "SELF_STUDY" && eventType === "STUDY");
                       return (
                         <button
                           key={t}
                           type="button"
                           onClick={() => setEventType(t)}
-                          className={`flex items-center space-x-1.5 p-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                          className={`flex items-center space-x-2 p-2.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer text-left ${
                             isSelected
-                              ? "border-[#2d6a4f] shadow-2xs font-bold ring-1 ring-[#2d6a4f]"
-                              : "border-[#dbe7dd] dark:border-[#263d2e] opacity-75 hover:opacity-100 bg-[#fbfdfb] dark:bg-[#142318]"
+                              ? "border-[#2d6a4f] shadow-xs font-bold ring-2 ring-[#2d6a4f]/20"
+                              : "border-[#dbe7dd] dark:border-[#263d2e] opacity-80 hover:opacity-100 bg-[#fbfdfb] dark:bg-[#142318]"
                           }`}
                           style={{
                             backgroundColor: isSelected ? cfg.badgeBg : undefined,
                             color: isSelected ? cfg.badgeText : undefined,
                           }}
                         >
-                          <Icon className="w-3.5 h-3.5 shrink-0" />
-                          <span className="truncate">{cfg.label}</span>
+                          <span className="text-base shrink-0">{cfg.emoji}</span>
+                          <div className="truncate">
+                            <div className="truncate font-bold leading-tight">{cfg.shortLabel}</div>
+                          </div>
                         </button>
                       );
                     })}
                   </div>
+                  <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1.5">
+                    {currentTypeConfig.description}
+                  </p>
                 </div>
 
+                {/* 2. Title Field */}
+                <div>
+                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                    {isSchoolEvent(eventType)
+                      ? "Tên môn học / buổi học ở trường"
+                      : isSelfStudyEvent(eventType)
+                      ? "Tên buổi tự học / Topic"
+                      : isPersonalEvent(eventType)
+                      ? "Tên hoạt động cá nhân / Đi chơi"
+                      : eventType === "EXAM"
+                      ? "Tên kỳ thi / Môn thi"
+                      : eventType === "DEADLINE"
+                      ? "Tên bài tập / Hạn chót cần nộp"
+                      : "Tiêu đề sự kiện"}{" "}
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder={
+                      isSchoolEvent(eventType)
+                        ? "Ví dụ: Toán cao cấp, Vật lý đại cương..."
+                        : isSelfStudyEvent(eventType)
+                        ? "Ví dụ: IELTS Reading - Test 18, Giải bài tập Unit 3..."
+                        : isPersonalEvent(eventType)
+                        ? "Ví dụ: Đi chơi với bạn, Xem phim, Tiệc sinh nhật..."
+                        : eventType === "EXAM"
+                        ? "Ví dụ: Thi cuối kỳ Giải tích 1..."
+                        : eventType === "DEADLINE"
+                        ? "Ví dụ: Nộp Assignment 2, Nộp báo cáo..."
+                        : "Ví dụ: Lịch hẹn bác sĩ..."
+                    }
+                    className="rounded-2xl h-10 text-xs"
+                  />
+                </div>
+
+                {/* 3. Contextual Fields: Subject / Task */}
+                {(isSchoolEvent(eventType) || isSelfStudyEvent(eventType) || eventType === "EXAM" || eventType === "DEADLINE") && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        Môn học liên kết {isSelfStudyEvent(eventType) && <span className="text-amber-600 font-normal">(khuyên dùng)</span>}
+                      </label>
+                      <select
+                        value={subjectId}
+                        onChange={(e) => setSubjectId(e.target.value)}
+                        className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                      >
+                        <option value="">-- Chọn môn học --</option>
+                        {subjects.map((sub) => (
+                          <option key={sub.id} value={sub.id}>
+                            {sub.name} {sub.code ? `(${sub.code})` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {(isSelfStudyEvent(eventType) || eventType === "DEADLINE") && (
+                      <div>
+                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          Nhiệm vụ / Task liên kết (Tùy chọn)
+                        </label>
+                        <select
+                          value={taskId}
+                          onChange={(e) => setTaskId(e.target.value)}
+                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                        >
+                          <option value="">-- Không gắn nhiệm vụ --</option>
+                          {availableTasks.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 4. Location Field (School, Personal, Exam, Other) */}
+                {(isSchoolEvent(eventType) || isPersonalEvent(eventType) || eventType === "EXAM" || eventType === "OTHER") && (
+                  <div>
+                    <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                      <MapPin className="w-3.5 h-3.5 text-[#52b788]" />
+                      <span>{isSchoolEvent(eventType) ? "Địa điểm / Phòng học" : isPersonalEvent(eventType) ? "Địa điểm gặp mặt" : eventType === "EXAM" ? "Phòng thi / Giảng đường" : "Địa điểm"}</span>
+                    </label>
+                    <Input
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      placeholder={
+                        isSchoolEvent(eventType)
+                          ? "Ví dụ: Trường ĐH Bách Khoa - Phòng A203"
+                          : isPersonalEvent(eventType)
+                          ? "Ví dụ: Highlands Coffee Nhà Thờ..."
+                          : eventType === "EXAM"
+                          ? "Ví dụ: Phòng thi 405 Nhà H1..."
+                          : "Ví dụ: 123 Đường Nguyễn Huệ..."
+                      }
+                      className="rounded-2xl h-10 text-xs"
+                    />
+                  </div>
+                )}
+
+                {/* 5. Date & Time */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                      Ngày học
+                      {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày diễn ra"}
                     </label>
                     <Input
                       type="date"
@@ -426,7 +777,7 @@ export function EventModal({
 
                   <div>
                     <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                      Bắt đầu
+                      {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
                     </label>
                     <Input
                       type="time"
@@ -451,7 +802,7 @@ export function EventModal({
                   </div>
                 </div>
 
-                {/* Recurrence Rule Picker */}
+                {/* 6. Recurrence Rule Picker (Sections 9, 16) */}
                 <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
@@ -471,23 +822,34 @@ export function EventModal({
                   </div>
 
                   {recurrence === "WEEKLY" && (
-                    <div className="flex items-center justify-between gap-1 pt-1">
-                      {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((label, i) => (
-                        <button
-                          key={label}
-                          type="button"
-                          onClick={() => toggleDay(i)}
-                          className={`flex-1 h-8 text-[10px] font-bold rounded-lg ${weeklyDays.includes(i) ? "bg-[#52b788] text-white" : "bg-white dark:bg-[#1e3023] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]"}`}
-                        >
-                          {label}
-                        </button>
-                      ))}
+                    <div>
+                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] mb-1.5 font-medium">
+                        Chọn các ngày học hàng tuần (Ví dụ: T2 + T4 + T6):
+                      </p>
+                      <div className="flex items-center justify-between gap-1">
+                        {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((label, i) => (
+                          <button
+                            key={label}
+                            type="button"
+                            onClick={() => toggleDay(i)}
+                            className={`flex-1 h-8 text-[10px] font-bold rounded-xl transition-all cursor-pointer ${
+                              weeklyDays.includes(i)
+                                ? "bg-[#2d6a4f] text-white shadow-2xs"
+                                : "bg-white dark:bg-[#1e3023] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
 
                   {recurrence !== "NONE" && (
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">Ngày kết thúc lặp (Tùy chọn)</label>
+                      <label className="block text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                        Ngày kết thúc lặp (Tùy chọn)
+                      </label>
                       <Input
                         type="date"
                         value={recurrenceEndDate}
@@ -498,7 +860,7 @@ export function EventModal({
                   )}
                 </div>
 
-                {/* Locked Checkbox */}
+                {/* 7. Locked Checkbox */}
                 <div className="flex items-center space-x-2.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
                   <input
                     type="checkbox"
@@ -509,19 +871,28 @@ export function EventModal({
                   />
                   <label htmlFor="isLockedCheck" className="text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5 cursor-pointer select-none">
                     <Lock className="w-3.5 h-3.5 text-[#a3a86c]" />
-                    <span className="font-semibold">Khóa sự kiện này (AI tuyệt đối không được xếp lịch đè)</span>
+                    <span className="font-semibold">Khóa sự kiện này (AI tuyệt đối không được xếp lịch đè lên)</span>
                   </label>
                 </div>
 
+                {/* 8. Description */}
                 <div>
                   <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                    Ghi chú nội dung
+                    Ghi chú chi tiết
                   </label>
                   <textarea
                     rows={2}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Nội dung cần ôn, bài tập hoặc tài liệu..."
+                    placeholder={
+                      isSchoolEvent(eventType)
+                        ? "Ví dụ: Phòng A203, mang bài tập nhóm, nộp bài kiểm tra..."
+                        : isSelfStudyEvent(eventType)
+                        ? "Ví dụ: Làm đề Cambridge 18 Test 2 Reading, xem giải chi tiết..."
+                        : isPersonalEvent(eventType)
+                        ? "Ví dụ: Hẹn ăn tối mừng sinh nhật bạn..."
+                        : "Ghi chú nội dung..."
+                    }
                     className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
                   />
                 </div>
@@ -531,17 +902,26 @@ export function EventModal({
                     <Button
                       type="button"
                       variant="destructive"
-                      onClick={handleDelete}
+                      onClick={handleDeleteClick}
                       disabled={isSubmitting}
                       size="sm"
                       className="font-semibold rounded-2xl"
                     >
-                      Xóa lịch
+                      <Trash2 className="w-3.5 h-3.5 mr-1" />
+                      <span>Xóa lịch</span>
                     </Button>
-                  ) : <div />}
+                  ) : (
+                    <div />
+                  )}
 
                   <div className="flex items-center space-x-2">
-                    <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl border-[#dbe7dd] text-xs">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={onClose}
+                      disabled={isSubmitting}
+                      className="rounded-2xl border-[#dbe7dd] text-xs"
+                    >
                       Hủy
                     </Button>
                     <Button
