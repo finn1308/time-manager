@@ -31,7 +31,7 @@ export async function GET() {
   );
 
   const todaySelfStudyPlannedHours = todayEvents
-    .filter((ev) => isSelfStudyEvent(ev.type))
+    .filter((ev) => isSelfStudyEvent(ev.type) && (ev as any).trackStudyTime !== false)
     .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
 
   const todaySchoolHours = todayEvents
@@ -63,7 +63,7 @@ export async function GET() {
   );
 
   const weekSelfStudyPlannedHours = weekEvents
-    .filter((ev) => isSelfStudyEvent(ev.type))
+    .filter((ev) => isSelfStudyEvent(ev.type) && (ev as any).trackStudyTime !== false)
     .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
 
   const weekSchoolHours = weekEvents
@@ -188,7 +188,7 @@ export async function GET() {
     const dayLabel = format(day, "EEE (dd/MM)");
 
     const dayPlanned = expandedEvents
-      .filter((e) => e.startTime >= dayS && e.startTime <= dayE && isSelfStudyEvent(e.type) && !e.isCancelled)
+      .filter((e) => e.startTime >= dayS && e.startTime <= dayE && isSelfStudyEvent(e.type) && (e as any).trackStudyTime !== false && !e.isCancelled)
       .reduce((acc, e) => acc + (e.endTime.getTime() - e.startTime.getTime()) / (1000 * 3600), 0);
 
     const dayActual = last7DaysSessions
