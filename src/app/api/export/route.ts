@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
         }),
         prisma.flashcardDeck.findMany({
           where: { userId: user.id },
-          include: { cards: true },
+          include: { flashcards: true },
         }),
       ]);
 
