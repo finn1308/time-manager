@@ -56,10 +56,24 @@ export async function POST(req: Request) {
     // 1. Fetch existing calendar events for collision check
     const existingEvents = await prisma.calendarEvent.findMany({
       where: { userId: user.id },
-      select: { startTime: true, endTime: true, title: true, isLocked: true },
+      select: { 
+        id: true,
+        startTime: true, 
+        endTime: true, 
+        title: true, 
+        isLocked: true,
+        recurrence: true,
+        recurrenceRule: true,
+        parentId: true,
+        isException: true,
+        isCancelled: true,
+      },
     });
 
-    const timeSlots = existingEvents.map((e) => ({
+    const { expandRecurringEvents } = require("@/lib/scheduling/recurrence");
+    const expandedEvents = expandRecurringEvents(existingEvents, start, end);
+
+    const timeSlots = expandedEvents.map((e: any) => ({
       start: e.startTime,
       end: e.endTime,
       title: e.title,
