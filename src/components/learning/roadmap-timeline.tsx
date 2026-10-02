@@ -16,8 +16,10 @@ import {
   RotateCcw,
   Calendar,
   X,
+  Trash2,
 } from "lucide-react";
 import { StudyBunnyMascot } from "./study-bunny-mascot";
+import { DeleteRoadmapModal } from "./delete-roadmap-modal";
 import { Button } from "@/components/ui/button";
 
 export interface RoadmapStageData {
@@ -56,6 +58,8 @@ interface RoadmapTimelineProps {
   userXp: number;
   streakDays: number;
   onSelectQuiz: (quizId: string) => void;
+  onDeleteSuccess?: (message: string) => void;
+  onDeleteError?: (error: string) => void;
   onResetRoadmap?: () => void;
 }
 
@@ -64,9 +68,12 @@ export function RoadmapTimeline({
   userXp,
   streakDays,
   onSelectQuiz,
+  onDeleteSuccess,
+  onDeleteError,
   onResetRoadmap,
 }: RoadmapTimelineProps) {
   const [selectedLessonStage, setSelectedLessonStage] = useState<RoadmapStageData | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const completedCount = roadmap.stages.filter((s) => s.isCompleted).length;
   const progressPercent =
