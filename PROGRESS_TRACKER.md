@@ -63,10 +63,10 @@
   - [x] Floating PiP widget nổi trên UI + Document PiP API
   - [x] Tự động lưu StudySession record vào Database khi stop, phân loại Planned/Completed/Partial/Missed
 
-- [ ] **Tác vụ 10: Task System & Quick Inbox Parser** (Phần 22, 23, 24)
-  - [ ] Giao diện Task board/list: Inbox, Todo, In Progress, Done, Cancelled
-  - [ ] Quick Inbox NLP Parser (e.g. "Mai học Physics chương 3 1 tiếng")
-  - [ ] Kiểm soát thứ tự Task Dependency (Task A -> Task B -> Task C)
+- [x] **Tác vụ 10: Task System & Quick Inbox Parser** (Phần 22, 23, 24)
+  - [x] Giao diện Task board/list: Inbox, Todo, In Progress, Done, Cancelled
+  - [x] Quick Inbox NLP Parser (e.g. "Mai học Physics chương 3 1 tiếng")
+  - [x] Kiểm soát thứ tự Task Dependency (Task A -> Task B -> Task C)
 
 - [ ] **Tác vụ 11: PDF Knowledge Extraction & AI Learning Roadmap** (Phần 16, 17)
   - [ ] PDF Upload & Text Extractor với phân tích Chapter/Section chính xác
