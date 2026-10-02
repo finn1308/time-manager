@@ -154,6 +154,9 @@ export default async function AnalyticsPage() {
         plannedHours={plannedHours}
         completionRate={completionRate}
         streakDays={streak}
+        schoolHours={schoolHours}
+        personalHours={personalHours}
+        scheduledHours={scheduledHours}
       />
 
       {/* Main Chart */}
