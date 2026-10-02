@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { CommandPalette } from "./command-palette";
 import { AiStudyCoachModal } from "../ai/ai-study-coach-modal";
 import { QuickCaptureModal } from "./quick-capture-modal";
+import { NotificationCenter } from "../notifications/notification-center";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
 interface TopBarProps {
@@ -177,6 +178,9 @@ export function TopBar({ user }: TopBarProps) {
               </>
             )}
           </div>
+
+          {/* Notification Center */}
+          <NotificationCenter />
 
           {/* User Avatar */}
           <div className="w-8 h-8 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#9cd1b1] flex items-center justify-center font-bold text-xs shadow-2xs border border-[#b7d8c3]/60 dark:border-[#263d2e]">
