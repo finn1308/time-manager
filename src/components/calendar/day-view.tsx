@@ -122,9 +122,12 @@ export function DayView({
     return false;
   });
 
-  // 3. Calculate Overall Daily Stats (Planned, Actual, Remaining)
-  let totalPlannedMinutes = 0;
-  let totalActualMinutes = 0;
+  // 3. Calculate Overall Daily Stats separated by Event Types (Requirements 13 & 14)
+  let totalScheduledMinutes = 0;
+  let schoolMinutes = 0;
+  let personalMinutes = 0;
+  let selfStudyPlannedMinutes = 0;
+  let selfStudyActualMinutes = 0;
 
   // Track stats for each of the 4 periods
   const periodStats: Record<PeriodKey, { plannedMinutes: number; actualMinutes: number }> = {
@@ -147,16 +150,27 @@ export function DayView({
     const evActualSeconds = ev.studySessions?.reduce((sum, s) => sum + s.actualDurationSeconds, 0) || 0;
     const evActualMinutes = Math.round(evActualSeconds / 60);
 
-    totalPlannedMinutes += allocation.totalMinutes;
-    totalActualMinutes += evActualMinutes;
+    totalScheduledMinutes += allocation.totalMinutes;
 
-    // Distribute planned minutes across periods
+    if (isSchoolEvent(ev.type)) {
+      schoolMinutes += allocation.totalMinutes;
+    } else if (isPersonalEvent(ev.type)) {
+      personalMinutes += allocation.totalMinutes;
+    } else if (isSelfStudyEvent(ev.type)) {
+      selfStudyPlannedMinutes += allocation.totalMinutes;
+      selfStudyActualMinutes += evActualMinutes;
+    }
+
+    // Distribute planned minutes across periods for self-study
     (Object.keys(allocation.periods) as PeriodKey[]).forEach((pKey) => {
-      periodStats[pKey].plannedMinutes += allocation.periods[pKey];
+      if (isSelfStudyEvent(ev.type)) {
+        periodStats[pKey].plannedMinutes += allocation.periods[pKey];
+      }
     });
 
-    // Attribute actual minutes to the primary period
-    periodStats[allocation.primaryPeriod].actualMinutes += evActualMinutes;
+    if (isSelfStudyEvent(ev.type)) {
+      periodStats[allocation.primaryPeriod].actualMinutes += evActualMinutes;
+    }
 
     // Place into period event list
     periodEvents[allocation.primaryPeriod].push({
@@ -168,11 +182,11 @@ export function DayView({
     });
   });
 
-  const totalRemainingMinutes = Math.max(0, totalPlannedMinutes - totalActualMinutes);
+  const selfStudyRemainingMinutes = Math.max(0, selfStudyPlannedMinutes - selfStudyActualMinutes);
   const progressPercent =
-    totalPlannedMinutes > 0
-      ? Math.min(100, Math.round((totalActualMinutes / totalPlannedMinutes) * 100))
-      : totalActualMinutes > 0
+    selfStudyPlannedMinutes > 0
+      ? Math.min(100, Math.round((selfStudyActualMinutes / selfStudyPlannedMinutes) * 100))
+      : selfStudyActualMinutes > 0
       ? 100
       : 0;
 
