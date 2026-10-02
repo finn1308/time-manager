@@ -179,6 +179,12 @@ export async function PATCH(
       },
     });
 
+    // Award XP if task was just marked as DONE
+    if (updated.status === "DONE" && existing.status !== "DONE") {
+      const { awardUserXp } = await import("@/lib/gamification/engine");
+      await awardUserXp(user.id, 15, `Hoàn thành nhiệm vụ: ${updated.title}`);
+    }
+
     return NextResponse.json({ success: true, task: updated });
   } catch (err: any) {
     console.error("PATCH /api/tasks/[id] error:", err);
