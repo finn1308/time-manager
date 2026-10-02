@@ -54,6 +54,12 @@ const TARGET_GRADES = [
   { id: "A+", label: "A+", desc: "Tuyệt đối, chuyên gia môn học" },
 ];
 
+const PASSION_LEARNING_GOALS = [
+  { id: "Hiểu & Ứng dụng", label: "🌱 Hiểu & Ứng dụng", desc: "Nắm bản chất lý thuyết và vận dụng vào thực tiễn" },
+  { id: "Khám phá Chuyên sâu", label: "🌿 Khám phá Chuyên sâu", desc: "Nghiền ngẫm kiến thức sâu sắc theo nhịp độ tự nhiên" },
+  { id: "Tinh thông Thực hành", label: "🏆 Tinh thông Toàn diện", desc: "Làm chủ trọn vẹn toàn bộ các chủ đề trong tài liệu" },
+];
+
 export function CreateQuestWizard({
   subjects = [],
   onQuestCreated,
@@ -79,10 +85,11 @@ export function CreateQuestWizard({
   const [analysisReport, setAnalysisReport] = useState<DocumentAnalysisReport | null>(null);
 
   // Roadmap configs
+  const [studyPurpose, setStudyPurpose] = useState<"PASSION" | "EXAM">("PASSION");
   const [targetDays, setTargetDays] = useState<number>(14);
   const [isCustomDays, setIsCustomDays] = useState(false);
   const [customDaysInput, setCustomDaysInput] = useState("14");
-  const [targetGrade, setTargetGrade] = useState("A");
+  const [targetGrade, setTargetGrade] = useState("Hiểu & Ứng dụng");
 
   // Loading & error
   const [loading, setLoading] = useState(false);
