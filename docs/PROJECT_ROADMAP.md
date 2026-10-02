@@ -12,7 +12,7 @@
 
 ## TỔNG QUAN TIẾN ĐỘ TOÀN DỰ ÁN
 
-- **Tổng số Phase**: 39 Phase (Phase 0 đến Phase 38)
+- **Tổng số Phase**: 47 Phase (Phase 0 đến Phase 46)
 - **Hệ cơ sở dữ liệu**: Supabase PostgreSQL (Prisma ORM)
 - **Kiến trúc cốt lõi**:
   - `CALENDAR EVENT ≠ STUDY SESSION`
@@ -575,11 +575,143 @@
 
 ---
 
-## TỔNG KẾT KIỂM THỬ CUỐI CÙNG (FINAL AUDIT)
+# PHASE 39. 4-YEAR ACADEMIC YEAR MANAGEMENT
+
+- [x] Quản lý năm học (`AcademicYear` model trong PostgreSQL Supabase)
+- [x] Hỗ trợ Năm 1, Năm 2, Năm 3, Năm 4 và Custom Year không giới hạn
+- [x] Không hard-code các năm cố định (2026, 2027...)
+- [x] Tự động khởi tạo Năm 1 & 2 khi tài khoản sinh viên mới bắt đầu
+- [x] Chuyển đổi trạng thái linh hoạt: PLANNED, ACTIVE, COMPLETED, ARCHIVED
+- [x] Xóa an toàn: Tự động chuyển sang ARCHIVED nếu có môn học liên kết, bảo vệ dữ liệu lịch sử sinh viên
+- [x] API CRUD: `/api/academic/years`
+
+### Implementation Notes (Phase 39)
+- **Files**: [`src/app/api/academic/years/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/academic/years/route.ts), [`prisma/schema.prisma`](file:///Users/huy/Downloads/Time%20manager/prisma/schema.prisma).
+
+---
+
+# PHASE 40. SEMESTER MANAGEMENT
+
+- [x] Quản lý học kỳ (`Semester` model liên kết `academicYearId`)
+- [x] Hỗ trợ Học kỳ 1, Học kỳ 2, Học kỳ Hè, và Học kỳ Tùy chỉnh (FALL, SPRING, SUMMER, CUSTOM)
+- [x] Trạng thái vòng đời học kỳ: PLANNED, ACTIVE, COMPLETED, ARCHIVED
+- [x] Lưu trữ điểm trung bình học kỳ hệ 10 (`gpa10`) và hệ 4 (`gpa4`)
+- [x] Theo dõi tổng số tín chỉ đăng ký (`totalCredits`) và tín chỉ tích lũy đạt được (`earnedCredits`)
+- [x] API CRUD: `/api/academic/semesters`
+
+### Implementation Notes (Phase 40)
+- **Files**: [`src/app/api/academic/semesters/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/academic/semesters/route.ts).
+
+---
+
+# PHASE 41. SEMESTER TRANSITION & CONTINUITY ENGINE
+
+- [x] Tính năng Kết chuyển học kỳ ("Complete Semester")
+- [x] Đóng băng điểm số và tín chỉ học kỳ đã hoàn thành
+- [x] Tính toán và cập nhật điểm GPA tích lũy toàn khóa trên `DegreeProgram`
+- [x] Tự động lưu trữ (Archive) học kỳ cũ
+- [x] BẢO TOÀN VĨNH VIỄN 100% Ghi chú, tài liệu PDF, Flashcards, Study Sessions, Quizzes, và Knowledge Base
+- [x] TUYỆT ĐỐI không bao giờ reset cơ sở dữ liệu khi đổi học kỳ
+- [x] Tùy chọn tự động khởi tạo học kỳ tiếp theo liền mạch
+- [x] Ghi nhận AuditLog hành động TRANSITION
+- [x] API Endpoint: `/api/academic/semester-transition`
+
+### Implementation Notes (Phase 41)
+- **Files**: [`src/app/api/academic/semester-transition/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/academic/semester-transition/route.ts), [`src/lib/academic/gpa-calculator.ts`](file:///Users/huy/Downloads/Time%20manager/src/lib/academic/gpa-calculator.ts).
+
+---
+
+# PHASE 42. ACADEMIC COURSES & MOET GRADING ENGINE
+
+- [x] Mở rộng môn học (`Subject` model): Mã môn, số tín chỉ, giảng viên, phòng học, giáo trình
+- [x] Vòng đời môn học: PLANNED, ACTIVE, COMPLETED, DROPPED, ARCHIVED
+- [x] Quy chuẩn điểm Việt Nam (Bộ GD&ĐT / Thang tín chỉ quốc tế):
+  - 8.5 - 10.0: A  -> 4.0
+  - 8.0 - 8.4:  B+ -> 3.5
+  - 7.0 - 7.9:  B  -> 3.0
+  - 6.5 - 6.9:  C+ -> 2.5
+  - 5.5 - 6.4:  C  -> 2.0
+  - 5.0 - 5.4:  D+ -> 1.5
+  - 4.0 - 4.9:  D  -> 1.0
+  - < 4.0:      F  -> 0.0 (Học lại, không tính tín chỉ tích lũy)
+- [x] Tính điểm thành phần theo trọng số (`gradeWeightJson`)
+- [x] Tự động quy đổi điểm hệ 10 sang Điểm chữ và Hệ 4 khi nhập điểm
+- [x] Điểm danh và chuyên cần (`attendanceCount` / `totalSessions`)
+- [x] Tách biệt hoàn toàn: Môn học (Course) ≠ Phiên tự học (Study Session)
+
+### Implementation Notes (Phase 42)
+- **Files**: [`src/lib/academic/gpa-calculator.ts`](file:///Users/huy/Downloads/Time%20manager/src/lib/academic/gpa-calculator.ts), [`src/app/api/subjects/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/subjects/route.ts).
+
+---
+
+# PHASE 43. DEGREE PROGRAM & ACADEMIC HUB UI
+
+- [x] Khởi tạo mô hình chương trình đào tạo (`DegreeProgram` model: chuyên ngành, khoa, trường, mục tiêu tín chỉ e.g. 130, mục tiêu GPA e.g. 3.60)
+- [x] Dashboard tiến độ: `X / 130 Tín chỉ` kèm tỷ lệ % hoàn thành
+- [x] Xếp loại tốt nghiệp tự động: Xuất sắc, Giỏi, Khá, Trung bình
+- [x] Giao diện Quản lý Học thuật 4 năm (`/academic` Hub UI):
+  - Bộ chuyển đổi Năm học (Năm 1, Năm 2, Năm 3, Năm 4...)
+  - Tabs học kỳ linh hoạt kèm thẻ GPA học kỳ và tín chỉ
+  - Danh sách môn học, thẻ điểm số và form nhập điểm chi tiết
+  - Modal Kết chuyển học kỳ & Chốt điểm với bản tóm tắt an toàn
+  - Bảng điểm tổng hợp 4 năm (Academic Transcript) hiển thị lịch sử không bị reset
+- [x] Widget tổng quan học thuật trực tiếp trên Dashboard chính (`/`)
+- [x] API Endpoint: `/api/academic/degree-progress`
+
+### Implementation Notes (Phase 43)
+- **Files**: [`src/app/(dashboard)/academic/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/academic/page.tsx), [`src/app/api/academic/degree-progress/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/academic/degree-progress/route.ts), [`src/app/(dashboard)/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/page.tsx).
+
+---
+
+# PHASE 44. SKILLS MATRIX & PROJECT PORTFOLIO
+
+- [x] Mô hình Kỹ năng (`Skill` model: TECH, LANGUAGE, SOFT, DESIGN, OTHER; cấp độ BEGINNER, INTERMEDIATE, ADVANCED, EXPERT)
+- [x] Mô hình Dự án (`Project` model: repository URL, demo URL, công nghệ, trạng thái PLANNED, IN_PROGRESS, COMPLETED, FEATURED)
+- [x] Liên kết Dự án với Môn học đại học (`Subject`) và Kỹ năng áp dụng (`ProjectSkill`)
+- [x] Giao diện Hồ sơ Năng lực (`/career` Hub UI) phong cách Notion hiện đại:
+  - Tab Portfolio dự án thực chiến
+  - Tab Ma trận kỹ năng với thanh đo tiến độ
+- [x] API Endpoints: `/api/career/skills`, `/api/career/projects`
+
+### Implementation Notes (Phase 44)
+- **Files**: [`src/app/(dashboard)/career/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/career/page.tsx), [`src/app/api/career/skills/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/career/skills/route.ts), [`src/app/api/career/projects/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/career/projects/route.ts).
+
+---
+
+# PHASE 45. CERTIFICATES & CAREER INTERNSHIP KANBAN
+
+- [x] Quản lý chứng chỉ (`Certificate` model: đơn vị cấp, ngày cấp, ngày hết hạn, mã xác thực, điểm số, liên kết xác minh)
+- [x] Quản lý đơn ứng tuyển thực tập và việc làm (`CareerApplication` model: công ty, vị trí, loại hình, trạng thái SAVED, APPLIED, INTERVIEW, OFFER, REJECTED, WITHDRAWN)
+- [x] Theo dõi hạn nộp CV, mức lương/trợ cấp và kinh nghiệm phỏng vấn
+- [x] Tabs Chứng chỉ và Cơ hội nghề nghiệp trong `/career`
+- [x] API Endpoints: `/api/career/certificates`, `/api/career/applications`
+
+### Implementation Notes (Phase 45)
+- **Files**: [`src/app/api/career/certificates/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/career/certificates/route.ts), [`src/app/api/career/applications/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/career/applications/route.ts).
+
+---
+
+# PHASE 46. 4-YEAR BACKUP, RESTORE & AUDIT LOG
+
+- [x] Xuất bản sao lưu toàn diện định dạng JSON cho toàn bộ dữ liệu 4 năm (`academicYears`, `semesters`, `degreeProgram`, `subjects`, `skills`, `projects`, `certificates`, `careerApplications`, `tasks`, `events`, `sessions`, `notes`, `habits`, `flashcards`)
+- [x] Xuất báo cáo CSV bảng điểm đại học (`/api/export?format=csv&entity=courses`)
+- [x] Xuất báo cáo CSV thực tập & tuyển dụng (`/api/export?format=csv&entity=career`)
+- [x] Động cơ phục hồi (Restore / Import) tự động khôi phục toàn bộ cấu trúc học thuật không làm hỏng liên kết dữ liệu
+- [x] Ghi nhận nhật ký kiểm toán hệ thống (`AuditLog` model) cho mọi thao tác quan trọng (tạo/sửa/xóa môn học, kết chuyển học kỳ, ứng tuyển, sao lưu)
+
+### Implementation Notes (Phase 46)
+- **Files**: [`src/app/api/export/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/export/route.ts), [`src/app/api/import/route.ts`](file:///Users/huy/Downloads/Time%20manager/src/app/api/import/route.ts).
+
+---
+
+## TỔNG KẾT KIỂM THỬ TOÀN DIỆN CUỐI CÙNG (FINAL AUDIT)
 
 | Kiểm thử | Kết quả | Trạng thái |
 |---|---|---|
-| `test:scheduling` | 12/12 test cases PASS | ✅ Đạt |
-| `test:learning` | 19/19 test cases PASS | ✅ Đạt |
-| `tsc --noEmit` | 0 errors | ✅ Đạt |
-| `npm run build` | 81/81 routes compile thành công | ✅ Đạt |
+| `test:scheduling` | 12/12 test cases PASS | ✅ Đạt 100% |
+| `test:learning` | 19/19 test cases PASS | ✅ Đạt 100% |
+| `test:academic` | 21/21 test cases PASS | ✅ Đạt 100% |
+| `test:all` | 33/33 test cases PASS | ✅ Đạt 100% |
+| `tsc --noEmit` | 0 errors | ✅ Đạt 100% |
+| `eslint . --quiet` | 0 warnings/errors | ✅ Đạt 100% |
+| `npm run build` | 91/91 routes compile thành công sạch sẽ (Turbopack) | ✅ Đạt 100% |
