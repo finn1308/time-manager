@@ -99,8 +99,8 @@
   - [x] Dashboard trung tâm tổng hợp: Today schedule, Progress, Goals, Deadlines, Planned vs Actual, Streak, AI Insights
   - [x] Analytics trang chuyên sâu với bộ lọc thời gian: 7 ngày, 30 ngày, 90 ngày, custom
 
-- [ ] **Tác vụ 18: Data Export & Backup** (Phần 37)
-  - [ ] Xuất dữ liệu cá nhân ra JSON, CSV (Lịch học, phiên học, ghi chú)
+- [x] **Tác vụ 18: Data Export & Backup** (Phần 37)
+  - [x] Xuất dữ liệu cá nhân ra JSON, CSV (Lịch học, phiên học, ghi chú)
 
 - [ ] **Tác vụ 19: Responsive Mobile UI, Polish & Security** (Phần 38, 39, 41, 42, 43, 44)
   - [ ] Tối ưu hiển thị di động, bottom navigation, drawer
