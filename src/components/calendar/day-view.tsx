@@ -329,25 +329,35 @@ export function DayView({
               <span>•</span>
               <span className="text-[#2d6a4f] dark:text-[#52b788]">{dayNameVN}, {formatVN(currentDateObj, "dd/MM")}</span>
             </div>
-            <div className="flex items-baseline space-x-4 mt-1.5">
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mt-2">
               <div>
-                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">Kế hoạch: </span>
-                <strong className="text-xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
-                  {formatMinutesVN(totalPlannedMinutes)}
-                </strong>
-              </div>
-              <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
-              <div>
-                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">Đã học: </span>
+                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">Tự học (Thực tế): </span>
                 <strong className="text-xl font-bold text-[#2d6a4f] dark:text-[#52b788]">
-                  {formatMinutesVN(totalActualMinutes)}
+                  {formatMinutesVN(selfStudyActualMinutes)}
+                </strong>
+                {selfStudyPlannedMinutes > 0 && (
+                  <span className="text-xs text-[#73927d] ml-1">/ {formatMinutesVN(selfStudyPlannedMinutes)}</span>
+                )}
+              </div>
+              <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
+              <div>
+                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">🏫 Đi học trường: </span>
+                <strong className="text-sm font-bold text-sky-700 dark:text-sky-400">
+                  {formatMinutesVN(schoolMinutes)}
                 </strong>
               </div>
               <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
               <div>
-                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">Còn lại: </span>
-                <strong className="text-xl font-bold text-[#b87474] dark:text-[#f3a4a4]">
-                  {formatMinutesVN(totalRemainingMinutes)}
+                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">🎮 Cá nhân / Đi chơi: </span>
+                <strong className="text-sm font-bold text-amber-700 dark:text-amber-400">
+                  {formatMinutesVN(personalMinutes)}
+                </strong>
+              </div>
+              <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
+              <div>
+                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">📅 Tổng lịch: </span>
+                <strong className="text-sm font-bold text-[#526b5c] dark:text-[#a3bda9]">
+                  {formatMinutesVN(totalScheduledMinutes)}
                 </strong>
               </div>
             </div>
@@ -453,6 +463,8 @@ export function DayView({
                 {events.map((ev) => {
                   const subjectColor = ev.subject?.color || "#2d6a4f";
                   const isTimerActive = isEventActiveTimer(ev.id);
+                  const typeCfg = getEventTypeConfig(ev.type);
+                  const TypeIcon = typeCfg.icon;
 
                   return (
                     <div
@@ -465,18 +477,36 @@ export function DayView({
                           ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] ring-2 ring-[#2d6a4f]/30"
                           : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs"
                       }`}
-                      style={{ borderLeftColor: subjectColor, borderLeftWidth: "5px" }}
+                      style={{ borderLeftColor: typeCfg.borderLeftColor || subjectColor, borderLeftWidth: "5px" }}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
-                          <div className="flex items-center space-x-2">
-                            <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2] line-clamp-1">
-                              {ev.title}
+                          {/* Type badge */}
+                          <div className="flex items-center space-x-1.5">
+                            <span
+                              className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md"
+                              style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
+                            >
+                              <TypeIcon className="w-2.5 h-2.5 shrink-0" />
+                              <span>{typeCfg.shortLabel || typeCfg.label}</span>
                             </span>
                             {ev.isLocked && (
                               <Lock className="w-3 h-3 text-[#a3a86c] shrink-0" />
                             )}
                           </div>
+
+                          <div className="flex items-center space-x-2">
+                            <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2] line-clamp-1">
+                              {ev.title}
+                            </span>
+                          </div>
+
+                          {(ev as any).location && (
+                            <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+                              <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                              <span className="truncate">{(ev as any).location}</span>
+                            </div>
+                          )}
 
                           {ev.subject && (
                             <Badge
@@ -494,7 +524,7 @@ export function DayView({
                           )}
                         </div>
 
-                        {/* Quick Timer Trigger */}
+                        {/* Quick Timer Trigger - ONLY for SELF_STUDY */}
                         <div className="flex items-center space-x-1.5" onClick={(e) => e.stopPropagation()}>
                           {isTimerActive ? (
                             <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#2d6a4f] text-white text-[10px] font-mono animate-pulse">
@@ -525,7 +555,7 @@ export function DayView({
                               </button>
                             </div>
                           ) : (
-                            ev.subject && (
+                            canStartStudyTimer(ev.type) && ev.subject && (
                               <button
                                 onClick={() =>
                                   startTimer(
@@ -538,7 +568,7 @@ export function DayView({
                                     ev.id
                                   )
                                 }
-                                title="Bắt đầu tính giờ phiên này"
+                                title="Bắt đầu tự học phiên này"
                                 className="p-1.5 rounded-full bg-[#d8ebe0] text-[#1b4332] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
                               >
                                 <Play className="w-3 h-3 fill-current ml-0.2" />
