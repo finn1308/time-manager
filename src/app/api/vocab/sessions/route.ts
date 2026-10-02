@@ -14,6 +14,9 @@ export async function POST(req: Request) {
       totalItems = 0,
       correctItems = 0,
       durationSeconds = 0,
+      coinsDelta,
+      specialGameMode,
+      gameScore = 0,
     } = body;
 
     if (!wordSetId) {
@@ -33,16 +36,16 @@ export async function POST(req: Request) {
     const baseCoins = COIN_REWARDS[mode] || 10;
     const accuracy = totalItems > 0 ? (correctItems / totalItems) * 100 : 100;
 
-    // Bonus coin if accuracy is 100%
-    const coinsEarned = accuracy === 100 ? baseCoins + 5 : baseCoins;
-    const xpEarned = Math.round(15 + correctItems * 5);
+    // Use coinsDelta if provided explicitly (e.g. from Quán Cơm Tấm or custom games), otherwise calculate standard reward
+    let coinsEarned = typeof coinsDelta === "number" ? coinsDelta : (accuracy === 100 ? baseCoins + 5 : baseCoins);
+    const xpEarned = Math.max(5, Math.round(15 + correctItems * 5));
 
     // Save study session
     const session = await prisma.vocabStudySession.create({
       data: {
         userId: user.id,
         wordSetId,
-        mode,
+        mode: specialGameMode ? `SPECIAL_${specialGameMode}` : mode,
         totalItems,
         correctItems,
         accuracy: Math.round(accuracy * 10) / 10,
@@ -52,11 +55,16 @@ export async function POST(req: Request) {
       },
     });
 
+    // Compute new coins safely (never below 0)
+    const currentCoins = user.coins ?? 100;
+    const nextCoins = Math.max(0, currentCoins + coinsEarned);
+    const actualCoinsDelta = nextCoins - currentCoins;
+
     // Update user balance and XP
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
-        coins: { increment: coinsEarned },
+        coins: nextCoins,
         xp: { increment: xpEarned },
       },
       select: {
