@@ -31,6 +31,10 @@ export default function CalendarPage() {
   const [subjects, setSubjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Search & Filter State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>("ALL");
+
   // Natural Language Scheduling State (Section 17 & 44)
   const [nlpInput, setNlpInput] = useState("");
   const [isParsingNlp, setIsParsingNlp] = useState(false);
@@ -241,6 +245,28 @@ export default function CalendarPage() {
         </div>
       </div>
 
+      {/* Search & Filter Bar */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Input
+          placeholder="🔍 Tìm kiếm sự kiện..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="bg-white dark:bg-[#17261c] border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs h-10 w-full sm:w-1/3"
+        />
+        <select
+          value={selectedSubjectFilter}
+          onChange={(e) => setSelectedSubjectFilter(e.target.value)}
+          className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs h-10 px-3 w-full sm:w-1/4 outline-none text-[#192e22] dark:text-[#f0f7f2]"
+        >
+          <option value="ALL">Tất cả môn học</option>
+          {subjects.map((sub) => (
+            <option key={sub.id} value={sub.id}>
+              {sub.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Natural Language Event Quick Input (Section 17 & 44) */}
       <form
         onSubmit={handleParseNlp}
@@ -425,36 +451,53 @@ export default function CalendarPage() {
         subjects={subjects}
       />
 
-      {/* Main Calendar View Area */}
       {loading ? (
         <div className="text-center py-20 text-xs text-[#526b5c] animate-pulse">
           Đang tải dữ liệu thời khóa biểu...
         </div>
       ) : (
-        <>
-          {viewMode === "day" && (
-            <DayView
-              initialEvents={events}
+        (() => {
+          const filteredEvents = events.filter((ev) => {
+            const matchesSearch = ev.title.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesSubject = selectedSubjectFilter === "ALL" || ev.subject?.id === selectedSubjectFilter;
+            return matchesSearch && matchesSubject;
+          });
+
+          return (
+            <>
+              {viewMode === "day" && (
+                <DayView
+                  initialEvents={filteredEvents}
+                  blockedSlots={blockedSlots}
+                  subjects={subjects}
+                  onEventsChange={loadData}
+                />
+              )}
+              {viewMode === "week" && (
+                <WeekView
+                  initialEvents={filteredEvents}
+                  blockedSlots={blockedSlots}
+                  subjects={subjects}
+                  onEventsChange={loadData}
+                />
+              )}
+              {viewMode === "month" && (
+                <MonthView
+                  initialEvents={filteredEvents}
+                  subjects={subjects}
+                  onEventsChange={loadData}
+                />
+              )}
+            </>
+          );
+        })()
+      )}
               blockedSlots={blockedSlots}
               subjects={subjects}
               onEventsChange={loadData}
             />
           )}
-          {viewMode === "week" && (
-            <WeekView
-              initialEvents={events}
-              blockedSlots={blockedSlots}
-              subjects={subjects}
-              onEventsChange={loadData}
-            />
-          )}
-          {viewMode === "month" && (
-            <MonthView
-              initialEvents={events}
-              subjects={subjects}
-              onEventsChange={loadData}
-            />
-          )}
+
         </>
       )}
     </div>

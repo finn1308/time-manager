@@ -38,7 +38,11 @@ export function expandRecurringEvents(
   const exceptions = events.filter((e) => e.parentId || e.isException);
 
   for (const master of masterEvents) {
-    if (master.recurrence === "NONE" || !master.recurrenceRule) {
+    const effectiveRule =
+      master.recurrenceRule ||
+      (master.recurrence && master.recurrence !== "NONE" ? `FREQ=${master.recurrence}` : null);
+
+    if (!effectiveRule) {
       // Single event
       expanded.push({
         ...master,
@@ -52,7 +56,7 @@ export function expandRecurringEvents(
       // Note: RRule deals with dates blindly. We treat the Date as local time in Vietnam.
       const startZoned = toZonedTime(master.startTime, VIETNAM_TIMEZONE);
       
-      const rruleObj = rrulestr(master.recurrenceRule, {
+      const rruleObj = rrulestr(effectiveRule, {
         dtstart: new Date(Date.UTC(
           startZoned.getFullYear(),
           startZoned.getMonth(),
