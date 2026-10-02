@@ -74,6 +74,8 @@ export async function getCurrentUser() {
         image: true,
         role: true,
         timezone: true,
+        isPro: true,
+        coins: true,
         createdAt: true,
       },
     });
