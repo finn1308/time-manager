@@ -10,19 +10,20 @@ import {
 } from "@/lib/date-utils";
 import { addWeeks, subWeeks } from "date-fns";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play, Trash2, Video, FolderOpen, FileText } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play, Trash2, Video, FolderOpen, FileText, MapPin } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { AiSchedulePreviewModal } from "./ai-schedule-preview-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { AiResourceReminderBanner } from "../study/ai-resource-reminder-banner";
 import { useRouter } from "next/navigation";
-import { getEventTypeConfig } from "@/lib/calendar/event-types";
+import { getEventTypeConfig, canStartStudyTimer } from "@/lib/calendar/event-types";
 
 interface WeekViewProps {
   initialEvents: Array<{
     id: string;
     title: string;
     description: string | null;
+    location?: string | null;
     startTime: string;
     endTime: string;
     type?: string;
@@ -385,6 +386,7 @@ export function WeekView({
                           originalId: (ev as any).originalId,
                           title: ev.title,
                           description: ev.description,
+                          location: (ev as any).location,
                           subjectId: ev.subject?.id || null,
                           startTime: ev.startTime,
                           endTime: ev.endTime,
@@ -406,7 +408,7 @@ export function WeekView({
                           style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
                         >
                           <TypeIcon className="w-2.5 h-2.5 shrink-0" />
-                          <span>{typeCfg.label}</span>
+                          <span>{typeCfg.shortLabel || typeCfg.label}</span>
                         </span>
 
                         <div className="flex items-center space-x-1 shrink-0">
@@ -430,6 +432,14 @@ export function WeekView({
                           {ev.title}
                         </span>
                       </div>
+
+                      {/* Location Badge if available */}
+                      {(ev as any).location && (
+                        <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-1 truncate">
+                          <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                          <span className="truncate">{(ev as any).location}</span>
+                        </div>
+                      )}
 
                       {/* Resource Badges */}
                       <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
