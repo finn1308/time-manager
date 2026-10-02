@@ -25,6 +25,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  Plus,
   GraduationCap,
   Briefcase,
 } from "lucide-react";

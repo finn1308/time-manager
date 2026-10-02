@@ -283,6 +283,41 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* 4-Year Academic & Degree Progress Widget */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-[#ebf4ee] dark:bg-[#1e3425] text-[#2d6a4f] dark:text-[#74c69d] flex items-center justify-center shrink-0 shadow-xs">
+            <GraduationCap className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#74c69d] uppercase tracking-wider">
+                {activeSemester ? `${activeSemester.academicYear.name} • ${activeSemester.name}` : "Hệ điều hành học thuật 4 năm"}
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#52b788]/20 text-[#2d6a4f] dark:text-[#74c69d] font-semibold">
+                {degreeProgram?.major || "Công nghệ Thông tin"}
+              </span>
+            </div>
+            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+              Đã tích lũy <strong>{degreeProgram?.currentCredits || 0} / {degreeProgram?.totalCreditsRequired || 130}</strong> tín chỉ ({Math.min(100, Math.round(((degreeProgram?.currentCredits || 0) / (degreeProgram?.totalCreditsRequired || 130)) * 100))}%) • GPA tích lũy: <strong className="text-[#2d6a4f] dark:text-[#74c69d]">{degreeProgram?.currentGpa !== undefined ? degreeProgram.currentGpa.toFixed(2) : "0.00"}/4.00</strong>
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2.5 shrink-0">
+          <Link href="/academic">
+            <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#ebf4ee] dark:hover:bg-[#1e3425]">
+              Quản lý học thuật & GPA →
+            </Button>
+          </Link>
+          <Link href="/career">
+            <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#ebf4ee] dark:hover:bg-[#1e3425]">
+              Hồ sơ & Nghề nghiệp
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       {/* KPI Cards (Planned vs Actual, Streak, and Time Breakdown) */}
       <KpiCards
         actualHours={actualHours}
