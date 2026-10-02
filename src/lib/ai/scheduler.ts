@@ -3,6 +3,7 @@ import { executeAIScheduling, ProposedEvent, AISchedulerResponse } from "./clien
 import { validateProposedSchedule, TimeSlot, AvailabilityRuleItem } from "../scheduling/conflict-detector";
 import { makeVNDate } from "../date-utils";
 import { expandRecurringEvents } from "../scheduling/recurrence";
+import { expandRecurringEvents } from "../scheduling/recurrence";
 
 export async function generateAutoSchedule(params: {
   userId: string;

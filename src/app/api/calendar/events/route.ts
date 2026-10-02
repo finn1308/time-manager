@@ -70,8 +70,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const { expandRecurringEvents } = require("@/lib/scheduling/recurrence");
-    const expandedEvents = expandRecurringEvents(existingEvents, start, end);
+    const expandedEvents = expandRecurringEvents(existingEvents as any, start, end);
 
     const timeSlots = expandedEvents.map((e: any) => ({
       start: e.startTime,
