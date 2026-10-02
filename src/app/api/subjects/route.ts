@@ -1,14 +1,37 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { convertGrade10To4 } from "@/lib/academic/gpa-calculator";
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { searchParams } = new URL(req.url);
+  const semesterId = searchParams.get("semesterId");
+  const academicStatus = searchParams.get("status");
+
+  const whereClause: any = { userId: user.id };
+  if (semesterId) whereClause.semesterId = semesterId;
+  if (academicStatus) whereClause.status = academicStatus;
+
   const subjects = await prisma.subject.findMany({
-    where: { userId: user.id },
+    where: whereClause,
     include: {
+      semester: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          academicYear: {
+            select: {
+              id: true,
+              name: true,
+              yearNumber: true,
+            },
+          },
+        },
+      },
       goals: {
         include: {
           milestoneRecords: true,
@@ -22,8 +45,15 @@ export async function GET() {
         orderBy: { actualStart: "desc" },
         take: 5,
       },
+      projects: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
+        },
+      },
     },
-    orderBy: [{ isArchived: "asc" }, { priority: "desc" }],
+    orderBy: [{ isArchived: "asc" }, { priority: "desc" }, { createdAt: "desc" }],
   });
 
   return NextResponse.json({ subjects });
@@ -34,6 +64,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
+    const body = await req.json();
     const {
       name,
       code,
@@ -45,10 +76,31 @@ export async function POST(req: Request) {
       deadline,
       difficulty,
       estimatedWorkload,
-    } = await req.json();
+      semesterId,
+      credits,
+      lecturer,
+      classroom,
+      syllabus,
+      status,
+      midtermScore,
+      finalScore,
+      courseGrade,
+      gradeWeightJson,
+      attendanceCount,
+      totalSessions,
+    } = body;
 
     if (!name?.trim()) {
       return NextResponse.json({ error: "Tên môn học không được để trống" }, { status: 400 });
+    }
+
+    // Auto-calculate letterGrade and gradePoints if courseGrade is given
+    let calculatedLetter: string | null = null;
+    let calculatedPoints: number | null = null;
+    if (courseGrade !== undefined && courseGrade !== null && !isNaN(Number(courseGrade))) {
+      const conv = convertGrade10To4(Number(courseGrade));
+      calculatedLetter = conv.letter;
+      calculatedPoints = conv.points4;
     }
 
     const subject = await prisma.subject.create({
@@ -65,13 +117,43 @@ export async function POST(req: Request) {
         difficulty: difficulty || "MEDIUM",
         estimatedWorkload: estimatedWorkload ? parseFloat(estimatedWorkload) : null,
         isArchived: false,
+        // Academic extensions
+        semesterId: semesterId || null,
+        credits: credits !== undefined ? parseInt(credits, 10) : 3,
+        lecturer: lecturer?.trim() || null,
+        classroom: classroom?.trim() || null,
+        syllabus: syllabus?.trim() || null,
+        status: status || "ACTIVE",
+        midtermScore: midtermScore !== undefined && midtermScore !== null ? parseFloat(midtermScore) : null,
+        finalScore: finalScore !== undefined && finalScore !== null ? parseFloat(finalScore) : null,
+        courseGrade: courseGrade !== undefined && courseGrade !== null ? parseFloat(courseGrade) : null,
+        letterGrade: calculatedLetter,
+        gradePoints: calculatedPoints,
+        gradeWeightJson: gradeWeightJson || null,
+        attendanceCount: attendanceCount !== undefined ? parseInt(attendanceCount, 10) : 0,
+        totalSessions: totalSessions !== undefined ? parseInt(totalSessions, 10) : 15,
+      },
+      include: {
+        semester: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        entityType: "SUBJECT",
+        entityId: subject.id,
+        action: "CREATE",
+        detailsJson: JSON.stringify({ name: subject.name, credits: subject.credits, semesterId }),
       },
     });
 
     return NextResponse.json({ success: true, subject });
   } catch (err: any) {
     console.error("Error creating subject:", err);
-    return NextResponse.json({ error: "Lỗi tạo môn học" }, { status: 500 });
+    return NextResponse.json({ error: "Lỗi tạo môn học: " + err.message }, { status: 500 });
   }
 }
 
@@ -80,6 +162,7 @@ export async function PUT(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
+    const body = await req.json();
     const {
       id,
       name,
@@ -93,30 +176,92 @@ export async function PUT(req: Request) {
       difficulty,
       estimatedWorkload,
       isArchived,
-    } = await req.json();
+      semesterId,
+      credits,
+      lecturer,
+      classroom,
+      syllabus,
+      status,
+      midtermScore,
+      finalScore,
+      courseGrade,
+      letterGrade,
+      gradePoints,
+      gradeWeightJson,
+      attendanceCount,
+      totalSessions,
+    } = body;
 
     if (!id) return NextResponse.json({ error: "Thiếu ID môn học" }, { status: 400 });
 
+    const updateData: any = {};
+    if (name !== undefined) updateData.name = name.trim();
+    if (code !== undefined) updateData.code = code?.trim() || null;
+    if (color !== undefined) updateData.color = color;
+    if (description !== undefined) updateData.description = description?.trim() || null;
+    if (targetHours !== undefined) updateData.targetHours = targetHours ? parseFloat(targetHours) : null;
+    if (priority !== undefined) updateData.priority = parseInt(priority, 10);
+    if (targetScore !== undefined) updateData.targetScore = targetScore?.trim() || null;
+    if (deadline !== undefined) updateData.deadline = deadline ? new Date(deadline) : null;
+    if (difficulty !== undefined) updateData.difficulty = difficulty;
+    if (estimatedWorkload !== undefined) updateData.estimatedWorkload = estimatedWorkload ? parseFloat(estimatedWorkload) : null;
+    if (isArchived !== undefined) updateData.isArchived = Boolean(isArchived);
+
+    // Academic updates
+    if (semesterId !== undefined) updateData.semesterId = semesterId || null;
+    if (credits !== undefined) updateData.credits = parseInt(credits, 10);
+    if (lecturer !== undefined) updateData.lecturer = lecturer?.trim() || null;
+    if (classroom !== undefined) updateData.classroom = classroom?.trim() || null;
+    if (syllabus !== undefined) updateData.syllabus = syllabus?.trim() || null;
+    if (status !== undefined) updateData.status = status;
+    if (midtermScore !== undefined) updateData.midtermScore = midtermScore !== null ? parseFloat(midtermScore) : null;
+    if (finalScore !== undefined) updateData.finalScore = finalScore !== null ? parseFloat(finalScore) : null;
+
+    if (courseGrade !== undefined) {
+      if (courseGrade !== null && !isNaN(Number(courseGrade))) {
+        const gradeVal = parseFloat(courseGrade);
+        updateData.courseGrade = gradeVal;
+        const conv = convertGrade10To4(gradeVal);
+        updateData.letterGrade = letterGrade || conv.letter;
+        updateData.gradePoints = gradePoints !== undefined && gradePoints !== null ? parseFloat(gradePoints) : conv.points4;
+      } else {
+        updateData.courseGrade = null;
+        updateData.letterGrade = null;
+        updateData.gradePoints = null;
+      }
+    } else {
+      if (letterGrade !== undefined) updateData.letterGrade = letterGrade;
+      if (gradePoints !== undefined) updateData.gradePoints = gradePoints !== null ? parseFloat(gradePoints) : null;
+    }
+
+    if (gradeWeightJson !== undefined) updateData.gradeWeightJson = gradeWeightJson;
+    if (attendanceCount !== undefined) updateData.attendanceCount = parseInt(attendanceCount, 10);
+    if (totalSessions !== undefined) updateData.totalSessions = parseInt(totalSessions, 10);
+
     const subject = await prisma.subject.update({
       where: { id, userId: user.id },
+      data: updateData,
+      include: {
+        semester: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    await prisma.auditLog.create({
       data: {
-        name: name?.trim(),
-        code: code?.trim() || null,
-        color: color || undefined,
-        description: description !== undefined ? (description?.trim() || null) : undefined,
-        targetHours: targetHours !== undefined ? (targetHours ? parseFloat(targetHours) : null) : undefined,
-        priority: priority !== undefined ? parseInt(priority, 10) : undefined,
-        targetScore: targetScore !== undefined ? (targetScore?.trim() || null) : undefined,
-        deadline: deadline !== undefined ? (deadline ? new Date(deadline) : null) : undefined,
-        difficulty: difficulty !== undefined ? difficulty : undefined,
-        estimatedWorkload: estimatedWorkload !== undefined ? (estimatedWorkload ? parseFloat(estimatedWorkload) : null) : undefined,
-        isArchived: isArchived !== undefined ? Boolean(isArchived) : undefined,
+        userId: user.id,
+        entityType: "SUBJECT",
+        entityId: subject.id,
+        action: "UPDATE",
+        detailsJson: JSON.stringify({ name: subject.name, status: subject.status, courseGrade: subject.courseGrade }),
       },
     });
 
     return NextResponse.json({ success: true, subject });
-  } catch (err) {
-    return NextResponse.json({ error: "Lỗi cập nhật môn học" }, { status: 500 });
+  } catch (err: any) {
+    console.error("Error updating subject:", err);
+    return NextResponse.json({ error: "Lỗi cập nhật môn học: " + err.message }, { status: 500 });
   }
 }
 
@@ -127,6 +272,25 @@ export async function DELETE(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Thiếu ID môn học" }, { status: 400 });
+
+  const subject = await prisma.subject.findFirst({
+    where: { id, userId: user.id },
+  });
+
+  if (!subject) {
+    return NextResponse.json({ error: "Môn học không tồn tại" }, { status: 404 });
+  }
+
+  // Audit before deletion
+  await prisma.auditLog.create({
+    data: {
+      userId: user.id,
+      entityType: "SUBJECT",
+      entityId: id,
+      action: "DELETE",
+      detailsJson: JSON.stringify({ name: subject.name, code: subject.code }),
+    },
+  });
 
   await prisma.subject.delete({
     where: { id, userId: user.id },
