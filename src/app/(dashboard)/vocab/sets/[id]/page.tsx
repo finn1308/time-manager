@@ -429,7 +429,7 @@ export default function WordSetDetailPage() {
 
           {/* 6. Đặc biệt */}
           <button
-            onClick={() => setActiveStudyMode("SPECIAL")}
+            onClick={() => setShowSpecialModesModal(true)}
             disabled={filteredWords.length === 0}
             className="p-4 rounded-3xl bg-gradient-to-br from-[#f472b6] via-[#ec4899] to-[#db2777] text-white flex flex-col justify-between items-center text-center min-h-[160px] shadow-sm hover:shadow-md hover:scale-102 transition-all active:scale-98 disabled:opacity-50 relative group cursor-pointer"
           >
