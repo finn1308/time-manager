@@ -1,4 +1,4 @@
-import { calculateSM2 } from "../src/lib/vocab/sm2";
+import { calculateSm2 } from "../src/lib/vocab/sm2";
 import { prisma } from "../src/lib/prisma";
 
 async function runLuyenTuTests() {
@@ -25,24 +25,24 @@ async function runLuyenTuTests() {
     console.log("1️⃣ Testing SuperMemo SM-2 Algorithm...");
     
     // Repetition 0, quality 5 (perfect recall)
-    const firstReview = calculateSM2(0, 0, 2.5, 5);
+    const firstReview = calculateSm2({ repetition: 0, intervalDays: 0, easeFactor: 2.5, quality: 5 });
     assert(firstReview.repetition === 1, "SM-2: First successful review sets repetition to 1");
     assert(firstReview.intervalDays === 1, "SM-2: First interval is 1 day");
     assert(firstReview.easeFactor >= 2.5, "SM-2: Perfect recall maintains or increases ease factor");
     assert(firstReview.nextReviewDate > new Date(), "SM-2: Next review date is in future");
 
     // Repetition 1, quality 4 (good recall)
-    const secondReview = calculateSM2(1, 1, firstReview.easeFactor, 4);
+    const secondReview = calculateSm2({ repetition: 1, intervalDays: 1, easeFactor: firstReview.easeFactor, quality: 4 });
     assert(secondReview.repetition === 2, "SM-2: Second successful review sets repetition to 2");
     assert(secondReview.intervalDays === 6, "SM-2: Second interval is 6 days");
 
     // Repetition 2, quality 5 (perfect recall -> interval = 6 * EF)
-    const thirdReview = calculateSM2(2, 6, secondReview.easeFactor, 5);
+    const thirdReview = calculateSm2({ repetition: 2, intervalDays: 6, easeFactor: secondReview.easeFactor, quality: 5 });
     assert(thirdReview.repetition === 3, "SM-2: Third successful review sets repetition to 3");
     assert(thirdReview.intervalDays >= 14, "SM-2: Third interval compounds according to ease factor");
 
     // Failed recall (quality 1) -> reset repetition to 0, interval 1
-    const failedReview = calculateSM2(3, 15, thirdReview.easeFactor, 1);
+    const failedReview = calculateSm2({ repetition: 3, intervalDays: 15, easeFactor: thirdReview.easeFactor, quality: 1 });
     assert(failedReview.repetition === 0, "SM-2: Failed review resets repetition to 0");
     assert(failedReview.intervalDays === 1, "SM-2: Failed review resets interval to 1 day");
     assert(failedReview.easeFactor >= 1.3, "SM-2: Ease factor never drops below 1.3 floor");

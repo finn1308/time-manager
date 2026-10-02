@@ -9,10 +9,12 @@
     "lint": "eslint",
     "postinstall": "prisma generate",
     "seed": "tsx prisma/seed.ts",
+    "seed:vocab": "tsx prisma/seed-vocab.ts",
     "test:scheduling": "tsx scripts/test-scheduling.ts",
     "test:learning": "tsx scripts/test-learning-quiz.ts",
     "test:academic": "tsx scripts/test-academic-gpa.ts",
-    "test:all": "npm run test:scheduling && npm run test:learning && npm run test:academic"
+    "test:vocab": "tsx scripts/test-luyentu.ts",
+    "test:all": "npm run test:scheduling && npm run test:learning && npm run test:academic && npm run test:vocab"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
