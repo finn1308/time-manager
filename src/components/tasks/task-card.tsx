@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -77,10 +77,10 @@ export function TaskCard({
     }
   };
 
-  const isOverdue =
-    task.deadline &&
-    !task.isCompleted &&
-    new Date(task.deadline).getTime() < Date.now();
+  const isOverdue = useMemo(() => {
+    if (!task.deadline || task.isCompleted) return false;
+    return new Date(task.deadline).getTime() < new Date().getTime();
+  }, [task.deadline, task.isCompleted]);
 
   return (
     <Card className={`rounded-[22px] border transition-all p-3.5 shadow-2xs group hover:shadow-sm ${
