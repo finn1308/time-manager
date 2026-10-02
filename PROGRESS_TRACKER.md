@@ -58,10 +58,10 @@
   - [x] Tự động phát hiện Missed sessions, đề xuất Option A / Option B học bù
   - [x] Catch-up mode xử lý backlog không dồn quá tải
 
-- [ ] **Tác vụ 9: Study Timer & Floating PIP Mini-player** (Phần 13, 15)
-  - [ ] Chế độ Pomodoro, custom timer, study session timer
-  - [ ] Floating PiP widget nổi trên UI + Document PiP API
-  - [ ] Tự động lưu StudySession record vào Database khi stop, phân loại Planned/Completed/Partial/Missed
+- [x] **Tác vụ 9: Study Timer & Floating PIP Mini-player** (Phần 13, 15)
+  - [x] Chế độ Pomodoro, custom timer, study session timer
+  - [x] Floating PiP widget nổi trên UI + Document PiP API
+  - [x] Tự động lưu StudySession record vào Database khi stop, phân loại Planned/Completed/Partial/Missed
 
 - [ ] **Tác vụ 10: Task System & Quick Inbox Parser** (Phần 22, 23, 24)
   - [ ] Giao diện Task board/list: Inbox, Todo, In Progress, Done, Cancelled
