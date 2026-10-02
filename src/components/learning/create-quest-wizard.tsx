@@ -11,12 +11,18 @@ import {
   ArrowRight,
   Loader2,
   AlertCircle,
-  HelpCircle,
   ChevronLeft,
+  BookOpen,
+  Layers,
+  ShieldCheck,
+  EyeOff,
+  RotateCcw,
+  Zap,
 } from "lucide-react";
 import { StudyBunnyMascot } from "./study-bunny-mascot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DocumentAnalysisReport, ChapterMap } from "@/lib/ai/document-analyzer";
 
 interface SubjectOption {
   id: string;
@@ -32,10 +38,10 @@ interface CreateQuestWizardProps {
 }
 
 const DURATION_PRESETS = [
-  { days: 7, label: "7 Ngày", note: "~43 câu/ngày • Hiệu quả cao", workload: "Cao" },
-  { days: 14, label: "14 Ngày", note: "~21 câu/ngày • Hiệu quả cao", workload: "Vừa phải" },
-  { days: 21, label: "21 Ngày", note: "~14 câu/ngày • Cân bằng", workload: "Vừa phải" },
-  { days: 30, label: "30 Ngày", note: "~10 câu/ngày • Bền bỉ", workload: "Nhẹ nhàng" },
+  { days: 7, label: "7 Ngày", note: "~3 câu/ngày • Cường độ cao", workload: "Cường độ cao" },
+  { days: 14, label: "14 Ngày", note: "~3 câu/ngày • Hiệu quả tối ưu", workload: "Khuyên dùng" },
+  { days: 21, label: "21 Ngày", note: "~3 câu/ngày • Cân bằng chuyên sâu", workload: "Chuyên sâu" },
+  { days: 30, label: "30 Ngày", note: "~3 câu/ngày • Bền bỉ dài hạn", workload: "Bền bỉ" },
 ];
 
 const TARGET_GRADES = [
@@ -53,8 +59,13 @@ export function CreateQuestWizard({
   onQuestCreated,
   onCancel,
 }: CreateQuestWizardProps) {
-  // Wizard steps: 1: Material -> 2: Duration -> 3: Target Grade -> 4: Processing
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  // Wizard steps:
+  // 1: Upload Material
+  // 2: DOCUMENT ANALYSIS (Step 19)
+  // 3: Choose Duration & Target Grade
+  // 4: REVIEW LEARNING ROADMAP (Step 19 & 20)
+  // 5: Processing & Saving
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   // Material state
   const [importType, setImportType] = useState<"PDF" | "TEXT">("PDF");
@@ -63,11 +74,9 @@ export function CreateQuestWizard({
   const [textTitle, setTextTitle] = useState("");
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
   const [uploadedDocId, setUploadedDocId] = useState<string | null>(null);
-  const [uploadedDocMeta, setUploadedDocMeta] = useState<{
-    filename: string;
-    pageCount: number;
-    characterCount: number;
-  } | null>(null);
+
+  // Analysis result
+  const [analysisReport, setAnalysisReport] = useState<DocumentAnalysisReport | null>(null);
 
   // Roadmap configs
   const [targetDays, setTargetDays] = useState<number>(14);
@@ -80,8 +89,8 @@ export function CreateQuestWizard({
   const [processStage, setProcessStage] = useState<string>("UPLOADING");
   const [error, setError] = useState<string | null>(null);
 
-  // Step 1: Upload & Extract Material
-  const handleUploadMaterial = async () => {
+  // Step 1: Upload & Perform Deep Document Analysis
+  const handleUploadAndAnalyze = async () => {
     setError(null);
     setLoading(true);
 
@@ -101,11 +110,9 @@ export function CreateQuestWizard({
         if (!res.ok) throw new Error(data.error || "Không thể đọc nội dung file PDF");
 
         setUploadedDocId(data.documentId);
-        setUploadedDocMeta({
-          filename: data.filename,
-          pageCount: data.pageCount,
-          characterCount: data.characterCount,
-        });
+        if (data.analysisReport) {
+          setAnalysisReport(data.analysisReport);
+        }
       } else {
         if (!textInput.trim() || textInput.length < 20) {
           throw new Error("Vui lòng nhập nội dung văn bản tối thiểu 20 ký tự.");
@@ -125,14 +132,12 @@ export function CreateQuestWizard({
         if (!res.ok) throw new Error(data.error || "Không thể lưu văn bản");
 
         setUploadedDocId(data.documentId);
-        setUploadedDocMeta({
-          filename: data.filename,
-          pageCount: 1,
-          characterCount: data.characterCount,
-        });
+        if (data.analysisReport) {
+          setAnalysisReport(data.analysisReport);
+        }
       }
 
-      setStep(2); // Move to duration selection
+      setStep(2); // Move to Document Analysis review (Step 19)
     } catch (err: any) {
       setError(err.message || "Lỗi xử lý tài liệu");
     } finally {
@@ -140,18 +145,14 @@ export function CreateQuestWizard({
     }
   };
 
-  // Step 4: Final Generation
-  const handleGenerateRoadmap = async () => {
+  // Step 4 -> 5: Confirmed Generation & Saving to Database (Step 20)
+  const handleConfirmAndSaveRoadmap = async () => {
     setError(null);
-    setStep(4);
+    setStep(5);
     setLoading(true);
-    setProcessStage("EXTRACTING");
+    setProcessStage("GENERATING");
 
     try {
-      // Simulate progress stages for smooth UX
-      setTimeout(() => setProcessStage("ANALYZING"), 800);
-      setTimeout(() => setProcessStage("GENERATING"), 1800);
-
       const daysToSend = isCustomDays ? Math.max(1, parseInt(customDaysInput, 10) || 14) : targetDays;
 
       const res = await fetch("/api/learning/create-roadmap", {
@@ -171,23 +172,48 @@ export function CreateQuestWizard({
       setProcessStage("READY");
       setTimeout(() => {
         onQuestCreated(data.roadmapId);
-      }, 600);
+      }, 500);
     } catch (err: any) {
       setError(err.message || "Lỗi tạo lộ trình");
-      setStep(3);
+      setStep(4);
     } finally {
       setLoading(false);
     }
   };
+
+  const daysToSend = isCustomDays ? Math.max(1, parseInt(customDaysInput, 10) || 14) : targetDays;
+
+  // Build Preview Stages for Review Step (Step 19)
+  const previewStages = Array.from({ length: daysToSend }, (_, i) => {
+    const dayNum = i + 1;
+    const chapters = analysisReport?.chapters || [];
+    const chIndex = (dayNum - 1) % (chapters.length || 1);
+    const ch = chapters[chIndex];
+    const isSynthesis = dayNum > daysToSend - 2 && daysToSend >= 7;
+
+    return {
+      dayNumber: dayNum,
+      title: isSynthesis
+        ? `Day ${dayNum < 10 ? "0" + dayNum : dayNum}: Tổng hợp & Vận dụng Tình huống Chuyên sâu`
+        : `Day ${dayNum < 10 ? "0" + dayNum : dayNum}: ${ch?.title || `Chương ${chIndex + 1}`}`,
+      chapterTitle: ch?.title || `Chương ${chIndex + 1}`,
+      pageRange: ch ? `Trang ${ch.startPage} - ${ch.endPage}` : `Trang ${dayNum}`,
+      concepts: ch?.coreConcepts.slice(0, 3) || [`Khái niệm trọng tâm Ngày ${dayNum}`],
+      rules: ch?.rulesAndConditions.slice(0, 2) || [`Quy tắc vận dụng`],
+      estimatedMinutes: 20,
+      xpReward: 100 + dayNum * 5,
+    };
+  });
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Step Indicators */}
       <div className="flex items-center justify-between px-3">
         {[
-          { num: 1, title: "Tài liệu học tập" },
-          { num: 2, title: "Thời gian chinh phục" },
-          { num: 3, title: "Mục tiêu điểm" },
+          { num: 1, title: "1. Nạp tài liệu" },
+          { num: 2, title: "2. Phân tích tài liệu" },
+          { num: 3, title: "3. Cấu hình mục tiêu" },
+          { num: 4, title: "4. Xem trước lộ trình" },
         ].map((s) => (
           <div key={s.num} className="flex items-center space-x-2">
             <div
@@ -224,14 +250,14 @@ export function CreateQuestWizard({
       {/* ================= STEP 1: IMPORT MATERIAL ================= */}
       {step === 1 && (
         <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
-          <StudyBunnyMascot message="Chào bạn! Hãy nạp tài liệu học tập (PDF bài giảng, đề cương hoặc giáo trình) để mình giúp bạn biến thành Lộ trình học tương tác và bộ Quiz chất lượng cao nhé!" />
+          <StudyBunnyMascot message="Chào bạn! Hãy nạp tài liệu học tập (PDF bài giảng, đề cương hoặc giáo trình) để AI phân tích cấu trúc toàn diện và loại bỏ hoàn toàn các thông tin hành chính không liên quan nhé!" />
 
           {/* Import Type Tabs */}
           <div className="flex rounded-2xl bg-[#eef5f0] dark:bg-[#142318] p-1 border border-[#dbe7dd] dark:border-[#263d2e]">
             <button
               type="button"
               onClick={() => setImportType("PDF")}
-              className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+              className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 importType === "PDF"
                   ? "bg-white dark:bg-[#203627] text-[#1b4332] dark:text-[#d8ebe0] shadow-xs"
                   : "text-[#526b5c] dark:text-[#8aa693]"
@@ -242,7 +268,7 @@ export function CreateQuestWizard({
             <button
               type="button"
               onClick={() => setImportType("TEXT")}
-              className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+              className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 importType === "TEXT"
                   ? "bg-white dark:bg-[#203627] text-[#1b4332] dark:text-[#d8ebe0] shadow-xs"
                   : "text-[#526b5c] dark:text-[#8aa693]"
@@ -289,7 +315,7 @@ export function CreateQuestWizard({
                 <p className="text-xs text-[#73927d] mt-1">
                   {file
                     ? `${(file.size / (1024 * 1024)).toFixed(2)} MB • Nhấp để chọn file khác`
-                    : "Hỗ trợ giáo trình, bài giảng slide hoặc đề cương ôn tập (tối đa 25MB)"}
+                    : "Hỗ trợ giáo trình, tài liệu học tập, slide bài giảng (tất cả các trang đều được đọc)"}
                 </p>
                 <input
                   id="pdf-upload"
@@ -312,18 +338,18 @@ export function CreateQuestWizard({
                 </label>
                 <Input
                   type="text"
-                  placeholder="Ví dụ: Chiến lược Thương mại điện tử"
+                  placeholder="Ví dụ: Pháp luật và Sở hữu trí tuệ"
                   value={textTitle}
                   onChange={(e) => setTextTitle(e.target.value)}
                 />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                  Nội dung bài học hoặc ghi chú:
+                  Nội dung bài học hoặc đề cương:
                 </label>
                 <textarea
                   rows={8}
-                  placeholder="Dán nội dung kiến thức, định nghĩa, chương mục hoặc tóm tắt tài liệu vào đây..."
+                  placeholder="Dán nội dung giáo trình, chương mục hoặc các định nghĩa chuyên môn vào đây..."
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
                   className="w-full text-xs p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden"
@@ -341,32 +367,139 @@ export function CreateQuestWizard({
             <Button
               type="button"
               disabled={loading || (importType === "PDF" ? !file : textInput.length < 20)}
-              onClick={handleUploadMaterial}
-              className="ml-auto bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2"
+              onClick={handleUploadAndAnalyze}
+              className="ml-auto bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
             >
-              <span>{loading ? "Đang trích xuất văn bản..." : "Tiếp tục: Chọn thời gian"}</span>
+              <span>{loading ? "Đang phân tích tài liệu..." : "Phân tích tài liệu toàn diện"}</span>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
             </Button>
           </div>
         </div>
       )}
 
-      {/* ================= STEP 2: CHOOSE DURATION (PDF Page 1) ================= */}
-      {step === 2 && (
+      {/* ================= STEP 2: DOCUMENT ANALYSIS REPORT (Step 19) ================= */}
+      {step === 2 && analysisReport && (
         <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="text-center space-y-1">
-            <h2 className="text-xl font-extrabold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
-              🐰 Bạn muốn chinh phục môn này trong bao lâu?
+          {/* Header Card */}
+          <div className="border-b border-[#dbe7dd] dark:border-[#263d2e] pb-4">
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#2d6a4f] dark:text-[#52b788] bg-[#d8ebe0] dark:bg-[#1e3b28] px-3 py-1 rounded-full">
+              DOCUMENT ANALYSIS
+            </span>
+            <h2 className="text-xl font-black text-[#192e22] dark:text-[#f0f7f2] mt-2">
+              {analysisReport.documentTitle}
             </h2>
-            <p className="text-xs text-[#526b5c] dark:text-[#8aa693]">
-              Chọn lộ trình thời gian phù hợp với lịch trình cá nhân của bạn.
+            <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-1">
+              Tổng số trang phân tích: <strong>{analysisReport.totalPages} trang</strong>
             </p>
           </div>
 
-          <StudyBunnyMascot
-            message="Hành trình vạn dặm khởi đầu từ một bước chân! Hãy chọn số ngày bạn muốn hoàn thành nhé."
-            mood="cheering"
-          />
+          {/* Stats Metrics (Step 19 Spec) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[#2d6a4f]">
+              <span className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#7fc498] block">Phát hiện cấu trúc</span>
+              <span className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+                {analysisReport.detectedStats.chaptersCount} Chương
+              </span>
+              <span className="text-[10px] text-[#526b5c] dark:text-[#8aa693] block mt-0.5">
+                {analysisReport.detectedStats.topicsCount} chuyên đề chi tiết
+              </span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[#2d6a4f]">
+              <span className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#7fc498] block">Kiến thức cốt lõi</span>
+              <span className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+                {analysisReport.detectedStats.conceptsCount} Khái niệm
+              </span>
+              <span className="text-[10px] text-[#526b5c] dark:text-[#8aa693] block mt-0.5">
+                {analysisReport.detectedStats.rulesCount} quy định / điều kiện
+              </span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-[#fbfdfb] dark:bg-[#182b1e] border border-[#dbe7dd] dark:border-[#263d2e] col-span-2 sm:col-span-1">
+              <span className="text-[11px] font-bold text-[#526b5c] dark:text-[#8aa693] block">Tình huống thực tế</span>
+              <span className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+                {analysisReport.detectedStats.casesCount} Ca vận dụng
+              </span>
+              <span className="text-[10px] text-[#526b5c] dark:text-[#8aa693] block mt-0.5">
+                Hỗ trợ trắc nghiệm Scenario
+              </span>
+            </div>
+          </div>
+
+          {/* Ignored Metadata Protection Banner (Step 19 Spec) */}
+          <div className="p-3.5 rounded-2xl bg-[#f4f7f5] dark:bg-[#15241a] border border-[#dbe7dd] dark:border-[#263d2e] flex items-start space-x-3 text-xs">
+            <ShieldCheck className="w-5 h-5 text-[#2d6a4f] dark:text-[#52b788] shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                Đã loại bỏ thông tin hành chính (Metadata Protection):
+              </span>
+              <p className="text-[#526b5c] dark:text-[#8aa693] text-[11px] leading-relaxed">
+                Đã tự động loại bỏ <strong>{analysisReport.detectedStats.ignoredPagesCount} trang</strong> (trang bìa, tên trường/học viện, thông tin sinh viên, giảng viên hướng dẫn, lời cảm ơn, tài liệu tham khảo). AI cam kết 100% câu hỏi chỉ tập trung vào kiến thức môn học thực thụ.
+              </p>
+            </div>
+          </div>
+
+          {/* Chapters Outline */}
+          <div className="space-y-2.5">
+            <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+              <BookOpen className="w-4 h-4 text-[#2d6a4f]" />
+              <span>Cấu trúc các chương được phát hiện:</span>
+            </h4>
+            <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+              {analysisReport.chapters.map((ch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-xs flex items-center justify-between"
+                >
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                      {ch.title}
+                    </span>
+                    <p className="text-[11px] text-[#73927d] line-clamp-1">
+                      {ch.coreConcepts.slice(0, 2).join(", ") || "Khái niệm và quy định cốt lõi"}
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-[#d8ebe0] dark:bg-[#1e3b28] text-[10px] font-bold text-[#1b4332] dark:text-[#7fc498] shrink-0">
+                    Trang {ch.startPage} - {ch.endPage}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setStep(1)}
+              className="rounded-2xl space-x-1"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Nạp lại file</span>
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setStep(3)}
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
+            >
+              <span>Tiếp tục: Cấu hình mục tiêu</span>
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ================= STEP 3: CHOOSE DURATION & TARGET GRADE ================= */}
+      {step === 3 && (
+        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="text-center space-y-1">
+            <h2 className="text-xl font-extrabold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+              🐰 Thiết lập Thời gian & Mục tiêu Điểm số
+            </h2>
+            <p className="text-xs text-[#526b5c] dark:text-[#8aa693]">
+              Lộ trình sẽ phân bổ đều đặn toàn bộ các chương đã phát hiện trong tài liệu.
+            </p>
+          </div>
 
           {/* Preset Days Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -428,56 +561,16 @@ export function CreateQuestWizard({
                 className="max-w-[120px] rounded-xl text-center font-bold text-sm"
               />
               <span className="text-xs text-[#526b5c] dark:text-[#8aa693]">
-                ngày (khoảng {Math.max(1, Math.round(300 / (parseInt(customDaysInput, 10) || 14)))} câu hỏi/ngày)
+                ngày (phân bổ dàn đều qua các chương)
               </span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setStep(1)}
-              className="rounded-2xl space-x-1"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Quay lại</span>
-            </Button>
-            <Button
-              type="button"
-              onClick={() => setStep(3)}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2"
-            >
-              <span>Tiếp tục: Chọn mục tiêu điểm</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* ================= STEP 3: CHOOSE TARGET GRADE (PDF Page 2) ================= */}
-      {step === 3 && (
-        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="text-center space-y-1">
-            <h2 className="text-xl font-extrabold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
-              🎯 Bạn muốn đạt mục tiêu điểm nào?
-            </h2>
-            <p className="text-xs text-[#526b5c] dark:text-[#8aa693]">
-              Hệ thống sẽ điều chỉnh độ sâu kiến thức và các dạng câu hỏi thích ứng theo mục tiêu của bạn.
-            </p>
-          </div>
-
-          <StudyBunnyMascot
-            message="Mục tiêu điểm A cao ngất ngưởng! Chăm chỉ ôn luyện và làm quiz mỗi ngày là đạt được ngay thôi."
-            mood="happy"
-          />
-
           {/* Target Grade Selector */}
-          <div className="space-y-2">
+          <div className="space-y-2 pt-2 border-t border-[#dbe7dd] dark:border-[#263d2e]">
             <div className="flex items-center justify-between text-[11px] font-semibold text-[#73927d] px-1">
-              <span>Cơ bản</span>
-              <span className="text-[#2d6a4f] font-bold">Mục tiêu: {targetGrade}</span>
-              <span>Xuất sắc</span>
+              <span>Mục tiêu điểm số:</span>
+              <span className="text-[#2d6a4f] font-bold">Điểm {targetGrade}</span>
             </div>
             <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
               {TARGET_GRADES.map((g) => {
@@ -500,25 +593,6 @@ export function CreateQuestWizard({
             </div>
           </div>
 
-          {/* Adaptive Difficulty Callout (From PDF Page 2) */}
-          <div className="p-4 rounded-[22px] border border-[#b7d8c3] dark:border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#193322] space-y-2 text-xs">
-            <p className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
-              <Sparkles className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
-              <span>Hệ thống Adaptive Difficulty tự động tối ưu:</span>
-            </p>
-            <ul className="space-y-1 text-[#2d4734] dark:text-[#b5d6be] pl-5 list-disc text-[11px]">
-              <li>
-                Phân bổ tỷ lệ câu hỏi lý thuyết, hiểu bản chất và vận dụng tình huống phù hợp với mục tiêu điểm {targetGrade}.
-              </li>
-              <li>
-                Thời lượng dự kiến: <strong>15–25 phút/ngày</strong> với workload tối ưu.
-              </li>
-              <li>
-                Mỗi câu hỏi đều có giải thích cặn kẽ và trích dẫn trực tiếp từ tài liệu gốc.
-              </li>
-            </ul>
-          </div>
-
           <div className="flex items-center justify-between pt-2">
             <Button
               type="button"
@@ -527,23 +601,119 @@ export function CreateQuestWizard({
               className="rounded-2xl space-x-1"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span>Quay lại</span>
+              <span>Xem phân tích tài liệu</span>
             </Button>
             <Button
               type="button"
-              disabled={loading}
-              onClick={handleGenerateRoadmap}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold"
+              onClick={() => setStep(4)}
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
             >
-              <span>Tạo lộ trình học tập ngay</span>
+              <span>Review Lộ trình học</span>
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* ================= STEP 4: PROCESSING INDICATOR (Section 4 in prompt) ================= */}
+      {/* ================= STEP 4: REVIEW LEARNING ROADMAP (Step 19 Review & Step 20 Never Generate Immediately) ================= */}
       {step === 4 && (
+        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex items-center justify-between border-b border-[#dbe7dd] dark:border-[#263d2e] pb-4">
+            <div>
+              <span className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#52b788] uppercase tracking-wider">
+                XEM TRƯỚC LỘ TRÌNH (PREVIEW)
+              </span>
+              <h3 className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2] mt-0.5">
+                Lộ trình {daysToSend} ngày • Mục tiêu {targetGrade}
+              </h3>
+              <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-0.5">
+                Kiểm tra cấu trúc phân bổ trước khi khởi tạo dữ liệu chính thức.
+              </p>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setStep(3)}
+              className="rounded-full text-xs space-x-1 border-[#b7d8c3]"
+              title="Thay đổi số ngày hoặc mục tiêu điểm"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[#2d6a4f]" />
+              <span>Điều chỉnh</span>
+            </Button>
+          </div>
+
+          {/* Stages List Preview */}
+          <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+            {previewStages.map((stg) => (
+              <div
+                key={stg.dayNumber}
+                className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2 text-xs"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-[#2d6a4f] dark:text-[#7fc498]">
+                    {stg.title}
+                  </span>
+                  <span className="text-[10px] text-[#73927d] bg-[#eef5f0] dark:bg-[#1e3b28] px-2 py-0.5 rounded-full font-semibold">
+                    {stg.pageRange}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  {stg.concepts.map((c, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-0.5 rounded-full bg-[#eef5f0] dark:bg-[#1c3324] text-[10px] font-medium text-[#1b4332] dark:text-[#8aa693]"
+                    >
+                      • {c}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-[#526b5c] pt-1">
+                  <span>Khoảng 20 phút/ngày</span>
+                  <span className="font-bold text-[#2d6a4f]">+{stg.xpReward} XP</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Confirmation Notice (Step 20) */}
+          <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[#2d6a4f] text-xs space-y-1">
+            <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+              <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
+              <span>Xác nhận khởi tạo Lộ trình chính thức</span>
+            </span>
+            <p className="text-[#526b5c] dark:text-[#8aa693] text-[11px]">
+              Khi nhấn nút dưới đây, hệ thống sẽ chính thức lưu trữ Lộ trình {daysToSend} ngày, bộ bài giảng Markdown và toàn bộ câu hỏi trắc nghiệm chất lượng cao vào cơ sở dữ liệu.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setStep(3)}
+              className="rounded-2xl space-x-1"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Quay lại</span>
+            </Button>
+            <Button
+              type="button"
+              disabled={loading}
+              onClick={handleConfirmAndSaveRoadmap}
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer shadow-sm"
+            >
+              <span>{loading ? "Đang tạo lộ trình..." : "Tạo Lộ trình Học tập (Confirm)"}</span>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ================= STEP 5: PROCESSING & SAVING ================= */}
+      {step === 5 && (
         <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-8 text-center space-y-6 shadow-xs">
           <div className="w-16 h-16 rounded-full bg-[#d8ebe0] dark:bg-[#1f3b29] text-[#2d6a4f] dark:text-[#52b788] mx-auto flex items-center justify-center shadow-xs">
             <Loader2 className="w-8 h-8 animate-spin" />
@@ -551,10 +721,10 @@ export function CreateQuestWizard({
 
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
-              Analyzing your material & Generating Quest...
+              Đang hoàn thiện Lộ trình Chinh phục...
             </h3>
             <p className="text-xs text-[#73927d]">
-              AI đang phân tích cấu trúc tài liệu, trích xuất kiến thức cốt lõi và biên soạn bộ đề Quiz chuẩn sư phạm.
+              Hệ thống đang lưu trữ các chặng học, bài giảng Markdown và bộ Quiz trắc nghiệm vào cơ sở dữ liệu.
             </p>
           </div>
 
@@ -562,53 +732,19 @@ export function CreateQuestWizard({
           <div className="max-w-xs mx-auto text-left space-y-2 text-xs font-medium">
             <div className="flex items-center space-x-2 text-[#2d6a4f]">
               <CheckCircle2 className="w-4 h-4" />
-              <span>Tài liệu đã được tải lên an toàn</span>
+              <span>Bản đồ học thuật đã phân tích hoàn tất</span>
             </div>
             <div className="flex items-center space-x-2 text-[#2d6a4f]">
               <CheckCircle2 className="w-4 h-4" />
-              <span>Văn bản và số trang đã được bóc tách</span>
+              <span>Đã loại bỏ hoàn toàn metadata hành chính</span>
             </div>
-            <div
-              className={`flex items-center space-x-2 ${
-                processStage === "ANALYZING" || processStage === "GENERATING" || processStage === "READY"
-                  ? "text-[#2d6a4f]"
-                  : "text-[#73927d]"
-              }`}
-            >
-              {processStage === "UPLOADING" || processStage === "EXTRACTING" ? (
-                <div className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
-              ) : (
-                <CheckCircle2 className="w-4 h-4" />
-              )}
-              <span>Phát hiện chương mục & khái niệm cốt lõi</span>
+            <div className="flex items-center space-x-2 text-[#2d6a4f]">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Biên soạn bộ câu hỏi tình huống & bài giảng</span>
             </div>
-            <div
-              className={`flex items-center space-x-2 ${
-                processStage === "GENERATING" || processStage === "READY"
-                  ? "text-[#2d6a4f]"
-                  : "text-[#73927d]"
-              }`}
-            >
-              {processStage === "GENERATING" ? (
-                <div className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
-              ) : processStage === "READY" ? (
-                <CheckCircle2 className="w-4 h-4" />
-              ) : (
-                <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" />
-              )}
-              <span>Biên soạn câu hỏi tình huống & lời giải</span>
-            </div>
-            <div
-              className={`flex items-center space-x-2 ${
-                processStage === "READY" ? "text-[#2d6a4f]" : "text-[#73927d]"
-              }`}
-            >
-              {processStage === "READY" ? (
-                <CheckCircle2 className="w-4 h-4" />
-              ) : (
-                <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" />
-              )}
-              <span>Hoàn tất & Khởi tạo lộ trình</span>
+            <div className="flex items-center space-x-2 text-[#2d6a4f]">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Đang lưu trữ nguyên tử vào Supabase Database</span>
             </div>
           </div>
         </div>
