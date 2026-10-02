@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Play, Edit2, Target, Trash2, Plus, Sparkles, BookOpen } from "lucide-react";
+import { Play, Edit2, Target, Trash2, Plus, Sparkles, BookOpen, FolderOpen } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { SubjectDialog } from "./subject-dialog";
 import { GoalDialog } from "./goal-dialog";
+import { ResourceManager } from "../study/resource-manager";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog";
 import { useRouter } from "next/navigation";
 
 interface SubjectItem {
@@ -42,6 +44,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<any | null>(null);
   const [editingGoal, setEditingGoal] = useState<any | null>(null);
+  const [selectedResourceSubject, setSelectedResourceSubject] = useState<any | null>(null);
 
   const handleDeleteSubject = async (id: string, name: string) => {
     if (!confirm(`Bạn có chắc muốn xóa môn học "${name}" và toàn bộ lịch liên quan?`)) return;
