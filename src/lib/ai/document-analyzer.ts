@@ -131,7 +131,8 @@ export function classifyPage(text: string, pageNumber: number, totalPages: numbe
   // Check Table of Contents
   const hasTocKeyword = TOC_KEYWORDS.some((kw) => lower.includes(kw));
   const hasTocDottedLines = (text.match(/[\.\-_]{4,}\s*\d+/g) || []).length >= 3;
-  if ((hasTocKeyword || hasTocDottedLines) && pageNumber <= Math.min(10, totalPages * 0.3)) {
+  const isEarlyPage = pageNumber <= Math.max(5, Math.min(15, Math.ceil(totalPages * 0.35)));
+  if ((hasTocKeyword || hasTocDottedLines) && isEarlyPage) {
     return {
       pageNumber,
       type: "TOC",
