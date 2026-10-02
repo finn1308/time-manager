@@ -7,7 +7,17 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { sessionId, subjectId, actualDurationSeconds, notes, productivityScore, calendarEventId } = await req.json();
+    const {
+      sessionId,
+      subjectId,
+      actualDurationSeconds,
+      notes,
+      productivityScore,
+      calendarEventId,
+      taskId,
+      goalId,
+      source,
+    } = await req.json();
 
     const durationSeconds = Math.max(0, parseInt(actualDurationSeconds, 10) || 0);
     const now = new Date();
@@ -24,6 +34,8 @@ export async function POST(req: Request) {
           status: "COMPLETED",
           notes: notes?.trim() || null,
           productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
+          taskId: taskId || undefined,
+          goalId: goalId || undefined,
         },
         include: { subject: true },
       });
@@ -35,13 +47,15 @@ export async function POST(req: Request) {
           userId: user.id,
           subjectId,
           calendarEventId: calendarEventId || null,
+          taskId: taskId || null,
+          goalId: goalId || null,
           actualStart: start,
           actualEnd: now,
           actualDurationSeconds: durationSeconds,
           status: "COMPLETED",
           notes: notes?.trim() || null,
           productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
-          source: "PIP_TIMER",
+          source: source || "PIP_TIMER",
         },
         include: { subject: true },
       });
