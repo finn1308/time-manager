@@ -90,10 +90,10 @@
   - [x] Hệ thống XP, Level, Streak, Thành tích dựa trên hành động thực tế
   - [x] Habit Tracker theo dõi thói quen hàng ngày/tuần
 
-- [ ] **Tác vụ 16: Smart Notification, Progress Forecast & AI Weekly Review** (Phần 31, 33, 34)
-  - [ ] Trung tâm thông báo thông minh (Upcoming session, deadline, streak, missed session)
-  - [ ] Dự báo tiến độ hoàn thành mục tiêu (Progress forecast)
-  - [ ] AI Weekly Review báo cáo hiệu suất tuần & nút "Generate Next Week"
+- [x] **Tác vụ 16: Smart Notification, Progress Forecast & AI Weekly Review** (Phần 31, 33, 34)
+  - [x] Trung tâm thông báo thông minh (Upcoming session, deadline, streak, missed session)
+  - [x] Dự báo tiến độ hoàn thành mục tiêu (Progress forecast)
+  - [x] AI Weekly Review báo cáo hiệu suất tuần & nút "Generate Next Week"
 
 - [ ] **Tác vụ 17: Dashboard & Analytics Nâng cao** (Phần 14, 35, 36)
   - [ ] Dashboard trung tâm tổng hợp: Today schedule, Progress, Goals, Deadlines, Planned vs Actual, Streak, AI Insights
