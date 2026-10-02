@@ -425,45 +425,78 @@ export default async function DashboardPage() {
             </CardHeader>
 
             <CardContent className="p-6 pt-0 space-y-3">
-              {todayEvents.map((ev) => (
-                <div
-                  key={ev.id}
-                  className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#74a882] transition-all"
-                  style={{ borderLeftColor: ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
-                        {ev.title}
-                      </span>
-                      {ev.isLocked && (
-                        <Badge variant="yellow" className="text-[10px]">
-                          <Lock className="w-2.5 h-2.5 mr-1" />
-                          Đã khóa
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center space-x-2 text-[#526b5c] dark:text-[#a3bda9]">
-                      {ev.subject && (
-                        <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
-                          {ev.subject.name}
-                        </span>
-                      )}
-                      <span>•</span>
-                      <span className="font-mono font-medium">
-                        {formatVN(new Date(ev.startTime), "HH:mm")} – {formatVN(new Date(ev.endTime), "HH:mm")}
-                      </span>
-                    </div>
-                  </div>
+              {todayEvents.map((ev) => {
+                const typeConfig = PRIMARY_EVENT_TYPES[ev.type as keyof typeof PRIMARY_EVENT_TYPES] || {
+                  label: "Khác",
+                  icon: "📌",
+                  badgeClass: "bg-gray-100 text-gray-700",
+                };
+                const canStudy = canStartStudyTimer(ev.type);
 
-                  <Link href="/calendar">
-                    <Button variant="outline" size="sm" className="font-semibold space-x-1 rounded-xl">
-                      <Play className="w-3 h-3 fill-current" />
-                      <span>Chi tiết</span>
-                    </Button>
-                  </Link>
-                </div>
-              ))}
+                return (
+                  <div
+                    key={ev.id}
+                    className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#74a882] transition-all"
+                    style={{ borderLeftColor: ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                          {ev.title}
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${typeConfig.badgeClass}`}>
+                          {typeConfig.icon} {typeConfig.label}
+                        </span>
+                        {ev.isLocked && (
+                          <Badge variant="yellow" className="text-[10px]">
+                            <Lock className="w-2.5 h-2.5 mr-1" />
+                            Đã khóa
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-2 text-[#526b5c] dark:text-[#a3bda9]">
+                        {ev.subject && (
+                          <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                            {ev.subject.name}
+                          </span>
+                        )}
+                        <span>•</span>
+                        <span className="font-mono font-medium">
+                          {formatVN(new Date(ev.startTime), "HH:mm")} – {formatVN(new Date(ev.endTime), "HH:mm")}
+                        </span>
+                        {ev.location && (
+                          <>
+                            <span>•</span>
+                            <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                              📍 {ev.location}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <Link href="/calendar">
+                      <Button
+                        variant={canStudy ? "default" : "outline"}
+                        size="sm"
+                        className={`font-semibold space-x-1 rounded-xl ${canStudy ? "bg-[#2d6a4f] hover:bg-[#1b4332] text-white" : ""}`}
+                      >
+                        {canStudy ? (
+                          <>
+                            <Play className="w-3 h-3 fill-current" />
+                            <span>Bắt đầu học</span>
+                          </>
+                        ) : (
+                          <>
+                            <CalendarIcon className="w-3 h-3" />
+                            <span>Xem lịch</span>
+                          </>
+                        )}
+                      </Button>
+                    </Link>
+                  </div>
+                );
+              })}
 
               {todayEvents.length === 0 && (
                 <div className="text-center py-8 text-xs text-[#526b5c] dark:text-[#a3bda9] space-y-2 bg-[#f8fbf8] dark:bg-[#142318] rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e]">

@@ -38,8 +38,10 @@ export default async function AnalyticsPage() {
     const targetDay = subDays(nowVN, i);
     const dayLabel = `${dayNames[targetDay.getDay()]} (${formatVN(targetDay, "dd/MM")})`;
 
+    // Only count SELF_STUDY / STUDY events in Planned study minutes
     const eventsOnDay = allEvents.filter((ev) =>
-      isSameDay(toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE), targetDay)
+      isSameDay(toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE), targetDay) &&
+      (ev.type === "SELF_STUDY" || ev.type === "STUDY")
     );
     const plannedMinutes = eventsOnDay.reduce((acc, ev) => {
       const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 60);
@@ -75,15 +77,37 @@ export default async function AnalyticsPage() {
     });
   }
 
-  // KPI Calculations
+  // KPI Calculations (Axiom: CALENDAR EVENT ≠ STUDY SESSION)
   const totalActualSeconds = allSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
 
-  const totalPlannedHours = allEvents.reduce((acc, ev) => {
+  const selfStudyEvents = allEvents.filter((ev) => ev.type === "SELF_STUDY" || ev.type === "STUDY");
+  const schoolEvents = allEvents.filter((ev) => ev.type === "SCHOOL");
+  const personalEvents = allEvents.filter((ev) => ev.type === "PERSONAL");
+
+  const totalPlannedHours = selfStudyEvents.reduce((acc, ev) => {
     const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
     return acc + Math.max(0, diff);
   }, 0);
   const plannedHours = Math.round(totalPlannedHours * 10) / 10;
+
+  const totalSchoolHours = schoolEvents.reduce((acc, ev) => {
+    const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
+    return acc + Math.max(0, diff);
+  }, 0);
+  const schoolHours = Math.round(totalSchoolHours * 10) / 10;
+
+  const totalPersonalHours = personalEvents.reduce((acc, ev) => {
+    const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
+    return acc + Math.max(0, diff);
+  }, 0);
+  const personalHours = Math.round(totalPersonalHours * 10) / 10;
+
+  const totalScheduledHours = allEvents.reduce((acc, ev) => {
+    const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
+    return acc + Math.max(0, diff);
+  }, 0);
+  const scheduledHours = Math.round(totalScheduledHours * 10) / 10;
 
   const completionRate =
     plannedHours > 0 ? Math.min(100, Math.round((actualHours / plannedHours) * 100)) : (actualHours > 0 ? 100 : 0);
