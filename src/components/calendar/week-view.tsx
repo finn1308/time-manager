@@ -262,6 +262,7 @@ export function WeekView({
                       onClick={() => {
                         setEditingEvent({
                           id: ev.id,
+                          originalId: (ev as any).originalId,
                           title: ev.title,
                           description: ev.description,
                           subjectId: ev.subject?.id || null,
@@ -269,6 +270,8 @@ export function WeekView({
                           endTime: ev.endTime,
                           type: ev.type,
                           isLocked: ev.isLocked,
+                          recurrence: (ev as any).recurrence,
+                          recurrenceRule: (ev as any).recurrenceRule,
                         });
                         setIsEventModalOpen(true);
                       }}

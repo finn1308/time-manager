@@ -62,11 +62,12 @@ export function WhatIfSimulatorModal({
     const newWeekly = weeklyActualHours + hours;
     const budgetPct = Math.round((newWeekly / weeklyBudgetHours) * 100);
 
-    // Simulated time text
+    // Simulated time text across the 4 periods
     const dayNames = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
     const slotTimes: Record<string, string> = {
       morning: "08:30 - " + (8 + Math.floor(hours)) + ":" + ((hours % 1) * 60 === 0 ? "30" : "00"),
-      afternoon: "14:00 - " + (14 + Math.floor(hours)) + ":" + ((hours % 1) * 60 === 0 ? "00" : "30"),
+      noon: "12:30 - " + (12 + Math.floor(hours)) + ":" + ((hours % 1) * 60 === 0 ? "30" : "00"),
+      afternoon: "14:30 - " + (14 + Math.floor(hours)) + ":" + ((hours % 1) * 60 === 0 ? "30" : "00"),
       evening: "19:30 - " + (19 + Math.floor(hours)) + ":" + ((hours % 1) * 60 === 0 ? "30" : "00"),
     };
 
@@ -91,19 +92,20 @@ export function WhatIfSimulatorModal({
     if (!simResult) return;
     setIsApplying(true);
     try {
-      const now = new Date();
-      // Calculate target day
-      const targetDay = parseInt(targetDayOfWeek, 10);
-      const currentDay = now.getDay();
-      let diff = targetDay - currentDay;
+      const todayKey = getDateKeyVN(new Date());
+      const todayBase = parseISO(todayKey);
+      const targetDow = parseInt(targetDayOfWeek, 10);
+      const currentDow = getDayOfWeekVN(new Date());
+      let diff = targetDow - currentDow;
       if (diff <= 0) diff += 7;
-      const scheduledDate = new Date(now.getTime() + diff * 86400000);
+      const targetDateKey = getDateKeyVN(addDays(todayBase, diff));
 
-      let startH = 19;
-      if (timeSlot === "morning") startH = 8;
-      if (timeSlot === "afternoon") startH = 14;
+      let startHM = "19:30";
+      if (timeSlot === "morning") startHM = "08:30";
+      else if (timeSlot === "noon") startHM = "12:30";
+      else if (timeSlot === "afternoon") startHM = "14:30";
 
-      scheduledDate.setHours(startH, 30, 0, 0);
+      const scheduledDate = makeVNDate(targetDateKey, startHM);
       const hours = parseFloat(additionalHours) || 2;
       const endDate = new Date(scheduledDate.getTime() + hours * 3600000);
 
@@ -116,10 +118,12 @@ export function WhatIfSimulatorModal({
           startTime: scheduledDate.toISOString(),
           endTime: endDate.toISOString(),
           type: "STUDY",
+          timezone: "Asia/Ho_Chi_Minh",
         }),
       });
 
       if (!res.ok) throw new Error("Không thể lưu kịch bản");
+      if (onSuccess) onSuccess();
       router.refresh();
       onClose();
     } catch (err: any) {
@@ -210,9 +214,10 @@ export function WhatIfSimulatorModal({
                 onChange={(e) => setTimeSlot(e.target.value)}
                 className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
               >
-                <option value="morning">Buổi sáng (08:30)</option>
-                <option value="afternoon">Buổi chiều (14:00)</option>
-                <option value="evening">Buổi tối (19:30)</option>
+                <option value="morning">🌅 Buổi sáng (08:30)</option>
+                <option value="noon">☀️ Buổi trưa (12:30)</option>
+                <option value="afternoon">🌤️ Buổi chiều (14:30)</option>
+                <option value="evening">🌙 Buổi tối (19:30)</option>
               </select>
             </div>
           </div>
