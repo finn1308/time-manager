@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays, format, addDays } from "date-fns";
 import { expandRecurringEvents } from "@/lib/scheduling/recurrence";
+import { isSelfStudyEvent, isSchoolEvent, isPersonalEvent } from "@/lib/calendar/event-types";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -24,14 +25,27 @@ export async function GET() {
 
   const expandedEvents = expandRecurringEvents(allEventsAroundNow, weekAgo, weekAhead);
 
-  // 1. Today's Events (Planned)
-  const todayEvents = expandedEvents.filter(e => e.startTime >= todayStart && e.startTime <= todayEnd);
-  const todayPlannedHours = todayEvents.reduce((acc, ev) => {
-    const diff = (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600);
-    return acc + Math.max(0, diff);
-  }, 0);
+  // 1. Today's Events (Categorized by type - Requirements 13 & 14)
+  const todayEvents = expandedEvents.filter(
+    (e) => e.startTime >= todayStart && e.startTime <= todayEnd && !e.isCancelled
+  );
 
-  // 2. Fetch Today's Study Sessions (Actual)
+  const todaySelfStudyPlannedHours = todayEvents
+    .filter((ev) => isSelfStudyEvent(ev.type))
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
+
+  const todaySchoolHours = todayEvents
+    .filter((ev) => isSchoolEvent(ev.type))
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
+
+  const todayPersonalHours = todayEvents
+    .filter((ev) => isPersonalEvent(ev.type))
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
+
+  const todayScheduledHours = todayEvents
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
+
+  // 2. Fetch Today's Study Sessions (Actual recorded by timer)
   const todaySessions = await prisma.studySession.findMany({
     where: {
       userId: user.id,
@@ -43,12 +57,25 @@ export async function GET() {
   const todayActualSeconds = todaySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const todayActualHours = todayActualSeconds / 3600;
 
-  // 3. This Week's Events (Planned)
-  const weekEvents = expandedEvents.filter(e => e.startTime >= weekStart && e.startTime <= weekEnd);
-  const weekPlannedHours = weekEvents.reduce((acc, ev) => {
-    const diff = (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600);
-    return acc + Math.max(0, diff);
-  }, 0);
+  // 3. This Week's Events (Categorized)
+  const weekEvents = expandedEvents.filter(
+    (e) => e.startTime >= weekStart && e.startTime <= weekEnd && !e.isCancelled
+  );
+
+  const weekSelfStudyPlannedHours = weekEvents
+    .filter((ev) => isSelfStudyEvent(ev.type))
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
+
+  const weekSchoolHours = weekEvents
+    .filter((ev) => isSchoolEvent(ev.type))
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
+
+  const weekPersonalHours = weekEvents
+    .filter((ev) => isPersonalEvent(ev.type))
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
+
+  const weekScheduledHours = weekEvents
+    .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
 
   // 4. Fetch This Week's Study Sessions (Actual)
   const weekSessions = await prisma.studySession.findMany({
@@ -61,8 +88,8 @@ export async function GET() {
   const weekActualSeconds = weekSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const weekActualHours = weekActualSeconds / 3600;
 
-  const completionPercentage = weekPlannedHours > 0
-    ? Math.min(100, Math.round((weekActualHours / weekPlannedHours) * 100))
+  const completionPercentage = weekSelfStudyPlannedHours > 0
+    ? Math.min(100, Math.round((weekActualHours / weekSelfStudyPlannedHours) * 100))
     : (weekActualHours > 0 ? 100 : 0);
 
   // 5. Calculate Real Consecutive Study Streak
@@ -99,7 +126,7 @@ export async function GET() {
 
   // 6. Upcoming Study Sessions / Events (Next 7 days)
   const upcomingEvents = expandedEvents
-    .filter(e => e.startTime >= now && e.startTime <= weekAhead)
+    .filter((e) => e.startTime >= now && e.startTime <= weekAhead && !e.isCancelled)
     .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
     .slice(0, 5);
 
@@ -145,9 +172,8 @@ export async function GET() {
   });
 
   // 9. Day-by-day Planned vs Actual for Chart (Last 7 days)
+  // Self-study planned is compared with actual study sessions
   const chartData = [];
-  
-  // Need to fetch sessions for last 7 days to get actual data
   const last7DaysSessions = await prisma.studySession.findMany({
     where: {
       userId: user.id,
@@ -162,7 +188,7 @@ export async function GET() {
     const dayLabel = format(day, "EEE (dd/MM)");
 
     const dayPlanned = expandedEvents
-      .filter((e) => e.startTime >= dayS && e.startTime <= dayE)
+      .filter((e) => e.startTime >= dayS && e.startTime <= dayE && isSelfStudyEvent(e.type) && !e.isCancelled)
       .reduce((acc, e) => acc + (e.endTime.getTime() - e.startTime.getTime()) / (1000 * 3600), 0);
 
     const dayActual = last7DaysSessions
@@ -178,10 +204,16 @@ export async function GET() {
 
   return NextResponse.json({
     metrics: {
-      todayPlannedHours: Math.round(todayPlannedHours * 10) / 10,
+      todayPlannedHours: Math.round(todaySelfStudyPlannedHours * 10) / 10,
       todayActualHours: Math.round(todayActualHours * 10) / 10,
-      weekPlannedHours: Math.round(weekPlannedHours * 10) / 10,
+      todaySchoolHours: Math.round(todaySchoolHours * 10) / 10,
+      todayPersonalHours: Math.round(todayPersonalHours * 10) / 10,
+      todayScheduledHours: Math.round(todayScheduledHours * 10) / 10,
+      weekPlannedHours: Math.round(weekSelfStudyPlannedHours * 10) / 10,
       weekActualHours: Math.round(weekActualHours * 10) / 10,
+      weekSchoolHours: Math.round(weekSchoolHours * 10) / 10,
+      weekPersonalHours: Math.round(weekPersonalHours * 10) / 10,
+      weekScheduledHours: Math.round(weekScheduledHours * 10) / 10,
       completionPercentage,
       currentStreak,
       totalSessionsCount: allSessions.length,
