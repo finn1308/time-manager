@@ -376,7 +376,6 @@ export async function PUT(req: Request) {
         task: true,
         goal: true,
       },
-      },
     });
 
     return NextResponse.json({ success: true, event });

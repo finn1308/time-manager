@@ -15,14 +15,20 @@ export interface ExpandedEvent {
   timezone: string;
   type: string;
   location?: string | null;
+  goalId?: string | null;
   taskId?: string | null;
   isLocked: boolean;
+  isFlexible?: boolean;
+  trackStudyTime?: boolean;
+  seriesId?: string | null;
   isAiGenerated: boolean;
   recurrence: string;
   parentId: string | null;
   isException: boolean;
   isCancelled: boolean;
   subject?: any;
+  goal?: any;
+  task?: any;
   studySessions?: any[];
 }
 
