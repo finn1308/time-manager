@@ -130,8 +130,8 @@ export function parseNaturalLanguageTask(
 
   let deadline: Date | null = null;
   if (hasExplicitDate) {
-    const [y, m, d] = targetDayKey.split("-").map(Number);
-    deadline = makeVNDate(y, m, d, deadlineHour, deadlineMinute);
+    const timeStr = `${deadlineHour.toString().padStart(2, "0")}:${deadlineMinute.toString().padStart(2, "0")}`;
+    deadline = makeVNDate(targetDayKey, timeStr);
   }
 
   // 5. Clean Title (remove tags and priority keywords)
