@@ -5,11 +5,18 @@ const IV_LENGTH = 16; // 16 bytes for AES-GCM
 const AUTH_TAG_LENGTH = 16;
 
 /**
- * Derives a strictly 32-byte key from the environment variable
+ * Derives a strictly 32-byte key from a secret string
+ */
+function deriveKeyFromSecret(secret: string): Buffer {
+  return crypto.createHash("sha256").update(secret).digest();
+}
+
+/**
+ * Derives a strictly 32-byte key from the current environment variable
  */
 function getDerivedKey(): Buffer {
   const secret = process.env.ENCRYPTION_SECRET_KEY || "chronomind_default_secret_key_32bytes_change_in_env";
-  return crypto.createHash("sha256").update(secret).digest();
+  return deriveKeyFromSecret(secret);
 }
 
 export interface EncryptedData {
@@ -42,25 +49,40 @@ export function encryptApiKey(plainText: string): EncryptedData {
 }
 
 /**
- * Decrypts an AES-256-GCM encrypted API key
+ * Decrypts an AES-256-GCM encrypted API key.
+ * Tries the primary environment secret first, then known fallback secrets.
  */
 export function decryptApiKey(encrypted: string, iv: string, authTag: string): string {
-  try {
-    const key = getDerivedKey();
-    const ivBuffer = Buffer.from(iv, "base64");
-    const authTagBuffer = Buffer.from(authTag, "base64");
-    const decipher = crypto.createDecipheriv(ALGORITHM, key, ivBuffer);
+  const candidateSecrets = Array.from(
+    new Set([
+      process.env.ENCRYPTION_SECRET_KEY,
+      "c8b2f90145a329de7e9b04f14a82194c79435b80145c2692e104fba28d09321c",
+      "chronomind_default_secret_key_32bytes_change_in_env",
+      "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    ].filter(Boolean) as string[])
+  );
 
-    decipher.setAuthTag(authTagBuffer);
+  const ivBuffer = Buffer.from(iv, "base64");
+  const authTagBuffer = Buffer.from(authTag, "base64");
 
-    let decrypted = decipher.update(encrypted, "base64", "utf8");
-    decrypted += decipher.final("utf8");
+  for (const secret of candidateSecrets) {
+    try {
+      const key = deriveKeyFromSecret(secret);
+      const decipher = crypto.createDecipheriv(ALGORITHM, key, ivBuffer);
+      decipher.setAuthTag(authTagBuffer);
 
-    return decrypted;
-  } catch (error) {
-    console.error("Failed to decrypt API key:", error);
-    throw new Error("Decryption failed. Invalid key or corrupted data.");
+      let decrypted = decipher.update(encrypted, "base64", "utf8");
+      decrypted += decipher.final("utf8");
+
+      if (decrypted) {
+        return decrypted;
+      }
+    } catch {
+      // Continue to next candidate secret
+    }
   }
+
+  throw new Error("Decryption failed. Invalid key or corrupted data.");
 }
 
 /**

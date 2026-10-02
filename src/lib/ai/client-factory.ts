@@ -92,39 +92,37 @@ async function callOpenAIAPI(apiKey: string, userPrompt: string): Promise<AISche
 }
 
 async function callGeminiAPI(apiKey: string, userPrompt: string): Promise<AISchedulerResponse> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [
-        {
-          role: "user",
-          parts: [
-            { text: AI_SCHEDULER_SYSTEM_PROMPT },
-            { text: userPrompt },
-          ],
-        },
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.3,
+  const { callGeminiGenerate } = await import("./gemini");
+  const { text: rawText, modelUsed } = await callGeminiGenerate({
+    apiKey,
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { text: AI_SCHEDULER_SYSTEM_PROMPT },
+          { text: userPrompt },
+        ],
       },
-    }),
+    ],
+    generationConfig: {
+      responseMimeType: "application/json",
+      temperature: 0.3,
+    },
   });
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Gemini API Error: ${res.status} ${errorText}`);
+  // Strip markdown code block if model wrapped JSON in ```json ... ```
+  let jsonStr = rawText.trim();
+  if (jsonStr.startsWith("```json")) {
+    jsonStr = jsonStr.replace(/^```json\s*/, "").replace(/```$/, "").trim();
+  } else if (jsonStr.startsWith("```")) {
+    jsonStr = jsonStr.replace(/^```\s*/, "").replace(/```$/, "").trim();
   }
 
-  const json = await res.json();
-  const rawText = json.candidates[0].content.parts[0].text;
-  const parsed = JSON.parse(rawText);
+  const parsed = JSON.parse(jsonStr);
   return {
     proposedEvents: parsed.proposedEvents || [],
-    summary: parsed.summary || "Lịch học đã được phân bổ tự động bằng Google Gemini.",
-    providerUsed: "Google Gemini 1.5 Flash",
+    summary: parsed.summary || `Lịch học đã được phân bổ tự động bằng Google Gemini (${modelUsed}).`,
+    providerUsed: `Google Gemini (${modelUsed})`,
   };
 }
 

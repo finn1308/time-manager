@@ -27,7 +27,14 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Chưa có API key nào được lưu cho nhà cung cấp này" }, { status: 404 });
       }
 
-      targetKey = decryptApiKey(storedKey.encryptedKey, storedKey.iv, storedKey.authTag);
+      try {
+        targetKey = decryptApiKey(storedKey.encryptedKey, storedKey.iv, storedKey.authTag);
+      } catch {
+        return NextResponse.json(
+          { error: "API Key đã lưu không thể giải mã (khóa bảo mật hệ thống đã được cập nhật). Vui lòng nhập lại API Key." },
+          { status: 400 }
+        );
+      }
     }
 
     if (!targetKey) {
@@ -36,21 +43,12 @@ export async function POST(req: Request) {
 
     // Ping the corresponding AI provider
     if (provider === "GEMINI") {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${targetKey}`;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: "ping" }] }],
-        }),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        return NextResponse.json({ error: `Gemini API trả về lỗi: ${res.status} - ${errText.slice(0, 120)}` }, { status: 400 });
+      const { testGeminiApiKey } = await import("@/lib/ai/gemini");
+      const result = await testGeminiApiKey(targetKey);
+      if (!result.success) {
+        return NextResponse.json({ error: result.error || "Không thể kết nối đến Google Gemini API" }, { status: 400 });
       }
-
-      return NextResponse.json({ success: true, message: "Kết nối Google Gemini thành công!" });
+      return NextResponse.json({ success: true, message: result.message });
     } else if (provider === "OPENAI") {
       const res = await fetch("https://api.openai.com/v1/models", {
         headers: { Authorization: `Bearer ${targetKey}` },

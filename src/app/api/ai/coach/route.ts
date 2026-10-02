@@ -102,20 +102,12 @@ ${activeGoals
 Người dùng hỏi: "${question}"
 Hãy trả lời cô đọng, tâm lý, có số liệu thực tế rõ ràng, đưa ra lời khuyên thiết thực và ngắn gọn bằng tiếng Việt.`;
 
-          const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${decryptedKey}`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-              }),
-            }
-          );
-          if (res.ok) {
-            const data = await res.json();
-            aiAnswer = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          }
+          const { callGeminiGenerate } = await import("@/lib/ai/gemini");
+          const { text } = await callGeminiGenerate({
+            apiKey: decryptedKey,
+            contents: [{ parts: [{ text: prompt }] }],
+          });
+          aiAnswer = text;
         }
       } catch (err) {
         console.error("AI Provider call failed, falling back to local coach engine:", err);
