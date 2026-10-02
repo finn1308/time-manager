@@ -49,7 +49,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
     const available = DIVERSE_PASTEL_PALETTE.filter((c) => !usedColors.includes(c));
     return available.length > 0
       ? available[0]
-      : DIVERSE_PASTEL_PALETTE[Math.floor(Math.random() * DIVERSE_PASTEL_PALETTE.length)];
+      : DIVERSE_PASTEL_PALETTE[usedColors.length % DIVERSE_PASTEL_PALETTE.length];
   };
 
   const [name, setName] = useState(editingSubject ? editingSubject.name : "");
