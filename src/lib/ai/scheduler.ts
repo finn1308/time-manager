@@ -2,6 +2,7 @@ import { prisma } from "../prisma";
 import { executeAIScheduling, ProposedEvent, AISchedulerResponse } from "./client-factory";
 import { validateProposedSchedule, TimeSlot, AvailabilityRuleItem } from "../scheduling/conflict-detector";
 import { makeVNDate } from "../date-utils";
+import { expandRecurringEvents } from "../scheduling/recurrence";
 
 export async function generateAutoSchedule(params: {
   userId: string;
@@ -70,11 +71,10 @@ export async function generateAutoSchedule(params: {
     },
   });
 
-  const { expandRecurringEvents } = require("../scheduling/recurrence");
   const expandedEvents = expandRecurringEvents(existingCalendarEvents, startWindow, endWindow);
   
   // Filter expanded events to only those in the requested window
-  const eventsInWindow = expandedEvents.filter(e => e.startTime <= endWindow && e.endTime >= startWindow);
+  const eventsInWindow = expandedEvents.filter((e: any) => e.startTime <= endWindow && e.endTime >= startWindow);
 
   const timeSlots: TimeSlot[] = eventsInWindow.map((e: any) => ({
     start: e.startTime,
@@ -109,10 +109,10 @@ export async function generateAutoSchedule(params: {
       specificDate: null,
       isLocked: true,
     })),
-    existingEvents: existingCalendarEvents.map((e) => ({
+    existingEvents: eventsInWindow.map((e: any) => ({
       title: e.title,
-      startTime: e.startTime.toISOString(),
-      endTime: e.endTime.toISOString(),
+      startTime: typeof e.startTime === "string" ? new Date(e.startTime).toISOString() : e.startTime.toISOString(),
+      endTime: typeof e.endTime === "string" ? new Date(e.endTime).toISOString() : e.endTime.toISOString(),
     })),
     customInstructions,
   });
