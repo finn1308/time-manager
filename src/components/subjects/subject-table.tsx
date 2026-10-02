@@ -15,7 +15,7 @@ interface SubjectItem {
   code: string | null;
   color: string;
   description: string | null;
-  targetHours?: number;
+  targetHours?: number | null;
   completedHours?: number;
   priority?: number;
   studyGoals: Array<{
