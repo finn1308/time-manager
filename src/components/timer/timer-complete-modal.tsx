@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 interface TimerCompleteModalProps {
   subject: ActiveSubject;
   scheduleEventId: string | null;
+  taskId?: string | null;
   seconds: number;
   open: boolean;
   onClose: () => void;
@@ -18,6 +19,7 @@ interface TimerCompleteModalProps {
 export function TimerCompleteModal({
   subject,
   scheduleEventId,
+  taskId,
   seconds,
   open,
   onClose,
@@ -38,6 +40,7 @@ export function TimerCompleteModal({
         body: JSON.stringify({
           subjectId: subject.id,
           calendarEventId: scheduleEventId,
+          taskId: taskId || null,
           actualDurationSeconds: seconds,
           productivityScore,
           notes: notes.trim() || null,
