@@ -558,7 +558,7 @@ export default function WordSetDetailPage() {
         </div>
       </div>
 
-      {/* Interactive Study Modal (Launches Flashcard, Quiz, Listening, Typing, Matching, Special) */}
+      {/* Interactive Study Modal (Launches Flashcard, Quiz, Listening, Typing, Matching) */}
       {activeStudyMode && (
         <InteractiveStudyModal
           isOpen={Boolean(activeStudyMode)}
@@ -573,6 +573,27 @@ export default function WordSetDetailPage() {
           onSessionComplete={fetchSetData}
         />
       )}
+
+      {/* Special Modes Modal (Image 3: Hỗn hợp, Luyện đặt câu, Quán cơm tấm, Chim chăm chỉ, Giải cứu khỉ) */}
+      <SpecialModesModal
+        isOpen={showSpecialModesModal}
+        onClose={() => setShowSpecialModesModal(false)}
+        wordSetId={setDetails.id}
+        wordSetTitle={`${setDetails.orderNumber}. ${setDetails.title}`}
+        words={allWords}
+        userCoins={userCoins}
+        isUserPro={isPro}
+        onCoinsUpdated={(newCoins) => setUserCoins(newCoins)}
+        onSessionComplete={fetchSetData}
+      />
+
+      {/* Add Words Modal (Image 1: Thêm vào bộ từ) */}
+      <AddWordsModal
+        isOpen={showAddWordsModal}
+        onClose={() => setShowAddWordsModal(false)}
+        defaultWordSetId={setDetails.id}
+        onWordsAdded={() => fetchSetData()}
+      />
     </div>
   );
 }
