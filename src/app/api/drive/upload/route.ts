@@ -8,12 +8,6 @@ import {
   uploadFileToDriveFolder,
 } from "@/lib/drive/google-drive";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 const ALLOWED_MIME_TYPES = [
   "application/pdf",
   "image/jpeg",
