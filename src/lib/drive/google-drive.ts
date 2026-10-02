@@ -20,8 +20,8 @@ export function getGoogleOAuth2Client(redirectUri?: string) {
 /**
  * Returns OAuth authorization URL for the user to grant Google Drive file access
  */
-export function getDriveAuthUrl(userId: string, returnUrl?: string): string {
-  const oauth2Client = getGoogleOAuth2Client();
+export function getDriveAuthUrl(userId: string, returnUrl?: string, redirectUri?: string): string {
+  const oauth2Client = getGoogleOAuth2Client(redirectUri);
   const state = JSON.stringify({ userId, returnUrl: returnUrl || "/calendar" });
 
   return oauth2Client.generateAuthUrl({

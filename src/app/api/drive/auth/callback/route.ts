@@ -7,10 +7,13 @@ export async function GET(req: Request) {
   const stateRaw = searchParams.get("state");
   const error = searchParams.get("error");
 
-  const baseAppUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host") || "";
+  const proto = req.headers.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
+  const origin = host ? `${proto}://${host}` : (process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000");
+  const redirectUri = `${origin}/api/drive/auth/callback`;
 
   if (error || !code) {
-    return NextResponse.redirect(`${baseAppUrl}/calendar?drive_error=${encodeURIComponent(error || "access_denied")}`);
+    return NextResponse.redirect(`${origin}/calendar?drive_error=${encodeURIComponent(error || "access_denied")}`);
   }
 
   let userId = "";
@@ -27,11 +30,11 @@ export async function GET(req: Request) {
   }
 
   if (!userId) {
-    return NextResponse.redirect(`${baseAppUrl}/calendar?drive_error=invalid_state`);
+    return NextResponse.redirect(`${origin}/calendar?drive_error=invalid_state`);
   }
 
   try {
-    const oauth2Client = getGoogleOAuth2Client();
+    const oauth2Client = getGoogleOAuth2Client(redirectUri);
     const { tokens } = await oauth2Client.getToken(code);
 
     await saveUserDriveTokens(userId, {
@@ -42,9 +45,9 @@ export async function GET(req: Request) {
       scope: tokens.scope,
     });
 
-    return NextResponse.redirect(`${baseAppUrl}${returnUrl}${returnUrl.includes("?") ? "&" : "?"}drive_connected=true`);
+    return NextResponse.redirect(`${origin}${returnUrl}${returnUrl.includes("?") ? "&" : "?"}drive_connected=true`);
   } catch (err: any) {
     console.error("Error exchanging Google Drive OAuth code:", err);
-    return NextResponse.redirect(`${baseAppUrl}/calendar?drive_error=token_exchange_failed`);
+    return NextResponse.redirect(`${origin}/calendar?drive_error=token_exchange_failed`);
   }
 }
