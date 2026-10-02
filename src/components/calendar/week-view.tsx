@@ -1,11 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { formatVN, getWeekDaysInVN, VIETNAM_TIMEZONE } from "@/lib/date-utils";
-import { addWeeks, subWeeks, isSameDay } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import {
+  formatVN,
+  getWeekDaysDetailedVN,
+  getDateKeyVN,
+  makeVNDate,
+  VIETNAM_TIMEZONE,
+} from "@/lib/date-utils";
+import { addWeeks, subWeeks } from "date-fns";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play, CheckCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { AiSchedulePreviewModal } from "./ai-schedule-preview-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
@@ -41,20 +46,70 @@ interface WeekViewProps {
     code: string | null;
     color: string;
   }>;
+  onEventsChange?: () => void;
 }
 
-export function WeekView({ initialEvents = [], blockedSlots = [], subjects = [] }: WeekViewProps) {
+export function WeekView({
+  initialEvents = [],
+  blockedSlots = [],
+  subjects = [],
+  onEventsChange,
+}: WeekViewProps) {
   const [currentWeekRef, setCurrentWeekRef] = useState<Date>(new Date());
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [modalDefaultDate, setModalDefaultDate] = useState<string>(getDateKeyVN(new Date()));
   const [editingEvent, setEditingEvent] = useState<any | null>(null);
 
   const { startTimer } = usePipTimer();
 
-  const weekDays = getWeekDaysInVN(currentWeekRef);
-  const todayVN = toZonedTime(new Date(), VIETNAM_TIMEZONE);
+  const weekDays = getWeekDaysDetailedVN(currentWeekRef);
 
-  const dayNamesVN = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"];
+  // Drag and drop handlers to move events between days
+  const handleDragStart = (e: React.DragEvent, eventItem: any) => {
+    e.dataTransfer.setData("application/json", JSON.stringify(eventItem));
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDropOnDay = async (e: React.DragEvent, targetDateKey: string) => {
+    e.preventDefault();
+    try {
+      const raw = e.dataTransfer.getData("application/json");
+      if (!raw) return;
+      const eventItem = JSON.parse(raw);
+
+      // Keep exact hour and minute in Vietnam timezone, only change calendar date
+      const startHM = formatVN(eventItem.startTime, "HH:mm");
+      const endHM = formatVN(eventItem.endTime, "HH:mm");
+      const newStart = makeVNDate(targetDateKey, startHM);
+      const newEnd = makeVNDate(targetDateKey, endHM);
+
+      const res = await fetch("/api/calendar/events", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: eventItem.id,
+          startTime: newStart.toISOString(),
+          endTime: newEnd.toISOString(),
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Không thể di chuyển lịch");
+        return;
+      }
+
+      if (onEventsChange) onEventsChange();
+    } catch (err: any) {
+      console.error("Drop error:", err);
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-4">
@@ -86,7 +141,7 @@ export function WeekView({ initialEvents = [], blockedSlots = [], subjects = [] 
           </div>
 
           <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] px-2">
-            Tuần: {formatVN(weekDays[0], "dd/MM")} - {formatVN(weekDays[6], "dd/MM/yyyy")}
+            Tuần: {weekDays[0].dayOfMonth}/{weekDays[0].monthStr} – {weekDays[6].dayOfMonth}/{weekDays[6].monthStr}
           </span>
         </div>
 
@@ -105,6 +160,7 @@ export function WeekView({ initialEvents = [], blockedSlots = [], subjects = [] 
             size="sm"
             onClick={() => {
               setEditingEvent(null);
+              setModalDefaultDate(getDateKeyVN(new Date()));
               setIsEventModalOpen(true);
             }}
             className="space-x-1.5 font-bold"
@@ -115,53 +171,65 @@ export function WeekView({ initialEvents = [], blockedSlots = [], subjects = [] 
         </div>
       </div>
 
-      {/* Week Grid (7 columns with rounded-[24px] cards) */}
+      {/* Week Grid (7 columns: Thứ 2 -> Chủ Nhật strictly aligned to Vietnam timezone) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3.5">
-        {weekDays.map((day, dayIndex) => {
-          const isToday = isSameDay(day, todayVN);
-          const dayOfWeekNumber = (dayIndex + 1) % 7; // 1 (Mon) -> 6 (Sat), 0 (Sun)
-
-          // Events on this day
-          const dayEvents = initialEvents.filter((ev) =>
-            isSameDay(toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE), day)
+        {weekDays.map((day) => {
+          // Strictly match events by Vietnam calendar date key
+          const dayEvents = initialEvents.filter(
+            (ev) => getDateKeyVN(ev.startTime) === day.dateKey
           );
 
-          // Blocked slots applying to this day
+          // Blocked slots matching dayOfWeek (0 = Sun, 1 = Mon ... 6 = Sat)
           const dayBlockedSlots = blockedSlots.filter((bs) => {
             if (bs.dayOfWeek !== null && bs.dayOfWeek !== undefined) {
-              return bs.dayOfWeek === dayOfWeekNumber;
+              return bs.dayOfWeek === day.dayOfWeek;
             }
             return false;
           });
 
           return (
             <div
-              key={dayIndex}
+              key={day.dateKey}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDropOnDay(e, day.dateKey)}
               className={`flex flex-col rounded-[24px] border transition-all soft-card-shadow ${
-                isToday
+                day.isToday
                   ? "border-[#52b788] bg-[#d8ebe0]/20 dark:bg-[#1d3827]/20 ring-2 ring-[#52b788]/20"
                   : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
               }`}
             >
               {/* Day Header */}
               <div
-                className={`p-3 border-b text-center rounded-t-[24px] ${
-                  isToday
+                className={`p-3 border-b text-center rounded-t-[24px] relative ${
+                  day.isToday
                     ? "border-[#b7d8c3] bg-[#d8ebe0]/50 dark:bg-[#1d3827]/40"
                     : "border-[#dbe7dd]/80 dark:border-[#263d2e]"
                 }`}
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]">
-                  {dayNamesVN[dayIndex]}
-                </p>
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]">
+                    {day.dayName}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setEditingEvent(null);
+                      setModalDefaultDate(day.dateKey);
+                      setIsEventModalOpen(true);
+                    }}
+                    title={`Thêm lịch cho ${day.dayName}`}
+                    className="p-1 rounded-full text-[#73927d] hover:text-[#1b4332] hover:bg-[#d8ebe0] cursor-pointer transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
                 <div
                   className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold mt-1 ${
-                    isToday
+                    day.isToday
                       ? "bg-[#2d6a4f] text-white shadow-2xs"
                       : "text-[#192e22] dark:text-[#f0f7f2]"
                   }`}
                 >
-                  {formatVN(day, "d")}
+                  {day.dayOfMonth}
                 </div>
               </div>
 
@@ -189,6 +257,8 @@ export function WeekView({ initialEvents = [], blockedSlots = [], subjects = [] 
                   return (
                     <div
                       key={ev.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, ev)}
                       onClick={() => {
                         setEditingEvent({
                           id: ev.id,
@@ -264,7 +334,9 @@ export function WeekView({ initialEvents = [], blockedSlots = [], subjects = [] 
             setEditingEvent(null);
           }}
           subjects={subjects}
+          defaultDate={modalDefaultDate}
           editingEvent={editingEvent}
+          onSuccess={onEventsChange}
         />
       )}
 
