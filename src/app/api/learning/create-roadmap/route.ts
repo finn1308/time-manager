@@ -74,80 +74,66 @@ export async function POST(req: Request) {
       provider,
     });
 
-    // 4. Save to Database in a single transaction
-    const roadmap = await prisma.$transaction(async (tx) => {
-      // Create Roadmap
-      const createdRoadmap = await tx.learningRoadmap.create({
-        data: {
-          userId: user.id,
-          subjectId: subjectId || null,
-          documentId: documentId || null,
-          title: learningPackage.courseTitle,
-          targetDays: parsedDays,
-          targetGrade: learningPackage.targetGrade,
-          dailyMinutes: Math.round(learningPackage.stages.reduce((acc, s) => acc + s.estimatedMinutes, 0) / learningPackage.stages.length) || 20,
-          totalStages: learningPackage.stages.length,
-          completedStages: 0,
-          totalXp: 0,
-          status: "ACTIVE",
-        },
-      });
-
-      // Create each Stage and associated Quiz
-      for (const stg of learningPackage.stages) {
-        const isDayOne = stg.dayNumber === 1;
-
-        const stage = await tx.roadmapStage.create({
-          data: {
-            roadmapId: createdRoadmap.id,
+    // 4. Save to Database using atomic nested create
+    const roadmap = await prisma.learningRoadmap.create({
+      data: {
+        userId: user.id,
+        subjectId: subjectId || null,
+        documentId: documentId || null,
+        title: learningPackage.courseTitle,
+        targetDays: parsedDays,
+        targetGrade: learningPackage.targetGrade,
+        dailyMinutes:
+          Math.round(
+            learningPackage.stages.reduce((acc, s) => acc + s.estimatedMinutes, 0) /
+              (learningPackage.stages.length || 1)
+          ) || 20,
+        totalStages: learningPackage.stages.length,
+        completedStages: 0,
+        totalXp: 0,
+        status: "ACTIVE",
+        stages: {
+          create: learningPackage.stages.map((stg) => ({
             dayNumber: stg.dayNumber,
             title: stg.title,
             description: stg.description,
             estimatedMinutes: stg.estimatedMinutes,
             xpReward: stg.xpReward,
-            isUnlocked: isDayOne, // Day 1 is always unlocked first!
+            isUnlocked: stg.dayNumber === 1,
             isCompleted: false,
             lessonContent: stg.lessonContent,
             keyConcepts: JSON.stringify(stg.keyConcepts),
-          },
-        });
-
-        // Create Quiz for this Stage
-        const quiz = await tx.quiz.create({
-          data: {
-            userId: user.id,
-            stageId: stage.id,
-            subjectId: subjectId || null,
-            documentId: documentId || null,
-            title: `Quiz: ${stg.title}`,
-            description: `Bài kiểm tra hiểu bản chất và phản xạ cho ${stg.title}`,
-            difficulty: targetGrade === "A" || targetGrade === "A+" ? "HARD" : "MEDIUM",
-            questionCount: stg.questions.length,
-            status: "PUBLISHED",
-          },
-        });
-
-        // Create Quiz Questions
-        for (const q of stg.questions) {
-          await tx.quizQuestion.create({
-            data: {
-              quizId: quiz.id,
-              question: q.question,
-              options: JSON.stringify(q.options),
-              correctAnswer: q.correctAnswer,
-              hint: q.hint,
-              rationale: q.rationale,
-              difficulty: q.difficulty,
-              questionType: q.questionType,
-              topic: q.topic,
-              sourceReference: q.sourceReference,
-              sourcePage: q.sourcePage || null,
+            quizzes: {
+              create: [
+                {
+                  userId: user.id,
+                  subjectId: subjectId || null,
+                  documentId: documentId || null,
+                  title: `Quiz: ${stg.title}`,
+                  description: `Bài kiểm tra hiểu bản chất và phản xạ cho ${stg.title}`,
+                  difficulty: targetGrade === "A" || targetGrade === "A+" ? "HARD" : "MEDIUM",
+                  questionCount: stg.questions.length,
+                  status: "PUBLISHED",
+                  questions: {
+                    create: stg.questions.map((q) => ({
+                      question: q.question,
+                      options: JSON.stringify(q.options),
+                      correctAnswer: q.correctAnswer,
+                      hint: q.hint,
+                      rationale: q.rationale,
+                      difficulty: q.difficulty,
+                      questionType: q.questionType,
+                      topic: q.topic,
+                      sourceReference: q.sourceReference,
+                      sourcePage: q.sourcePage || null,
+                    })),
+                  },
+                },
+              ],
             },
-          });
-        }
-      }
-
-      return createdRoadmap;
+          })),
+        },
+      },
     });
 
     return NextResponse.json({

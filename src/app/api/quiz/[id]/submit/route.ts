@@ -133,44 +133,40 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     let nextDayNumber: number | null = null;
 
     // Execute database persistence in transaction
-    const attempt = await prisma.$transaction(async (tx) => {
-      // 1. Create Quiz Attempt
-      const newAttempt = await tx.quizAttempt.create({
-        data: {
-          userId: user.id,
-          quizId: quiz.id,
-          mode,
-          score,
-          totalQuestions,
-          correctAnswers: correctCount,
-          incorrectAnswers: incorrectCount,
-          skippedQuestions: skippedCount,
-          timeSpentSeconds: totalTimeSpent,
-          xpEarned,
-          completedAt: new Date(),
-        },
-      });
-
-      // 2. Create individual Quiz Answers
-      for (const ea of evaluatedAnswers) {
-        await tx.quizAnswer.create({
+    const attempt = await prisma.$transaction(
+      async (tx) => {
+        // 1. Create Quiz Attempt with nested answers in one atomic write
+        const newAttempt = await tx.quizAttempt.create({
           data: {
-            attemptId: newAttempt.id,
-            questionId: ea.questionId,
-            selectedAnswer: ea.selectedAnswer,
-            isCorrect: ea.isCorrect,
-            timeSpentSeconds: ea.timeSpentSeconds,
+            userId: user.id,
+            quizId: quiz.id,
+            mode,
+            score,
+            totalQuestions,
+            correctAnswers: correctCount,
+            incorrectAnswers: incorrectCount,
+            skippedQuestions: skippedCount,
+            timeSpentSeconds: totalTimeSpent,
+            xpEarned,
+            completedAt: new Date(),
+            answers: {
+              create: evaluatedAnswers.map((ea) => ({
+                questionId: ea.questionId,
+                selectedAnswer: ea.selectedAnswer,
+                isCorrect: ea.isCorrect,
+                timeSpentSeconds: ea.timeSpentSeconds,
+              })),
+            },
           },
         });
-      }
 
-      // 3. Update User XP
-      await tx.user.update({
-        where: { id: user.id },
-        data: {
-          xp: { increment: xpEarned },
-        },
-      });
+        // 2. Update User XP
+        await tx.user.update({
+          where: { id: user.id },
+          data: {
+            xp: { increment: xpEarned },
+          },
+        });
 
       // 4. UNLOCK NEXT DAY LOGIC (If user passed and quiz is attached to a Roadmap Stage)
       if (isPassed && quiz.stageId && quiz.stage) {
@@ -216,7 +212,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       }
 
       return newAttempt;
-    });
+    },
+    { timeout: 30000, maxWait: 10000 }
+  );
 
     // Determine Weak Topics
     const weakTopics = Object.entries(weakTopicCounts)
