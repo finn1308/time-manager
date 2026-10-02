@@ -433,13 +433,27 @@ export default function CalendarPage() {
       ) : (
         <>
           {viewMode === "day" && (
-            <DayView initialEvents={events} blockedSlots={blockedSlots} subjects={subjects} />
+            <DayView
+              initialEvents={events}
+              blockedSlots={blockedSlots}
+              subjects={subjects}
+              onEventsChange={loadData}
+            />
           )}
           {viewMode === "week" && (
-            <WeekView initialEvents={events} blockedSlots={blockedSlots} subjects={subjects} />
+            <WeekView
+              initialEvents={events}
+              blockedSlots={blockedSlots}
+              subjects={subjects}
+              onEventsChange={loadData}
+            />
           )}
           {viewMode === "month" && (
-            <MonthView initialEvents={events} subjects={subjects} />
+            <MonthView
+              initialEvents={events}
+              subjects={subjects}
+              onEventsChange={loadData}
+            />
           )}
         </>
       )}
