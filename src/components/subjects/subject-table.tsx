@@ -91,11 +91,11 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
           </thead>
           <tbody className="divide-y divide-[#dbe7dd]/60 dark:divide-[#263d2e]">
             {subjects.map((sub) => {
-              const target = sub.targetHours || 10;
+              const target = sub.targetHours; // can be null/undefined
               const loggedHours = sub.completedHours !== undefined
                 ? sub.completedHours
                 : Math.round((sub.totalLoggedMinutes / 60) * 10) / 10;
-              const percent = target > 0 ? Math.min(100, Math.round((loggedHours / target) * 100)) : 0;
+              const percent = target ? Math.min(100, Math.round((loggedHours / target) * 100)) : 0;
               const priority = sub.priority || 3;
 
               return (
@@ -130,7 +130,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
                   {/* Target Hours */}
                   <td className="py-4 px-4 text-right font-mono font-semibold text-[#192e22] dark:text-[#f0f7f2]">
-                    {target > 0 ? `${target}h` : <span className="text-[#8ba393] italic">Chưa đặt</span>}
+                    {target ? `${target}h` : <span className="text-[#8ba393] italic text-[11px]">Không đặt chỉ tiêu</span>}
                   </td>
 
                   {/* Logged Hours */}
@@ -140,21 +140,25 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
                   {/* Progress Bar */}
                   <td className="py-4 px-4">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-semibold">
-                        <span>{percent}%</span>
-                        {target > 0 && <span>còn {Math.max(0, target - loggedHours).toFixed(1)}h</span>}
+                    {target ? (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-semibold">
+                          <span>{percent}%</span>
+                          <span>còn {Math.max(0, target - loggedHours).toFixed(1)}h</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-[#dbe7dd] dark:bg-[#263d2e] overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all duration-300"
+                            style={{
+                              width: `${percent}%`,
+                              backgroundColor: sub.color || "#2d6a4f",
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-[#dbe7dd] dark:bg-[#263d2e] overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-300"
-                          style={{
-                            width: `${percent}%`,
-                            backgroundColor: sub.color || "#2d6a4f",
-                          }}
-                        />
-                      </div>
-                    </div>
+                    ) : (
+                      <span className="text-[#8ba393] text-[11px] italic">Không yêu cầu tiến độ</span>
+                    )}
                   </td>
 
                   {/* Priority */}
