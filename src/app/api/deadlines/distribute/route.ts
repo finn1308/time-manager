@@ -88,12 +88,30 @@ export async function POST(req: Request) {
     const createdEvents = await prisma.$transaction(async (tx) => {
       const events = [];
 
+      // Find or assign subject
+      let assignedSubjectId = subjectId || null;
+      if (!assignedSubjectId) {
+        const firstSub = await tx.subject.findFirst({ where: { userId: user.id } });
+        if (firstSub) {
+          assignedSubjectId = firstSub.id;
+        } else {
+          const generalSub = await tx.subject.create({
+            data: {
+              userId: user.id,
+              name: "Chung",
+              color: "#2d6a4f",
+            },
+          });
+          assignedSubjectId = generalSub.id;
+        }
+      }
+
       for (const s of result.sessions) {
         // Create CalendarEvent
         const event = await tx.calendarEvent.create({
           data: {
             userId: user.id,
-            subjectId: s.subjectId || null,
+            subjectId: s.subjectId || assignedSubjectId,
             taskId: s.taskId || null,
             title: s.title,
             description: `Tự động phân bổ chống dồn bài trước deadline (${new Date(deadlineDate).toLocaleDateString("vi-VN")})`,
@@ -109,11 +127,16 @@ export async function POST(req: Request) {
         await tx.studySession.create({
           data: {
             userId: user.id,
-            subjectId: s.subjectId || null,
+            subjectId: s.subjectId || assignedSubjectId,
             taskId: s.taskId || null,
             goalId: s.goalId || null,
             calendarEventId: event.id,
+            plannedStart: s.startTime,
+            plannedEnd: s.endTime,
+            actualStart: s.startTime,
+            actualEnd: s.endTime,
             plannedDurationSeconds: s.durationMinutes * 60,
+            actualDurationSeconds: 0,
             status: "PLANNED",
           },
         });

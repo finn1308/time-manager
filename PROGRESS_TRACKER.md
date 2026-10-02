@@ -39,9 +39,9 @@
   - [x] Hệ thống phân cấp: Goal -> Milestone -> Task -> Study Session
   - [x] API CRUD & validation cho Goals, Milestones, Tasks
 
-- [ ] **Tác vụ 5: Deadline & Assignment Engine** (Phần 8)
-  - [ ] Quản lý bài tập, deadline thi cử với estimated time, priority
-  - [ ] Thuật toán phân bổ tự động chia nhỏ deadline thành các study session cách đều trước ngày hạn
+- [x] **Tác vụ 5: Deadline & Assignment Engine** (Phần 8)
+  - [x] Quản lý bài tập, deadline thi cử với estimated time, priority
+  - [x] Thuật toán phân bổ tự động chia nhỏ deadline thành các study session cách đều trước ngày hạn
 
 - [ ] **Tác vụ 6: Nâng cấp Calendar đa chế độ & Phân loại sự kiện** (Phần 9)
   - [ ] Bổ sung chế độ xem Agenda view (bên cạnh Day, Week, Month)
