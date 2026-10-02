@@ -34,6 +34,7 @@ import {
   formatHoursVN,
   VIETNAM_TIMEZONE,
 } from "@/lib/date-utils";
+import { PRIMARY_EVENT_TYPES, canStartStudyTimer } from "@/lib/calendar/event-types";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -79,14 +80,39 @@ export default async function DashboardPage() {
   });
 
   // Calculate Real Overall KPIs
+  // Axiom: CALENDAR EVENT ≠ STUDY SESSION
+  // Actual hours ONLY counts completed study sessions from timer.
   const totalActualSeconds = allSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
 
-  const totalPlannedHours = allEvents.reduce((acc, ev) => {
+  // Planned study hours ONLY counts SELF_STUDY / STUDY events
+  const selfStudyEvents = allEvents.filter((ev) => ev.type === "SELF_STUDY" || ev.type === "STUDY");
+  const schoolEvents = allEvents.filter((ev) => ev.type === "SCHOOL");
+  const personalEvents = allEvents.filter((ev) => ev.type === "PERSONAL");
+
+  const totalPlannedHours = selfStudyEvents.reduce((acc, ev) => {
     const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
     return acc + Math.max(0, diff);
   }, 0);
   const plannedHours = Math.round(totalPlannedHours * 10) / 10;
+
+  const totalSchoolHours = schoolEvents.reduce((acc, ev) => {
+    const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
+    return acc + Math.max(0, diff);
+  }, 0);
+  const schoolHours = Math.round(totalSchoolHours * 10) / 10;
+
+  const totalPersonalHours = personalEvents.reduce((acc, ev) => {
+    const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
+    return acc + Math.max(0, diff);
+  }, 0);
+  const personalHours = Math.round(totalPersonalHours * 10) / 10;
+
+  const totalScheduledHours = allEvents.reduce((acc, ev) => {
+    const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
+    return acc + Math.max(0, diff);
+  }, 0);
+  const scheduledHours = Math.round(totalScheduledHours * 10) / 10;
 
   const completionRate =
     plannedHours > 0
@@ -159,7 +185,7 @@ export default async function DashboardPage() {
     const dayLabel = formatVN(dRange.startUTC, "EEE (dd/MM)");
 
     const p = allEvents
-      .filter((e) => getDateKeyVN(e.startTime) === dKey)
+      .filter((e) => getDateKeyVN(e.startTime) === dKey && (e.type === "SELF_STUDY" || e.type === "STUDY"))
       .reduce((acc, e) => acc + (new Date(e.endTime).getTime() - new Date(e.startTime).getTime()) / (1000 * 3600), 0);
 
     const a = allSessions
@@ -246,12 +272,15 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI Cards (Planned vs Actual, Streak) */}
+      {/* KPI Cards (Planned vs Actual, Streak, and Time Breakdown) */}
       <KpiCards
         actualHours={actualHours}
         plannedHours={plannedHours}
         completionRate={completionRate}
         streakDays={streak}
+        schoolHours={schoolHours}
+        personalHours={personalHours}
+        scheduledHours={scheduledHours}
       />
 
       {/* Study Budget & Debt Card */}
