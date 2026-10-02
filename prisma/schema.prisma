@@ -9,18 +9,18 @@ generator client {
 }
 
 model User {
-  id            String         @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String         @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
   passwordHash  String?
-  role          String         @default("USER")
-  timezone      String         @default("Asia/Ho_Chi_Minh")
-  xp            Int            @default(0)
-  streakDays    Int            @default(1)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  role          String    @default("USER")
+  timezone      String    @default("Asia/Ho_Chi_Minh")
+  xp            Int       @default(0)
+  streakDays    Int       @default(1)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   accounts          Account[]
   sessions          Session[]
@@ -54,6 +54,7 @@ model Account {
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
 }
 
@@ -68,7 +69,7 @@ model Session {
 model UserApiKey {
   id           String   @id @default(cuid())
   userId       String
-  provider     String   // GEMINI, OPENAI, ANTHROPIC
+  provider     String // GEMINI, OPENAI, ANTHROPIC
   encryptedKey String   @db.Text
   iv           String
   authTag      String
@@ -77,6 +78,7 @@ model UserApiKey {
   updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, provider])
 }
 
@@ -125,29 +127,42 @@ model Goal {
 }
 
 model CalendarEvent {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   userId        String
   subjectId     String?
   title         String
-  description   String?   @db.Text
+  description   String?  @db.Text
   startTime     DateTime
   endTime       DateTime
-  timezone      String    @default("Asia/Ho_Chi_Minh")
-  type          String    @default("STUDY")
-  isLocked      Boolean   @default(false)
-  isAiGenerated Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  timezone      String   @default("Asia/Ho_Chi_Minh")
+  type          String   @default("STUDY")
+  isLocked      Boolean  @default(false)
+  isAiGenerated Boolean  @default(false)
+
+  // Recurring support
+  recurrence      String           @default("NONE") // NONE, DAILY, WEEKLY, MONTHLY, YEARLY
+  recurrenceRule  String?          @db.Text         // JSON representation of the recurrence rule
+  recurrenceEnd   DateTime?                         // End date of the recurrence
+  parentId        String?                           // If this is an exception, points to the original recurring event
+  exceptionDate   String?                           // YYYY-MM-DD to identify which occurrence this exception replaces
+  isException     Boolean          @default(false)  // true if this record overrides a generated occurrence
+  isCancelled     Boolean          @default(false)  // true if this occurrence is deleted
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   studySessions StudySession[]
+  parent          CalendarEvent?   @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
+  exceptions      CalendarEvent[]  @relation("EventExceptions")
 
   @@index([userId, startTime, endTime])
+  @@index([parentId])
 }
 
 model StudySession {
-  id                    String         @id @default(cuid())
+  id                    String    @id @default(cuid())
   userId                String
   subjectId             String
   calendarEventId       String?
@@ -156,12 +171,12 @@ model StudySession {
   actualStart           DateTime
   actualEnd             DateTime
   actualDurationSeconds Int
-  status                String         @default("COMPLETED")
-  notes                 String?        @db.Text
+  status                String    @default("COMPLETED")
+  notes                 String?   @db.Text
   productivityScore     Int?
-  source                String         @default("PIP_TIMER")
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  source                String    @default("PIP_TIMER")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
@@ -221,20 +236,20 @@ model UserSettings {
 // ==============================================================================
 
 model Document {
-  id            String         @id @default(cuid())
+  id            String   @id @default(cuid())
   userId        String
   subjectId     String?
   filename      String
   fileSize      Int
-  fileType      String         @default("application/pdf")
+  fileType      String   @default("application/pdf")
   storagePath   String?
-  extractedText String?        @db.Text
-  pageCount     Int            @default(1)
+  extractedText String?  @db.Text
+  pageCount     Int      @default(1)
   contentHash   String?
-  status        String         @default("READY") // UPLOADING, PROCESSING, EXTRACTING, ANALYZING, GENERATING, READY, FAILED
+  status        String   @default("READY") // UPLOADING, PROCESSING, EXTRACTING, ANALYZING, GENERATING, READY, FAILED
   errorMessage  String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject          Subject?          @relation(fields: [subjectId], references: [id], onDelete: SetNull)
@@ -245,43 +260,43 @@ model Document {
 }
 
 model LearningRoadmap {
-  id              String         @id @default(cuid())
+  id              String   @id @default(cuid())
   userId          String
   subjectId       String?
   documentId      String?
   title           String
-  targetDays      Int            @default(14) // 7, 14, 21, 30, or custom
-  targetGrade     String         @default("A") // PASS, C, C+, B, B+, A, A+
-  dailyMinutes    Int            @default(25)
-  totalStages     Int            @default(0)
-  completedStages Int            @default(0)
-  totalXp         Int            @default(0)
-  status          String         @default("ACTIVE") // ACTIVE, COMPLETED, ARCHIVED
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  targetDays      Int      @default(14) // 7, 14, 21, 30, or custom
+  targetGrade     String   @default("A") // PASS, C, C+, B, B+, A, A+
+  dailyMinutes    Int      @default(25)
+  totalStages     Int      @default(0)
+  completedStages Int      @default(0)
+  totalXp         Int      @default(0)
+  status          String   @default("ACTIVE") // ACTIVE, COMPLETED, ARCHIVED
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject   Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  document  Document?      @relation(fields: [documentId], references: [id], onDelete: SetNull)
-  stages    RoadmapStage[]
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject  Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  document Document?      @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  stages   RoadmapStage[]
 
   @@index([userId])
 }
 
 model RoadmapStage {
-  id               String         @id @default(cuid())
+  id               String   @id @default(cuid())
   roadmapId        String
-  dayNumber        Int            // Day 1, Day 2, Day 3...
-  title            String         // e.g. "Chương 1: Tổng quan về Quản trị Bán hàng"
-  description      String?        @db.Text
-  estimatedMinutes Int            @default(15)
-  xpReward         Int            @default(100)
-  isUnlocked       Boolean        @default(false)
-  isCompleted      Boolean        @default(false)
-  lessonContent    String?        @db.Text // Key concepts, summary, bullet points
-  keyConcepts      String?        @db.Text // JSON string array
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  dayNumber        Int // Day 1, Day 2, Day 3...
+  title            String // e.g. "Chương 1: Tổng quan về Quản trị Bán hàng"
+  description      String?  @db.Text
+  estimatedMinutes Int      @default(15)
+  xpReward         Int      @default(100)
+  isUnlocked       Boolean  @default(false)
+  isCompleted      Boolean  @default(false)
+  lessonContent    String?  @db.Text // Key concepts, summary, bullet points
+  keyConcepts      String?  @db.Text // JSON string array
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   roadmap        LearningRoadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
   quizzes        Quiz[]
@@ -291,45 +306,45 @@ model RoadmapStage {
 }
 
 model Quiz {
-  id            String         @id @default(cuid())
+  id            String   @id @default(cuid())
   userId        String
   stageId       String?
   documentId    String?
   subjectId     String?
   title         String
-  description   String?        @db.Text
-  difficulty    String         @default("MEDIUM") // EASY, MEDIUM, HARD, MIXED
-  questionCount Int            @default(10)
-  status        String         @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  description   String?  @db.Text
+  difficulty    String   @default("MEDIUM") // EASY, MEDIUM, HARD, MIXED
+  questionCount Int      @default(10)
+  status        String   @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stage         RoadmapStage?  @relation(fields: [stageId], references: [id], onDelete: Cascade)
-  document      Document?      @relation(fields: [documentId], references: [id], onDelete: SetNull)
-  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  questions     QuizQuestion[]
-  attempts      QuizAttempt[]
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stage     RoadmapStage?  @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  document  Document?      @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  subject   Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
 
   @@index([userId])
   @@index([stageId])
 }
 
 model QuizQuestion {
-  id              String       @id @default(cuid())
+  id              String   @id @default(cuid())
   quizId          String
-  question        String       @db.Text
-  options         String       @db.Text // JSON array: ["A", "B", "C", "D"]
-  correctAnswer   Int          // 0, 1, 2, 3
-  hint            String?      @db.Text
-  rationale       String       @db.Text
-  difficulty      String       @default("MEDIUM")
-  questionType    String       @default("APPLICATION") // APPLICATION, SCENARIO, ANALYSIS, CAUSE_EFFECT, CONCEPT
+  question        String   @db.Text
+  options         String   @db.Text // JSON array: ["A", "B", "C", "D"]
+  correctAnswer   Int // 0, 1, 2, 3
+  hint            String?  @db.Text
+  rationale       String   @db.Text
+  difficulty      String   @default("MEDIUM")
+  questionType    String   @default("APPLICATION") // APPLICATION, SCENARIO, ANALYSIS, CAUSE_EFFECT, CONCEPT
   topic           String
-  sourceReference String?      // e.g. "Chương 2, Mục 3"
-  sourcePage      Int?         // e.g. 17
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  sourceReference String? // e.g. "Chương 2, Mục 3"
+  sourcePage      Int? // e.g. 17
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
   answers QuizAnswer[]
@@ -338,19 +353,19 @@ model QuizQuestion {
 }
 
 model QuizAttempt {
-  id                String       @id @default(cuid())
-  userId            String
-  quizId            String
-  mode              String       @default("PRACTICE") // PRACTICE, EXAM
-  score             Float        // Percentage 0-100
-  totalQuestions    Int
-  correctAnswers    Int
-  incorrectAnswers  Int
-  skippedQuestions  Int          @default(0)
-  timeSpentSeconds  Int
-  xpEarned          Int          @default(0)
-  startedAt         DateTime     @default(now())
-  completedAt       DateTime?
+  id               String    @id @default(cuid())
+  userId           String
+  quizId           String
+  mode             String    @default("PRACTICE") // PRACTICE, EXAM
+  score            Float // Percentage 0-100
+  totalQuestions   Int
+  correctAnswers   Int
+  incorrectAnswers Int
+  skippedQuestions Int       @default(0)
+  timeSpentSeconds Int
+  xpEarned         Int       @default(0)
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
 
   user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
@@ -360,12 +375,12 @@ model QuizAttempt {
 }
 
 model QuizAnswer {
-  id               String       @id @default(cuid())
+  id               String  @id @default(cuid())
   attemptId        String
   questionId       String
-  selectedAnswer   Int          // 0, 1, 2, 3 (-1 if skipped)
+  selectedAnswer   Int // 0, 1, 2, 3 (-1 if skipped)
   isCorrect        Boolean
-  timeSpentSeconds Int          @default(0)
+  timeSpentSeconds Int     @default(0)
 
   attempt  QuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
@@ -374,15 +389,15 @@ model QuizAnswer {
 }
 
 model FlashcardDeck {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   userId      String
   subjectId   String?
   stageId     String?
   title       String
-  description String?     @db.Text
-  cardCount   Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  description String?  @db.Text
+  cardCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject    Subject?      @relation(fields: [subjectId], references: [id], onDelete: SetNull)
@@ -393,16 +408,16 @@ model FlashcardDeck {
 }
 
 model Flashcard {
-  id              String        @id @default(cuid())
+  id              String   @id @default(cuid())
   deckId          String
-  front           String        @db.Text
-  back            String        @db.Text
-  hint            String?       @db.Text
+  front           String   @db.Text
+  back            String   @db.Text
+  hint            String?  @db.Text
   topic           String?
   sourceReference String?
-  masteryLevel    Int           @default(0) // 0 to 5
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  masteryLevel    Int      @default(0) // 0 to 5
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   deck FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
 

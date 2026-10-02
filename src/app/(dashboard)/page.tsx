@@ -354,6 +354,7 @@ export default async function DashboardPage() {
 
         <div className="lg:col-span-4">
           <SchedulingDna
+            totalSessionsCount={allSessions.length}
             bestFocusTimeSlot={bestFocusTimeSlot}
             averageSessionMinutes={averageSessionMinutes}
             estimationVariancePercent={estimationVariancePercent}
@@ -363,7 +364,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Heatmap Section */}
-      <StudyHeatmap sessions={allSessions} />
+      <StudyHeatmap subjects={subjects.map((s) => ({ id: s.id, name: s.name, color: s.color }))} />
 
       {/* 2-Column Schedule & Subjects Deep Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
