@@ -179,7 +179,9 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
   const totalActualSeconds = allSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
 
-  const selfStudyEvents = allEvents.filter((ev) => ev.type === "SELF_STUDY" || ev.type === "STUDY");
+  const selfStudyEvents = allEvents.filter(
+    (ev) => (ev.type === "SELF_STUDY" || ev.type === "STUDY") && (ev as any).trackStudyTime !== false
+  );
   const schoolEvents = allEvents.filter((ev) => ev.type === "SCHOOL");
   const personalEvents = allEvents.filter((ev) => ev.type === "PERSONAL");
 
