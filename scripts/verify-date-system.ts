@@ -110,10 +110,10 @@ const ev1End = makeVNDate("2026-10-02", "12:30");
 const alloc1 = calculateEventPeriodAllocation(ev1Start, ev1End);
 
 assert(alloc1.totalMinutes === 60, "Event 11:30-12:30 totalMinutes is 60");
-assert(alloc1.allocations.morning === 30, "Event 11:30-12:30 morning portion is 30m", `Got ${alloc1.allocations.morning}`);
-assert(alloc1.allocations.noon === 30, "Event 11:30-12:30 noon portion is 30m", `Got ${alloc1.allocations.noon}`);
-assert(alloc1.allocations.afternoon === 0, "Event 11:30-12:30 afternoon portion is 0m");
-assert(alloc1.allocations.evening === 0, "Event 11:30-12:30 evening portion is 0m");
+assert(alloc1.periods.morning === 30, "Event 11:30-12:30 morning portion is 30m", `Got ${alloc1.periods.morning}`);
+assert(alloc1.periods.noon === 30, "Event 11:30-12:30 noon portion is 30m", `Got ${alloc1.periods.noon}`);
+assert(alloc1.periods.afternoon === 0, "Event 11:30-12:30 afternoon portion is 0m");
+assert(alloc1.periods.evening === 0, "Event 11:30-12:30 evening portion is 0m");
 
 // Example B: Single period 08:00 - 09:30 (Morning)
 const ev2Start = makeVNDate("2026-10-02", "08:00");
@@ -121,7 +121,7 @@ const ev2End = makeVNDate("2026-10-02", "09:30");
 const alloc2 = calculateEventPeriodAllocation(ev2Start, ev2End);
 
 assert(alloc2.totalMinutes === 90, "Event 08:00-09:30 totalMinutes is 90");
-assert(alloc2.allocations.morning === 90, "Event 08:00-09:30 morning portion is 90m");
+assert(alloc2.periods.morning === 90, "Event 08:00-09:30 morning portion is 90m");
 assert(alloc2.primaryPeriod === "morning", "Event 08:00-09:30 primaryPeriod is morning");
 
 // Example C: Cross Noon to Afternoon: 13:30 to 15:00
@@ -131,8 +131,8 @@ const ev3End = makeVNDate("2026-10-02", "15:00");
 const alloc3 = calculateEventPeriodAllocation(ev3Start, ev3End);
 
 assert(alloc3.totalMinutes === 90, "Event 13:30-15:00 totalMinutes is 90");
-assert(alloc3.allocations.noon === 30, "Event 13:30-15:00 noon portion is 30m", `Got ${alloc3.allocations.noon}`);
-assert(alloc3.allocations.afternoon === 60, "Event 13:30-15:00 afternoon portion is 60m", `Got ${alloc3.allocations.afternoon}`);
+assert(alloc3.periods.noon === 30, "Event 13:30-15:00 noon portion is 30m", `Got ${alloc3.periods.noon}`);
+assert(alloc3.periods.afternoon === 60, "Event 13:30-15:00 afternoon portion is 60m", `Got ${alloc3.periods.afternoon}`);
 
 // ---------------------------------------------------------------------------
 // TEST 4: RECURRING EVENTS EXPANSION IN VN TIMEZONE
