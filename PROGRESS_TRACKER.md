@@ -86,9 +86,9 @@
   - [x] Hệ thống `#Tags` lọc toàn bộ ứng dụng
   - [x] Quick Capture menu tạo nhanh Task, Note, Event, Session, Goal
 
-- [ ] **Tác vụ 15: Gamification & Habit Tracker** (Phần 29, 30)
-  - [ ] Hệ thống XP, Level, Streak, Thành tích dựa trên hành động thực tế
-  - [ ] Habit Tracker theo dõi thói quen hàng ngày/tuần
+- [x] **Tác vụ 15: Gamification & Habit Tracker** (Phần 29, 30)
+  - [x] Hệ thống XP, Level, Streak, Thành tích dựa trên hành động thực tế
+  - [x] Habit Tracker theo dõi thói quen hàng ngày/tuần
 
 - [ ] **Tác vụ 16: Smart Notification, Progress Forecast & AI Weekly Review** (Phần 31, 33, 34)
   - [ ] Trung tâm thông báo thông minh (Upcoming session, deadline, streak, missed session)
