@@ -114,6 +114,21 @@ export function getDateKeyVN(date: Date | string | number = new Date()): string 
   return formatInTimeZone(d, VIETNAM_TIMEZONE, "yyyy-MM-dd");
 }
 
+export function getVNTodayKey(): string {
+  return getDateKeyVN(new Date());
+}
+
+export function getVNDayOffsets(startOffset: number, endOffset: number = 0): string[] {
+  const keys: string[] = [];
+  const today = new Date();
+  for (let offset = startOffset; offset <= endOffset; offset++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + offset);
+    keys.push(getDateKeyVN(d));
+  }
+  return keys;
+}
+
 /**
  * Checks if two dates/timestamps fall on the exact same calendar day in Vietnam
  */
