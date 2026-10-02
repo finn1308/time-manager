@@ -129,6 +129,16 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       },
     },
     {
+      id: "habits",
+      title: "Thói quen & Thành tích XP (Habits & Badges)",
+      category: "Điều hướng",
+      icon: Flame,
+      run: () => {
+        router.push("/habits");
+        onClose();
+      },
+    },
+    {
       id: "settings",
       title: "Cài đặt & Khóa AI (Settings)",
       category: "Điều hướng",
