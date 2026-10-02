@@ -53,10 +53,10 @@
   - [x] Lập lịch thông minh 4 buổi, ưu tiên deadline gần, tôn trọng availability & blocked slots
   - [x] Server-side deterministic conflict detection & transaction rollback an toàn
 
-- [ ] **Tác vụ 8: AI Rescheduler & Khôi phục phiên học bỏ lỡ (Missed Sessions)** (Phần 11, 12, 32)
-  - [ ] Tính năng "Đổi lịch học hôm nay"
-  - [ ] Tự động phát hiện Missed sessions, đề xuất Option A / Option B học bù
-  - [ ] Catch-up mode xử lý backlog không dồn quá tải
+- [x] **Tác vụ 8: AI Rescheduler & Khôi phục phiên học bỏ lỡ (Missed Sessions)** (Phần 11, 12, 32)
+  - [x] Tính năng "Đổi lịch học hôm nay"
+  - [x] Tự động phát hiện Missed sessions, đề xuất Option A / Option B học bù
+  - [x] Catch-up mode xử lý backlog không dồn quá tải
 
 - [ ] **Tác vụ 9: Study Timer & Floating PIP Mini-player** (Phần 13, 15)
   - [ ] Chế độ Pomodoro, custom timer, study session timer
