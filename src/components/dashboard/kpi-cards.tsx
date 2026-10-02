@@ -119,6 +119,34 @@ export function KpiCards({
           })}
         </div>
       </div>
+
+      {/* Time Categories Breakdown Banner */}
+      {(schoolHours !== undefined || personalHours !== undefined || scheduledHours !== undefined) && (
+        <div className="lg:col-span-12 p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8faf8] dark:bg-[#152319] flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-[#2d6a4f] dark:text-[#74c69d] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#52b788] animate-pulse" />
+            <span>Phân định loại thời gian (Calendar ≠ Study Session):</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 font-mono text-[13px]">
+            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#1e3a8a] dark:text-[#93c5fd]">
+              <span>🏫 Đi học:</span>
+              <strong className="font-bold">{(schoolHours ?? 0).toFixed(1)}h</strong>
+            </span>
+            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#166534] dark:text-[#86efac]">
+              <span>🏠 Tự học thực tế:</span>
+              <strong className="font-bold">{actualHours.toFixed(1)}h</strong>
+            </span>
+            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#6b21a8] dark:text-[#d8b4fe]">
+              <span>🎮 Cá nhân:</span>
+              <strong className="font-bold">{(personalHours ?? 0).toFixed(1)}h</strong>
+            </span>
+            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#374151] dark:text-[#d1d5db]">
+              <span>📅 Tổng lịch xếp:</span>
+              <strong className="font-bold">{(scheduledHours ?? 0).toFixed(1)}h</strong>
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
