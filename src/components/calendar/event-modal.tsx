@@ -17,6 +17,8 @@ import {
   AlertTriangle,
   Sparkles,
   BookOpen,
+  Target,
+  Sliders,
 } from "lucide-react";
 import { formatVN, getDateKeyVN, makeVNDate } from "@/lib/date-utils";
 import { ResourceManager } from "@/components/study/resource-manager";
@@ -53,6 +55,10 @@ interface EventModalProps {
     endTime: string | Date;
     type?: string;
     isLocked?: boolean;
+    isFlexible?: boolean;
+    trackStudyTime?: boolean;
+    goalId?: string | null;
+    seriesId?: string | null;
     recurrence?: string;
     recurrenceRule?: string | null;
     recurrenceEnd?: string | Date | null;
@@ -82,11 +88,15 @@ export function EventModal({
   const [subjectId, setSubjectId] = useState<string>("");
   const [taskId, setTaskId] = useState<string>("");
   const [tasks, setTasks] = useState<Array<{ id: string; title: string; subjectId?: string | null }>>([]);
+  const [goalId, setGoalId] = useState<string>("");
+  const [goals, setGoals] = useState<Array<{ id: string; title: string }>>([]);
   const [eventType, setEventType] = useState<CalendarEventType>(defaultType);
   const [dateStr, setDateStr] = useState<string>(defaultDate);
   const [startTimeStr, setStartTimeStr] = useState<string>(defaultStartTime);
   const [endTimeStr, setEndTimeStr] = useState<string>(defaultEndTime);
   const [isLocked, setIsLocked] = useState<boolean>(false);
+  const [isFlexible, setIsFlexible] = useState<boolean>(defaultType === "PERSONAL");
+  const [trackStudyTime, setTrackStudyTime] = useState<boolean>(defaultType === "SELF_STUDY" || defaultType === "STUDY");
 
   // Recurrence state
   const [recurrence, setRecurrence] = useState<string>("NONE");
@@ -100,20 +110,21 @@ export function EventModal({
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [deleteModeChoice, setDeleteModeChoice] = useState<"SINGLE" | "ALL" | "FUTURE">("SINGLE");
 
-  // Fetch tasks for dropdown
+  // Fetch tasks and goals for dropdowns
   useEffect(() => {
-    async function loadTasks() {
+    async function loadTasksAndGoals() {
       try {
-        const res = await fetch("/api/tasks");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.tasks) setTasks(data.tasks);
-        }
+        const [resTasks, resGoals] = await Promise.all([
+          fetch("/api/tasks").then((r) => (r.ok ? r.json() : { tasks: [] })),
+          fetch("/api/goals").then((r) => (r.ok ? r.json() : { goals: [] })),
+        ]);
+        if (resTasks.tasks) setTasks(resTasks.tasks);
+        if (resGoals.goals) setGoals(resGoals.goals);
       } catch (e) {
-        console.warn("Failed to load tasks:", e);
+        console.warn("Failed to load tasks/goals:", e);
       }
     }
-    loadTasks();
+    loadTasksAndGoals();
   }, []);
 
   // Sync state whenever editingEvent or open changes
@@ -124,6 +135,7 @@ export function EventModal({
       setLocation(editingEvent.location || "");
       setSubjectId(editingEvent.subjectId || "");
       setTaskId(editingEvent.taskId || "");
+      setGoalId(editingEvent.goalId || "");
 
       const normalizedType = ((editingEvent.type?.toUpperCase() || "OTHER") as CalendarEventType);
       setEventType(normalizedType);
@@ -132,6 +144,8 @@ export function EventModal({
       setStartTimeStr(formatVN(editingEvent.startTime, "HH:mm"));
       setEndTimeStr(formatVN(editingEvent.endTime, "HH:mm"));
       setIsLocked(!!editingEvent.isLocked);
+      setIsFlexible(editingEvent.isFlexible ?? (normalizedType === "PERSONAL"));
+      setTrackStudyTime(editingEvent.trackStudyTime ?? (normalizedType === "SELF_STUDY" || normalizedType === "STUDY"));
       setRecurrence(editingEvent.recurrence && editingEvent.recurrence !== "NONE" ? editingEvent.recurrence : "NONE");
 
       // Parse weekly days from recurrenceRule if present
@@ -159,11 +173,14 @@ export function EventModal({
       setLocation("");
       setSubjectId(subjects[0]?.id || "");
       setTaskId("");
+      setGoalId("");
       setEventType(defaultType);
       setDateStr(defaultDate);
       setStartTimeStr(defaultStartTime);
       setEndTimeStr(defaultEndTime);
-      setIsLocked(false);
+      setIsLocked(defaultType === "SCHOOL" || defaultType === "EXAM");
+      setIsFlexible(defaultType === "PERSONAL");
+      setTrackStudyTime(defaultType === "SELF_STUDY" || defaultType === "STUDY");
       setRecurrence("NONE");
       setWeeklyDays([]);
       setRecurrenceEndDate("");
@@ -247,10 +264,13 @@ export function EventModal({
         location: location.trim() || null,
         subjectId: subjectId || null,
         taskId: taskId || null,
+        goalId: goalId || null,
         startTime: startUTC.toISOString(),
         endTime: endUTC.toISOString(),
         type: eventType,
         isLocked,
+        isFlexible,
+        trackStudyTime,
         timezone: "Asia/Ho_Chi_Minh",
         recurrence,
         recurrenceRule: rrule,
@@ -362,6 +382,27 @@ export function EventModal({
       setWeeklyDays(weeklyDays.filter((d) => d !== dayIndex));
     } else {
       setWeeklyDays([...weeklyDays, dayIndex].sort());
+    }
+  };
+
+  const handleSelectEventType = (t: CalendarEventType) => {
+    setEventType(t);
+    if (t === "SCHOOL") {
+      setIsLocked(true);
+      setIsFlexible(false);
+      setTrackStudyTime(false);
+    } else if (t === "PERSONAL") {
+      setIsLocked(false);
+      setIsFlexible(true);
+      setTrackStudyTime(false);
+    } else if (t === "SELF_STUDY" || t === "STUDY") {
+      setIsLocked(false);
+      setIsFlexible(false);
+      setTrackStudyTime(true);
+    } else if (t === "EXAM" || t === "DEADLINE") {
+      setIsLocked(true);
+      setIsFlexible(false);
+      setTrackStudyTime(false);
     }
   };
 
@@ -632,7 +673,7 @@ export function EventModal({
                         <button
                           key={t}
                           type="button"
-                          onClick={() => setEventType(t)}
+                          onClick={() => handleSelectEventType(t)}
                           className={`flex items-center space-x-2 p-2.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer text-left ${
                             isSelected
                               ? "border-[#2d6a4f] shadow-xs font-bold ring-2 ring-[#2d6a4f]/20"
@@ -693,25 +734,48 @@ export function EventModal({
                   />
                 </div>
 
-                {/* 3. Contextual Fields: Subject / Task */}
+                {/* 3. Contextual Fields: Subject / Goal / Task */}
                 {(isSchoolEvent(eventType) || isSelfStudyEvent(eventType) || eventType === "EXAM" || eventType === "DEADLINE") && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                        Môn học liên kết {isSelfStudyEvent(eventType) && <span className="text-amber-600 font-normal">(khuyên dùng)</span>}
-                      </label>
-                      <select
-                        value={subjectId}
-                        onChange={(e) => setSubjectId(e.target.value)}
-                        className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
-                      >
-                        <option value="">-- Chọn môn học --</option>
-                        {subjects.map((sub) => (
-                          <option key={sub.id} value={sub.id}>
-                            {sub.name} {sub.code ? `(${sub.code})` : ""}
-                          </option>
-                        ))}
-                      </select>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          Môn học liên kết {isSelfStudyEvent(eventType) && <span className="text-amber-600 font-normal">(khuyên dùng)</span>}
+                        </label>
+                        <select
+                          value={subjectId}
+                          onChange={(e) => setSubjectId(e.target.value)}
+                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                        >
+                          <option value="">-- Chọn môn học --</option>
+                          {subjects.map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.name} {sub.code ? `(${sub.code})` : ""}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {goals.length > 0 && (
+                        <div>
+                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                            <Target className="w-3 h-3 text-[#2d6a4f]" />
+                            <span>Mục tiêu / Goal (Tùy chọn)</span>
+                          </label>
+                          <select
+                            value={goalId}
+                            onChange={(e) => setGoalId(e.target.value)}
+                            className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                          >
+                            <option value="">-- Không gắn mục tiêu --</option>
+                            {goals.map((g) => (
+                              <option key={g.id} value={g.id}>
+                                {g.title}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                     </div>
 
                     {(isSelfStudyEvent(eventType) || eventType === "DEADLINE") && (
@@ -860,18 +924,73 @@ export function EventModal({
                   )}
                 </div>
 
-                {/* 7. Locked Checkbox */}
-                <div className="flex items-center space-x-2.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
-                  <input
-                    type="checkbox"
-                    id="isLockedCheck"
-                    checked={isLocked}
-                    onChange={(e) => setIsLocked(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
-                  />
-                  <label htmlFor="isLockedCheck" className="text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5 cursor-pointer select-none">
-                    <Lock className="w-3.5 h-3.5 text-[#a3a86c]" />
-                    <span className="font-semibold">Khóa sự kiện này (AI tuyệt đối không được xếp lịch đè lên)</span>
+                {/* 7. Advanced Controls: isLocked, isFlexible, trackStudyTime */}
+                <div className="space-y-2.5 p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
+                  <div className="text-[11px] font-bold text-[#192e22] dark:text-[#f0f7f2] uppercase tracking-wider flex items-center space-x-1.5 mb-1">
+                    <Sliders className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                    <span>Cấu hình linh hoạt & Ràng buộc AI</span>
+                  </div>
+
+                  {/* Track Study Time Toggle (Phase 11) */}
+                  <label className="flex items-start space-x-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={trackStudyTime}
+                      onChange={(e) => setTrackStudyTime(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
+                    />
+                    <div>
+                      <span className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1">
+                        <span>Tính vào giờ học tập (Track Study Time)</span>
+                        {trackStudyTime && <span className="text-[10px] text-[#2d6a4f] font-bold">(Được tính)</span>}
+                      </span>
+                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+                        Khi bật, lịch này được tính vào chỉ số kế hoạch học tập (Planned Study Hours) và phân tích trên Dashboard.
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* isLocked Checkbox (Phase 18) */}
+                  <label className="flex items-start space-x-2.5 cursor-pointer select-none pt-1">
+                    <input
+                      type="checkbox"
+                      checked={isLocked}
+                      onChange={(e) => {
+                        setIsLocked(e.target.checked);
+                        if (e.target.checked) setIsFlexible(false);
+                      }}
+                      className="mt-0.5 w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
+                    />
+                    <div>
+                      <span className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1">
+                        <Lock className="w-3 h-3 text-[#a3a86c]" />
+                        <span>Khóa sự kiện này (Hard Constraint)</span>
+                      </span>
+                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+                        Lịch cố định không thể dịch chuyển. AI Scheduler tuyệt đối không được xếp lịch tự học đè lên khung giờ này.
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* isFlexible Checkbox (Phase 18) */}
+                  <label className="flex items-start space-x-2.5 cursor-pointer select-none pt-1">
+                    <input
+                      type="checkbox"
+                      checked={isFlexible}
+                      onChange={(e) => {
+                        setIsFlexible(e.target.checked);
+                        if (e.target.checked) setIsLocked(false);
+                      }}
+                      className="mt-0.5 w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
+                    />
+                    <div>
+                      <span className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                        Linh hoạt (Flexible Constraint)
+                      </span>
+                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+                        Cho phép kéo thả tự do hoặc để AI Scheduler đề xuất dời giờ khi phát sinh xung đột khẩn cấp.
+                      </p>
+                    </div>
                   </label>
                 </div>
 
