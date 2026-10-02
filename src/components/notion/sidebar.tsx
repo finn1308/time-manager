@@ -25,7 +25,8 @@ import {
   ChevronRight,
   Menu,
   X,
-  Plus,
+  GraduationCap,
+  Briefcase,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
@@ -53,6 +54,8 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
 
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
+    { label: "Academic OS & GPA", href: "/academic", icon: GraduationCap },
+    { label: "Career & Portfolio", href: "/career", icon: Briefcase },
     { label: "Calendar", href: "/calendar", icon: Calendar },
     { label: "Tasks & Inbox", href: "/tasks", icon: CheckSquare },
     { label: "Deadlines", href: "/deadlines", icon: Flame },
