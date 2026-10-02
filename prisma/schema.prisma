@@ -8,6 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ==============================================================================
+// USER & AUTHENTICATION
+// ==============================================================================
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -22,23 +26,31 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts          Account[]
-  sessions          Session[]
-  userApiKeys       UserApiKey[]
-  subjects          Subject[]
-  goals             Goal[]
-  calendarEvents    CalendarEvent[]
-  studySessions     StudySession[]
-  availabilityRules AvailabilityRule[]
-  aiPreferences     AiPreferences?
-  userSettings      UserSettings?
-  documents         Document[]
-  learningRoadmaps  LearningRoadmap[]
-  quizzes           Quiz[]
-  quizAttempts      QuizAttempt[]
-  flashcardDecks    FlashcardDeck[]
-  resources         Resource[]
-  studyNotes        StudyNote[]
+  accounts              Account[]
+  sessions              Session[]
+  userApiKeys           UserApiKey[]
+  subjects              Subject[]
+  goals                 Goal[]
+  calendarEvents        CalendarEvent[]
+  studySessions         StudySession[]
+  availabilityRules     AvailabilityRule[]
+  aiPreferences         AiPreferences?
+  userStudyPreferences UserStudyPreferences?
+  userSettings          UserSettings?
+  documents             Document[]
+  learningRoadmaps      LearningRoadmap[]
+  quizzes               Quiz[]
+  quizAttempts          QuizAttempt[]
+  flashcardDecks        FlashcardDeck[]
+  flashcardReviews      FlashcardReview[]
+  resources             Resource[]
+  studyNotes            StudyNote[]
+  tasks                 Task[]
+  notes                 Note[]
+  tags                  Tag[]
+  habits                Habit[]
+  notifications         Notification[]
+  weeklyReviews         WeeklyReview[]
 }
 
 model Account {
@@ -84,128 +96,29 @@ model UserApiKey {
   @@unique([userId, provider])
 }
 
-model Subject {
-  id             String   @id @default(cuid())
-  userId         String
-  name           String
-  code           String?
-  color          String   @default("#408257")
-  description    String?  @db.Text
-  targetHours    Float?
-  completedHours Float    @default(0.0)
-  priority       Int      @default(3)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+// ==============================================================================
+// USER PREFERENCES & SETTINGS
+// ==============================================================================
 
-  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goals            Goal[]
-  calendarEvents   CalendarEvent[]
-  studySessions    StudySession[]
-  documents        Document[]
-  learningRoadmaps LearningRoadmap[]
-  quizzes          Quiz[]
-  flashcardDecks   FlashcardDeck[]
-  resources        Resource[]
-  studyNotes       StudyNote[]
-
-  @@index([userId])
-}
-
-model Goal {
-  id          String    @id @default(cuid())
-  userId      String
-  subjectId   String?
-  title       String
-  description String?   @db.Text
-  targetHours Float
-  deadline    DateTime?
-  status      String    @default("ACTIVE")
-  milestones  String?   @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-
-  @@index([userId])
-}
-
-model CalendarEvent {
-  id            String   @id @default(cuid())
-  userId        String
-  subjectId     String?
-  title         String
-  description   String?  @db.Text
-  startTime     DateTime
-  endTime       DateTime
-  timezone      String   @default("Asia/Ho_Chi_Minh")
-  type          String   @default("STUDY")
-  isLocked      Boolean  @default(false)
-  isAiGenerated Boolean  @default(false)
-
-  // Recurring support
-  recurrence      String           @default("NONE") // NONE, DAILY, WEEKLY, MONTHLY, YEARLY
-  recurrenceRule  String?          @db.Text         // JSON representation of the recurrence rule
-  recurrenceEnd   DateTime?                         // End date of the recurrence
-  parentId        String?                           // If this is an exception, points to the original recurring event
-  exceptionDate   String?                           // YYYY-MM-DD to identify which occurrence this exception replaces
-  isException     Boolean          @default(false)  // true if this record overrides a generated occurrence
-  isCancelled     Boolean          @default(false)  // true if this occurrence is deleted
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  studySessions StudySession[]
-  parent          CalendarEvent?   @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
-  exceptions      CalendarEvent[]  @relation("EventExceptions")
-  resources       Resource[]
-  studyNotes      StudyNote[]
-
-  @@index([userId, startTime, endTime])
-  @@index([parentId])
-}
-
-model StudySession {
-  id                    String    @id @default(cuid())
-  userId                String
-  subjectId             String
-  calendarEventId       String?
-  plannedStart          DateTime?
-  plannedEnd            DateTime?
-  actualStart           DateTime
-  actualEnd             DateTime
-  actualDurationSeconds Int
-  status                String    @default("COMPLETED")
-  notes                 String?   @db.Text
-  productivityScore     Int?
-  source                String    @default("PIP_TIMER")
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: SetNull)
-
-  @@index([userId, actualStart])
-}
-
-model AvailabilityRule {
-  id          String   @id @default(cuid())
-  userId      String
-  title       String   @default("Giờ rảnh")
-  dayOfWeek   Int
-  startTime   String
-  endTime     String
-  isAvailable Boolean  @default(true)
-  timezone    String   @default("Asia/Ho_Chi_Minh")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model UserStudyPreferences {
+  id                      String   @id @default(cuid())
+  userId                  String   @unique
+  maxSessionDurationMins  Int      @default(90)
+  breakDurationMins       Int      @default(15)
+  pomodoroDurationMins    Int      @default(25)
+  pomodoroBreakMins       Int      @default(5)
+  preferredStudyHours     String   @default("08:00-11:30,14:00-17:30,19:30-22:30")
+  unwantedStudyHours      String   @default("23:00-06:00,12:00-13:30")
+  maxDailyStudyHours      Float    @default(6.0)
+  maxDailySessions        Int      @default(4)
+  restDays                String   @default("0") // Day of week: 0 = Sun
+  timePreference          String   @default("BALANCED") // MORNING, AFTERNOON, EVENING, BALANCED
+  scheduleFlexibility     String   @default("MODERATE") // STRICT, MODERATE, FLEXIBLE
+  minBreakBetweenSessions Int      @default(15)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, dayOfWeek])
 }
 
 model AiPreferences {
@@ -240,7 +153,244 @@ model UserSettings {
 }
 
 // ==============================================================================
-// AI QUIZ & LEARNING ROADMAP GENERATOR ("STUDY BUNNY / STUDY QUEST")
+// SUBJECTS, GOALS & MILESTONES
+// ==============================================================================
+
+model Subject {
+  id                String    @id @default(cuid())
+  userId            String
+  name              String
+  code              String?
+  color             String    @default("#408257")
+  description       String?   @db.Text
+  targetHours       Float?
+  completedHours    Float     @default(0.0)
+  priority          Int       @default(3)
+  targetScore       String?
+  deadline          DateTime?
+  difficulty        String    @default("MEDIUM") // EASY, MEDIUM, HARD
+  estimatedWorkload Float?
+  isArchived        Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goals            Goal[]
+  calendarEvents   CalendarEvent[]
+  studySessions    StudySession[]
+  documents        Document[]
+  learningRoadmaps LearningRoadmap[]
+  quizzes          Quiz[]
+  flashcardDecks   FlashcardDeck[]
+  resources        Resource[]
+  studyNotes       StudyNote[]
+  tasks            Task[]
+  notes            Note[]
+  habits           Habit[]
+
+  @@index([userId])
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  userId      String
+  subjectId   String?
+  title       String
+  description String?   @db.Text
+  targetHours Float
+  deadline    DateTime?
+  status      String    @default("ACTIVE") // ACTIVE, COMPLETED, ARCHIVED
+  milestones  String?   @db.Text // Legacy JSON milestones
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject          Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  milestoneRecords Milestone[]
+  tasks            Task[]
+  studySessions    StudySession[]
+  notes            Note[]
+
+  @@index([userId])
+  @@index([subjectId])
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  goalId      String
+  title       String
+  description String?   @db.Text
+  targetDate  DateTime?
+  isCompleted Boolean   @default(false)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  goal  Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@index([goalId])
+}
+
+// ==============================================================================
+// TASK SYSTEM & DEPENDENCIES (TODOIST-STYLE INBOX & DAG)
+// ==============================================================================
+
+model Task {
+  id                 String    @id @default(cuid())
+  userId             String
+  subjectId          String?
+  goalId             String?
+  milestoneId        String?
+  parentTaskId       String?
+  title              String
+  description        String?   @db.Text
+  priority           String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  deadline           DateTime?
+  estimatedMinutes   Int       @default(60)
+  status             String    @default("INBOX") // INBOX, TODO, IN_PROGRESS, DONE, CANCELLED
+  isRecurring        Boolean   @default(false)
+  recurrenceRule     String?
+  scheduledStartTime DateTime?
+  scheduledEndTime   DateTime?
+  order              Int       @default(0)
+  isCompleted        Boolean   @default(false)
+  completedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject          Subject?         @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  goal             Goal?            @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  milestone        Milestone?       @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  parentTask       Task?            @relation("SubTasks", fields: [parentTaskId], references: [id], onDelete: SetNull)
+  subTasks         Task[]           @relation("SubTasks")
+  dependencies     TaskDependency[] @relation("TaskRequires")
+  prerequisitesFor TaskDependency[] @relation("PrerequisiteOf")
+  studySessions    StudySession[]
+  calendarEvents   CalendarEvent[]
+  tags             TaskTag[]
+  notes            Note[]
+
+  @@index([userId, status])
+  @@index([subjectId])
+  @@index([goalId])
+  @@index([milestoneId])
+}
+
+model TaskDependency {
+  id             String   @id @default(cuid())
+  taskId         String
+  prerequisiteId String
+  createdAt      DateTime @default(now())
+
+  task         Task @relation("TaskRequires", fields: [taskId], references: [id], onDelete: Cascade)
+  prerequisite Task @relation("PrerequisiteOf", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, prerequisiteId])
+  @@index([taskId])
+  @@index([prerequisiteId])
+}
+
+// ==============================================================================
+// CALENDAR & AVAILABILITY
+// ==============================================================================
+
+model CalendarEvent {
+  id            String   @id @default(cuid())
+  userId        String
+  subjectId     String?
+  taskId        String?
+  title         String
+  description   String?  @db.Text
+  startTime     DateTime
+  endTime       DateTime
+  timezone      String   @default("Asia/Ho_Chi_Minh")
+  type          String   @default("STUDY") // STUDY, PERSONAL, EXAM, DEADLINE, MEETING, BLOCKED, OTHER
+  isLocked      Boolean  @default(false)
+  isAiGenerated Boolean  @default(false)
+
+  // Recurring support
+  recurrence     String          @default("NONE") // NONE, DAILY, WEEKLY, MONTHLY, YEARLY
+  recurrenceRule String?         @db.Text
+  recurrenceEnd  DateTime?
+  parentId       String?
+  exceptionDate  String?
+  isException    Boolean         @default(false)
+  isCancelled    Boolean         @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject?        @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  task          Task?           @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  studySessions StudySession[]
+  parent        CalendarEvent?  @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
+  exceptions    CalendarEvent[] @relation("EventExceptions")
+  resources     Resource[]
+  studyNotes    StudyNote[]
+
+  @@index([userId, startTime, endTime])
+  @@index([parentId])
+  @@index([taskId])
+}
+
+model AvailabilityRule {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String   @default("Giờ rảnh")
+  dayOfWeek   Int
+  startTime   String
+  endTime     String
+  isAvailable Boolean  @default(true)
+  timezone    String   @default("Asia/Ho_Chi_Minh")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, dayOfWeek])
+}
+
+// ==============================================================================
+// STUDY SESSIONS & TRACKING
+// ==============================================================================
+
+model StudySession {
+  id                     String    @id @default(cuid())
+  userId                 String
+  subjectId              String
+  calendarEventId        String?
+  taskId                 String?
+  goalId                 String?
+  plannedStart           DateTime?
+  plannedEnd             DateTime?
+  actualStart            DateTime
+  actualEnd              DateTime
+  plannedDurationSeconds Int?
+  actualDurationSeconds  Int
+  status                 String    @default("COMPLETED") // PLANNED, IN_PROGRESS, COMPLETED, PARTIAL, MISSED, CANCELLED
+  notes                  String?   @db.Text
+  productivityScore      Int?
+  interruptionsCount     Int       @default(0)
+  source                 String    @default("PIP_TIMER")
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: SetNull)
+  task          Task?          @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  goal          Goal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
+
+  @@index([userId, actualStart])
+  @@index([taskId])
+  @@index([goalId])
+}
+
+// ==============================================================================
+// LEARNING MATERIALS, ROADMAPS & QUIZZES
 // ==============================================================================
 
 model Document {
@@ -254,7 +404,7 @@ model Document {
   extractedText String?  @db.Text
   pageCount     Int      @default(1)
   contentHash   String?
-  status        String   @default("READY") // UPLOADING, PROCESSING, EXTRACTING, ANALYZING, GENERATING, READY, FAILED
+  status        String   @default("READY")
   errorMessage  String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -263,6 +413,7 @@ model Document {
   subject          Subject?          @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   learningRoadmaps LearningRoadmap[]
   quizzes          Quiz[]
+  notes            Note[]
 
   @@index([userId])
 }
@@ -273,13 +424,13 @@ model LearningRoadmap {
   subjectId       String?
   documentId      String?
   title           String
-  targetDays      Int      @default(14) // 7, 14, 21, 30, or custom
-  targetGrade     String   @default("A") // PASS, C, C+, B, B+, A, A+
+  targetDays      Int      @default(14)
+  targetGrade     String   @default("A")
   dailyMinutes    Int      @default(25)
   totalStages     Int      @default(0)
   completedStages Int      @default(0)
   totalXp         Int      @default(0)
-  status          String   @default("ACTIVE") // ACTIVE, COMPLETED, ARCHIVED
+  status          String   @default("ACTIVE")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -294,15 +445,15 @@ model LearningRoadmap {
 model RoadmapStage {
   id               String   @id @default(cuid())
   roadmapId        String
-  dayNumber        Int // Day 1, Day 2, Day 3...
-  title            String // e.g. "Chương 1: Tổng quan về Quản trị Bán hàng"
+  dayNumber        Int
+  title            String
   description      String?  @db.Text
   estimatedMinutes Int      @default(15)
   xpReward         Int      @default(100)
   isUnlocked       Boolean  @default(false)
   isCompleted      Boolean  @default(false)
-  lessonContent    String?  @db.Text // Key concepts, summary, bullet points
-  keyConcepts      String?  @db.Text // JSON string array
+  lessonContent    String?  @db.Text
+  keyConcepts      String?  @db.Text
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -321,9 +472,9 @@ model Quiz {
   subjectId     String?
   title         String
   description   String?  @db.Text
-  difficulty    String   @default("MEDIUM") // EASY, MEDIUM, HARD, MIXED
+  difficulty    String   @default("MEDIUM")
   questionCount Int      @default(10)
-  status        String   @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  status        String   @default("PUBLISHED")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -342,15 +493,15 @@ model QuizQuestion {
   id              String   @id @default(cuid())
   quizId          String
   question        String   @db.Text
-  options         String   @db.Text // JSON array: ["A", "B", "C", "D"]
-  correctAnswer   Int // 0, 1, 2, 3
+  options         String   @db.Text
+  correctAnswer   Int
   hint            String?  @db.Text
   rationale       String   @db.Text
   difficulty      String   @default("MEDIUM")
-  questionType    String   @default("APPLICATION") // APPLICATION, SCENARIO, ANALYSIS, CAUSE_EFFECT, CONCEPT
+  questionType    String   @default("APPLICATION")
   topic           String
-  sourceReference String? // e.g. "Chương 2, Mục 3"
-  sourcePage      Int? // e.g. 17
+  sourceReference String?
+  sourcePage      Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -364,8 +515,8 @@ model QuizAttempt {
   id               String    @id @default(cuid())
   userId           String
   quizId           String
-  mode             String    @default("PRACTICE") // PRACTICE, EXAM
-  score            Float // Percentage 0-100
+  mode             String    @default("PRACTICE")
+  score            Float
   totalQuestions   Int
   correctAnswers   Int
   incorrectAnswers Int
@@ -386,7 +537,7 @@ model QuizAnswer {
   id               String  @id @default(cuid())
   attemptId        String
   questionId       String
-  selectedAnswer   Int // 0, 1, 2, 3 (-1 if skipped)
+  selectedAnswer   Int
   isCorrect        Boolean
   timeSpentSeconds Int     @default(0)
 
@@ -395,6 +546,10 @@ model QuizAnswer {
 
   @@index([attemptId])
 }
+
+// ==============================================================================
+// FLASHCARDS & SPACED REPETITION (ANKI SM-2)
+// ==============================================================================
 
 model FlashcardDeck {
   id          String   @id @default(cuid())
@@ -416,20 +571,200 @@ model FlashcardDeck {
 }
 
 model Flashcard {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   deckId          String
-  front           String   @db.Text
-  back            String   @db.Text
-  hint            String?  @db.Text
+  front           String    @db.Text
+  back            String    @db.Text
+  hint            String?   @db.Text
   topic           String?
   sourceReference String?
-  masteryLevel    Int      @default(0) // 0 to 5
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  masteryLevel    Int       @default(0) // 0 to 5
+  intervalDays    Int       @default(1)
+  easeFactor      Float     @default(2.5)
+  repetitionCount Int       @default(0)
+  status          String    @default("NEW") // NEW, LEARNING, REVIEW, MASTERED
+  lastReviewed    DateTime?
+  nextReview      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  deck FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  deck    FlashcardDeck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  reviews FlashcardReview[]
 
   @@index([deckId])
+  @@index([status, nextReview])
+}
+
+model FlashcardReview {
+  id           String   @id @default(cuid())
+  userId       String
+  flashcardId  String
+  rating       Int // 1: Again, 2: Hard, 3: Good, 4: Easy
+  intervalDays Int
+  easeFactor   Float
+  reviewedAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+
+  @@index([userId, flashcardId])
+}
+
+// ==============================================================================
+// NOTION-STYLE NOTES & KNOWLEDGE BASE
+// ==============================================================================
+
+model Note {
+  id         String   @id @default(cuid())
+  userId     String
+  subjectId  String?
+  goalId     String?
+  taskId     String?
+  documentId String?
+  title      String   @default("Ghi chú mới")
+  content    String   @db.Text
+  isPinned   Boolean  @default(false)
+  isArchived Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject  Subject?  @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  goal     Goal?     @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  task     Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  document Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  tags     NoteTag[]
+
+  @@index([userId])
+  @@index([subjectId])
+}
+
+// ==============================================================================
+// TAG SYSTEM (#Tags)
+// ==============================================================================
+
+model Tag {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  color     String   @default("#408257")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskTags TaskTag[]
+  noteTags NoteTag[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model TaskTag {
+  taskId String
+  tagId  String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, tagId])
+}
+
+model NoteTag {
+  noteId String
+  tagId  String
+  note   Note   @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([noteId, tagId])
+}
+
+// ==============================================================================
+// HABIT TRACKER
+// ==============================================================================
+
+model Habit {
+  id            String     @id @default(cuid())
+  userId        String
+  subjectId     String?
+  title         String
+  description   String?
+  frequency     String     @default("DAILY") // DAILY, WEEKLY
+  targetDays    String     @default("1,2,3,4,5,6,0")
+  targetValue   Int        @default(1)
+  unit          String     @default("lần")
+  color         String     @default("#2d6a4f")
+  icon          String     @default("Check")
+  streak        Int        @default(0)
+  longestStreak Int        @default(0)
+  isArchived    Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   Subject?   @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  habitLogs HabitLog[]
+
+  @@index([userId])
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  dateKey   String   // "YYYY-MM-DD" in Asia/Ho_Chi_Minh
+  value     Int      @default(1)
+  notes     String?
+  createdAt DateTime @default(now())
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, dateKey])
+  @@index([habitId])
+}
+
+// ==============================================================================
+// SMART NOTIFICATIONS
+// ==============================================================================
+
+model Notification {
+  id           String    @id @default(cuid())
+  userId       String
+  title        String
+  message      String
+  type         String    // SESSION_REMINDER, DEADLINE, EXAM, MISSED_SESSION, STREAK, UNFINISHED_TASK
+  isRead       Boolean   @default(false)
+  link         String?
+  scheduledFor DateTime?
+  createdAt    DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+}
+
+// ==============================================================================
+// AI WEEKLY REVIEW & CATCH-UP
+// ==============================================================================
+
+model WeeklyReview {
+  id                String   @id @default(cuid())
+  userId            String
+  weekStartDate     String   // "YYYY-MM-DD"
+  weekEndDate       String   // "YYYY-MM-DD"
+  plannedHours      Float    @default(0.0)
+  actualHours       Float    @default(0.0)
+  completionRate    Float    @default(0.0)
+  completedGoals    Int      @default(0)
+  totalGoals        Int      @default(0)
+  upcomingDeadlines Int      @default(0)
+  subjectStatsJson  String   @db.Text
+  aiInsightsJson    String   @db.Text
+  nextWeekPlanJson  String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekStartDate])
+  @@index([userId])
 }
 
 // ==============================================================================
@@ -479,4 +814,3 @@ model StudyNote {
   @@index([calendarEventId])
   @@index([subjectId])
 }
-
