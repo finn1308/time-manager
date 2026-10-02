@@ -283,7 +283,7 @@ export function AiSchedulePreviewModal({
                         <div className="flex items-center space-x-1 font-mono font-bold text-[#192e22] dark:text-[#f0f7f2]">
                           <Clock className="w-3.5 h-3.5 text-[#73927d]" />
                           <span>
-                            {formatVN(new Date(event.startTime), "dd/MM HH:mm")} - {formatVN(new Date(event.endTime), "HH:mm")}
+                            {formatVN(new Date(event.startTime), "EEEE, dd/MM • HH:mm")} – {formatVN(new Date(event.endTime), "HH:mm")}
                           </span>
                         </div>
                         <Badge variant="secondary" className="mt-1 font-mono text-[10px]">

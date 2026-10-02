@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays, format } from "date-fns";
+import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays, format, addDays } from "date-fns";
+import { expandRecurringEvents } from "@/lib/scheduling/recurrence";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -12,16 +13,19 @@ export async function GET() {
   const todayEnd = endOfDay(now);
   const weekStart = startOfWeek(now, { weekStartsOn: 1 }); // Monday
   const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+  const weekAgo = subDays(now, 7);
+  const weekAhead = addDays(now, 7);
 
-  // 1. Fetch Today's Calendar Events (Planned)
-  const todayEvents = await prisma.calendarEvent.findMany({
-    where: {
-      userId: user.id,
-      startTime: { gte: todayStart, lte: todayEnd },
-    },
+  // Fetch all calendar events around this window to expand accurately
+  const allEventsAroundNow = await prisma.calendarEvent.findMany({
+    where: { userId: user.id },
     include: { subject: true },
   });
 
+  const expandedEvents = expandRecurringEvents(allEventsAroundNow, weekAgo, weekAhead);
+
+  // 1. Today's Events (Planned)
+  const todayEvents = expandedEvents.filter(e => e.startTime >= todayStart && e.startTime <= todayEnd);
   const todayPlannedHours = todayEvents.reduce((acc, ev) => {
     const diff = (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600);
     return acc + Math.max(0, diff);
@@ -39,14 +43,8 @@ export async function GET() {
   const todayActualSeconds = todaySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const todayActualHours = todayActualSeconds / 3600;
 
-  // 3. Fetch This Week's Events (Planned)
-  const weekEvents = await prisma.calendarEvent.findMany({
-    where: {
-      userId: user.id,
-      startTime: { gte: weekStart, lte: weekEnd },
-    },
-  });
-
+  // 3. This Week's Events (Planned)
+  const weekEvents = expandedEvents.filter(e => e.startTime >= weekStart && e.startTime <= weekEnd);
   const weekPlannedHours = weekEvents.reduce((acc, ev) => {
     const diff = (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600);
     return acc + Math.max(0, diff);
@@ -80,8 +78,6 @@ export async function GET() {
 
   let currentStreak = 0;
   let checkDate = new Date();
-
-  // If today had study, start counting from today; otherwise if yesterday had study, start from yesterday
   const todayKey = format(checkDate, "yyyy-MM-dd");
   const yesterdayKey = format(subDays(checkDate, 1), "yyyy-MM-dd");
 
@@ -102,15 +98,10 @@ export async function GET() {
   }
 
   // 6. Upcoming Study Sessions / Events (Next 7 days)
-  const upcomingEvents = await prisma.calendarEvent.findMany({
-    where: {
-      userId: user.id,
-      startTime: { gte: now },
-    },
-    include: { subject: true },
-    orderBy: { startTime: "asc" },
-    take: 5,
-  });
+  const upcomingEvents = expandedEvents
+    .filter(e => e.startTime >= now && e.startTime <= weekAhead)
+    .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+    .slice(0, 5);
 
   // 7. Overdue Goals
   const overdueGoals = await prisma.goal.findMany({
@@ -123,7 +114,7 @@ export async function GET() {
     orderBy: { deadline: "asc" },
   });
 
-  // 8. Subject Progress (Real data from Subject and StudySessions)
+  // 8. Subject Progress
   const subjects = await prisma.subject.findMany({
     where: { userId: user.id },
     include: {
@@ -155,17 +146,26 @@ export async function GET() {
 
   // 9. Day-by-day Planned vs Actual for Chart (Last 7 days)
   const chartData = [];
+  
+  // Need to fetch sessions for last 7 days to get actual data
+  const last7DaysSessions = await prisma.studySession.findMany({
+    where: {
+      userId: user.id,
+      actualStart: { gte: startOfDay(weekAgo), lte: todayEnd },
+    },
+  });
+
   for (let i = 6; i >= 0; i--) {
     const day = subDays(now, i);
     const dayS = startOfDay(day);
     const dayE = endOfDay(day);
     const dayLabel = format(day, "EEE (dd/MM)");
 
-    const dayPlanned = todayEvents
+    const dayPlanned = expandedEvents
       .filter((e) => e.startTime >= dayS && e.startTime <= dayE)
       .reduce((acc, e) => acc + (e.endTime.getTime() - e.startTime.getTime()) / (1000 * 3600), 0);
 
-    const dayActual = todaySessions
+    const dayActual = last7DaysSessions
       .filter((s) => s.actualStart >= dayS && s.actualStart <= dayE)
       .reduce((acc, s) => acc + s.actualDurationSeconds / 3600, 0);
 
