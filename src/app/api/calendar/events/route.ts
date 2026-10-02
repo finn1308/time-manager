@@ -22,6 +22,10 @@ export async function GET(req: Request) {
     include: {
       subject: true,
       studySessions: true,
+      resources: true,
+      studyNotes: {
+        orderBy: { createdAt: "desc" },
+      },
     },
     orderBy: { startTime: "asc" },
   });
@@ -203,36 +207,92 @@ export async function DELETE(req: Request) {
   const id = searchParams.get("id");
   const originalId = searchParams.get("originalId");
   const exceptionDate = searchParams.get("exceptionDate");
-  const deleteMode = searchParams.get("deleteMode"); // SINGLE, ALL
+  const deleteMode = searchParams.get("deleteMode") || "SINGLE"; // SINGLE, ALL
 
   if (!id) return NextResponse.json({ error: "Thiếu ID sự kiện" }, { status: 400 });
 
   try {
-    if (deleteMode === "SINGLE" && originalId && exceptionDate) {
-      // Create a cancellation exception
-      await prisma.calendarEvent.create({
-        data: {
-          userId: user.id,
-          title: "Cancelled",
-          startTime: new Date(),
-          endTime: new Date(),
-          parentId: originalId,
-          exceptionDate: exceptionDate,
-          isException: true,
-          isCancelled: true,
-        }
-      });
-    } else {
-      // Delete all (or just standard single event)
-      const targetId = originalId || id;
-      await prisma.calendarEvent.delete({
-        where: { id: targetId, userId: user.id },
+    // Clean potential composite occurrence IDs (e.g. cuid_2026-10-02)
+    const cleanId = id.includes("_") ? id.split("_")[0] : id;
+    const cleanOriginalId = originalId
+      ? (originalId.includes("_") ? originalId.split("_")[0] : originalId)
+      : cleanId;
+
+    // 1. Find the target event in DB (trying originalId first, then id)
+    let targetEvent = await prisma.calendarEvent.findFirst({
+      where: { id: cleanOriginalId, userId: user.id },
+    });
+
+    if (!targetEvent && cleanId !== cleanOriginalId) {
+      targetEvent = await prisma.calendarEvent.findFirst({
+        where: { id: cleanId, userId: user.id },
       });
     }
 
-    return NextResponse.json({ success: true });
+    if (!targetEvent) {
+      // Check if maybe it was direct id
+      targetEvent = await prisma.calendarEvent.findFirst({
+        where: { id, userId: user.id },
+      });
+    }
+
+    if (!targetEvent) {
+      // Event already deleted or not found
+      return NextResponse.json({ success: true, message: "Sự kiện đã bị xóa" });
+    }
+
+    const isRecurring = Boolean(targetEvent.recurrence && targetEvent.recurrence !== "NONE");
+
+    // Case 1: Recurring occurrence delete only this single instance
+    if (deleteMode === "SINGLE" && isRecurring && exceptionDate) {
+      // Check if exception already exists
+      const existingEx = await prisma.calendarEvent.findFirst({
+        where: {
+          parentId: targetEvent.id,
+          exceptionDate: exceptionDate,
+          userId: user.id,
+        },
+      });
+
+      if (existingEx) {
+        await prisma.calendarEvent.update({
+          where: { id: existingEx.id },
+          data: { isCancelled: true },
+        });
+      } else {
+        await prisma.calendarEvent.create({
+          data: {
+            userId: user.id,
+            title: "Cancelled",
+            startTime: targetEvent.startTime,
+            endTime: targetEvent.endTime,
+            parentId: targetEvent.id,
+            exceptionDate: exceptionDate,
+            isException: true,
+            isCancelled: true,
+          },
+        });
+      }
+      return NextResponse.json({ success: true, message: "Đã hủy buổi học này" });
+    }
+
+    // Case 2: This is an exception event record
+    if (targetEvent.isException) {
+      await prisma.calendarEvent.update({
+        where: { id: targetEvent.id },
+        data: { isCancelled: true },
+      });
+      return NextResponse.json({ success: true, message: "Đã xóa lịch" });
+    }
+
+    // Case 3: Delete master / single event directly from DB
+    await prisma.calendarEvent.delete({
+      where: { id: targetEvent.id, userId: user.id },
+    });
+
+    return NextResponse.json({ success: true, message: "Đã xóa sự kiện thành công" });
   } catch (error: any) {
     console.error("Delete calendar event error:", error);
-    return NextResponse.json({ error: "Lỗi xóa sự kiện" }, { status: 500 });
+    return NextResponse.json({ error: "Lỗi xóa sự kiện: " + (error?.message || "Vui lòng thử lại") }, { status: 500 });
   }
 }
