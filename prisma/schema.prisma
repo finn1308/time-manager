@@ -37,6 +37,8 @@ model User {
   quizzes           Quiz[]
   quizAttempts      QuizAttempt[]
   flashcardDecks    FlashcardDeck[]
+  resources         Resource[]
+  studyNotes        StudyNote[]
 }
 
 model Account {
@@ -103,6 +105,8 @@ model Subject {
   learningRoadmaps LearningRoadmap[]
   quizzes          Quiz[]
   flashcardDecks   FlashcardDeck[]
+  resources        Resource[]
+  studyNotes       StudyNote[]
 
   @@index([userId])
 }
@@ -156,6 +160,8 @@ model CalendarEvent {
   studySessions StudySession[]
   parent          CalendarEvent?   @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
   exceptions      CalendarEvent[]  @relation("EventExceptions")
+  resources       Resource[]
+  studyNotes      StudyNote[]
 
   @@index([userId, startTime, endTime])
   @@index([parentId])
@@ -225,6 +231,8 @@ model UserSettings {
   weeklyStudyBudgetHours Float    @default(20.0)
   examMode               Boolean  @default(false)
   notificationsEnabled   Boolean  @default(true)
+  autoShareResources     Boolean  @default(false)
+  remindMissingResources Boolean  @default(true)
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
@@ -423,3 +431,52 @@ model Flashcard {
 
   @@index([deckId])
 }
+
+// ==============================================================================
+// RESOURCE MANAGER & STUDY NOTES
+// Strictly metadata only. No binary file stored in database!
+// ==============================================================================
+
+model Resource {
+  id              String         @id @default(cuid())
+  userId          String
+  subjectId       String?
+  calendarEventId String?
+  title           String
+  type            String         // MEETING, STORAGE, LEARNING, OTHER
+  subType         String?        // ZOOM, MEET, TEAMS, GDRIVE, ONEDRIVE, DROPBOX, YOUTUBE, LMS, WEB, FILE_PDF, FILE_IMAGE
+  url             String         @db.Text
+  externalFileId  String?        // Google Drive file ID
+  mimeType        String?
+  fileSize        Int?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([calendarEventId])
+  @@index([subjectId])
+}
+
+model StudyNote {
+  id              String         @id @default(cuid())
+  userId          String
+  calendarEventId String?
+  subjectId       String?
+  content         String         @db.Text
+  isPinned        Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: Cascade)
+  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([calendarEventId])
+  @@index([subjectId])
+}
+
