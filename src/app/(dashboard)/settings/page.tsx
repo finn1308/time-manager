@@ -287,6 +287,40 @@ export default function SettingsPage() {
     setStudyPrefs({ ...studyPrefs, restDays: newDays.join(",") });
   };
 
+  const handleRestoreFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setRestoring(true);
+      setRestoreMessage(null);
+      const text = await file.text();
+      const json = JSON.parse(text);
+
+      const res = await fetch("/api/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(json),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Lỗi khôi phục dữ liệu");
+
+      setRestoreMessage({
+        type: "success",
+        text: `Khôi phục thành công: ${data.imported.subjects} môn học, ${data.imported.tasks} nhiệm vụ, ${data.imported.events} lịch học, ${data.imported.notes} ghi chú, ${data.imported.habits} thói quen!`,
+      });
+    } catch (err: any) {
+      setRestoreMessage({
+        type: "error",
+        text: err.message || "File sao lưu không hợp lệ hoặc bị lỗi",
+      });
+    } finally {
+      setRestoring(false);
+      e.target.value = "";
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-16">
       {/* Header */}
