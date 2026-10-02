@@ -13,17 +13,39 @@ export interface ActiveSubject {
   icon?: string | null;
 }
 
-interface PipTimerContextType {
+export type TimerMode = "POMODORO" | "CUSTOM_COUNTDOWN" | "STOPWATCH";
+export type PomodoroPhase = "WORK" | "SHORT_BREAK" | "LONG_BREAK";
+
+export interface StartTimerOptions {
+  scheduleEventId?: string | null;
+  taskId?: string | null;
+  mode?: TimerMode;
+  targetMinutes?: number;
+  pomodoroWorkMinutes?: number;
+  pomodoroBreakMinutes?: number;
+  pomodoroLongBreakMinutes?: number;
+}
+
+export interface PipTimerContextType {
   activeSubject: ActiveSubject | null;
   scheduleEventId: string | null;
+  taskId: string | null;
+  mode: TimerMode;
+  pomodoroPhase: PomodoroPhase;
+  pomodoroCycle: number;
+  targetSeconds: number;
+  remainingSeconds: number;
   secondsElapsed: number;
+  totalWorkSeconds: number;
   isRunning: boolean;
   isPaused: boolean;
   isPipOpen: boolean;
-  startTimer: (subject: ActiveSubject, scheduleEventId?: string | null) => void;
+  startTimer: (subject: ActiveSubject, optionsOrEventId?: string | null | StartTimerOptions) => void;
   pauseTimer: () => void;
   resumeTimer: () => void;
   stopTimer: () => void;
+  switchPhase: (targetPhase?: PomodoroPhase) => void;
+  setTimerMode: (newMode: TimerMode, targetMins?: number) => void;
   requestDocumentPip: () => Promise<void>;
   closeDocumentPip: () => void;
   formatTime: (totalSeconds: number) => string;
@@ -31,29 +53,68 @@ interface PipTimerContextType {
 
 const PipTimerContext = createContext<PipTimerContextType | undefined>(undefined);
 
-const STORAGE_KEY = "chronomind_timer_state_v1";
+const STORAGE_KEY = "chronomind_timer_state_v2";
+
+function playTimerChime() {
+  if (typeof window === "undefined") return;
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.18); // A5
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.7);
+  } catch (e) {
+    console.warn("Could not play audio chime:", e);
+  }
+}
 
 export function PipTimerProvider({ children }: { children: React.ReactNode }) {
   const [activeSubject, setActiveSubject] = useState<ActiveSubject | null>(null);
   const [scheduleEventId, setScheduleEventId] = useState<string | null>(null);
-  const [secondsElapsed, setSecondsElapsed] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isPipOpen, setIsPipOpen] = useState(false);
-  const [showCompleteModal, setShowCompleteModal] = useState(false);
-  const [stoppedSeconds, setStoppedSeconds] = useState(0);
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [mode, setMode] = useState<TimerMode>("POMODORO");
+  const [pomodoroPhase, setPomodoroPhase] = useState<PomodoroPhase>("WORK");
+  const [pomodoroCycle, setPomodoroCycle] = useState<number>(0);
+
+  // Settings
+  const [pomodoroWorkMins, setPomodoroWorkMins] = useState<number>(25);
+  const [pomodoroBreakMins, setPomodoroBreakMins] = useState<number>(5);
+  const [pomodoroLongBreakMins, setPomodoroLongBreakMins] = useState<number>(15);
+
+  // Timing state
+  const [targetSeconds, setTargetSeconds] = useState<number>(25 * 60);
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(25 * 60);
+  const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
+  const [totalWorkSeconds, setTotalWorkSeconds] = useState<number>(0);
+
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isPipOpen, setIsPipOpen] = useState<boolean>(false);
+  const [showCompleteModal, setShowCompleteModal] = useState<boolean>(false);
+  const [stoppedSeconds, setStoppedSeconds] = useState<number>(0);
 
   const pipWindowRef = useRef<any>(null);
   const [pipContainer, setPipContainer] = useState<HTMLElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const startTimeRef = useRef<number | null>(null);
-  const accumulatedRef = useRef<number>(0);
 
-  // Format seconds into HH:MM:SS
+  // High precision reference
+  const lastTickRef = useRef<number | null>(null);
+
+  // Format seconds into HH:MM:SS or MM:SS
   const formatTime = useCallback((totalSeconds: number): string => {
-    const hrs = Math.floor(totalSeconds / 3600);
-    const mins = Math.floor((totalSeconds % 3600) / 60);
-    const secs = totalSeconds % 60;
+    const s = Math.max(0, Math.floor(totalSeconds));
+    const hrs = Math.floor(s / 3600);
+    const mins = Math.floor((s % 3600) / 60);
+    const secs = s % 60;
     if (hrs > 0) {
       return `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     }
@@ -69,8 +130,14 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
         if (parsed.activeSubject) {
           setActiveSubject(parsed.activeSubject);
           setScheduleEventId(parsed.scheduleEventId || null);
+          setTaskId(parsed.taskId || null);
+          setMode(parsed.mode || "POMODORO");
+          setPomodoroPhase(parsed.pomodoroPhase || "WORK");
+          setPomodoroCycle(parsed.pomodoroCycle || 0);
+          setTargetSeconds(parsed.targetSeconds || 25 * 60);
+          setRemainingSeconds(parsed.remainingSeconds || 25 * 60);
           setSecondsElapsed(parsed.secondsElapsed || 0);
-          accumulatedRef.current = parsed.secondsElapsed || 0;
+          setTotalWorkSeconds(parsed.totalWorkSeconds || 0);
           setIsRunning(false);
           setIsPaused(true);
         }
@@ -80,30 +147,107 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Timer tick effect with high-precision timestamp offset
+  // Switch phase logic
+  const switchPhase = useCallback(
+    (targetPhase?: PomodoroPhase) => {
+      let nextPhase: PomodoroPhase = "WORK";
+      if (targetPhase) {
+        nextPhase = targetPhase;
+      } else {
+        if (pomodoroPhase === "WORK") {
+          const nextCycle = pomodoroCycle + 1;
+          setPomodoroCycle(nextCycle);
+          nextPhase = nextCycle % 4 === 0 ? "LONG_BREAK" : "SHORT_BREAK";
+        } else {
+          nextPhase = "WORK";
+        }
+      }
+
+      setPomodoroPhase(nextPhase);
+
+      let nextDuration = 25 * 60;
+      if (nextPhase === "WORK") {
+        nextDuration = pomodoroWorkMins * 60;
+      } else if (nextPhase === "SHORT_BREAK") {
+        nextDuration = pomodoroBreakMins * 60;
+      } else {
+        nextDuration = pomodoroLongBreakMins * 60;
+      }
+
+      setTargetSeconds(nextDuration);
+      setRemainingSeconds(nextDuration);
+      setIsPaused(false);
+    },
+    [pomodoroPhase, pomodoroCycle, pomodoroWorkMins, pomodoroBreakMins, pomodoroLongBreakMins]
+  );
+
+  // Stop Timer
+  const stopTimer = useCallback(() => {
+    setIsRunning(false);
+    setIsPaused(false);
+    const loggedSeconds = totalWorkSeconds > 0 ? totalWorkSeconds : secondsElapsed;
+    setStoppedSeconds(loggedSeconds);
+    setShowCompleteModal(true);
+    localStorage.removeItem(STORAGE_KEY);
+  }, [totalWorkSeconds, secondsElapsed]);
+
+  // Main tick effect
   useEffect(() => {
     if (isRunning && !isPaused) {
-      startTimeRef.current = Date.now();
-      const currentAccumulated = accumulatedRef.current;
+      lastTickRef.current = Date.now();
 
       intervalRef.current = setInterval(() => {
-        if (startTimeRef.current) {
-          const delta = Math.floor((Date.now() - startTimeRef.current) / 1000);
-          const total = currentAccumulated + delta;
-          setSecondsElapsed(total);
+        const now = Date.now();
+        const delta = Math.round((now - (lastTickRef.current || now)) / 1000);
+        if (delta <= 0) return;
+        lastTickRef.current = now;
 
-          // Save to localStorage every 5 seconds
-          if (total % 5 === 0 && activeSubject) {
-            localStorage.setItem(
-              STORAGE_KEY,
-              JSON.stringify({
-                activeSubject,
-                scheduleEventId,
-                secondsElapsed: total,
-                isPaused: false,
-              })
-            );
-          }
+        if (mode === "STOPWATCH") {
+          setSecondsElapsed((prev) => {
+            const next = prev + delta;
+            setTotalWorkSeconds(next);
+            return next;
+          });
+        } else {
+          // COUNTDOWN OR POMODORO
+          setRemainingSeconds((prev) => {
+            const next = prev - delta;
+            if (pomodoroPhase === "WORK") {
+              setTotalWorkSeconds((work) => work + delta);
+              setSecondsElapsed((work) => work + delta);
+            }
+
+            if (next <= 0) {
+              playTimerChime();
+              if (mode === "CUSTOM_COUNTDOWN") {
+                stopTimer();
+                return 0;
+              }
+              // In Pomodoro mode: transition phase
+              switchPhase();
+              return 0;
+            }
+            return next;
+          });
+        }
+
+        // Periodically persist state
+        if (activeSubject) {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              activeSubject,
+              scheduleEventId,
+              taskId,
+              mode,
+              pomodoroPhase,
+              pomodoroCycle,
+              targetSeconds,
+              remainingSeconds,
+              secondsElapsed,
+              totalWorkSeconds,
+            })
+          );
         }
       }, 1000);
     } else {
@@ -118,46 +262,98 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, isPaused, activeSubject, scheduleEventId]);
+  }, [
+    isRunning,
+    isPaused,
+    mode,
+    pomodoroPhase,
+    activeSubject,
+    scheduleEventId,
+    taskId,
+    pomodoroCycle,
+    targetSeconds,
+    remainingSeconds,
+    secondsElapsed,
+    totalWorkSeconds,
+    switchPhase,
+    stopTimer,
+  ]);
 
-  const startTimer = useCallback((subject: ActiveSubject, eventId?: string | null) => {
-    setActiveSubject(subject);
-    setScheduleEventId(eventId || null);
-    setSecondsElapsed(0);
-    accumulatedRef.current = 0;
-    setIsRunning(true);
+  // Start timer action
+  const startTimer = useCallback(
+    (subject: ActiveSubject, optionsOrEventId?: string | null | StartTimerOptions) => {
+      let eventId: string | null = null;
+      let tId: string | null = null;
+      let targetMode: TimerMode = "POMODORO";
+      let workMins = 25;
+      let breakMins = 5;
+      let longBreakMins = 15;
+      let customMins: number | null = null;
+
+      if (typeof optionsOrEventId === "string") {
+        eventId = optionsOrEventId;
+      } else if (optionsOrEventId && typeof optionsOrEventId === "object") {
+        eventId = optionsOrEventId.scheduleEventId || null;
+        tId = optionsOrEventId.taskId || null;
+        if (optionsOrEventId.mode) targetMode = optionsOrEventId.mode;
+        if (optionsOrEventId.pomodoroWorkMinutes) workMins = optionsOrEventId.pomodoroWorkMinutes;
+        if (optionsOrEventId.pomodoroBreakMinutes) breakMins = optionsOrEventId.pomodoroBreakMinutes;
+        if (optionsOrEventId.pomodoroLongBreakMinutes) longBreakMins = optionsOrEventId.pomodoroLongBreakMinutes;
+        if (optionsOrEventId.targetMinutes) customMins = optionsOrEventId.targetMinutes;
+      }
+
+      setActiveSubject(subject);
+      setScheduleEventId(eventId);
+      setTaskId(tId);
+      setMode(targetMode);
+      setPomodoroPhase("WORK");
+      setPomodoroCycle(0);
+      setPomodoroWorkMins(workMins);
+      setPomodoroBreakMins(breakMins);
+      setPomodoroLongBreakMins(longBreakMins);
+
+      let initialTarget = workMins * 60;
+      if (targetMode === "CUSTOM_COUNTDOWN") {
+        initialTarget = (customMins || 45) * 60;
+      } else if (targetMode === "STOPWATCH") {
+        initialTarget = 0;
+      }
+
+      setTargetSeconds(initialTarget);
+      setRemainingSeconds(initialTarget);
+      setSecondsElapsed(0);
+      setTotalWorkSeconds(0);
+      setIsRunning(true);
+      setIsPaused(false);
+    },
+    []
+  );
+
+  const pauseTimer = useCallback(() => {
+    setIsPaused(true);
+  }, []);
+
+  const resumeTimer = useCallback(() => {
+    lastTickRef.current = Date.now();
     setIsPaused(false);
   }, []);
 
-  const pauseTimer = useCallback(() => {
-    if (isRunning && !isPaused) {
-      if (startTimeRef.current) {
-        const delta = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        accumulatedRef.current += delta;
-      }
-      setIsPaused(true);
+  const setTimerMode = useCallback((newMode: TimerMode, targetMins?: number) => {
+    setMode(newMode);
+    if (newMode === "POMODORO") {
+      setPomodoroPhase("WORK");
+      const s = 25 * 60;
+      setTargetSeconds(s);
+      setRemainingSeconds(s);
+    } else if (newMode === "CUSTOM_COUNTDOWN") {
+      const s = (targetMins || 45) * 60;
+      setTargetSeconds(s);
+      setRemainingSeconds(s);
+    } else {
+      setTargetSeconds(0);
+      setRemainingSeconds(0);
     }
-  }, [isRunning, isPaused]);
-
-  const resumeTimer = useCallback(() => {
-    if (isRunning && isPaused) {
-      startTimeRef.current = Date.now();
-      setIsPaused(false);
-    }
-  }, [isRunning, isPaused]);
-
-  const stopTimer = useCallback(() => {
-    if (startTimeRef.current && isRunning && !isPaused) {
-      const delta = Math.floor((Date.now() - startTimeRef.current) / 1000);
-      accumulatedRef.current += delta;
-    }
-    const finalSecs = accumulatedRef.current;
-    setStoppedSeconds(finalSecs);
-    setIsRunning(false);
-    setIsPaused(false);
-    setShowCompleteModal(true);
-    localStorage.removeItem(STORAGE_KEY);
-  }, [isRunning, isPaused]);
+  }, []);
 
   // Request W3C Document Picture-in-Picture
   const requestDocumentPip = useCallback(async () => {
@@ -167,7 +363,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
       try {
         const pipWindow = await (window as any).documentPictureInPicture.requestWindow({
           width: 360,
-          height: 270,
+          height: 290,
         });
 
         pipWindowRef.current = pipWindow;
@@ -188,7 +384,6 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
               pipWindow.document.head.appendChild(newLinkEl);
             }
           } catch {
-            // Cross-origin styles fallback
             if (styleSheet.href) {
               const newLinkEl = pipWindow.document.createElement("link");
               newLinkEl.rel = "stylesheet";
@@ -198,10 +393,9 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
           }
         });
 
-        // Add Notion-style font and base body styles
         pipWindow.document.body.style.margin = "0";
         pipWindow.document.body.style.padding = "0";
-        pipWindow.document.body.style.backgroundColor = "#191919";
+        pipWindow.document.body.style.backgroundColor = "#121d15";
         pipWindow.document.body.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
         const container = pipWindow.document.createElement("div");
@@ -237,7 +431,14 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
       value={{
         activeSubject,
         scheduleEventId,
+        taskId,
+        mode,
+        pomodoroPhase,
+        pomodoroCycle,
+        targetSeconds,
+        remainingSeconds,
         secondsElapsed,
+        totalWorkSeconds,
         isRunning,
         isPaused,
         isPipOpen,
@@ -245,6 +446,8 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
         pauseTimer,
         resumeTimer,
         stopTimer,
+        switchPhase,
+        setTimerMode,
         requestDocumentPip,
         closeDocumentPip,
         formatTime,
@@ -256,7 +459,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
       {isPipOpen &&
         pipContainer &&
         ReactDOM.createPortal(
-          <div className="dark p-3.5 bg-[#191919] text-[#e3e2e0] h-full flex flex-col justify-between select-none">
+          <div className="dark p-4 bg-[#121d15] text-[#e3e2e0] h-full flex flex-col justify-between select-none">
             <PipMiniPlayer />
           </div>,
           pipContainer
@@ -267,12 +470,14 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
         <TimerCompleteModal
           subject={activeSubject}
           scheduleEventId={scheduleEventId}
+          taskId={taskId}
           seconds={stoppedSeconds}
           open={showCompleteModal}
           onClose={() => {
             setShowCompleteModal(false);
             setActiveSubject(null);
             setSecondsElapsed(0);
+            setTotalWorkSeconds(0);
           }}
         />
       )}
