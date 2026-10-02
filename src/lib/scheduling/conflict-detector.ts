@@ -87,27 +87,51 @@ export function detectSlotConflict(
 
   const rulesForDay = availabilityRules.filter((r) => r.dayOfWeek === dayOfWeek);
 
-  for (const rule of rulesForDay) {
+  // Check unavailable (blackout) rules
+  const unavailableRules = rulesForDay.filter((r) => !r.isAvailable);
+  for (const rule of unavailableRules) {
     const [startH, startM] = rule.startTime.split(":").map(Number);
     const [endH, endM] = rule.endTime.split(":").map(Number);
     const ruleStartMins = startH * 60 + startM;
     const ruleEndMins = endH * 60 + endM;
 
-    // If rule specifies busy/sleeping period (isAvailable === false), AI must NOT overlap it
-    if (!rule.isAvailable) {
-      const isOverlap = proposedStartMins < ruleEndMins && proposedEndMins > ruleStartMins;
-      if (isOverlap) {
-        return {
-          hasConflict: true,
-          reason: `Trùng với khung giờ bận/nghỉ ngơi (${rule.startTime} - ${rule.endTime})`,
-          conflictingSlot: {
-            title: "Khung giờ bận/nghỉ ngơi",
-            start: proposedStart,
-            end: proposedEnd,
-            type: "UNAVAILABLE_TIME",
-          },
-        };
-      }
+    const isOverlap = proposedStartMins < ruleEndMins && proposedEndMins > ruleStartMins;
+    if (isOverlap) {
+      return {
+        hasConflict: true,
+        reason: `Trùng với khung giờ bận/nghỉ ngơi (${rule.startTime} - ${rule.endTime})`,
+        conflictingSlot: {
+          title: "Khung giờ bận/nghỉ ngơi",
+          start: proposedStart,
+          end: proposedEnd,
+          type: "UNAVAILABLE_TIME",
+        },
+      };
+    }
+  }
+
+  // If there are positive availability windows defined for this day, slot must fit inside at least one
+  const availableWindows = rulesForDay.filter((r) => r.isAvailable);
+  if (availableWindows.length > 0) {
+    const fitsInWindow = availableWindows.some((r) => {
+      const [startH, startM] = r.startTime.split(":").map(Number);
+      const [endH, endM] = r.endTime.split(":").map(Number);
+      const winStartMins = startH * 60 + startM;
+      const winEndMins = endH * 60 + endM;
+      return proposedStartMins >= winStartMins && proposedEndMins <= winEndMins;
+    });
+
+    if (!fitsInWindow) {
+      return {
+        hasConflict: true,
+        reason: `Nằm ngoài khung giờ học rảnh rỗi đã đăng ký (${availableWindows.map((w) => `${w.startTime}-${w.endTime}`).join(", ")})`,
+        conflictingSlot: {
+          title: "Ngoài khung giờ học rảnh",
+          start: proposedStart,
+          end: proposedEnd,
+          type: "UNAVAILABLE_TIME",
+        },
+      };
     }
   }
 
@@ -124,6 +148,7 @@ export function validateProposedSchedule(
   availabilityRules: AvailabilityRuleItem[] = [],
   minBreakMinutes: number = 15
 ): {
+  isValid: boolean;
   validSessions: ProposedSession[];
   rejectedSessions: Array<{ session: ProposedSession; reason: string }>;
   totalValidHours: number;
@@ -179,6 +204,7 @@ export function validateProposedSchedule(
   }, 0);
 
   return {
+    isValid: rejectedSessions.length === 0 && validSessions.length > 0,
     validSessions,
     rejectedSessions,
     totalValidHours: Math.round((totalValidMinutes / 60) * 10) / 10,

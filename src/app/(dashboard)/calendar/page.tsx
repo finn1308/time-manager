@@ -491,15 +491,6 @@ export default function CalendarPage() {
             </>
           );
         })()
-      )}
-              blockedSlots={blockedSlots}
-              subjects={subjects}
-              onEventsChange={loadData}
-            />
-          )}
-
-        </>
-      )}
     </div>
   );
 }
