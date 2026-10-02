@@ -107,9 +107,9 @@
   - [x] Giao diện Notion-inspired màu pastel green, empty states, skeletons
   - [x] Bảo mật server-side validation, chống IDOR, kiểm soát quyền truy cập tài liệu
 
-- [ ] **Tác vụ 20: Kiểm thử toàn diện & Build Production** (Phần 48, 49, 50, 54, 55)
-  - [ ] Chạy kiểm tra TypeScript strict (`tsc --noEmit`)
-  - [ ] Kiểm tra ESLint
-  - [ ] Chạy kiểm thử tự động hệ thống
-  - [ ] Build production `npm run build`
-  - [ ] Lập Báo cáo Tổng kết Hoàn thành (Final Audit Report)
+- [x] **Tác vụ 20: Kiểm thử toàn diện & Build Production** (Phần 48, 49, 50, 54, 55)
+  - [x] Chạy kiểm tra TypeScript strict (`tsc --noEmit`) (0 errors)
+  - [x] Kiểm tra ESLint
+  - [x] Chạy kiểm thử tự động hệ thống (31/31 unit & integration tests passed)
+  - [x] Build production `npm run build` (81/81 routes generated successfully)
+  - [x] Lập Báo cáo Tổng kết Hoàn thành (Final Audit Report)
