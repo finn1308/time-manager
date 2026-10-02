@@ -165,15 +165,24 @@ export function EventModal({
     try {
       setIsSubmitting(true);
       const id = editingEvent!.id;
-      const originalId = editingEvent!.originalId || "";
-      const exDate = formatVN(editingEvent!.startTime, "yyyy-MM-dd");
+      const isRecurring = editingEvent!.recurrence !== "NONE";
+      const originalId = isRecurring ? (editingEvent!.originalId || id) : "";
+      const exDate = isRecurring ? formatVN(editingEvent!.startTime, "yyyy-MM-dd") : "";
       
-      await fetch(`/api/calendar/events?id=${id}&originalId=${originalId}&exceptionDate=${exDate}&deleteMode=${mode}`, { method: "DELETE" });
+      let url = `/api/calendar/events?id=${id}&deleteMode=${mode}`;
+      if (isRecurring && originalId && exDate) {
+        url += `&originalId=${originalId}&exceptionDate=${exDate}`;
+      }
+      
+      const res = await fetch(url, { method: "DELETE" });
+      if (!res.ok) {
+        throw new Error("Không thể xóa sự kiện, vui lòng thử lại.");
+      }
       if (onSuccess) onSuccess();
       router.refresh();
       onClose();
-    } catch (e) {
-      alert("Không thể xóa sự kiện");
+    } catch (e: any) {
+      alert(e.message || "Không thể xóa sự kiện");
     } finally {
       setIsSubmitting(false);
       setShowEditModePrompt(false);

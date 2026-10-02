@@ -207,27 +207,32 @@ export async function DELETE(req: Request) {
 
   if (!id) return NextResponse.json({ error: "Thiếu ID sự kiện" }, { status: 400 });
 
-  if (deleteMode === "SINGLE" && originalId && exceptionDate) {
-    // Create a cancellation exception
-    await prisma.calendarEvent.create({
-      data: {
-        userId: user.id,
-        title: "Cancelled",
-        startTime: new Date(),
-        endTime: new Date(),
-        parentId: originalId,
-        exceptionDate: exceptionDate,
-        isException: true,
-        isCancelled: true,
-      }
-    });
-  } else {
-    // Delete all (or just standard single event)
-    const targetId = originalId || id;
-    await prisma.calendarEvent.delete({
-      where: { id: targetId, userId: user.id },
-    });
-  }
+  try {
+    if (deleteMode === "SINGLE" && originalId && exceptionDate) {
+      // Create a cancellation exception
+      await prisma.calendarEvent.create({
+        data: {
+          userId: user.id,
+          title: "Cancelled",
+          startTime: new Date(),
+          endTime: new Date(),
+          parentId: originalId,
+          exceptionDate: exceptionDate,
+          isException: true,
+          isCancelled: true,
+        }
+      });
+    } else {
+      // Delete all (or just standard single event)
+      const targetId = originalId || id;
+      await prisma.calendarEvent.delete({
+        where: { id: targetId, userId: user.id },
+      });
+    }
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("Delete calendar event error:", error);
+    return NextResponse.json({ error: "Lỗi xóa sự kiện" }, { status: 500 });
+  }
 }
