@@ -16,6 +16,7 @@ import { AiSchedulePreviewModal } from "./ai-schedule-preview-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { AiResourceReminderBanner } from "../study/ai-resource-reminder-banner";
 import { useRouter } from "next/navigation";
+import { getEventTypeConfig } from "@/lib/calendar/event-types";
 
 interface WeekViewProps {
   initialEvents: Array<{
