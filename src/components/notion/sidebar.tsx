@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+import {
   LayoutDashboard,
   Sparkles,
   Calendar,
@@ -28,6 +29,14 @@ import {
   Plus,
   GraduationCap,
   Briefcase,
+  Home,
+  LayoutGrid,
+  PlaySquare,
+  ShoppingBag,
+  Award,
+  ArrowLeft,
+  Languages,
+  ShieldCheck,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
@@ -53,8 +62,21 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { startTimer, activeSubject } = usePipTimer();
 
+  const isVocab = pathname.startsWith("/vocab");
+
+  const vocabNavItems = [
+    { label: "Trang chủ", href: "/vocab", icon: Home, iconColor: "text-sky-500" },
+    { label: "Bộ từ vựng", href: "/vocab/courses/a1-0-3-0", icon: LayoutGrid, iconColor: "text-purple-500" },
+    { label: "Từ vựng", href: "/vocab/words", icon: BookOpen, iconColor: "text-emerald-500" },
+    { label: "Học từ vựng", href: "/vocab/spaced-repetition", icon: PlaySquare, iconColor: "text-orange-500" },
+    { label: "Cửa hàng", href: "/vocab/shop", icon: ShoppingBag, iconColor: "text-amber-500" },
+    { label: "Xếp hạng", href: "/vocab/leaderboard", icon: Award, iconColor: "text-rose-500" },
+    { label: "Quản lý nội dung", href: "/vocab/admin", icon: ShieldCheck, iconColor: "text-indigo-500" },
+  ];
+
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
+    { label: "LUYENTU (Từ vựng)", href: "/vocab", icon: Languages, highlight: true },
     { label: "Academic OS & GPA", href: "/academic", icon: GraduationCap },
     { label: "Career & Portfolio", href: "/career", icon: Briefcase },
     { label: "Calendar", href: "/calendar", icon: Calendar },
