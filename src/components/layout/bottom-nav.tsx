@@ -21,6 +21,8 @@ import {
   Settings,
   LogOut,
   Play,
+  GraduationCap,
+  Briefcase,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
@@ -38,6 +40,8 @@ export function BottomNav() {
   ];
 
   const drawerItems = [
+    { label: "Học thuật & GPA 4 năm", href: "/academic", icon: GraduationCap },
+    { label: "Hồ sơ & Nghề nghiệp", href: "/career", icon: Briefcase },
     { label: "Môn học (Subjects)", href: "/subjects", icon: BookOpen },
     { label: "Mục tiêu (Goals)", href: "/goals", icon: Target },
     { label: "Deadline & Bài tập", href: "/deadlines", icon: Flame },
