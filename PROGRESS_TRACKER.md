@@ -95,9 +95,9 @@
   - [x] Dự báo tiến độ hoàn thành mục tiêu (Progress forecast)
   - [x] AI Weekly Review báo cáo hiệu suất tuần & nút "Generate Next Week"
 
-- [ ] **Tác vụ 17: Dashboard & Analytics Nâng cao** (Phần 14, 35, 36)
-  - [ ] Dashboard trung tâm tổng hợp: Today schedule, Progress, Goals, Deadlines, Planned vs Actual, Streak, AI Insights
-  - [ ] Analytics trang chuyên sâu với bộ lọc thời gian: 7 ngày, 30 ngày, 90 ngày, custom
+- [x] **Tác vụ 17: Dashboard & Analytics Nâng cao** (Phần 14, 35, 36)
+  - [x] Dashboard trung tâm tổng hợp: Today schedule, Progress, Goals, Deadlines, Planned vs Actual, Streak, AI Insights
+  - [x] Analytics trang chuyên sâu với bộ lọc thời gian: 7 ngày, 30 ngày, 90 ngày, custom
 
 - [ ] **Tác vụ 18: Data Export & Backup** (Phần 37)
   - [ ] Xuất dữ liệu cá nhân ra JSON, CSV (Lịch học, phiên học, ghi chú)
