@@ -51,6 +51,16 @@ model User {
   habits                Habit[]
   notifications         Notification[]
   weeklyReviews         WeeklyReview[]
+
+  // 4-Year Academic OS Relations
+  degreeProgram         DegreeProgram?
+  academicYears         AcademicYear[]
+  semesters             Semester[]
+  skills                Skill[]
+  projects              Project[]
+  certificates          Certificate[]
+  careerApplications    CareerApplication[]
+  auditLogs             AuditLog[]
 }
 
 model Account {
@@ -171,10 +181,28 @@ model Subject {
   difficulty        String    @default("MEDIUM") // EASY, MEDIUM, HARD
   estimatedWorkload Float?
   isArchived        Boolean   @default(false)
+
+  // 4-Year Academic Extensions
+  semesterId        String?
+  credits           Int       @default(3)
+  lecturer          String?
+  classroom         String?
+  syllabus          String?   @db.Text
+  status            String    @default("ACTIVE") // PLANNED, ACTIVE, COMPLETED, DROPPED, ARCHIVED
+  midtermScore      Float?
+  finalScore        Float?
+  courseGrade       Float?    // 10.0 scale
+  letterGrade       String?   // A, B+, B, C+, C, D+, D, F
+  gradePoints       Float?    // 4.0 scale
+  gradeWeightJson   String?   @db.Text // {"attendance":10,"midterm":30,"project":20,"final":40}
+  attendanceCount   Int       @default(0)
+  totalSessions     Int       @default(15)
+
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
   user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semester         Semester?         @relation(fields: [semesterId], references: [id], onDelete: SetNull)
   goals            Goal[]
   calendarEvents   CalendarEvent[]
   studySessions    StudySession[]
@@ -187,8 +215,10 @@ model Subject {
   tasks            Task[]
   notes            Note[]
   habits           Habit[]
+  projects         Project[]
 
   @@index([userId])
+  @@index([semesterId])
 }
 
 model Goal {
@@ -823,3 +853,173 @@ model StudyNote {
   @@index([calendarEventId])
   @@index([subjectId])
 }
+
+// ==============================================================================
+// 4-YEAR ACADEMIC OPERATING SYSTEM MODELS
+// ==============================================================================
+
+model DegreeProgram {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  major                String   @default("Công nghệ Thông tin")
+  faculty              String?  @default("Khoa CNTT")
+  university           String?  @default("Đại học")
+  totalCreditsRequired Int      @default(130)
+  targetGpa            Float    @default(3.6)
+  currentGpa           Float    @default(0.0)
+  currentCredits       Int      @default(0)
+  graduationYear       Int?
+  status               String   @default("ACTIVE") // ACTIVE, GRADUATED, ON_HOLD
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AcademicYear {
+  id         String   @id @default(cuid())
+  userId     String
+  yearNumber Int      @default(1) // 1, 2, 3, 4, 5...
+  name       String   // e.g. "Năm 1", "Năm 2", "Năm học 2024 - 2025"
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("ACTIVE") // PLANNED, ACTIVE, COMPLETED, ARCHIVED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semesters Semester[]
+
+  @@unique([userId, yearNumber])
+  @@index([userId])
+}
+
+model Semester {
+  id             String   @id @default(cuid())
+  userId         String
+  academicYearId String
+  name           String   // e.g. "Học kỳ 1", "Học kỳ 2", "Học kỳ Hè"
+  type           String   @default("FALL") // FALL, SPRING, SUMMER, CUSTOM
+  startDate      DateTime
+  endDate        DateTime
+  status         String   @default("ACTIVE") // PLANNED, ACTIVE, COMPLETED, ARCHIVED
+  gpa10          Float?
+  gpa4           Float?
+  totalCredits   Int      @default(0)
+  earnedCredits  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  subjects     Subject[]
+
+  @@index([userId, status])
+  @@index([academicYearId])
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  category    String   @default("TECH") // TECH, LANGUAGE, SOFT, DESIGN, OTHER
+  level       String   @default("INTERMEDIATE") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects ProjectSkill[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model Project {
+  id            String    @id @default(cuid())
+  userId        String
+  subjectId     String?
+  title         String
+  description   String?   @db.Text
+  repositoryUrl String?
+  demoUrl       String?
+  technologies  String?   // Comma-separated or tags
+  status        String    @default("IN_PROGRESS") // PLANNED, IN_PROGRESS, COMPLETED, FEATURED
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  skills  ProjectSkill[]
+
+  @@index([userId])
+  @@index([subjectId])
+}
+
+model ProjectSkill {
+  projectId String
+  skillId   String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  skill   Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, skillId])
+}
+
+model Certificate {
+  id            String    @id @default(cuid())
+  userId        String
+  name          String
+  issuer        String
+  issueDate     DateTime
+  expiryDate    DateTime?
+  credentialId  String?
+  credentialUrl String?
+  score         String?
+  status        String    @default("ACTIVE") // ACTIVE, EXPIRED
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model CareerApplication {
+  id          String    @id @default(cuid())
+  userId      String
+  company     String
+  role        String
+  location    String?
+  type        String    @default("INTERNSHIP") // INTERNSHIP, PART_TIME, FULL_TIME
+  status      String    @default("APPLIED") // SAVED, APPLIED, INTERVIEW, OFFER, REJECTED, WITHDRAWN
+  appliedDate DateTime?
+  deadline    DateTime?
+  salary      String?
+  notes       String?   @db.Text
+  jobUrl      String?
+  resumeUrl   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String
+  entityType  String   // CALENDAR_EVENT, SUBJECT, GRADE, SEMESTER, TASK, NOTE
+  entityId    String
+  action      String   // CREATE, UPDATE, DELETE, RESTORE, ARCHIVE, TRANSITION
+  detailsJson String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, entityType, createdAt])
+}
+
