@@ -23,6 +23,12 @@ export async function GET(req: Request) {
     where: { userId: user.id },
     include: {
       subject: true,
+      goal: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
       task: {
         select: {
           id: true,
@@ -65,10 +71,14 @@ export async function POST(req: Request) {
       location,
       subjectId,
       taskId,
+      goalId,
       startTime,
       endTime,
       type,
       isLocked,
+      isFlexible,
+      trackStudyTime,
+      seriesId,
       timezone,
       recurrence,
       recurrenceRule,
@@ -119,6 +129,16 @@ export async function POST(req: Request) {
       }
     }
 
+    // 5b. Validate Goal Ownership
+    if (goalId) {
+      const goal = await prisma.goal.findFirst({
+        where: { id: goalId, userId: user.id },
+      });
+      if (!goal) {
+        return NextResponse.json({ error: "Mục tiêu không tồn tại hoặc không thuộc quyền sở hữu của bạn" }, { status: 400 });
+      }
+    }
+
     // 6. Conflict Detection (Unless it's a DEADLINE milestone)
     if (normalizedType !== "DEADLINE") {
       const existingEvents = await prisma.calendarEvent.findMany({
@@ -161,6 +181,13 @@ export async function POST(req: Request) {
     }
 
     // 7. Create Event
+    const finalTrackStudyTime = trackStudyTime !== undefined
+      ? Boolean(trackStudyTime)
+      : (normalizedType === "SELF_STUDY" || normalizedType === "STUDY");
+    const finalIsFlexible = isFlexible !== undefined
+      ? Boolean(isFlexible)
+      : (normalizedType === "PERSONAL");
+
     const event = await prisma.calendarEvent.create({
       data: {
         userId: user.id,
@@ -169,10 +196,14 @@ export async function POST(req: Request) {
         location: location?.trim() || null,
         subjectId: subjectId || null,
         taskId: taskId || null,
+        goalId: goalId || null,
         startTime: start,
         endTime: end,
         type: normalizedType,
         isLocked: !!isLocked,
+        isFlexible: finalIsFlexible,
+        trackStudyTime: finalTrackStudyTime,
+        seriesId: seriesId || null,
         timezone: timezone || "Asia/Ho_Chi_Minh",
         isAiGenerated: false,
         recurrence: recurrence || "NONE",
@@ -182,6 +213,7 @@ export async function POST(req: Request) {
       include: {
         subject: true,
         task: true,
+        goal: true,
       },
     });
 
@@ -205,10 +237,14 @@ export async function PUT(req: Request) {
       location,
       subjectId,
       taskId,
+      goalId,
       startTime,
       endTime,
       type,
       isLocked,
+      isFlexible,
+      trackStudyTime,
+      seriesId,
       recurrence,
       recurrenceRule,
       recurrenceEnd,
@@ -273,13 +309,16 @@ export async function PUT(req: Request) {
             location: location !== undefined ? location?.trim() || null : undefined,
             subjectId: subjectId !== undefined ? subjectId || null : undefined,
             taskId: taskId !== undefined ? taskId || null : undefined,
+            goalId: goalId !== undefined ? goalId || null : undefined,
             startTime: start,
             endTime: end,
             type: type !== undefined ? type : undefined,
             isLocked: isLocked !== undefined ? !!isLocked : undefined,
+            isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
+            trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : undefined,
             isCancelled: false,
           },
-          include: { subject: true, task: true },
+          include: { subject: true, task: true, goal: true },
         });
         return NextResponse.json({ success: true, event: updatedEx });
       }
@@ -292,17 +331,20 @@ export async function PUT(req: Request) {
           location: location !== undefined ? location?.trim() || null : null,
           subjectId: subjectId || null,
           taskId: taskId || null,
+          goalId: goalId || null,
           startTime: start!,
           endTime: end!,
           type: type || "OTHER",
           isLocked: isLocked !== undefined ? !!isLocked : false,
+          isFlexible: isFlexible !== undefined ? !!isFlexible : (type === "PERSONAL"),
+          trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : (type === "SELF_STUDY" || type === "STUDY"),
           timezone: "Asia/Ho_Chi_Minh",
           parentId: cleanOriginalId,
           exceptionDate: targetDateKey,
           isException: true,
           isCancelled: false,
         },
-        include: { subject: true, task: true },
+        include: { subject: true, task: true, goal: true },
       });
       return NextResponse.json({ success: true, event: exceptionEvent });
     }
@@ -317,10 +359,14 @@ export async function PUT(req: Request) {
         location: location !== undefined ? location?.trim() || null : undefined,
         subjectId: subjectId !== undefined ? subjectId || null : undefined,
         taskId: taskId !== undefined ? taskId || null : undefined,
+        goalId: goalId !== undefined ? goalId || null : undefined,
         startTime: start,
         endTime: end,
         type: type !== undefined ? type : undefined,
         isLocked: isLocked !== undefined ? !!isLocked : undefined,
+        isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
+        trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : undefined,
+        seriesId: seriesId !== undefined ? seriesId : undefined,
         recurrence: recurrence !== undefined ? recurrence : undefined,
         recurrenceRule: recurrenceRule !== undefined ? recurrenceRule : undefined,
         recurrenceEnd: recurrenceEnd !== undefined ? (recurrenceEnd ? new Date(recurrenceEnd) : null) : undefined,
@@ -328,6 +374,8 @@ export async function PUT(req: Request) {
       include: {
         subject: true,
         task: true,
+        goal: true,
+      },
       },
     });
 
