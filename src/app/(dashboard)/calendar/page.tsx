@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { WeekView } from "@/components/calendar/week-view";
 import { MonthView } from "@/components/calendar/month-view";
 import { DayView } from "@/components/calendar/day-view";
+import { AgendaView } from "@/components/calendar/agenda-view";
 import { WhatIfSimulatorModal } from "@/components/calendar/what-if-simulator-modal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -20,12 +21,14 @@ import {
   CheckCircle2,
   CalendarCheck,
   RefreshCw,
+  List,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ALL_EVENT_TYPES, getEventTypeConfig } from "@/lib/calendar/event-types";
 
 export default function CalendarPage() {
   const router = useRouter();
-  const [viewMode, setViewMode] = useState<"day" | "week" | "month">("week");
+  const [viewMode, setViewMode] = useState<"day" | "week" | "month" | "agenda">("week");
   const [events, setEvents] = useState<any[]>([]);
   const [blockedSlots, setBlockedSlots] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -34,6 +37,7 @@ export default function CalendarPage() {
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>("ALL");
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("ALL");
 
   // Natural Language Scheduling State (Section 17 & 44)
   const [nlpInput, setNlpInput] = useState("");

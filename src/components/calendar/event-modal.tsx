@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Lock, Repeat, FolderOpen, Calendar as CalendarIcon } from "lucide-react";
 import { formatVN, getDateKeyVN, makeVNDate } from "@/lib/date-utils";
 import { ResourceManager } from "@/components/study/resource-manager";
+import { getEventTypeConfig, ALL_EVENT_TYPES, CalendarEventType } from "@/lib/calendar/event-types";
 
 interface EventModalProps {
   open: boolean;
@@ -50,6 +51,7 @@ export function EventModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [subjectId, setSubjectId] = useState<string>("");
+  const [eventType, setEventType] = useState<CalendarEventType>("STUDY");
   const [dateStr, setDateStr] = useState<string>(defaultDate);
   const [startTimeStr, setStartTimeStr] = useState<string>(defaultStartTime);
   const [endTimeStr, setEndTimeStr] = useState<string>(defaultEndTime);
@@ -73,6 +75,7 @@ export function EventModal({
       setTitle(editingEvent.title || "");
       setDescription(editingEvent.description || "");
       setSubjectId(editingEvent.subjectId || subjects[0]?.id || "");
+      setEventType(((editingEvent.type?.toUpperCase() || "STUDY") as CalendarEventType) || "STUDY");
       setDateStr(formatVN(editingEvent.startTime, "yyyy-MM-dd"));
       setStartTimeStr(formatVN(editingEvent.startTime, "HH:mm"));
       setEndTimeStr(formatVN(editingEvent.endTime, "HH:mm"));
@@ -83,6 +86,7 @@ export function EventModal({
       setTitle("");
       setDescription("");
       setSubjectId(subjects[0]?.id || "");
+      setEventType("STUDY");
       setDateStr(defaultDate);
       setStartTimeStr(defaultStartTime);
       setEndTimeStr(defaultEndTime);
@@ -140,6 +144,7 @@ export function EventModal({
         subjectId: subjectId || null,
         startTime: startUTC.toISOString(),
         endTime: endUTC.toISOString(),
+        type: eventType,
         isLocked,
         timezone: "Asia/Ho_Chi_Minh",
         recurrence,
@@ -371,6 +376,38 @@ export function EventModal({
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                    Phân loại sự kiện
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {ALL_EVENT_TYPES.map((t) => {
+                      const cfg = getEventTypeConfig(t);
+                      const Icon = cfg.icon;
+                      const isSelected = eventType === t;
+                      return (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setEventType(t)}
+                          className={`flex items-center space-x-1.5 p-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                            isSelected
+                              ? "border-[#2d6a4f] shadow-2xs font-bold ring-1 ring-[#2d6a4f]"
+                              : "border-[#dbe7dd] dark:border-[#263d2e] opacity-75 hover:opacity-100 bg-[#fbfdfb] dark:bg-[#142318]"
+                          }`}
+                          style={{
+                            backgroundColor: isSelected ? cfg.badgeBg : undefined,
+                            color: isSelected ? cfg.badgeText : undefined,
+                          }}
+                        >
+                          <Icon className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">{cfg.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
