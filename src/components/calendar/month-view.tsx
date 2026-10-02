@@ -13,8 +13,9 @@ import {
   isSameMonth,
 } from "date-fns";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Plus, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Calendar, Trash2, FolderOpen } from "lucide-react";
 import { EventModal } from "./event-modal";
+import { useRouter } from "next/navigation";
 
 interface MonthViewProps {
   initialEvents: Array<{
@@ -25,6 +26,10 @@ interface MonthViewProps {
     endTime: string;
     type?: string;
     isLocked?: boolean;
+    recurrence?: string;
+    recurrenceRule?: string | null;
+    originalId?: string;
+    resources?: any[];
     subject: {
       id: string;
       name: string;
@@ -42,9 +47,11 @@ interface MonthViewProps {
 }
 
 export function MonthView({ initialEvents = [], subjects = [], onEventsChange }: MonthViewProps) {
+  const router = useRouter();
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<any | null>(null);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
@@ -65,6 +72,33 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
   const selectedDayEvents = initialEvents.filter(
     (ev) => getDateKeyVN(ev.startTime) === selectedDayKey
   );
+
+  const handleQuickDelete = async (e: React.MouseEvent, ev: any) => {
+    e.stopPropagation();
+    const isRecurring = Boolean(ev.recurrence && ev.recurrence !== "NONE");
+    if (isRecurring) {
+      setEditingEvent(ev);
+      setIsEventModalOpen(true);
+      return;
+    }
+
+    if (!confirm(`Bạn có chắc muốn xóa lịch "${ev.title}" không?`)) return;
+
+    try {
+      const cleanId = ev.id.includes("_") ? ev.id.split("_")[0] : ev.id;
+      const res = await fetch(`/api/calendar/events?id=${cleanId}&deleteMode=SINGLE`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Không thể xóa lịch");
+      }
+      if (onEventsChange) onEventsChange();
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Lỗi xóa lịch");
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-4">
@@ -105,55 +139,63 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
         <Button
           variant="pill"
           size="sm"
-          onClick={() => setIsEventModalOpen(true)}
+          onClick={() => {
+            setEditingEvent(null);
+            setIsEventModalOpen(true);
+          }}
           className="space-x-1.5 font-bold"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>Thêm sự kiện</span>
+          <span>Tạo lịch mới</span>
         </Button>
       </div>
 
+      {/* Grid Layout: Calendar + Side Info */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* Month Calendar Grid */}
+        {/* Month Matrix */}
         <div className="lg:col-span-3 bg-white dark:bg-[#17261c] p-4 rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
-          {/* Header Row */}
-          <div className="grid grid-cols-7 mb-2 text-center text-xs font-bold text-[#526b5c] dark:text-[#a3bda9]">
-            {dayNamesVN.map((name, i) => (
-              <div key={i} className="py-1">
+          {/* Day Name Header */}
+          <div className="grid grid-cols-7 mb-2 border-b border-[#dbe7dd]/60 dark:border-[#263d2e] pb-2 text-center">
+            {dayNamesVN.map((name) => (
+              <div
+                key={name}
+                className="text-[11px] font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]"
+              >
                 {name}
               </div>
             ))}
           </div>
 
           {/* Days Grid */}
-          <div className="grid grid-cols-7 gap-1.5">
-            {days.map((d, index) => {
+          <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+            {days.map((d) => {
               const dKey = getDateKeyVN(d);
-              const isCurrentMonth = isSameMonth(d, monthStart);
-              const isToday = dKey === todayKeyVN;
               const isSelected = dKey === selectedDayKey;
+              const isToday = dKey === todayKeyVN;
+              const isCurrentMonth = isSameMonth(d, currentMonth);
 
-              const eventsOnDay = initialEvents.filter(
+              // Events for this day
+              const dayEvs = initialEvents.filter(
                 (ev) => getDateKeyVN(ev.startTime) === dKey
               );
 
               return (
                 <div
-                  key={index}
+                  key={dKey}
                   onClick={() => setSelectedDay(d)}
-                  className={`min-h-[85px] p-2 rounded-2xl border text-left cursor-pointer transition-all ${
+                  className={`min-h-[70px] sm:min-h-[90px] p-1.5 sm:p-2 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                     isSelected
-                      ? "border-[#2d6a4f] bg-[#d8ebe0]/30 dark:bg-[#1d3827]/40 ring-1 ring-[#2d6a4f]"
+                      ? "border-[#52b788] bg-[#d8ebe0]/30 dark:bg-[#1d3827]/40 ring-2 ring-[#52b788]/20"
                       : isToday
-                      ? "border-[#52b788] bg-white dark:bg-[#142318]"
+                      ? "border-[#52b788]/60 bg-[#edf7f0]/40 dark:bg-[#16271c]"
                       : isCurrentMonth
-                      ? "border-transparent hover:border-[#dbe7dd] bg-[#f8fbf8] dark:bg-[#132217]"
-                      : "border-transparent opacity-30 bg-transparent"
+                      ? "border-[#dbe7dd]/60 dark:border-[#263d2e]/80 hover:bg-[#f6faf7] dark:hover:bg-[#1a2d21]"
+                      : "border-transparent opacity-40 bg-gray-50/50 dark:bg-black/10"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center justify-between">
                     <span
-                      className={`text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold ${
+                      className={`text-xs font-bold inline-flex items-center justify-center w-5 h-5 rounded-full ${
                         isToday
                           ? "bg-[#2d6a4f] text-white"
                           : "text-[#192e22] dark:text-[#f0f7f2]"
@@ -161,27 +203,31 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                     >
                       {formatVN(d, "d")}
                     </span>
-                    {eventsOnDay.length > 0 && (
-                      <span className="text-[10px] text-[#2d6a4f] dark:text-[#52b788] font-bold">
-                        {eventsOnDay.length}
+
+                    {dayEvs.length > 0 && (
+                      <span className="text-[10px] font-mono font-semibold px-1 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#203c2a] dark:text-[#a3bda9]">
+                        {dayEvs.length}
                       </span>
                     )}
                   </div>
 
-                  {/* Tiny Event Pills */}
-                  <div className="space-y-1">
-                    {eventsOnDay.slice(0, 2).map((ev) => (
+                  {/* Tiny Event Pills Preview */}
+                  <div className="space-y-1 mt-1 overflow-hidden">
+                    {dayEvs.slice(0, 2).map((ev) => (
                       <div
                         key={ev.id}
-                        className="truncate text-[9px] px-1.5 py-0.5 rounded-full font-medium text-white truncate shadow-2xs"
-                        style={{ backgroundColor: ev.subject?.color || "#2d6a4f" }}
+                        className="truncate text-[9px] font-medium px-1.5 py-0.5 rounded-md border border-[#dbe7dd]/80 dark:border-[#263d2e]"
+                        style={{
+                          backgroundColor: `${ev.subject?.color || "#2d6a4f"}15`,
+                          color: ev.subject?.color || "#1b4332",
+                        }}
                       >
                         {ev.title}
                       </div>
                     ))}
-                    {eventsOnDay.length > 2 && (
-                      <div className="text-[9px] text-[#526b5c] dark:text-[#a3bda9] pl-1 font-semibold">
-                        +{eventsOnDay.length - 2} buổi khác
+                    {dayEvs.length > 2 && (
+                      <div className="text-[8px] text-[#73927d] pl-1">
+                        +{dayEvs.length - 2} buổi khác
                       </div>
                     )}
                   </div>
@@ -203,10 +249,26 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
               {selectedDayEvents.map((ev) => (
                 <div
                   key={ev.id}
-                  className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs"
+                  onClick={() => {
+                    setEditingEvent(ev);
+                    setIsEventModalOpen(true);
+                  }}
+                  className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#52b788] transition-all cursor-pointer group"
                   style={{ borderLeftColor: ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
                 >
-                  <div className="font-bold text-[#192e22] dark:text-[#f0f7f2]">{ev.title}</div>
+                  <div className="flex items-start justify-between">
+                    <div className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex-1">
+                      {ev.title}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => handleQuickDelete(e, ev)}
+                      title="Xóa lịch này"
+                      className="opacity-60 group-hover:opacity-100 text-gray-400 hover:text-rose-600 p-1 rounded-md"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                   <div className="font-mono text-[10px] text-[#73927d] mt-1">
                     {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
                   </div>
@@ -224,7 +286,10 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
           <Button
             variant="pill"
             size="sm"
-            onClick={() => setIsEventModalOpen(true)}
+            onClick={() => {
+              setEditingEvent(null);
+              setIsEventModalOpen(true);
+            }}
             className="w-full mt-3 font-semibold"
           >
             Thêm buổi học cho ngày này
@@ -235,9 +300,13 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
       {isEventModalOpen && (
         <EventModal
           open={isEventModalOpen}
-          onClose={() => setIsEventModalOpen(false)}
+          onClose={() => {
+            setIsEventModalOpen(false);
+            setEditingEvent(null);
+          }}
           subjects={subjects}
           defaultDate={selectedDayKey}
+          editingEvent={editingEvent}
           onSuccess={onEventsChange}
         />
       )}
