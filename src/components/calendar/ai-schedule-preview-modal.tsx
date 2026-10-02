@@ -7,7 +7,8 @@ import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { Sparkles, Check, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { formatVN } from "@/lib/date-utils";
+import { formatVN, getDateKeyVN } from "@/lib/date-utils";
+import { addDays, parseISO } from "date-fns";
 
 interface ProposedEvent {
   subjectId: string;
@@ -23,21 +24,22 @@ interface AiSchedulePreviewModalProps {
   open: boolean;
   onClose: () => void;
   subjects: Array<{ id: string; name: string; code: string | null; color: string }>;
+  onSuccess?: () => void;
 }
 
 export function AiSchedulePreviewModal({
   open,
   onClose,
   subjects = [],
+  onSuccess,
 }: AiSchedulePreviewModalProps) {
   const router = useRouter();
 
-  const today = new Date();
-  const nextWeek = new Date(today);
-  nextWeek.setDate(today.getDate() + 6);
+  const todayKey = getDateKeyVN(new Date());
+  const nextWeekKey = getDateKeyVN(addDays(parseISO(todayKey), 6));
 
-  const [startDate, setStartDate] = useState(today.toISOString().split("T")[0]);
-  const [endDate, setEndDate] = useState(nextWeek.toISOString().split("T")[0]);
+  const [startDate, setStartDate] = useState(todayKey);
+  const [endDate, setEndDate] = useState(nextWeekKey);
   const [customInstructions, setCustomInstructions] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -111,6 +113,7 @@ export function AiSchedulePreviewModal({
         throw new Error("Không thể lưu lịch vào cơ sở dữ liệu");
       }
 
+      if (onSuccess) onSuccess();
       router.refresh();
       onClose();
     } catch (err: any) {

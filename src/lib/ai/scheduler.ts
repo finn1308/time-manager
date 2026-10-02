@@ -55,18 +55,28 @@ export async function generateAutoSchedule(params: {
   const existingCalendarEvents = await prisma.calendarEvent.findMany({
     where: {
       userId,
-      startTime: { lte: endWindow },
-      endTime: { gte: startWindow },
     },
     select: {
+      id: true,
       title: true,
       startTime: true,
       endTime: true,
       isLocked: true,
+      recurrence: true,
+      recurrenceRule: true,
+      parentId: true,
+      isException: true,
+      isCancelled: true,
     },
   });
 
-  const timeSlots: TimeSlot[] = existingCalendarEvents.map((e) => ({
+  const { expandRecurringEvents } = require("../scheduling/recurrence");
+  const expandedEvents = expandRecurringEvents(existingCalendarEvents, startWindow, endWindow);
+  
+  // Filter expanded events to only those in the requested window
+  const eventsInWindow = expandedEvents.filter(e => e.startTime <= endWindow && e.endTime >= startWindow);
+
+  const timeSlots: TimeSlot[] = eventsInWindow.map((e: any) => ({
     start: e.startTime,
     end: e.endTime,
     title: e.title,
