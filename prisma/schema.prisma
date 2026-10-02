@@ -52,6 +52,15 @@ model User {
   notifications         Notification[]
   weeklyReviews         WeeklyReview[]
 
+  // LUYENTU Vocabulary Platform
+  coins                 Int       @default(100)
+  isPro                 Boolean   @default(false)
+  vocabEnrollments      UserCourseEnrollment[]
+  vocabSetProgresses    UserWordSetProgress[]
+  vocabWordProgresses   UserWordProgress[]
+  vocabStudySessions    VocabStudySession[]
+  userPurchases         UserPurchase[]
+
   // 4-Year Academic OS Relations
   degreeProgram         DegreeProgram?
   academicYears         AcademicYear[]
@@ -1022,4 +1031,182 @@ model AuditLog {
 
   @@index([userId, entityType, createdAt])
 }
+
+// ==============================================================================
+// LUYENTU - VOCABULARY PLATFORM MODELS
+// ==============================================================================
+
+model VocabCourse {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String   // e.g. "A1 (0-3.0)"
+  subtitle    String?  // e.g. "Dành cho người mới bắt đầu học tiếng anh"
+  description String?  @db.Text
+  icon        String?  @default("📚")
+  coverColor  String?  @default("#10b981")
+  level       String   @default("BEGINNER") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  isPublished Boolean  @default(true)
+  isPro       Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  wordSets    WordSet[]
+  enrollments UserCourseEnrollment[]
+
+  @@index([isPublished, order])
+}
+
+model WordSet {
+  id          String   @id @default(cuid())
+  courseId    String
+  orderNumber Int      // 1, 2, 3, 4...
+  title       String   // e.g. "Lời chào hỏi", "Số đếm", "Màu sắc"
+  description String?  @db.Text
+  icon        String?
+  isPro       Boolean  @default(false) // PRO lock badge
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course         VocabCourse           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  words          VocabWord[]
+  userProgresses UserWordSetProgress[]
+  studySessions  VocabStudySession[]
+
+  @@unique([courseId, orderNumber])
+  @@index([courseId])
+}
+
+model VocabWord {
+  id              String   @id @default(cuid())
+  wordSetId       String
+  term            String   // English word: "Hello", "Good morning"
+  phonetic        String?  // IPA: "/həˈləʊ/"
+  partOfSpeech    String?  // noun, verb, adjective, phrase, interjection
+  meaning         String   // Vietnamese: "Xin chào"
+  explanation     String?  @db.Text
+  exampleSentence String?  @db.Text // "Hello, nice to meet you!"
+  exampleMeaning  String?  @db.Text // "Xin chào, rất vui được gặp bạn!"
+  audioUrl        String?
+  imageUrl        String?
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  wordSet      WordSet            @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+  userProgress UserWordProgress[]
+
+  @@index([wordSetId, order])
+}
+
+model UserCourseEnrollment {
+  id          String   @id @default(cuid())
+  userId      String
+  courseId    String
+  isPinned    Boolean  @default(false) // Pin button from image: "📌 Đã ghim"
+  isUnlocked  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course VocabCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+}
+
+model UserWordSetProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  wordSetId      String
+  isUnlocked     Boolean  @default(false)
+  completedWords Int      @default(0)
+  totalWords     Int      @default(0)
+  isMastered     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wordSet WordSet @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordSetId])
+  @@index([userId])
+}
+
+model UserWordProgress {
+  id              String    @id @default(cuid())
+  userId          String
+  wordId          String
+  wordSetId       String
+  status          String    @default("NEW") // "NEW" (chưa học), "LEARNING" (chưa thuộc), "MASTERED" (đã thuộc)
+  isFavorite      Boolean   @default(false)
+  timesStudied    Int       @default(0)
+  correctCount    Int       @default(0)
+  incorrectCount  Int       @default(0)
+
+  // SuperMemo SM-2 Spaced Repetition (Học ngắt quãng)
+  repetition      Int       @default(0)
+  intervalDays    Int       @default(1)
+  easeFactor      Float     @default(2.5)
+  nextReviewDate  DateTime?
+  lastReviewedAt  DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word VocabWord @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@index([userId, status])
+  @@index([userId, wordSetId])
+  @@index([userId, nextReviewDate])
+}
+
+model VocabStudySession {
+  id              String   @id @default(cuid())
+  userId          String
+  wordSetId       String
+  mode            String   // FLASHCARD, QUIZ, LISTENING, TYPING, MATCHING, SPECIAL
+  totalItems      Int      @default(0)
+  correctItems    Int      @default(0)
+  accuracy        Float    @default(0)
+  durationSeconds Int      @default(0)
+  coinsEarned     Int      @default(0)
+  xpEarned        Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wordSet WordSet @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model ShopItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  type        String   // PRO_UNLOCK, STREAK_FREEZE, AVATAR, BADGE, THEME
+  costCoins   Int
+  icon        String?
+  metadata    String?  // JSON
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  purchases   UserPurchase[]
+}
+
+model UserPurchase {
+  id         String   @id @default(cuid())
+  userId     String
+  shopItemId String
+  costPaid   Int
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopItem ShopItem @relation(fields: [shopItemId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 
