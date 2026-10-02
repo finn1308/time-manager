@@ -23,9 +23,11 @@ import {
   CalendarCheck,
   RefreshCw,
   List,
+  GraduationCap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ALL_EVENT_TYPES, getEventTypeConfig } from "@/lib/calendar/event-types";
+import { SchoolTimetableGeneratorModal } from "@/components/calendar/school-timetable-generator-modal";
 
 export default function CalendarPage() {
   const router = useRouter();
@@ -51,6 +53,9 @@ export default function CalendarPage() {
 
   // Smart Reschedule & Recovery Modal (Section 16)
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+
+  // School Timetable Generator Modal (Phase 8)
+  const [isTimetableOpen, setIsTimetableOpen] = useState(false);
 
   const loadData = async () => {
     try {
@@ -148,6 +153,17 @@ export default function CalendarPage() {
 
         {/* View mode switcher & Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
+          {/* School Timetable Generator Trigger (Phase 8) */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsTimetableOpen(true)}
+            className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs font-semibold space-x-1.5 h-9 bg-white dark:bg-[#17261c] hover:bg-[#eef5f0] dark:hover:bg-[#1b3426]"
+          >
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>Thời khóa biểu trường</span>
+          </Button>
+
           {/* What-If Simulator Trigger (Section 35) */}
           <Button
             size="sm"
@@ -365,6 +381,14 @@ export default function CalendarPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* School Timetable Generator Modal (Phase 8) */}
+      <SchoolTimetableGeneratorModal
+        open={isTimetableOpen}
+        onClose={() => setIsTimetableOpen(false)}
+        subjects={subjects}
+        onSuccess={loadData}
+      />
 
       {/* Smart Reschedule & Recovery Modal (Section 16) */}
       <RescheduleRecoveryModal
