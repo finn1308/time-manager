@@ -57,6 +57,15 @@ export default async function DashboardPage() {
   });
   const weeklyBudgetHours = userSettings?.weeklyStudyBudgetHours || 20.0;
 
+  // 1b. Fetch Degree Program & Active Academic Context
+  const [degreeProgram, activeSemester] = await Promise.all([
+    prisma.degreeProgram.findUnique({ where: { userId: user.id } }),
+    prisma.semester.findFirst({
+      where: { userId: user.id, status: "ACTIVE" },
+      include: { academicYear: true, subjects: true },
+    }),
+  ]);
+
   // 2. Fetch Subjects with Goals & Study Sessions
   const subjects = await prisma.subject.findMany({
     where: { userId: user.id },
