@@ -224,7 +224,7 @@ export function WeekView({
           </div>
 
           <span className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
-            {weekDays[0].formattedDate} – {weekDays[6].formattedDate}
+            {weekDays[0].fullFormatted} – {weekDays[6].fullFormatted}
           </span>
         </div>
 
@@ -522,7 +522,7 @@ export function WeekView({
         open={isAiModalOpen}
         onClose={() => setIsAiModalOpen(false)}
         subjects={subjects}
-        onScheduleCommitted={() => {
+        onSuccess={() => {
           if (onEventsChange) onEventsChange();
         }}
       />
