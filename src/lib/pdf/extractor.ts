@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { PDFParse } from "pdf-parse";
+import { getDocumentProxy, extractText } from "unpdf";
 
 export interface ExtractedPage {
   pageNumber: number;
@@ -16,63 +16,54 @@ export interface PDFExtractionResult {
 }
 
 /**
- * Extracts and cleans text from a PDF buffer using pdf-parse v2
+ * Extracts and cleans text from a PDF buffer using unpdf (Next.js serverless & runtime friendly)
  */
-export async function extractTextFromPDF(buffer: Buffer): Promise<PDFExtractionResult> {
-  const parser = new PDFParse({ data: buffer });
-  try {
-    const textResult = await parser.getText();
-    const pageCount = textResult.total || textResult.pages?.length || 1;
+export async function extractTextFromPDF(buffer: Buffer | Uint8Array): Promise<PDFExtractionResult> {
+  const uint8 = Buffer.isBuffer(buffer)
+    ? new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+    : buffer instanceof Uint8Array
+    ? buffer
+    : new Uint8Array(buffer);
+  const pdf = await getDocumentProxy(uint8);
+  const { totalPages, text: pageTexts } = await extractText(pdf, { mergePages: false });
 
-    const pages: ExtractedPage[] = [];
-    const fullTextParts: string[] = [];
+  const pages: ExtractedPage[] = [];
+  const fullTextParts: string[] = [];
 
-    if (textResult.pages && Array.isArray(textResult.pages)) {
-      for (let i = 0; i < textResult.pages.length; i++) {
-        const pageObj = textResult.pages[i];
-        const pageNum = pageObj.num || i + 1;
-        const rawPageText = pageObj.text || "";
-        const cleanPageText = cleanText(rawPageText);
+  const textArray = Array.isArray(pageTexts) ? pageTexts : [pageTexts];
 
-        pages.push({
-          pageNumber: pageNum,
-          text: cleanPageText,
-        });
+  for (let i = 0; i < textArray.length; i++) {
+    const rawPage = textArray[i] || "";
+    const cleanPage = cleanText(rawPage);
+    const pageNum = i + 1;
 
-        if (cleanPageText.trim()) {
-          fullTextParts.push(`--- [Trang ${pageNum}] ---\n${cleanPageText}`);
-        }
-      }
-    } else {
-      const singleText = cleanText(textResult.text || "");
-      pages.push({ pageNumber: 1, text: singleText });
-      fullTextParts.push(singleText);
-    }
+    pages.push({
+      pageNumber: pageNum,
+      text: cleanPage,
+    });
 
-    const fullText = fullTextParts.join("\n\n");
-    const cleanedText = cleanText(fullText);
-
-    // Compute SHA-256 hash of the content for deduplication and caching
-    const contentHash = crypto.createHash("sha256").update(buffer).digest("hex");
-
-    // Detect structural headings from the text
-    const headings = extractHeadings(cleanedText);
-
-    return {
-      fullText,
-      cleanedText,
-      pageCount,
-      pages,
-      contentHash,
-      headings,
-    };
-  } finally {
-    try {
-      await parser.destroy();
-    } catch {
-      // Ignore cleanup error
+    if (cleanPage.trim()) {
+      fullTextParts.push(`--- [Trang ${pageNum}] ---\n${cleanPage}`);
     }
   }
+
+  const fullText = fullTextParts.join("\n\n");
+  const cleanedText = cleanText(fullText);
+
+  // Compute SHA-256 hash of the content for deduplication and caching
+  const contentHash = crypto.createHash("sha256").update(uint8).digest("hex");
+
+  // Detect structural headings from the text
+  const headings = extractHeadings(cleanedText);
+
+  return {
+    fullText,
+    cleanedText,
+    pageCount: totalPages || pages.length || 1,
+    pages,
+    contentHash,
+    headings,
+  };
 }
 
 /**
@@ -123,7 +114,7 @@ function extractHeadings(text: string): string[] {
 }
 
 /**
- * Splits long text into chunks of approximately maxTokens (approx 4 chars per token)
+ * Splits long text into chunks of approximately maxCharsPerChunk
  * while preserving page references for citation accuracy.
  */
 export function chunkTextWithPageRef(

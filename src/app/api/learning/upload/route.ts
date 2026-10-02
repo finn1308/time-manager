@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { extractTextFromPDF, cleanText } from "@/lib/pdf/extractor";
 import crypto from "crypto";
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) {
