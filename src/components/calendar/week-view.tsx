@@ -539,7 +539,7 @@ export function WeekView({
                             +15m
                           </button>
 
-                          {ev.subject && (
+                          {canStartStudyTimer(ev.type) && ev.subject && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -553,7 +553,7 @@ export function WeekView({
                                   ev.id
                                 );
                               }}
-                              title="Bắt đầu học ngay môn này"
+                              title="Bắt đầu tự học ngay môn này"
                               className="p-1 rounded-full bg-[#d8ebe0] text-[#1b4332] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
                             >
                               <Play className="w-2.5 h-2.5 fill-current ml-0.2" />

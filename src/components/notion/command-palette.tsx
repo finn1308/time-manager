@@ -14,6 +14,7 @@ import {
   Play,
   Sparkles,
   CheckSquare,
+  Brain,
   Plus,
   Search,
   ArrowRight,
