@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
+import { formatVN, getDateKeyVN, makeVNDate } from "@/lib/date-utils";
 
 interface EventModalProps {
   open: boolean;
@@ -13,6 +14,8 @@ interface EventModalProps {
   subjects: Array<{ id: string; name: string; code: string | null; color: string }>;
   defaultDate?: string;
   defaultStartTime?: string;
+  defaultEndTime?: string;
+  onSuccess?: () => void;
   editingEvent?: {
     id: string;
     title: string;
@@ -29,8 +32,10 @@ export function EventModal({
   open,
   onClose,
   subjects = [],
-  defaultDate = new Date().toISOString().split("T")[0],
-  defaultStartTime = "14:00",
+  defaultDate = getDateKeyVN(new Date()),
+  defaultStartTime = "08:00",
+  defaultEndTime = "09:30",
+  onSuccess,
   editingEvent,
 }: EventModalProps) {
   const router = useRouter();
@@ -40,21 +45,25 @@ export function EventModal({
   const [subjectId, setSubjectId] = useState<string>(
     editingEvent ? editingEvent.subjectId || "" : subjects[0]?.id || ""
   );
+
   const [dateStr, setDateStr] = useState<string>(
     editingEvent
-      ? new Date(editingEvent.startTime).toLocaleDateString("en-CA")
+      ? formatVN(editingEvent.startTime, "yyyy-MM-dd")
       : defaultDate
   );
+
   const [startTimeStr, setStartTimeStr] = useState<string>(
     editingEvent
-      ? new Date(editingEvent.startTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+      ? formatVN(editingEvent.startTime, "HH:mm")
       : defaultStartTime
   );
+
   const [endTimeStr, setEndTimeStr] = useState<string>(
     editingEvent
-      ? new Date(editingEvent.endTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
-      : "15:30"
+      ? formatVN(editingEvent.endTime, "HH:mm")
+      : defaultEndTime
   );
+
   const [isLocked, setIsLocked] = useState<boolean>(editingEvent ? !!editingEvent.isLocked : false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -65,13 +74,27 @@ export function EventModal({
     setIsSubmitting(true);
 
     try {
+      if (!dateStr) {
+        throw new Error("Vui lòng chọn ngày học");
+      }
+      if (!startTimeStr || !endTimeStr) {
+        throw new Error("Vui lòng nhập giờ bắt đầu và kết thúc");
+      }
+
+      const startUTC = makeVNDate(dateStr, startTimeStr);
+      const endUTC = makeVNDate(dateStr, endTimeStr);
+
+      if (endUTC <= startUTC) {
+        throw new Error("Giờ kết thúc phải sau giờ bắt đầu");
+      }
+
       const payload = {
         id: editingEvent?.id,
         title: title.trim(),
         description: description.trim() || null,
         subjectId: subjectId || null,
-        startTime: `${dateStr}T${startTimeStr}:00+07:00`,
-        endTime: `${dateStr}T${endTimeStr}:00+07:00`,
+        startTime: startUTC.toISOString(),
+        endTime: endUTC.toISOString(),
         isLocked,
         timezone: "Asia/Ho_Chi_Minh",
       };
@@ -87,6 +110,7 @@ export function EventModal({
         throw new Error(data.error || "Không thể lưu sự kiện");
       }
 
+      if (onSuccess) onSuccess();
       router.refresh();
       onClose();
     } catch (err: any) {
@@ -101,6 +125,7 @@ export function EventModal({
     try {
       setIsSubmitting(true);
       await fetch(`/api/calendar/events?id=${editingEvent.id}`, { method: "DELETE" });
+      if (onSuccess) onSuccess();
       router.refresh();
       onClose();
     } catch (e) {
@@ -112,11 +137,13 @@ export function EventModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-md">
+      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
         <DialogHeader>
-          <DialogTitle>{editingEvent ? "Chỉnh sửa lịch học" : "Tạo lịch học mới"}</DialogTitle>
-          <DialogDescription>
-            Hệ thống sẽ chạy bộ kiểm tra conflict trên server và bảo đảm không trùng lịch.
+          <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            {editingEvent ? "Chỉnh sửa lịch học" : "Tạo lịch học mới"}
+          </DialogTitle>
+          <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            Múi giờ chuẩn: Asia/Ho_Chi_Minh. Kiểm tra xung đột tự động bảo đảm không trùng lịch.
           </DialogDescription>
         </DialogHeader>
 
@@ -135,6 +162,7 @@ export function EventModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="VD: Làm bài tập Giải tích chương 3"
+              className="rounded-2xl"
               required
             />
           </div>
@@ -161,12 +189,13 @@ export function EventModal({
           <div className="grid grid-cols-3 gap-2.5">
             <div>
               <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                Ngày *
+                Ngày (VN) *
               </label>
               <Input
                 type="date"
                 value={dateStr}
                 onChange={(e) => setDateStr(e.target.value)}
+                className="rounded-2xl"
                 required
               />
             </div>
@@ -178,6 +207,7 @@ export function EventModal({
                 type="time"
                 value={startTimeStr}
                 onChange={(e) => setStartTimeStr(e.target.value)}
+                className="rounded-2xl"
                 required
               />
             </div>
@@ -189,6 +219,7 @@ export function EventModal({
                 type="time"
                 value={endTimeStr}
                 onChange={(e) => setEndTimeStr(e.target.value)}
+                className="rounded-2xl"
                 required
               />
             </div>
@@ -222,7 +253,7 @@ export function EventModal({
             />
           </div>
 
-          <DialogFooter className="flex justify-between items-center">
+          <DialogFooter className="flex justify-between items-center pt-2">
             {editingEvent ? (
               <Button
                 type="button"
@@ -237,14 +268,14 @@ export function EventModal({
             ) : <div />}
 
             <div className="flex items-center space-x-2">
-              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl">
+              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting} className="rounded-2xl border-[#dbe7dd] text-xs">
                 Hủy
               </Button>
               <Button
                 type="submit"
                 variant="default"
                 disabled={isSubmitting}
-                className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold"
+                className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold text-xs"
               >
                 {isSubmitting ? "Đang lưu..." : editingEvent ? "Cập nhật" : "Tạo lịch"}
               </Button>

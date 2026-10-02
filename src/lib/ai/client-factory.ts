@@ -182,12 +182,13 @@ export function runLocalHeuristicScheduler(params: {
   const startDay = parseISO(params.startDate);
   const endDay = parseISO(params.endDate);
 
-  // Preferred candidate study windows in a day (local VN time)
+  // Candidate study windows across the 4 BUỔI in Vietnam timezone
   const candidateWindows = [
-    { start: "14:00", end: "15:30", duration: 90 }, // Afternoon slot 1
-    { start: "15:45", end: "17:15", duration: 90 }, // Afternoon slot 2
-    { start: "19:30", end: "21:00", duration: 90 }, // Evening prime slot 1
-    { start: "21:15", end: "22:45", duration: 90 }, // Evening prime slot 2
+    { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
+    { start: "12:30", end: "13:30", duration: 60, label: "Trưa", emoji: "☀️", period: "noon" },
+    { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
+    { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+    { start: "21:15", end: "22:45", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
   ];
 
   // Sort subjects by priority desc, remaining hours desc
@@ -200,13 +201,15 @@ export function runLocalHeuristicScheduler(params: {
   let subjectIdx = 0;
 
   while (curDay <= endDay) {
+    const curDateKey = getDateKeyVN(curDay);
+
     for (const win of candidateWindows) {
       if (sortedSubjects.length === 0) break;
 
       const sub = sortedSubjects[subjectIdx % sortedSubjects.length];
 
-      const candStart = timeStringToDateOnDay(curDay, win.start);
-      const candEnd = timeStringToDateOnDay(curDay, win.end);
+      const candStart = makeVNDate(curDateKey, win.start);
+      const candEnd = makeVNDate(curDateKey, win.end);
 
       // Check collision with blocked slots
       const blockCollision = collidesWithBlockedSlot(candStart, candEnd, params.blockedSlots);
@@ -236,7 +239,7 @@ export function runLocalHeuristicScheduler(params: {
         startTime: candStart.toISOString(),
         endTime: candEnd.toISOString(),
         durationMinutes: win.duration,
-        reasoning: `Khung giờ ${win.start} - ${win.end} hoàn toàn trống, không vướng giờ bận, ưu tiên môn có trọng số ${sub.priority}.`,
+        reasoning: `Buổi ${win.label} (${win.emoji} ${win.start} - ${win.end}) hoàn toàn khả dụng, không vướng giờ bận/khóa, phân bổ tối ưu theo độ ưu tiên ${sub.priority}/5.`,
       });
 
       subjectIdx++;
@@ -247,7 +250,7 @@ export function runLocalHeuristicScheduler(params: {
 
   return {
     proposedEvents,
-    summary: `Đã tự động tính toán và phân bổ ${proposedEvents.length} buổi học tối ưu, tránh hoàn toàn mọi khung giờ bị khóa và lịch bận cố định.`,
-    providerUsed: "ChronoMind Local Constraint Satisfaction Engine",
+    summary: `Đã tự động tính toán và phân bổ ${proposedEvents.length} buổi học tối ưu qua 4 Buổi (Sáng, Trưa, Chiều, Tối), tránh hoàn toàn mọi khung giờ bị khóa và lịch bận cố định.`,
+    providerUsed: "ChronoMind Local Constraint Satisfaction Engine (4-Period Aware)",
   };
 }
