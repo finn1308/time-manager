@@ -245,6 +245,18 @@ export default function CalendarPage() {
               <CalendarDays className="w-3.5 h-3.5" />
               <span>Tháng</span>
             </button>
+
+            <button
+              onClick={() => setViewMode("agenda")}
+              className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
+                viewMode === "agenda"
+                  ? "bg-[#2d6a4f] text-white shadow-2xs"
+                  : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
+              }`}
+            >
+              <List className="w-3.5 h-3.5" />
+              <span>Agenda</span>
+            </button>
           </div>
         </div>
       </div>
@@ -268,6 +280,21 @@ export default function CalendarPage() {
               {sub.name}
             </option>
           ))}
+        </select>
+        <select
+          value={selectedTypeFilter}
+          onChange={(e) => setSelectedTypeFilter(e.target.value)}
+          className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs h-10 px-3 w-full sm:w-1/4 outline-none text-[#192e22] dark:text-[#f0f7f2]"
+        >
+          <option value="ALL">Tất cả loại sự kiện</option>
+          {ALL_EVENT_TYPES.map((t) => {
+            const cfg = getEventTypeConfig(t);
+            return (
+              <option key={t} value={t}>
+                {cfg.label}
+              </option>
+            );
+          })}
         </select>
       </div>
 
@@ -464,7 +491,10 @@ export default function CalendarPage() {
           const filteredEvents = events.filter((ev) => {
             const matchesSearch = ev.title.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesSubject = selectedSubjectFilter === "ALL" || ev.subject?.id === selectedSubjectFilter;
-            return matchesSearch && matchesSubject;
+            const matchesType =
+              selectedTypeFilter === "ALL" ||
+              (ev.type || "STUDY").toUpperCase() === selectedTypeFilter;
+            return matchesSearch && matchesSubject && matchesType;
           });
 
           return (
@@ -487,6 +517,13 @@ export default function CalendarPage() {
               )}
               {viewMode === "month" && (
                 <MonthView
+                  initialEvents={filteredEvents}
+                  subjects={subjects}
+                  onEventsChange={loadData}
+                />
+              )}
+              {viewMode === "agenda" && (
+                <AgendaView
                   initialEvents={filteredEvents}
                   subjects={subjects}
                   onEventsChange={loadData}
