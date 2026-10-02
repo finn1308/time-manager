@@ -81,7 +81,8 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
 
       const eventsOnDay = allEvents.filter((ev) =>
         isSameDay(toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE), targetDay) &&
-        (ev.type === "SELF_STUDY" || ev.type === "STUDY")
+        (ev.type === "SELF_STUDY" || ev.type === "STUDY") &&
+        (ev as any).trackStudyTime !== false
       );
       const plannedMinutes = eventsOnDay.reduce((acc, ev) => {
         const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 60);
@@ -108,7 +109,12 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
 
       const eventsInBucket = allEvents.filter((ev) => {
         const d = toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE);
-        return d >= bucketStart && d <= bucketEnd && (ev.type === "SELF_STUDY" || ev.type === "STUDY");
+        return (
+          d >= bucketStart &&
+          d <= bucketEnd &&
+          (ev.type === "SELF_STUDY" || ev.type === "STUDY") &&
+          (ev as any).trackStudyTime !== false
+        );
       });
       const plannedMinutes = eventsInBucket.reduce((acc, ev) => {
         const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 60);
@@ -137,7 +143,12 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
 
       const eventsInBucket = allEvents.filter((ev) => {
         const d = toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE);
-        return d >= bucketStart && d <= bucketEnd && (ev.type === "SELF_STUDY" || ev.type === "STUDY");
+        return (
+          d >= bucketStart &&
+          d <= bucketEnd &&
+          (ev.type === "SELF_STUDY" || ev.type === "STUDY") &&
+          (ev as any).trackStudyTime !== false
+        );
       });
       const plannedMinutes = eventsInBucket.reduce((acc, ev) => {
         const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 60);
