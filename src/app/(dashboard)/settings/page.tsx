@@ -23,6 +23,11 @@ import {
   Sun,
   Moon,
   BatteryCharging,
+  Download,
+  Upload,
+  Database,
+  FileSpreadsheet,
+  CheckCircle2,
 } from "lucide-react";
 
 interface KeyRecord {
@@ -73,7 +78,7 @@ const DAY_LABELS = [
 ];
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<"AI_KEYS" | "STUDY_PREFS" | "SYSTEM">("AI_KEYS");
+  const [activeTab, setActiveTab] = useState<"AI_KEYS" | "STUDY_PREFS" | "SYSTEM" | "BACKUP">("AI_KEYS");
 
   // AI Key State
   const [keys, setKeys] = useState<KeyRecord[]>([]);
@@ -96,6 +101,10 @@ export default function SettingsPage() {
   // Study Preferences State
   const [studyPrefs, setStudyPrefs] = useState<StudyPreferences>(DEFAULT_PREFS);
   const [savingPrefs, setSavingPrefs] = useState(false);
+
+  // Backup & Restore State
+  const [restoring, setRestoring] = useState(false);
+  const [restoreMessage, setRestoreMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -327,6 +336,18 @@ export default function SettingsPage() {
         >
           <Globe className="w-3.5 h-3.5" />
           <span>Hệ thống & Ngân sách</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("BACKUP")}
+          className={`px-4 py-2 rounded-xl transition-all flex items-center space-x-2 cursor-pointer ${
+            activeTab === "BACKUP"
+              ? "bg-[#2d6a4f] text-white shadow-2xs"
+              : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+          }`}
+        >
+          <Database className="w-3.5 h-3.5" />
+          <span>Sao lưu & Xuất dữ liệu</span>
         </button>
       </div>
 
