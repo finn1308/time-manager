@@ -48,10 +48,10 @@
   - [x] Phân biệt màu sắc & icon: Study, Personal, Exam, Deadline, Meeting, Blocked, Other
   - [x] Drag & Drop, resize, tạo/sửa/xóa sự kiện, bảo toàn lịch cũ khi AI generate
 
-- [ ] **Tác vụ 7: Nâng cấp AI Context Engine & Auto Scheduler** (Phần 10, 45, 46, 47)
-  - [ ] Context Builder tích hợp toàn diện: User + Settings + Availability + Calendar + Subjects + Goals + Milestones + Tasks + Deadlines + Exams + History + Planned vs Actual + Missed sessions
-  - [ ] Lập lịch thông minh 4 buổi, ưu tiên deadline gần, tôn trọng availability & blocked slots
-  - [ ] Server-side deterministic conflict detection & transaction rollback an toàn
+- [x] **Tác vụ 7: Nâng cấp AI Context Engine & Auto Scheduler** (Phần 10, 45, 46, 47)
+  - [x] Context Builder tích hợp toàn diện: User + Settings + Availability + Calendar + Subjects + Goals + Milestones + Tasks + Deadlines + Exams + History + Planned vs Actual + Missed sessions
+  - [x] Lập lịch thông minh 4 buổi, ưu tiên deadline gần, tôn trọng availability & blocked slots
+  - [x] Server-side deterministic conflict detection & transaction rollback an toàn
 
 - [ ] **Tác vụ 8: AI Rescheduler & Khôi phục phiên học bỏ lỡ (Missed Sessions)** (Phần 11, 12, 32)
   - [ ] Tính năng "Đổi lịch học hôm nay"
