@@ -77,9 +77,9 @@
   - [x] AI Quiz generator bám sát nội dung tài liệu, quiz attempt tracker & review history
   - [x] Flashcard Deck với thuật toán Spaced Repetition (SuperMemo SM-2: New, Learning, Review, Mastered)
 
-- [ ] **Tác vụ 13: Notion-Style Rich Note Editor** (Phần 21)
-  - [ ] Trình soạn thảo ghi chú dạng khối (Headings, bold/italic, checklists, quotes, code, links)
-  - [ ] Liên kết linh hoạt Note với Môn học, Goal, Task, PDF
+- [x] **Tác vụ 13: Notion-Style Rich Note Editor** (Phần 21)
+  - [x] Trình soạn thảo ghi chú dạng khối (Headings, bold/italic, checklists, quotes, code, links)
+  - [x] Liên kết linh hoạt Note với Môn học, Goal, Task, PDF
 
 - [ ] **Tác vụ 14: Global Search (Cmd+K), Tag System & Quick Capture** (Phần 26, 27, 28)
   - [ ] Command Palette (⌘K) tìm kiếm toàn cục xuyên suốt Tasks, Notes, Subjects, Goals, Events, Flashcards

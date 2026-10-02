@@ -389,9 +389,11 @@ export default function CalendarPage() {
           const filteredEvents = events.filter((ev) => {
             const matchesSearch = ev.title.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesSubject = selectedSubjectFilter === "ALL" || ev.subject?.id === selectedSubjectFilter;
+            const evType = (ev.type || "OTHER").toUpperCase();
             const matchesType =
               selectedTypeFilter === "ALL" ||
-              (ev.type || "STUDY").toUpperCase() === selectedTypeFilter;
+              evType === selectedTypeFilter ||
+              (selectedTypeFilter === "SELF_STUDY" && evType === "STUDY");
             return matchesSearch && matchesSubject && matchesType;
           });
 
