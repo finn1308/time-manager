@@ -89,7 +89,7 @@ model Subject {
   code           String?
   color          String   @default("#408257")
   description    String?  @db.Text
-  targetHours    Float    @default(10.0)
+  targetHours    Float?
   completedHours Float    @default(0.0)
   priority       Int      @default(3)
   createdAt      DateTime @default(now())
