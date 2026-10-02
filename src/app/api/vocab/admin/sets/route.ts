@@ -21,14 +21,14 @@ export async function POST(req: Request) {
 
     const course = await prisma.vocabCourse.findUnique({
       where: { id: courseId },
-      include: { sets: { select: { orderNumber: true } } },
+      include: { wordSets: { select: { orderNumber: true } } },
     });
 
     if (!course) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    const nextOrder = orderNumber || (course.sets.length > 0 ? Math.max(...course.sets.map((s) => s.orderNumber)) + 1 : 1);
+    const nextOrder = orderNumber || (course.wordSets.length > 0 ? Math.max(...course.wordSets.map((s) => s.orderNumber)) + 1 : 1);
 
     const newSet = await prisma.wordSet.create({
       data: {
