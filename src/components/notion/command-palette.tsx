@@ -13,6 +13,7 @@ import {
   Settings,
   Play,
   Sparkles,
+  CheckSquare,
   Plus,
   Search,
   ArrowRight,
@@ -49,6 +50,16 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       icon: Calendar,
       run: () => {
         router.push("/calendar");
+        onClose();
+      },
+    },
+    {
+      id: "tasks",
+      title: "Nhiệm vụ & Quick Inbox (Tasks & Todo)",
+      category: "Điều hướng",
+      icon: CheckSquare,
+      run: () => {
+        router.push("/tasks");
         onClose();
       },
     },
