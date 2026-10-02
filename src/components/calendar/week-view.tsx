@@ -146,6 +146,34 @@ export function WeekView({
     setIsEventModalOpen(true);
   };
 
+  // Quick resize event duration (+/- delta minutes)
+  const handleQuickResize = async (e: React.MouseEvent, ev: any, deltaMinutes: number) => {
+    e.stopPropagation();
+    try {
+      const currentStart = new Date(ev.startTime);
+      const currentEnd = new Date(ev.endTime);
+      const currentDuration = Math.round((currentEnd.getTime() - currentStart.getTime()) / 60000);
+      const newDuration = Math.max(15, currentDuration + deltaMinutes);
+      const newEnd = new Date(currentStart.getTime() + newDuration * 60 * 1000);
+
+      const res = await fetch("/api/calendar/events", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: ev.id.includes("_") ? ev.id.split("_")[0] : ev.id,
+          startTime: currentStart.toISOString(),
+          endTime: newEnd.toISOString(),
+        }),
+      });
+
+      if (res.ok && onEventsChange) {
+        onEventsChange();
+      }
+    } catch (err) {
+      console.error("Resize error:", err);
+    }
+  };
+
   // Drag and drop handlers to move events between days
   const handleDragStart = (e: React.DragEvent, eventItem: any) => {
     e.dataTransfer.setData("application/json", JSON.stringify(eventItem));
