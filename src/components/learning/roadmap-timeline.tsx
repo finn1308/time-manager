@@ -109,8 +109,8 @@ export function RoadmapTimeline({
             </p>
           </div>
 
-          {/* Quick Metrics Badges */}
-          <div className="flex items-center space-x-3 shrink-0">
+          {/* Quick Metrics Badges & Actions */}
+          <div className="flex items-center space-x-2.5 shrink-0">
             <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#fcedeb] dark:bg-[#381c1c] text-[#d9483b] text-xs font-bold shadow-2xs">
               <Flame className="w-4 h-4 fill-[#d9483b]" />
               <span>{streakDays} Ngày Streak</span>
@@ -119,6 +119,16 @@ export function RoadmapTimeline({
               <Zap className="w-4 h-4 fill-[#2d6a4f] dark:fill-[#7fc498]" />
               <span>{userXp} XP</span>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDeleteModal(true)}
+              className="rounded-full text-xs text-[#b91c1c] dark:text-[#f87171] border-[#fecaca] dark:border-[#522222] hover:bg-[#fef2f2] dark:hover:bg-[#2b1616] space-x-1 cursor-pointer transition-all shadow-2xs"
+              title="Delete this learning roadmap"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Delete roadmap</span>
+            </Button>
           </div>
         </div>
 
@@ -404,8 +414,15 @@ export function RoadmapTimeline({
               )}
             </div>
           </div>
-        </div>
-      )}
+      {/* ================= DELETE CONFIRMATION MODAL ================= */}
+      <DeleteRoadmapModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        roadmapTitle={roadmap.title}
+        roadmapId={roadmap.id}
+        onSuccess={(msg) => onDeleteSuccess?.(msg)}
+        onError={(err) => onDeleteError?.(err)}
+      />
     </div>
   );
 }
