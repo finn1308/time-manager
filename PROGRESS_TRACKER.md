@@ -73,9 +73,9 @@
   - [x] AI Learning Roadmap Generator theo ngày, mục tiêu, tài liệu
   - [x] Nút "Delete Roadmap" với modal xác nhận xóa an toàn không ảnh hưởng Study Session
 
-- [ ] **Tác vụ 12: AI Quiz & Spaced Repetition Flashcards** (Phần 18, 19, 20)
-  - [ ] AI Quiz generator bám sát nội dung tài liệu, quiz attempt tracker & review history
-  - [ ] Flashcard Deck với thuật toán Spaced Repetition (SuperMemo SM-2: New, Learning, Review, Mastered)
+- [x] **Tác vụ 12: AI Quiz & Spaced Repetition Flashcards** (Phần 18, 19, 20)
+  - [x] AI Quiz generator bám sát nội dung tài liệu, quiz attempt tracker & review history
+  - [x] Flashcard Deck với thuật toán Spaced Repetition (SuperMemo SM-2: New, Learning, Review, Mastered)
 
 - [ ] **Tác vụ 13: Notion-Style Rich Note Editor** (Phần 21)
   - [ ] Trình soạn thảo ghi chú dạng khối (Headings, bold/italic, checklists, quotes, code, links)
