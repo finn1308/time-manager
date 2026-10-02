@@ -34,6 +34,9 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const [serverResults, setServerResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   const actions = [
     {
       id: "dashboard",
@@ -162,14 +165,84 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
     },
   ];
 
-  const filtered = actions.filter((a) =>
-    a.title.toLowerCase().includes(query.toLowerCase()) ||
-    a.category.toLowerCase().includes(query.toLowerCase())
+  // Debounced search for database items
+  useEffect(() => {
+    if (!query.trim() || query.trim().length < 2) {
+      setServerResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`);
+        if (res.ok) {
+          const data = await res.json();
+          setServerResults(data.results || []);
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const filteredActions = actions.filter(
+    (a) =>
+      a.title.toLowerCase().includes(query.toLowerCase()) ||
+      a.category.toLowerCase().includes(query.toLowerCase())
   );
+
+  // Map server result icons
+  const getItemIcon = (type: string) => {
+    switch (type) {
+      case "TASK":
+        return CheckSquare;
+      case "NOTE":
+        return FileText;
+      case "SUBJECT":
+        return BookOpen;
+      case "GOAL":
+        return Target;
+      case "EVENT":
+        return Calendar;
+      case "CARD":
+        return Brain;
+      default:
+        return Sparkles;
+    }
+  };
+
+  // Combined list for keyboard navigation
+  const allItems = [
+    ...serverResults.map((item) => ({
+      id: `server-${item.type}-${item.id}`,
+      title: item.title,
+      subtitle: item.subtitle,
+      badge: item.badge,
+      icon: getItemIcon(item.type),
+      run: () => {
+        router.push(item.url);
+        onClose();
+      },
+    })),
+    ...filteredActions.map((a) => ({
+      id: a.id,
+      title: a.title,
+      subtitle: undefined,
+      badge: a.category,
+      icon: a.icon,
+      run: a.run,
+    })),
+  ];
 
   useEffect(() => {
     setSelectedIndex(0);
-  }, [query]);
+  }, [query, serverResults]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -177,21 +250,21 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       if (!open) return;
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % (filtered.length || 1));
+        setSelectedIndex((prev) => (prev + 1) % (allItems.length || 1));
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + filtered.length) % (filtered.length || 1));
+        setSelectedIndex((prev) => (prev - 1 + allItems.length) % (allItems.length || 1));
       } else if (e.key === "Enter") {
         e.preventDefault();
-        if (filtered[selectedIndex]) {
-          filtered[selectedIndex].run();
+        if (allItems[selectedIndex]) {
+          allItems[selectedIndex].run();
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, filtered, selectedIndex]);
+  }, [open, allItems, selectedIndex]);
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -203,24 +276,35 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Gõ lệnh hoặc tìm kiếm (VD: Lịch, Môn học, Timer, AI...)"
+            placeholder="Tìm kiếm Task, Note, Môn học, Thẻ bài hoặc Gõ lệnh..."
             className="flex-1 bg-transparent border-none text-xs text-[#192e22] dark:text-[#f0f7f2] placeholder:text-[#8ba393] focus:outline-none"
             autoFocus
           />
+          {isSearching && (
+            <span className="text-[10px] text-[#2d6a4f] dark:text-[#52b788] animate-pulse mr-2">
+              Đang tìm...
+            </span>
+          )}
           <kbd className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#eef5f0] dark:bg-[#1d3024] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]">
             ESC
           </kbd>
         </div>
 
-        {/* Action List */}
-        <div className="p-2 max-h-80 overflow-y-auto space-y-1">
-          {filtered.map((action, idx) => {
-            const Icon = action.icon;
+        {/* Action & Result List */}
+        <div className="p-2 max-h-84 overflow-y-auto space-y-1">
+          {serverResults.length > 0 && (
+            <div className="px-3 pt-1.5 pb-1 text-[10px] font-bold text-[#2d6a4f] dark:text-[#52b788] uppercase tracking-wider">
+              Kết quả dữ liệu ({serverResults.length})
+            </div>
+          )}
+
+          {allItems.map((item, idx) => {
+            const Icon = item.icon;
             const isSelected = idx === selectedIndex;
             return (
               <div
-                key={action.id}
-                onClick={action.run}
+                key={item.id}
+                onClick={item.run}
                 onMouseEnter={() => setSelectedIndex(idx)}
                 className={`flex items-center justify-between px-3 py-2.5 rounded-2xl cursor-pointer text-xs transition-colors ${
                   isSelected
@@ -238,30 +322,39 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
                   >
                     <Icon className="w-3.5 h-3.5" />
                   </div>
-                  <span className="font-semibold truncate">{action.title}</span>
+                  <div className="truncate">
+                    <p className="font-semibold truncate">{item.title}</p>
+                    {item.subtitle && (
+                      <p className="text-[10px] text-[#73927d] dark:text-[#8ba393] truncate">
+                        {item.subtitle}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center space-x-2 shrink-0">
-                  <span className="text-[10px] font-medium text-[#73927d] dark:text-[#8ba393]">
-                    {action.category}
-                  </span>
+                  {item.badge && (
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#eef5f0] dark:bg-[#1d3024] text-[#73927d] dark:text-[#8ba393]">
+                      {item.badge}
+                    </span>
+                  )}
                   <ArrowRight className="w-3.5 h-3.5 opacity-60" />
                 </div>
               </div>
             );
           })}
 
-          {filtered.length === 0 && (
+          {allItems.length === 0 && !isSearching && (
             <div className="py-8 text-center text-xs text-[#73927d]">
-              Không tìm thấy lệnh hoặc trang phù hợp với "{query}".
+              Không tìm thấy lệnh hoặc dữ liệu phù hợp với "{query}".
             </div>
           )}
         </div>
 
         {/* Footer shortcuts */}
         <div className="px-4 py-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] flex items-center justify-between text-[10px] text-[#73927d]">
-          <span>Dùng phím ↑ ↓ để di chuyển • Nhấn Enter để chọn</span>
-          <span className="font-mono">ChronoMind Palette</span>
+          <span>Dùng phím ↑ ↓ để di chuyển • Nhấn Enter để mở</span>
+          <span className="font-mono">ChronoMind Global Search</span>
         </div>
       </DialogContent>
     </Dialog>
