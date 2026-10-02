@@ -214,18 +214,21 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
 
                   {/* Tiny Event Pills Preview */}
                   <div className="space-y-1 mt-1 overflow-hidden">
-                    {dayEvs.slice(0, 2).map((ev) => (
-                      <div
-                        key={ev.id}
-                        className="truncate text-[9px] font-medium px-1.5 py-0.5 rounded-md border border-[#dbe7dd]/80 dark:border-[#263d2e]"
-                        style={{
-                          backgroundColor: `${ev.subject?.color || "#2d6a4f"}15`,
-                          color: ev.subject?.color || "#1b4332",
-                        }}
-                      >
-                        {ev.title}
-                      </div>
-                    ))}
+                    {dayEvs.slice(0, 2).map((ev) => {
+                      const typeCfg = getEventTypeConfig(ev.type);
+                      return (
+                        <div
+                          key={ev.id}
+                          className="truncate text-[9px] font-medium px-1.5 py-0.5 rounded-md border border-[#dbe7dd]/80 dark:border-[#263d2e]"
+                          style={{
+                            backgroundColor: typeCfg.badgeBg,
+                            color: typeCfg.badgeText,
+                          }}
+                        >
+                          {ev.title}
+                        </div>
+                      );
+                    })}
                     {dayEvs.length > 2 && (
                       <div className="text-[8px] text-[#73927d] pl-1">
                         +{dayEvs.length - 2} buổi khác
@@ -247,34 +250,55 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
             </h3>
 
             <div className="py-3 overflow-y-auto space-y-2 max-h-96">
-              {selectedDayEvents.map((ev) => (
-                <div
-                  key={ev.id}
-                  onClick={() => {
-                    setEditingEvent(ev);
-                    setIsEventModalOpen(true);
-                  }}
-                  className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#52b788] transition-all cursor-pointer group"
-                  style={{ borderLeftColor: ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex-1">
-                      {ev.title}
+              {selectedDayEvents.map((ev) => {
+                const typeCfg = getEventTypeConfig(ev.type);
+                const TypeIcon = typeCfg.icon;
+                return (
+                  <div
+                    key={ev.id}
+                    onClick={() => {
+                      setEditingEvent(ev);
+                      setIsEventModalOpen(true);
+                    }}
+                    className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#52b788] transition-all cursor-pointer group"
+                    style={{ borderLeftColor: typeCfg.borderLeftColor || ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
+                  >
+                    <div className="flex items-center space-x-1.5 mb-1">
+                      <span
+                        className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.2 rounded-md"
+                        style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
+                      >
+                        <TypeIcon className="w-2.5 h-2.5 shrink-0" />
+                        <span>{typeCfg.label}</span>
+                      </span>
+                      {ev.subject && (
+                        <span
+                          className="text-[9px] font-bold px-1.5 py-0.2 rounded-md text-white"
+                          style={{ backgroundColor: ev.subject.color || "#2d6a4f" }}
+                        >
+                          {ev.subject.name}
+                        </span>
+                      )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={(e) => handleQuickDelete(e, ev)}
-                      title="Xóa lịch này"
-                      className="opacity-60 group-hover:opacity-100 text-gray-400 hover:text-rose-600 p-1 rounded-md"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-start justify-between">
+                      <div className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex-1">
+                        {ev.title}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => handleQuickDelete(e, ev)}
+                        title="Xóa lịch này"
+                        className="opacity-60 group-hover:opacity-100 text-gray-400 hover:text-rose-600 p-1 rounded-md"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <div className="font-mono text-[10px] text-[#73927d] mt-1">
+                      {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
+                    </div>
                   </div>
-                  <div className="font-mono text-[10px] text-[#73927d] mt-1">
-                    {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
 
               {selectedDayEvents.length === 0 && (
                 <p className="text-xs text-[#8ba393] text-center py-10">
