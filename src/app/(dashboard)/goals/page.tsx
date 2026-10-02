@@ -97,6 +97,51 @@ export default function GoalsPage() {
   };
 
   return (
+  const handleToggleMilestone = async (milestoneId: string, currentCompleted: boolean) => {
+    try {
+      // Optimistic update
+      setGoals((prev) =>
+        prev.map((g) => ({
+          ...g,
+          milestoneRecords: (g.milestoneRecords || []).map((m: any) =>
+            m.id === milestoneId ? { ...m, isCompleted: !currentCompleted } : m
+          ),
+        }))
+      );
+
+      const res = await fetch("/api/milestones", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: milestoneId, isCompleted: !currentCompleted }),
+      });
+      if (!res.ok) {
+        loadData();
+      }
+    } catch (err) {
+      console.error("Failed to toggle milestone:", err);
+      loadData();
+    }
+  };
+
+  const handleAddMilestone = async (goalId: string, milestoneTitle: string) => {
+    if (!milestoneTitle.trim()) return;
+    try {
+      const res = await fetch("/api/milestones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ goalId, title: milestoneTitle.trim() }),
+      });
+      if (res.ok) {
+        loadData();
+      }
+    } catch (err) {
+      console.error("Failed to add milestone:", err);
+    }
+  };
+
+  const [newMilestoneInput, setNewMilestoneInput] = useState<{ [goalId: string]: string }>({});
+
+  return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -106,13 +151,13 @@ export default function GoalsPage() {
             <span>Mục tiêu học tập & Milestone (Goals)</span>
           </h1>
           <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
-            Đặt ra số giờ cần đạt, deadline và các mốc milestone nhỏ để AI phân bổ lịch học thông minh.
+            Thiết lập hệ thống phân cấp: Môn học → Mục tiêu lớn → Mốc Milestone → Phiên học để AI phân bổ tối ưu.
           </p>
         </div>
 
         <Button
           onClick={() => setModalOpen(true)}
-          className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl flex items-center space-x-2 shadow-2xs text-xs font-semibold h-10 px-4"
+          className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl flex items-center space-x-2 shadow-2xs text-xs font-semibold h-10 px-4 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Thêm mục tiêu mới</span>
@@ -122,7 +167,7 @@ export default function GoalsPage() {
       {/* Content */}
       {loading ? (
         <div className="p-12 text-center text-xs text-[#526b5c] animate-pulse">
-          Đang tải danh sách mục tiêu...
+          Đang tải danh sách mục tiêu & milestones...
         </div>
       ) : goals.length === 0 ? (
         <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-12 text-center">
@@ -137,7 +182,7 @@ export default function GoalsPage() {
           </p>
           <Button
             onClick={() => setModalOpen(true)}
-            className="mt-5 bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl text-xs font-semibold"
+            className="mt-5 bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl text-xs font-semibold cursor-pointer"
           >
             Tạo mục tiêu ngay
           </Button>
@@ -154,12 +199,20 @@ export default function GoalsPage() {
               reqWeeklyHours = Math.round((g.targetHours / weeksLeft) * 10) / 10;
             }
 
-            let milestonesList: Array<{ title: string; done: boolean }> = [];
-            if (g.milestones) {
+            const records: any[] = g.milestoneRecords || [];
+            let fallbackList: Array<{ title: string; done: boolean }> = [];
+            if (records.length === 0 && g.milestones) {
               try {
-                milestonesList = JSON.parse(g.milestones);
+                fallbackList = JSON.parse(g.milestones);
               } catch {}
             }
+
+            const totalMilestones = records.length > 0 ? records.length : fallbackList.length;
+            const completedCount =
+              records.length > 0
+                ? records.filter((m) => m.isCompleted).length
+                : fallbackList.filter((m) => m.done).length;
+            const progressPercent = totalMilestones > 0 ? Math.round((completedCount / totalMilestones) * 100) : 0;
 
             return (
               <Card
@@ -167,23 +220,23 @@ export default function GoalsPage() {
                 className="rounded-[26px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-5 soft-card-hover flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1 min-w-0">
                       {g.subject && (
                         <span
-                          className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
+                          className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full text-white truncate max-w-[200px]"
                           style={{ backgroundColor: g.subject.color || "#2d6a4f" }}
                         >
                           {g.subject.name}
                         </span>
                       )}
-                      <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                      <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
                         {g.title}
                       </h3>
                     </div>
                     <button
                       onClick={() => handleDelete(g.id)}
-                      className="p-1.5 rounded-full hover:bg-[#f7ebeb] text-[#73927d] hover:text-[#b87474] transition-colors cursor-pointer"
+                      className="p-1.5 rounded-full hover:bg-[#f7ebeb] text-[#73927d] hover:text-[#b87474] transition-colors cursor-pointer shrink-0"
                       title="Xóa mục tiêu"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -196,22 +249,96 @@ export default function GoalsPage() {
                     </p>
                   )}
 
-                  {/* Milestones Checklist (Section 10) */}
-                  {milestonesList.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] space-y-1.5">
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#73927d]">
-                        Milestones ({milestonesList.length})
+                  {/* Progress Bar */}
+                  {totalMilestones > 0 && (
+                    <div className="mt-3.5 space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9]">
+                        <span>Tiến độ milestone</span>
+                        <span className="font-semibold text-[#2d6a4f] dark:text-[#52b788]">
+                          {completedCount}/{totalMilestones} ({progressPercent}%)
+                        </span>
                       </div>
-                      <div className="space-y-1 text-xs">
-                        {milestonesList.map((m, idx) => (
-                          <div key={idx} className="flex items-center space-x-1.5 text-[#192e22] dark:text-[#f0f7f2]">
-                            <Square className="w-3 h-3 text-[#2d6a4f] shrink-0" />
-                            <span className="truncate">{m.title}</span>
-                          </div>
-                        ))}
+                      <div className="w-full h-1.5 bg-[#e8f1eb] dark:bg-[#203527] rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-[#2d6a4f] dark:bg-[#52b788] transition-all duration-300 rounded-full"
+                          style={{ width: `${progressPercent}%` }}
+                        />
                       </div>
                     </div>
                   )}
+
+                  {/* Milestones Checklist */}
+                  <div className="mt-4 pt-3 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] space-y-2">
+                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#73927d]">
+                      <span>Milestones ({totalMilestones})</span>
+                    </div>
+
+                    <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+                      {records.length > 0 ? (
+                        records.map((m) => (
+                          <div
+                            key={m.id}
+                            onClick={() => handleToggleMilestone(m.id, m.isCompleted)}
+                            className="flex items-center space-x-2 text-xs p-1.5 rounded-xl hover:bg-[#f3f8f5] dark:hover:bg-[#1a2d21] cursor-pointer transition-colors"
+                          >
+                            {m.isCompleted ? (
+                              <CheckCircle2 className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788] shrink-0" />
+                            ) : (
+                              <Square className="w-4 h-4 text-[#8ba393] shrink-0" />
+                            )}
+                            <span
+                              className={`truncate flex-1 ${
+                                m.isCompleted
+                                  ? "line-through text-[#8ba393] dark:text-[#607d6a]"
+                                  : "text-[#192e22] dark:text-[#f0f7f2]"
+                              }`}
+                            >
+                              {m.title}
+                            </span>
+                          </div>
+                        ))
+                      ) : fallbackList.length > 0 ? (
+                        fallbackList.map((m, idx) => (
+                          <div key={idx} className="flex items-center space-x-2 text-xs p-1">
+                            <Square className="w-3.5 h-3.5 text-[#8ba393] shrink-0" />
+                            <span className="truncate text-[#192e22] dark:text-[#f0f7f2]">{m.title}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-[11px] text-[#8ba393] italic py-1">Chưa có milestone nào</div>
+                      )}
+                    </div>
+
+                    {/* Quick Add Milestone inline */}
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <Input
+                        placeholder="+ Thêm mốc nhỏ..."
+                        value={newMilestoneInput[g.id] || ""}
+                        onChange={(e) =>
+                          setNewMilestoneInput((prev) => ({ ...prev, [g.id]: e.target.value }))
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleAddMilestone(g.id, newMilestoneInput[g.id] || "");
+                            setNewMilestoneInput((prev) => ({ ...prev, [g.id]: "" }));
+                          }
+                        }}
+                        className="h-7 text-[11px] rounded-lg border-[#dbe7dd] dark:border-[#263d2e] px-2"
+                      />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          handleAddMilestone(g.id, newMilestoneInput[g.id] || "");
+                          setNewMilestoneInput((prev) => ({ ...prev, [g.id]: "" }));
+                        }}
+                        className="h-7 px-2 text-xs text-[#2d6a4f] dark:text-[#52b788] cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-5 pt-4 border-t border-[#dbe7dd]/70 dark:border-[#263d2e] space-y-2">
@@ -228,11 +355,11 @@ export default function GoalsPage() {
                     )}
                   </div>
 
-                  {/* Deadline Indicator (Section 32) */}
+                  {/* Deadline Indicator */}
                   {daysLeft !== null && (
                     <div className="flex items-center justify-between text-[11px] pt-1">
-                      <span className={daysLeft <= 7 ? "text-amber-700 font-semibold" : "text-[#526b5c]"}>
-                        {daysLeft > 0 ? `Còn ${daysLeft} ngày` : "Đã đến hạn"}
+                      <span className={daysLeft <= 7 ? "text-amber-700 dark:text-amber-400 font-semibold" : "text-[#526b5c] dark:text-[#a3bda9]"}>
+                        {daysLeft > 0 ? `Còn ${daysLeft} ngày` : daysLeft === 0 ? "Hạn là hôm nay" : "Đã quá hạn"}
                       </span>
                       {reqWeeklyHours && (
                         <span className="text-[#2d6a4f] dark:text-[#52b788] font-bold">
