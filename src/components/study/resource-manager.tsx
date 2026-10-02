@@ -7,7 +7,6 @@ import {
   Image as ImageIcon,
   FolderOpen,
   Cloud,
-  Youtube,
   GraduationCap,
   ExternalLink,
   Plus,
@@ -26,6 +25,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+function YoutubeIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  );
+}
 
 export interface ResourceItem {
   id: string;
@@ -375,7 +382,7 @@ export function ResourceManager({
       case "DROPBOX":
         return <Cloud className="w-4 h-4 text-sky-600 dark:text-sky-400" />;
       case "YOUTUBE":
-        return <Youtube className="w-4 h-4 text-red-600 dark:text-red-400" />;
+        return <YoutubeIcon className="w-4 h-4 text-red-600 dark:text-red-400" />;
       case "LMS":
         return <GraduationCap className="w-4 h-4 text-purple-600 dark:text-purple-400" />;
       case "FILE_IMAGE":
