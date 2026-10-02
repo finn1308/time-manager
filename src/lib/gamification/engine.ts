@@ -186,8 +186,8 @@ export async function getUserGamificationData(userId: string) {
     }),
     prisma.studySession.aggregate({
       where: { userId, status: "COMPLETED" },
-      _count: { id: true },
-      _sum: { actualDurationMinutes: true },
+      _count: { _all: true },
+      _sum: { actualDurationSeconds: true },
     }),
     prisma.task.count({
       where: { userId, status: "DONE" },
@@ -203,21 +203,22 @@ export async function getUserGamificationData(userId: string) {
       SELECT COUNT(*) as count FROM "StudySession"
       WHERE "userId" = ${userId}
         AND "status" = 'COMPLETED'
-        AND EXTRACT(HOUR FROM "startTime" AT TIME ZONE 'Asia/Ho_Chi_Minh') >= 22
+        AND EXTRACT(HOUR FROM "actualEnd" AT TIME ZONE 'Asia/Ho_Chi_Minh') >= 22
     `.catch(() => [{ count: BigInt(0) }]),
     // Sessions completed before 07:00
     prisma.$queryRaw<Array<{ count: bigint }>>`
       SELECT COUNT(*) as count FROM "StudySession"
       WHERE "userId" = ${userId}
         AND "status" = 'COMPLETED'
-        AND EXTRACT(HOUR FROM "startTime" AT TIME ZONE 'Asia/Ho_Chi_Minh') < 7
+        AND EXTRACT(HOUR FROM "actualStart" AT TIME ZONE 'Asia/Ho_Chi_Minh') < 7
     `.catch(() => [{ count: BigInt(0) }]),
   ]);
 
   const totalXp = user?.xp || 0;
   const streakDays = user?.streakDays || 1;
-  const completedSessions = sessionStats._count.id || 0;
-  const totalStudyMinutes = sessionStats._sum.actualDurationMinutes || 0;
+  const completedSessions = sessionStats._count?._all || 0;
+  const totalStudySeconds = sessionStats._sum?.actualDurationSeconds || 0;
+  const totalStudyMinutes = Math.round(totalStudySeconds / 60);
   const nightOwlCount = Number(nightSessionsCount[0]?.count || 0);
   const earlyBirdCount = Number(earlySessionsCount[0]?.count || 0);
 

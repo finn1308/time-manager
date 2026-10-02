@@ -34,7 +34,7 @@ import {
   formatHoursVN,
   VIETNAM_TIMEZONE,
 } from "@/lib/date-utils";
-import { PRIMARY_EVENT_TYPES, canStartStudyTimer } from "@/lib/calendar/event-types";
+import { getEventTypeConfig, canStartStudyTimer } from "@/lib/calendar/event-types";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
