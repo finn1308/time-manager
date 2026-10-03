@@ -60,6 +60,9 @@ model User {
   vocabWordProgresses   UserWordProgress[]
   vocabStudySessions    VocabStudySession[]
   userPurchases         UserPurchase[]
+  vocabMasteries        UserVocabularyMastery[]
+  learningEvents        LearningEvent[]
+  aiLearningReports     UserAiLearningReport[]
 
   // 4-Year Academic OS Relations
   degreeProgram         DegreeProgram?
@@ -1093,8 +1096,10 @@ model VocabWord {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  wordSet      WordSet            @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
-  userProgress UserWordProgress[]
+  wordSet        WordSet                 @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+  userProgress   UserWordProgress[]
+  masteryRecords UserVocabularyMastery[]
+  learningEvents LearningEvent[]
 
   @@index([wordSetId, order])
 }
@@ -1208,5 +1213,107 @@ model UserPurchase {
 
   @@index([userId])
 }
+
+// ==============================================================================
+// LUYENTU - AI-POWERED ADAPTIVE LEARNING ENGINE MODELS
+// ==============================================================================
+
+model UserVocabularyMastery {
+  id                   String    @id @default(cuid())
+  userId               String
+  vocabularyId         String
+
+  // Continuous knowledge & confidence scores (0.0 to 1.0)
+  knowledgeScore       Float     @default(0.0)
+  confidenceScore      Float     @default(0.0)
+
+  // Behavioral signals
+  totalAttempts        Int       @default(0)
+  correctAttempts      Int       @default(0)
+  incorrectAttempts    Int       @default(0)
+  consecutiveCorrect   Int       @default(0)
+  consecutiveIncorrect Int       @default(0)
+  averageResponseTime  Float     @default(0.0) // seconds
+
+  // Temporal signals
+  lastSeenAt           DateTime?
+  lastCorrectAt        DateTime?
+  lastIncorrectAt      DateTime?
+
+  // Forgetting & dynamic difficulty
+  forgettingRisk       Float     @default(0.0) // 0.0 (safe) -> 1.0 (imminent forgetting)
+  difficultyScore      Float     @default(0.5) // 0.1 (very easy) -> 1.0 (very hard)
+  memoryStability      Float     @default(1.0) // stability factor S in half-life model (in days)
+  nextReviewAt         DateTime?
+
+  // Cross-skill mastery breakdown (0.0 to 1.0)
+  recognitionScore     Float     @default(0.0) // EN -> VN
+  recallScore          Float     @default(0.0) // VN -> EN
+  spellingScore        Float     @default(0.0) // Typing word
+  listeningScore       Float     @default(0.0) // Audio identification
+  usageScore           Float     @default(0.0) // Contextual / sentence usage
+
+  // AI Cognitive analysis fields
+  aiAnalysisNotes      String?   @db.Text
+  lastAiAnalyzedAt     DateTime?
+
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabulary VocabWord @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vocabularyId])
+  @@index([userId, knowledgeScore])
+  @@index([userId, forgettingRisk])
+  @@index([userId, nextReviewAt])
+  @@index([vocabularyId])
+}
+
+model LearningEvent {
+  id              String    @id @default(cuid())
+  userId          String
+  vocabularyId    String
+
+  eventType       String    // VIEW, ANSWER_CORRECT, ANSWER_INCORRECT, SKIPPED, FLASHCARD_REVIEW, QUIZ_COMPLETED, MANUAL_MARK_KNOWN, MANUAL_MARK_UNKNOWN
+  answer          String?   @db.Text
+  isCorrect       Boolean
+  responseTime    Float?    // response duration in seconds
+  questionType    String?   // RECOGNITION, RECALL, SENTENCE_COMPLETION, LISTENING, SPELLING, MATCHING
+  difficulty      Float?    // 0.1 - 1.0
+
+  previousMastery Float?
+  newMastery      Float?
+  metadata        String?   @db.Text // JSON metadata
+
+  createdAt       DateTime  @default(now())
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabulary VocabWord @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, eventType])
+  @@index([vocabularyId])
+}
+
+model UserAiLearningReport {
+  id                    String    @id @default(cuid())
+  userId                String
+
+  strongestArea         String
+  weakestArea           String
+  wordsNeedingAttention String    @db.Text // JSON string
+  wordsImprovingRapidly String    @db.Text // JSON string
+  recommendedFocus      String    @db.Text
+  cognitiveInsights     String?   @db.Text
+  providerUsed          String?
+
+  createdAt             DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
 
 
