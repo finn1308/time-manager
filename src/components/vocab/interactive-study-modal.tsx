@@ -55,6 +55,7 @@ interface InteractiveStudyModalProps {
   mode: StudyMode;
   words: StudyWord[];
   onSessionComplete?: () => void;
+  isEmbedded?: boolean;
 }
 
 export function InteractiveStudyModal({
@@ -65,6 +66,7 @@ export function InteractiveStudyModal({
   mode,
   words,
   onSessionComplete,
+  isEmbedded = false,
 }: InteractiveStudyModalProps) {
   // Navigation & Progress
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -534,7 +536,13 @@ export function InteractiveStudyModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md animate-in fade-in overflow-y-auto">
+    <div
+      className={
+        isEmbedded
+          ? "w-full flex items-center justify-center p-0"
+          : "fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md animate-in fade-in overflow-y-auto"
+      }
+    >
       {/* Quiz Sub-Type Selector Modal matching Image 2 */}
       {showQuizTypeModal && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in zoom-in-95">
@@ -609,7 +617,11 @@ export function InteractiveStudyModal({
       )}
 
       {/* Main Container */}
-      <div className="bg-white dark:bg-[#15251a] rounded-[36px] max-w-2xl w-full border border-gray-200/90 dark:border-[#263d2e] shadow-2xl flex flex-col max-h-[95vh] overflow-hidden my-auto">
+      <div
+        className={`bg-white dark:bg-[#15251a] rounded-[36px] max-w-2xl w-full border border-gray-200/90 dark:border-[#263d2e] shadow-2xl flex flex-col overflow-hidden my-auto ${
+          isEmbedded ? "max-h-none" : "max-h-[95vh]"
+        }`}
+      >
         {/* Top Control Bar matching Screenshots 1, 3, 4, 5 */}
         <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-[#263d2e]/80 space-y-2.5">
           <div className="flex items-center justify-between">

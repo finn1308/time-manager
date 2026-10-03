@@ -193,6 +193,7 @@ export function InteractiveStudyScreen() {
 
           <InteractiveStudyModal
             isOpen={true}
+            isEmbedded={true}
             onClose={() => {}}
             wordSetId={wordSetId}
             wordSetTitle={wordSetTitle}

@@ -37,12 +37,15 @@ export function VocabIndexNav({ currentStep }: VocabIndexNavProps) {
     }
   }
 
+  const isDirectIndex = pathname.startsWith("/index");
+  const prefix = isDirectIndex ? "/index" : "/vocab/index";
+
   const steps = [
     {
       step: 1,
       title: "1. Lộ trình học",
       subtitle: "Roadmap Screen",
-      href: "/vocab/index/1",
+      href: `${prefix}/1`,
       icon: Compass,
       color: "from-emerald-500 to-teal-600",
       activeBg: "bg-emerald-500 text-white shadow-emerald-500/25",
@@ -51,7 +54,7 @@ export function VocabIndexNav({ currentStep }: VocabIndexNavProps) {
       step: 2,
       title: "2. Danh sách bài học",
       subtitle: "Topic Set Overview",
-      href: "/vocab/index/2",
+      href: `${prefix}/2`,
       icon: ListOrdered,
       color: "from-sky-500 to-blue-600",
       activeBg: "bg-sky-500 text-white shadow-sky-500/25",
@@ -60,7 +63,7 @@ export function VocabIndexNav({ currentStep }: VocabIndexNavProps) {
       step: 3,
       title: "3. Cài đặt học & Từ vựng",
       subtitle: "Lesson Detail & Modes",
-      href: "/vocab/index/3",
+      href: `${prefix}/3`,
       icon: Sliders,
       color: "from-purple-500 to-indigo-600",
       activeBg: "bg-purple-600 text-white shadow-purple-500/25",
@@ -69,7 +72,7 @@ export function VocabIndexNav({ currentStep }: VocabIndexNavProps) {
       step: 4,
       title: "4. Luyện tập tương tác",
       subtitle: "Game & Study Engine",
-      href: "/vocab/index/4",
+      href: `${prefix}/4`,
       icon: Layers,
       color: "from-amber-500 to-orange-600",
       activeBg: "bg-amber-500 text-white shadow-amber-500/25",
@@ -78,7 +81,7 @@ export function VocabIndexNav({ currentStep }: VocabIndexNavProps) {
       step: 5,
       title: "5. Mini-game đặc biệt",
       subtitle: "Special Arcade & Story",
-      href: "/vocab/index/5",
+      href: `${prefix}/5`,
       icon: Gamepad2,
       color: "from-rose-500 to-pink-600",
       activeBg: "bg-rose-500 text-white shadow-rose-500/25",

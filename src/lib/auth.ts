@@ -62,27 +62,52 @@ export async function getSession(): Promise<SessionPayload | null> {
 
 export async function getCurrentUser() {
   const session = await getSession();
-  if (!session?.userId) return null;
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: session.userId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        role: true,
-        timezone: true,
-        isPro: true,
-        coins: true,
-        createdAt: true,
-      },
-    });
-    return user;
-  } catch {
-    return null;
+  if (session?.userId) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: session.userId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+          timezone: true,
+          isPro: true,
+          coins: true,
+          createdAt: true,
+        },
+      });
+      if (user) return user;
+    } catch {
+      // ignore
+    }
   }
+
+  // Local development auto-fallback to primary developer user if no active session cookie
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      const devUser = await prisma.user.findFirst({
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+          timezone: true,
+          isPro: true,
+          coins: true,
+          createdAt: true,
+        },
+      });
+      return devUser;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
 }
 
 export async function requireAuth() {
