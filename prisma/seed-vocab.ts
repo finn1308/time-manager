@@ -255,6 +255,210 @@ export async function seedVocabData() {
     }
   }
 
+  // Additional Roadmaps / Courses
+  const additionalCourses = [
+    {
+      slug: "hsa-dgnl-2026",
+      title: "Luyện thi HSA & ĐGNL",
+      subtitle: "Từ vựng trọng tâm kỳ thi Đánh giá năng lực ĐHQG",
+      description: "Bộ từ vựng bám sát cấu trúc bài thi HSA và V-SAT với các chủ đề khoa học, xã hội, tư duy ngôn ngữ.",
+      icon: "🎯",
+      coverColor: "#3b82f6",
+      level: "INTERMEDIATE",
+      order: 2,
+      sets: [
+        {
+          orderNumber: 1,
+          title: "Tư duy ngôn ngữ & Logic",
+          description: "Các thuật ngữ thường gặp trong phần đọc hiểu và lập luận phản biện.",
+          isPro: false,
+          words: [
+            { term: "Hypothesis", phonetic: "/haɪˈpɒθ.ə.sɪs/", partOfSpeech: "noun", meaning: "Giả thuyết", exampleSentence: "Scientists proposed a new hypothesis.", exampleMeaning: "Các nhà khoa học đã đề xuất một giả thuyết mới." },
+            { term: "Phenomenon", phonetic: "/fəˈnɒm.ɪ.nən/", partOfSpeech: "noun", meaning: "Hiện tượng", exampleSentence: "Gravity is a natural phenomenon.", exampleMeaning: "Trọng lực là một hiện tượng tự nhiên." },
+            { term: "Evidence", phonetic: "/ˈev.ɪ.dəns/", partOfSpeech: "noun", meaning: "Bằng chứng", exampleSentence: "There is clear evidence of climate change.", exampleMeaning: "Có bằng chứng rõ ràng về biến đổi khí hậu." },
+            { term: "Analyze", phonetic: "/ˈæn.əl.aɪz/", partOfSpeech: "verb", meaning: "Phân tích", exampleSentence: "We must analyze the data carefully.", exampleMeaning: "Chúng ta cần phân tích dữ liệu một cách cẩn thận." },
+            { term: "Evaluate", phonetic: "/ɪˈvæl.ju.eɪt/", partOfSpeech: "verb", meaning: "Đánh giá", exampleSentence: "Teachers evaluate students' performance.", exampleMeaning: "Giáo viên đánh giá kết quả của học sinh." },
+          ],
+        },
+        {
+          orderNumber: 2,
+          title: "Khoa học tự nhiên & Môi trường",
+          description: "Từ vựng chuyên đề sinh thái, môi trường và phát triển bền vững.",
+          isPro: true,
+          words: [
+            { term: "Ecosystem", phonetic: "/ˈiː.kəʊˌsɪs.təm/", partOfSpeech: "noun", meaning: "Hệ sinh thái", exampleSentence: "Forests are delicate ecosystems.", exampleMeaning: "Rừng là những hệ sinh thái nhạy cảm." },
+            { term: "Biodiversity", phonetic: "/ˌbaɪ.əʊ.daɪˈvɜː.sə.ti/", partOfSpeech: "noun", meaning: "Đa dạng sinh học", exampleSentence: "Protecting biodiversity is vital.", exampleMeaning: "Bảo vệ đa dạng sinh học là điều tối quan trọng." },
+            { term: "Atmosphere", phonetic: "/ˈæt.məs.fɪər/", partOfSpeech: "noun", meaning: "Khí quyển", exampleSentence: "Pollution enters the atmosphere.", exampleMeaning: "Chất ô nhiễm đi vào bầu khí quyển." },
+          ],
+        },
+      ],
+    },
+    {
+      slug: "thpt-qg-2026",
+      title: "THPT Quốc Gia 9+",
+      subtitle: "Tuyển chọn từ vựng phân loại câu 8+ 9+ kỳ thi tốt nghiệp",
+      description: "Từ vựng nâng cao, thành ngữ Idioms và Cụm động từ Phrasal Verbs hay bẫy trong đề thi chính thức.",
+      icon: "🎓",
+      coverColor: "#8b5cf6",
+      level: "INTERMEDIATE",
+      order: 3,
+      sets: [
+        {
+          orderNumber: 1,
+          title: "Phrasal Verbs then chốt",
+          description: "Cụm động từ then chốt thường xuyên xuất hiện trong đề minh họa và đề thi thật.",
+          isPro: false,
+          words: [
+            { term: "Bring about", phonetic: "/brɪŋ əˈbaʊt/", partOfSpeech: "verb", meaning: "Gây ra, mang lại", exampleSentence: "The reform will bring about major changes.", exampleMeaning: "Cải cách sẽ mang lại những thay đổi lớn." },
+            { term: "Come across", phonetic: "/kʌm əˈkrɒs/", partOfSpeech: "verb", meaning: "Tình cờ gặp", exampleSentence: "I came across an old photo in the attic.", exampleMeaning: "Tôi tình cờ thấy một bức ảnh cũ trên gác xép." },
+            { term: "Carry out", phonetic: "/ˈkær.i aʊt/", partOfSpeech: "verb", meaning: "Tiến hành, thực hiện", exampleSentence: "They decided to carry out the survey.", exampleMeaning: "Họ quyết định tiến hành cuộc khảo sát." },
+            { term: "Make up for", phonetic: "/meɪk ʌp fɔːr/", partOfSpeech: "verb", meaning: "Bù đắp cho", exampleSentence: "Hard work can make up for a lack of talent.", exampleMeaning: "Chăm chỉ có thể bù đắp cho sự thiếu hụt tài năng." },
+          ],
+        },
+      ],
+    },
+    {
+      slug: "cambridge-in-use",
+      title: "Cambridge In Use",
+      subtitle: "Bộ giáo trình chuẩn Cambridge kinh điển cho mọi trình độ",
+      description: "Bộ sách học từ vựng tiếng Anh theo ngữ cảnh thực tế hàng đầu thế giới.",
+      icon: "📖",
+      coverColor: "#059669",
+      level: "ADVANCED",
+      order: 4,
+      sets: [
+        {
+          orderNumber: 1,
+          title: "Work & Professional Life",
+          description: "Từ vựng về công việc, đồng nghiệp, giờ làm việc và sự nghiệp.",
+          isPro: false,
+          words: [
+            { term: "Commute", phonetic: "/kəˈmjuːt/", partOfSpeech: "verb", meaning: "Đi lại hàng ngày đi làm", exampleSentence: "He commutes by train every morning.", exampleMeaning: "Anh ấy đi tàu điện đi làm mỗi sáng." },
+            { term: "Colleague", phonetic: "/ˈkɒl.iːɡ/", partOfSpeech: "noun", meaning: "Đồng nghiệp", exampleSentence: "She gets along well with all her colleagues.", exampleMeaning: "Cô ấy hòa đồng rất tốt với tất cả đồng nghiệp." },
+            { term: "Deadline", phonetic: "/ˈded.laɪn/", partOfSpeech: "noun", meaning: "Hạn chót", exampleSentence: "We have to meet the project deadline.", exampleMeaning: "Chúng tôi phải kịp hạn chót dự án." },
+          ],
+        },
+      ],
+    },
+    {
+      slug: "toeic-600-essential",
+      title: "TOEIC 600+ Cốt lõi",
+      subtitle: "50 chủ đề từ vựng vàng trong đề thi TOEIC format mới",
+      description: "Nắm chắc 600 từ vựng cốt lõi về hợp đồng, mua sắm, quảng cáo, hội nghị thương mại.",
+      icon: "💼",
+      coverColor: "#f59e0b",
+      level: "INTERMEDIATE",
+      order: 5,
+      sets: [
+        {
+          orderNumber: 1,
+          title: "Contracts & Agreements",
+          description: "Hợp đồng, thỏa thuận và nghĩa vụ pháp lý trong kinh doanh.",
+          isPro: false,
+          words: [
+            { term: "Agreement", phonetic: "/əˈɡriː.mənt/", partOfSpeech: "noun", meaning: "Sự thỏa thuận, hợp đồng", exampleSentence: "Both parties reached an agreement.", exampleMeaning: "Cả hai bên đã đạt được một sự thỏa thuận." },
+            { term: "Obligation", phonetic: "/ˌɒb.lɪˈɡeɪ.ʃən/", partOfSpeech: "noun", meaning: "Nghĩa vụ, bổn phận", exampleSentence: "Employers have legal obligations.", exampleMeaning: "Người sử dụng lao động có các nghĩa vụ pháp lý." },
+            { term: "Assurance", phonetic: "/əˈʃɔː.rəns/", partOfSpeech: "noun", meaning: "Sự đảm bảo, cam đoan", exampleSentence: "He gave us his assurance of quality.", exampleMeaning: "Anh ấy đã đưa ra lời đảm bảo về chất lượng." },
+          ],
+        },
+      ],
+    },
+    {
+      slug: "destination-b1-b2",
+      title: "Destination B1-B2",
+      subtitle: "Cẩm nang bứt phá ngữ pháp & từ vựng học thuật đỉnh cao",
+      description: "Tổng hợp từ vựng học thuật, Collocations và Cụm từ chuyên sâu cho kỳ thi quốc tế.",
+      icon: "🚀",
+      coverColor: "#ec4899",
+      level: "ADVANCED",
+      order: 6,
+      sets: [
+        {
+          orderNumber: 1,
+          title: "Education & Learning",
+          description: "Các thuật ngữ giáo dục, học phần, bằng cấp và thành tựu.",
+          isPro: false,
+          words: [
+            { term: "Curriculum", phonetic: "/kəˈrɪk.jə.ləm/", partOfSpeech: "noun", meaning: "Chương trình giảng dạy", exampleSentence: "The school updated its science curriculum.", exampleMeaning: "Trường đã cập nhật chương trình giảng dạy khoa học." },
+            { term: "Discipline", phonetic: "/ˈdɪs.ə.plɪn/", partOfSpeech: "noun", meaning: "Kỷ luật, rèn luyện", exampleSentence: "Self-discipline is essential for success.", exampleMeaning: "Tính tự kỷ luật là điều cần thiết để thành công." },
+            { term: "Graduate", phonetic: "/ˈɡrædʒ.u.eɪt/", partOfSpeech: "verb", meaning: "Tốt nghiệp", exampleSentence: "She will graduate from university next month.", exampleMeaning: "Cô ấy sẽ tốt nghiệp đại học vào tháng tới." },
+          ],
+        },
+      ],
+    },
+  ];
+
+  for (const cData of additionalCourses) {
+    const course = await prisma.vocabCourse.upsert({
+      where: { slug: cData.slug },
+      update: {
+        title: cData.title,
+        subtitle: cData.subtitle,
+        description: cData.description,
+        icon: cData.icon,
+        coverColor: cData.coverColor,
+        level: cData.level,
+        order: cData.order,
+      },
+      create: {
+        slug: cData.slug,
+        title: cData.title,
+        subtitle: cData.subtitle,
+        description: cData.description,
+        icon: cData.icon,
+        coverColor: cData.coverColor,
+        level: cData.level,
+        isPublished: true,
+        order: cData.order,
+      },
+    });
+
+    for (const sData of cData.sets) {
+      const set = await prisma.wordSet.upsert({
+        where: {
+          courseId_orderNumber: {
+            courseId: course.id,
+            orderNumber: sData.orderNumber,
+          },
+        },
+        update: {
+          title: sData.title,
+          description: sData.description,
+          isPro: sData.isPro,
+        },
+        create: {
+          courseId: course.id,
+          orderNumber: sData.orderNumber,
+          title: sData.title,
+          description: sData.description,
+          isPro: sData.isPro,
+        },
+      });
+
+      for (let i = 0; i < sData.words.length; i++) {
+        const w = sData.words[i];
+        const existing = await prisma.vocabWord.findFirst({
+          where: { wordSetId: set.id, term: w.term },
+        });
+
+        if (!existing) {
+          await prisma.vocabWord.create({
+            data: {
+              wordSetId: set.id,
+              term: w.term,
+              phonetic: w.phonetic,
+              partOfSpeech: w.partOfSpeech,
+              meaning: w.meaning,
+              exampleSentence: w.exampleSentence || null,
+              exampleMeaning: w.exampleMeaning || null,
+              order: i + 1,
+            },
+          });
+        }
+      }
+    }
+  }
+
   // 2. Seed Shop Items
   const shopItemsData = [
     {
