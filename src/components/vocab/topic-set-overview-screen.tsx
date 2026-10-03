@@ -438,7 +438,7 @@ export function TopicSetOverviewScreen({ initialSlug }: TopicSetOverviewScreenPr
       <AddWordsModal
         isOpen={showAddWordsModal}
         onClose={() => setShowAddWordsModal(false)}
-        defaultCourseId={course.id}
+        defaultWordSetId={course.wordSets?.[0]?.id}
         onWordsAdded={() => fetchCourseData()}
       />
     </div>

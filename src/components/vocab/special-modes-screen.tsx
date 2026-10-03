@@ -218,41 +218,59 @@ export function SpecialModesScreen() {
           {activeGame === "MIXED" && (
             <MixedPracticeGame
               words={words}
-              onClose={() => setActiveGame(null)}
-              onSessionComplete={loadData}
+              wordSetId={wordSetId}
+              wordSetTitle={wordSetTitle}
+              onClose={() => {
+                setActiveGame(null);
+                loadData();
+              }}
             />
           )}
 
           {activeGame === "SENTENCE" && (
             <SentenceCraftGame
               words={words}
-              onClose={() => setActiveGame(null)}
-              onSessionComplete={loadData}
+              wordSetId={wordSetId}
+              isUserPro={true}
+              onClose={() => {
+                setActiveGame(null);
+                loadData();
+              }}
             />
           )}
 
           {activeGame === "COM_TAM" && (
             <ComTamGame
               words={words}
-              onClose={() => setActiveGame(null)}
-              userCoins={userCoins}
-              onCoinsChanged={(newCoins) => setUserCoins(newCoins)}
+              wordSetId={wordSetId}
+              initialCoins={userCoins}
+              onUpdateCoins={(newCoins: number) => setUserCoins(newCoins)}
+              onClose={() => {
+                setActiveGame(null);
+                loadData();
+              }}
             />
           )}
 
           {activeGame === "CHIM_CHAM_CHI" && (
             <FlappyBirdGame
               words={words}
-              onClose={() => setActiveGame(null)}
-              onSessionComplete={loadData}
+              wordSetId={wordSetId}
+              onClose={() => {
+                setActiveGame(null);
+                loadData();
+              }}
             />
           )}
 
           {activeGame === "GIAI_CUU_KHI" && (
             <MonkeyRescueGame
               words={words}
-              onClose={() => setActiveGame(null)}
-              onSessionComplete={loadData}
+              wordSetId={wordSetId}
+              onClose={() => {
+                setActiveGame(null);
+                loadData();
+              }}
             />
           )}
         </div>
