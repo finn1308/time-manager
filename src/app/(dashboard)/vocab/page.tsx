@@ -17,6 +17,7 @@ import {
   Flame,
   Award,
 } from "lucide-react";
+import { AddWordsModal } from "@/components/vocab/add-words-modal";
 
 interface CourseItem {
   id: string;
