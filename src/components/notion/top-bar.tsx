@@ -10,6 +10,7 @@ import { AiStudyCoachModal } from "../ai/ai-study-coach-modal";
 import { QuickCaptureModal } from "./quick-capture-modal";
 import { NotificationCenter } from "../notifications/notification-center";
 import { usePipTimer } from "../timer/pip-timer-provider";
+import { GamificationBadge } from "../vocab/gamification-badge";
 
 interface TopBarProps {
   user: {
@@ -48,11 +49,13 @@ export function TopBar({ user }: TopBarProps) {
   return (
     <>
       <header className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-8 py-3 bg-[#f4f8f5]/85 dark:bg-[#101c14]/85 backdrop-blur-md border-b border-[#dbe7dd]/80 dark:border-[#263d2e]">
-        {/* Left: Date Display */}
+        {/* Left: Date Display & Gamification Streak/Coins */}
         <div className="flex items-center space-x-3">
           <div className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9]">
             <span>{formatVN(now, "EEEE, dd 'thg' MM, yyyy")}</span>
           </div>
+          <div className="hidden sm:block h-3.5 w-px bg-[#dbe7dd] dark:bg-[#263d2e]" />
+          <GamificationBadge />
         </div>
 
         {/* Right: Quick Search (Cmd+K), AI Coach, Quick Add (+), User Avatar */}
