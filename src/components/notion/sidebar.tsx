@@ -65,6 +65,7 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
 
   const vocabNavItems = [
     { label: "Trang chủ", href: "/vocab", icon: Home, iconColor: "text-sky-500" },
+    { label: "Học thích ứng AI", href: "/vocab/adaptive", icon: Brain, iconColor: "text-teal-500" },
     { label: "Bộ từ vựng", href: "/vocab/courses/a1-0-3-0", icon: LayoutGrid, iconColor: "text-purple-500" },
     { label: "Từ vựng", href: "/vocab/words", icon: BookOpen, iconColor: "text-emerald-500" },
     { label: "Học từ vựng", href: "/vocab/spaced-repetition", icon: PlaySquare, iconColor: "text-orange-500" },
