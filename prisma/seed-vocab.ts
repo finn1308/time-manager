@@ -205,53 +205,24 @@ export async function seedVocabData() {
       },
     });
 
-    // Sync words for this set: remove terms no longer in the set
-    const validTerms = setData.words.map((w) => w.term);
+    // Fast batch sync words for this set
     await prisma.vocabWord.deleteMany({
-      where: {
-        wordSetId: wordSet.id,
-        term: { notIn: validTerms },
-      },
+      where: { wordSetId: wordSet.id },
     });
 
-    for (let i = 0; i < setData.words.length; i++) {
-      const w = setData.words[i];
-      const existing = await prisma.vocabWord.findFirst({
-        where: {
-          wordSetId: wordSet.id,
-          term: w.term,
-        },
-      });
-
-      if (!existing) {
-        await prisma.vocabWord.create({
-          data: {
-            wordSetId: wordSet.id,
-            term: w.term,
-            phonetic: w.phonetic,
-            partOfSpeech: w.partOfSpeech,
-            meaning: w.meaning,
-            explanation: (w as any).explanation || null,
-            exampleSentence: w.exampleSentence || null,
-            exampleMeaning: w.exampleMeaning || null,
-            order: i + 1,
-          },
-        });
-      } else {
-        await prisma.vocabWord.update({
-          where: { id: existing.id },
-          data: {
-            phonetic: w.phonetic,
-            partOfSpeech: w.partOfSpeech,
-            meaning: w.meaning,
-            explanation: (w as any).explanation || null,
-            exampleSentence: w.exampleSentence || null,
-            exampleMeaning: w.exampleMeaning || null,
-            order: i + 1,
-          },
-        });
-      }
-    }
+    await prisma.vocabWord.createMany({
+      data: setData.words.map((w, idx) => ({
+        wordSetId: wordSet.id,
+        term: w.term,
+        phonetic: w.phonetic,
+        partOfSpeech: w.partOfSpeech,
+        meaning: w.meaning,
+        explanation: (w as any).explanation || null,
+        exampleSentence: w.exampleSentence || null,
+        exampleMeaning: w.exampleMeaning || null,
+        order: idx + 1,
+      })),
+    });
   }
 
   // Additional Roadmaps / Courses
@@ -434,27 +405,22 @@ export async function seedVocabData() {
         },
       });
 
-      for (let i = 0; i < sData.words.length; i++) {
-        const w = sData.words[i];
-        const existing = await prisma.vocabWord.findFirst({
-          where: { wordSetId: set.id, term: w.term },
-        });
+      await prisma.vocabWord.deleteMany({
+        where: { wordSetId: set.id },
+      });
 
-        if (!existing) {
-          await prisma.vocabWord.create({
-            data: {
-              wordSetId: set.id,
-              term: w.term,
-              phonetic: w.phonetic,
-              partOfSpeech: w.partOfSpeech,
-              meaning: w.meaning,
-              exampleSentence: w.exampleSentence || null,
-              exampleMeaning: w.exampleMeaning || null,
-              order: i + 1,
-            },
-          });
-        }
-      }
+      await prisma.vocabWord.createMany({
+        data: sData.words.map((w, idx) => ({
+          wordSetId: set.id,
+          term: w.term,
+          phonetic: w.phonetic,
+          partOfSpeech: w.partOfSpeech,
+          meaning: w.meaning,
+          exampleSentence: w.exampleSentence || null,
+          exampleMeaning: w.exampleMeaning || null,
+          order: idx + 1,
+        })),
+      });
     }
   }
 
