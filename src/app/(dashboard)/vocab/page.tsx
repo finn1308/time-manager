@@ -234,6 +234,13 @@ export default function VocabCoursesHubPage() {
           <p className="text-xs text-gray-400">Hãy thử tìm kiếm với từ khóa khác.</p>
         </div>
       )}
+
+      {/* Add Words Modal (Screenshot 1: Thêm vào bộ từ) */}
+      <AddWordsModal
+        isOpen={showAddWordsModal}
+        onClose={() => setShowAddWordsModal(false)}
+        onWordsAdded={() => fetchCourses()}
+      />
     </div>
   );
 }
