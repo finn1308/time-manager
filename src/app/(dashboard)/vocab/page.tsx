@@ -41,6 +41,7 @@ export default function VocabCoursesHubPage() {
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("ALL");
+  const [showAddWordsModal, setShowAddWordsModal] = useState(false);
 
   const fetchCourses = useCallback(async () => {
     try {
