@@ -503,13 +503,11 @@ export async function seedVocabData() {
   console.log("✅ Vocab seed completed successfully!");
 }
 
-if (require.main === module) {
-  seedVocabData()
-    .catch((e) => {
-      console.error(e);
-      process.exit(1);
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
-}
+seedVocabData()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
