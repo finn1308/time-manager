@@ -40,11 +40,11 @@ Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ cả semanti
 - [x] **Modal Chế độ Đặc biệt:** Popup menu chọn 5 mini-games học từ độc quyền (Luyện tập hỗn hợp, Luyện đặt câu PRO, Quán cơm tấm, Chim chăm chỉ arcade, Giải cứu khỉ). *(Hoàn thành: 2026-10-03 10:12 - `src/components/vocab/special-modes-modal.tsx`, `src/components/vocab/special-games/`)*
 
 ### 6. Giao diện & Engine các chế độ luyện tập (Game/Study Modes - Web 4: `/vocab/index/4`)
-- [ ] **Top Bar chuẩn bài tập:** Thanh Progress bar mượt mà, Bộ đếm câu (VD: 3/9), Đồng hồ đếm ngược sinh động, Coin reward indicator (+10 xu), Nút "Chơi lại", Nút "Thoát".
-- [ ] **Mode 1 - Flashcard:** Lật thẻ 3D animation, từ vựng, phiên âm IPA, loại từ, giải thích, hỗ trợ hotkeys (Space lật thẻ, Ctrl+S phát âm, Ctrl+1 Quên, Ctrl+2 Thuộc, ô input gõ nghĩa kiểm tra trí nhớ).
-- [ ] **Mode 2 - Listening (Nghe chép chính tả):** Icon phát loa kèm hotkey Ctrl+X, chọn tốc độ đọc (1.0x / 0.75x), ô input gõ từ phản xạ, nút Xem ví dụ gợi ý (Ctrl+E), Gợi ý ký tự đầu (Ctrl+Space), Phím Enter kiểm tra.
-- [ ] **Mode 3 - Typing (Gõ từ phản xạ):** Hiển thị nghĩa tiếng Việt/nghe audio, switch đổi chiều (Anh -> Việt / Việt -> Anh), autofocus input, phản hồi đúng/sai tức thì, kiểm tra phím Enter.
-- [ ] **Mode 4 - Ghép cặp (Matching Game):** Thanh đo sinh mệnh (5 trái tim), Timer đếm ngược 60s, 2 cột thẻ (Từ vựng tiếng Anh vs Nghĩa tiếng Việt), hiệu ứng khi click đúng/sai và hoàn thành vòng.
+- [x] **Top Bar chuẩn bài tập:** Thanh Progress bar mượt mà, Bộ đếm câu (VD: 3/9), Đồng hồ đếm ngược sinh động, Coin reward indicator (+10 xu), Nút "Chơi lại", Nút "Thoát". *(Hoàn thành: 2026-10-03 10:13 - `src/components/vocab/interactive-study-modal.tsx` lines 612-690, `src/components/vocab/interactive-study-screen.tsx`)*
+- [x] **Mode 1 - Flashcard:** Lật thẻ 3D animation, từ vựng, phiên âm IPA, loại từ, giải thích, hỗ trợ hotkeys (Space lật thẻ, Ctrl+S phát âm, Ctrl+1 Quên, Ctrl+2 Thuộc, ô input gõ nghĩa kiểm tra trí nhớ). *(Hoàn thành: 2026-10-03 10:13 - `src/components/vocab/interactive-study-modal.tsx` lines 770-893)*
+- [x] **Mode 2 - Listening (Nghe chép chính tả):** Icon phát loa kèm hotkey Ctrl+X, chọn tốc độ đọc (1.0x / 0.75x), ô input gõ từ phản xạ, nút Xem ví dụ gợi ý (Ctrl+E), Gợi ý ký tự đầu (Ctrl+Space), Phím Enter kiểm tra. *(Hoàn thành: 2026-10-03 10:13 - `src/components/vocab/interactive-study-modal.tsx` lines 965-1058)*
+- [x] **Mode 3 - Typing (Gõ từ phản xạ):** Hiển thị nghĩa tiếng Việt/nghe audio, switch đổi chiều (Anh -> Việt / Việt -> Anh), autofocus input, phản hồi đúng/sai tức thì, kiểm tra phím Enter. *(Hoàn thành: 2026-10-03 10:13 - `src/components/vocab/interactive-study-modal.tsx` lines 1060-1140)*
+- [x] **Mode 4 - Ghép cặp (Matching Game):** Thanh đo sinh mệnh (5 trái tim), Timer đếm ngược 60s, 2 cột thẻ (Từ vựng tiếng Anh vs Nghĩa tiếng Việt), hiệu ứng khi click đúng/sai và hoàn thành vòng. *(Hoàn thành: 2026-10-03 10:13 - `src/components/vocab/interactive-study-modal.tsx` lines 1142-1240)*
 
 ---
 *Ghi chú: Mỗi mục sẽ được cập nhật [x] ngay khi hoàn tất kiểm tra và tích hợp.*
