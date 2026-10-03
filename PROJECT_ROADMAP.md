@@ -31,13 +31,13 @@ Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ cả semanti
 - [x] **Grid danh sách các bài học:** Danh sách các bài học chuẩn thiết kế (Lời chào hỏi, Số đếm, Màu sắc, Ngày trong tuần, Tháng trong năm, Thời tiết...) với status Free, Đã hoàn thành (cúp vàng), hoặc Khóa (PRO badge). *(Hoàn thành: 2026-10-03 10:10 - `src/components/vocab/topic-set-overview-screen.tsx`)*
 
 ### 4. Màn hình Cài đặt học & Bảng từ vựng (Lesson Detail & Mode Selection - Web 3: `/vocab/index/3`)
-- [ ] **Thanh cấu hình bài học:** Bộ lọc Trạng thái (Toàn bộ / Chưa thuộc / Đã thuộc), Số lượng từ (10, 20 từ, Tất cả), Thứ tự từ (Ngẫu nhiên / Thứ tự / Bảng chữ cái).
-- [ ] **6 Card chế độ học chính:** Flashcard (+5 coins), Quiz Trắc nghiệm (+10 coins), Listening Nghe chép (+15 coins), Typing Gõ từ phản xạ (+10 coins), Ghép cặp Matching (+10 coins), Chế độ đặc biệt HOT (+20 coins).
-- [ ] **Data Table từ vựng chi tiết:** Search input, Cột Từ vựng + Audio speaker + Phiên âm IPA, Cột Nghĩa tiếng Việt, Loại từ (noun/verb/adj/thán từ), Ví dụ câu & Dịch nghĩa, Trạng thái thuộc/yêu thích.
+- [x] **Thanh cấu hình bài học:** Bộ lọc Trạng thái (Toàn bộ / Chưa thuộc / Đã thuộc), Số lượng từ (10, 20 từ, Tất cả), Thứ tự từ (Ngẫu nhiên / Thứ tự / Bảng chữ cái). *(Hoàn thành: 2026-10-03 10:11 - `src/components/vocab/lesson-detail-screen.tsx`, `src/app/(dashboard)/vocab/sets/[id]/page.tsx`)*
+- [x] **6 Card chế độ học chính:** Flashcard (+5 coins), Quiz Trắc nghiệm (+10 coins), Listening Nghe chép (+15 coins), Typing Gõ từ phản xạ (+10 coins), Ghép cặp Matching (+10 coins), Chế độ đặc biệt HOT (+20 coins). *(Hoàn thành: 2026-10-03 10:11 - `src/components/vocab/lesson-detail-screen.tsx`)*
+- [x] **Data Table từ vựng chi tiết:** Search input, Cột Từ vựng + Audio speaker + Phiên âm IPA, Cột Nghĩa tiếng Việt, Loại từ (noun/verb/adj/thán từ), Ví dụ câu & Dịch nghĩa, Trạng thái thuộc/yêu thích. *(Hoàn thành: 2026-10-03 10:11 - `src/components/vocab/lesson-detail-screen.tsx`)*
 
 ### 5. Các Modal chọn chế độ chi tiết (Popups)
-- [ ] **Modal Quiz Selection:** Popup chọn 3 dạng câu hỏi trắc nghiệm (Từ -> Nghĩa tiếng Việt, Điền ngữ cảnh câu, Nghĩa tiếng Việt -> Từ tiếng Anh).
-- [ ] **Modal Chế độ Đặc biệt:** Popup menu chọn 5 mini-games học từ độc quyền (Luyện tập hỗn hợp, Luyện đặt câu PRO, Quán cơm tấm, Chim chăm chỉ arcade, Giải cứu khỉ).
+- [x] **Modal Quiz Selection:** Popup chọn 3 dạng câu hỏi trắc nghiệm (Từ -> Nghĩa tiếng Việt, Điền ngữ cảnh câu, Nghĩa tiếng Việt -> Từ tiếng Anh). *(Hoàn thành: 2026-10-03 10:12 - `src/components/vocab/interactive-study-modal.tsx` lines 539-606)*
+- [x] **Modal Chế độ Đặc biệt:** Popup menu chọn 5 mini-games học từ độc quyền (Luyện tập hỗn hợp, Luyện đặt câu PRO, Quán cơm tấm, Chim chăm chỉ arcade, Giải cứu khỉ). *(Hoàn thành: 2026-10-03 10:12 - `src/components/vocab/special-modes-modal.tsx`, `src/components/vocab/special-games/`)*
 
 ### 6. Giao diện & Engine các chế độ luyện tập (Game/Study Modes - Web 4: `/vocab/index/4`)
 - [ ] **Top Bar chuẩn bài tập:** Thanh Progress bar mượt mà, Bộ đếm câu (VD: 3/9), Đồng hồ đếm ngược sinh động, Coin reward indicator (+10 xu), Nút "Chơi lại", Nút "Thoát".
