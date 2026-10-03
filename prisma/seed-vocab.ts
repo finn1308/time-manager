@@ -183,6 +183,7 @@ export async function seedVocabData() {
   ];
 
   for (const setData of wordSetsData) {
+    console.log(`Processing set: ${setData.title}`);
     const wordSet = await prisma.wordSet.upsert({
       where: {
         courseId_orderNumber: {
