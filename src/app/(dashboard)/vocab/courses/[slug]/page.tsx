@@ -18,7 +18,9 @@ import {
   ExternalLink,
   ChevronRight,
   BookOpen,
+  Plus,
 } from "lucide-react";
+import { AddWordsModal } from "@/components/vocab/add-words-modal";
 
 interface WordSetSummary {
   id: string;
