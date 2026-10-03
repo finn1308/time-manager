@@ -17,9 +17,9 @@ Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ cả semanti
 ## 📋 TIẾN ĐỘ THỰC HIỆN DỰ ÁN (CHECKLIST)
 
 ### 1. Setup Foundation & Global Layout
-- [ ] **App Shell & Navigation:** Sidebar navigation (Trang chủ, Bộ từ vựng, Từ vựng, Học từ vựng, Cửa hàng, Xếp hạng), User Profile card, Gamification Coins/Streak bar.
-- [ ] **Theme System:** Modern UI styling (Bo góc mềm `rounded-2xl/3xl`, button gradients emerald/violet/amber, light/dark responsive theme, badge status, card hover elevation).
-- [ ] **Data Models & Database:** Schema Prisma cho User, Roadmap/VocabCourse, WordSet, VocabWord, UserWordProgress, VocabStudySession, ShopItem, UserPurchase.
+- [x] **App Shell & Navigation:** Sidebar navigation (Trang chủ, Bộ từ vựng, Từ vựng, Học từ vựng, Cửa hàng, Xếp hạng), User Profile card, Gamification Coins/Streak bar. *(Hoàn thành: 2026-10-03 10:08 - `src/components/notion/sidebar.tsx`, `src/components/notion/top-bar.tsx`, `src/components/vocab/gamification-badge.tsx`)*
+- [x] **Theme System:** Modern UI styling (Bo góc mềm `rounded-2xl/3xl`, button gradients emerald/violet/amber, light/dark responsive theme, badge status, card hover elevation). *(Hoàn thành: 2026-10-03 10:08 - `src/app/globals.css`, Tailwind theme tokens)*
+- [x] **Data Models & Database:** Schema Prisma cho User, Roadmap/VocabCourse, WordSet, VocabWord, UserWordProgress, VocabStudySession, ShopItem, UserPurchase. *(Hoàn thành: 2026-10-03 10:08 - `prisma/schema.prisma`, `prisma/seed-vocab.ts`)*
 
 ### 2. Màn hình Lộ trình học (Roadmap Screen - Web 1: `/vocab/index/1`)
 - [ ] **Header & Breadcrumbs / Ghi chú lộ trình đã ghim:** Tag độ khó, chứng chỉ A1, B1, C1, nút Ghim lộ trình yêu thích.
