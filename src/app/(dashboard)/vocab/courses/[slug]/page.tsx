@@ -436,7 +436,15 @@ export default function VocabCourseDetailPage() {
             </div>
           </div>
         </div>
+        </div>
       )}
+
+      {/* Add Words Modal (Screenshot 1: Thêm vào bộ từ) */}
+      <AddWordsModal
+        isOpen={showAddWordsModal}
+        onClose={() => setShowAddWordsModal(false)}
+        onWordsAdded={() => fetchCourseData()}
+      />
     </div>
   );
 }
