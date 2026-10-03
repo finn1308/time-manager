@@ -64,6 +64,7 @@ export default function VocabCourseDetailPage() {
   const [pinLoading, setPinLoading] = useState(false);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [unlockLoading, setUnlockLoading] = useState(false);
+  const [showAddWordsModal, setShowAddWordsModal] = useState(false);
 
   const fetchCourseData = useCallback(async () => {
     try {
@@ -167,8 +168,17 @@ export default function VocabCourseDetailPage() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
 
-        {/* Action Buttons: Đã ghim, BXH, Học ngắt quãng */}
-        <div className="flex items-center space-x-2.5">
+        {/* Action Buttons: Thêm từ vựng, Đã ghim, BXH, Học ngắt quãng */}
+        <div className="flex items-center space-x-2.5 flex-wrap gap-y-2">
+          {/* Thêm từ vựng button */}
+          <button
+            onClick={() => setShowAddWordsModal(true)}
+            className="px-4 py-2 rounded-2xl bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs cursor-pointer active:scale-95"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Thêm từ vựng</span>
+          </button>
+
           {/* Ghim / Đã ghim Button */}
           <button
             onClick={handleTogglePin}
