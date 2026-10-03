@@ -96,10 +96,18 @@ export default function VocabCoursesHubPage() {
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 shrink-0">
+          <div className="flex items-center space-x-3 shrink-0 flex-wrap gap-y-2">
+            <button
+              onClick={() => setShowAddWordsModal(true)}
+              className="px-4 py-2.5 rounded-2xl bg-white text-emerald-800 text-xs font-extrabold shadow-sm hover:bg-emerald-50 transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+            >
+              <Plus className="w-4 h-4 text-emerald-600" />
+              <span>Thêm từ vựng</span>
+            </button>
+
             <Link
               href="/vocab/spaced-repetition"
-              className="px-4 py-2.5 rounded-2xl bg-white text-emerald-800 text-xs font-extrabold shadow-sm hover:bg-emerald-50 transition-all flex items-center space-x-1.5"
+              className="px-4 py-2.5 rounded-2xl bg-white/90 hover:bg-white text-emerald-800 text-xs font-extrabold shadow-sm transition-all flex items-center space-x-1.5"
             >
               <Clock className="w-4 h-4 text-emerald-600" />
               <span>⏱️ Ôn tập ngắt quãng</span>
