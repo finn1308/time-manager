@@ -4,13 +4,20 @@
 
 ---
 
-## 📌 QUY ƯỚC ĐIỀU HƯỚNG GIAO DIỆN (INDEX SCREEN URLS)
-Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ cả semantic route và index alias):
-- **Web 1 (Màn hình 1):** `/vocab/index/1` hoặc `/vocab` - Lộ trình học (Roadmap Screen)
-- **Web 2 (Màn hình 2):** `/vocab/index/2` hoặc `/vocab/courses/a1-0-3-0` - Chi tiết lộ trình / Danh sách bài học (Topic Set Overview)
-- **Web 3 (Màn hình 3):** `/vocab/index/3` hoặc `/vocab/sets/[id]` - Cài đặt học & Bảng từ vựng (Lesson Detail & Mode Selection)
-- **Web 4 (Màn hình 4):** `/vocab/index/4` hoặc `/vocab/sets/[id]/study/[mode]` - Giao diện & Engine luyện tập (Flashcard, Listening, Typing, Matching, Quiz)
-- **Web 5 (Màn hình 5):** `/vocab/index/5` hoặc `/vocab/special` - Mini-games & Chế độ học đặc biệt
+## 📌 QUY ƯỚC ĐIỀU HƯỚNG GIAO DIỆN (INDEX SCREEN URLS & DEDICATED FILES)
+Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ truy cập trực tiếp qua `/index/1..5` và `/vocab/index/1..5`):
+- **Web 1 (Màn hình 1):** `/index/1` hoặc `/vocab/index/1` (Semantic: `/vocab`) - Lộ trình học (Roadmap Screen)
+  - Dedicated Route File: [`src/app/(dashboard)/index/1/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/1/page.tsx)
+- **Web 2 (Màn hình 2):** `/index/2` hoặc `/vocab/index/2` (Semantic: `/vocab/courses/a1-0-3-0`) - Chi tiết lộ trình / Danh sách bài học (Topic Set Overview)
+  - Dedicated Route File: [`src/app/(dashboard)/index/2/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/2/page.tsx)
+- **Web 3 (Màn hình 3):** `/index/3` hoặc `/vocab/index/3` (Semantic: `/vocab/sets/[id]`) - Cài đặt học & Bảng từ vựng (Lesson Detail & Mode Selection)
+  - Dedicated Route File: [`src/app/(dashboard)/index/3/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/3/page.tsx)
+- **Web 4 (Màn hình 4):** `/index/4` hoặc `/vocab/index/4` (Semantic: `/vocab/sets/[id]/study/[mode]`) - Giao diện & Engine luyện tập (Flashcard, Listening, Typing, Matching, Quiz)
+  - Dedicated Route File: [`src/app/(dashboard)/index/4/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/4/page.tsx)
+- **Web 5 (Màn hình 5):** `/index/5` hoặc `/vocab/index/5` (Semantic: `/vocab/special`) - Mini-games Arcade & Chế độ học đặc biệt
+  - Dedicated Route File: [`src/app/(dashboard)/index/5/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/5/page.tsx)
+- **Index Hub:** `/index` hoặc `/vocab/index` - Trung tâm điều hướng tổng quan 5 giao diện
+  - Dedicated Route File: [`src/app/(dashboard)/index/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/page.tsx)
 
 ---
 
