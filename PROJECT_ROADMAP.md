@@ -27,8 +27,8 @@ Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ cả semanti
 - [x] **Section Grid các lộ trình:** Thẻ card lộ trình chuẩn luyentu (Luyện thi HSA, Cambridge In Use, Destination, Oxford 3000... kèm progress bar, difficulty scale, số từ, và nút bắt đầu học). *(Hoàn thành: 2026-10-03 10:09 - `src/components/vocab/roadmap-screen.tsx`, `prisma/seed-vocab.ts`)*
 
 ### 3. Màn hình Chi tiết lộ trình / Danh sách bài học (Topic Set Overview - Web 2: `/vocab/index/2`)
-- [ ] **Topic Header:** Tiêu đề bộ từ, số lượng từ (e.g. 371 từ), thanh % hoàn thành, nút "Học ngắt quãng SM-2", nút "BXH", nút "Đã ghim".
-- [ ] **Grid danh sách các bài học:** Danh sách các bài học chuẩn thiết kế (Lời chào hỏi, Số đếm, Màu sắc, Ngày trong tuần, Tháng trong năm, Thời tiết...) với status Free, Đã hoàn thành (cúp vàng), hoặc Khóa (PRO badge).
+- [x] **Topic Header:** Tiêu đề bộ từ, số lượng từ (e.g. 371 từ), thanh % hoàn thành, nút "Học ngắt quãng SM-2", nút "BXH", nút "Đã ghim". *(Hoàn thành: 2026-10-03 10:10 - `src/components/vocab/topic-set-overview-screen.tsx`, `src/app/(dashboard)/vocab/courses/[slug]/page.tsx`)*
+- [x] **Grid danh sách các bài học:** Danh sách các bài học chuẩn thiết kế (Lời chào hỏi, Số đếm, Màu sắc, Ngày trong tuần, Tháng trong năm, Thời tiết...) với status Free, Đã hoàn thành (cúp vàng), hoặc Khóa (PRO badge). *(Hoàn thành: 2026-10-03 10:10 - `src/components/vocab/topic-set-overview-screen.tsx`)*
 
 ### 4. Màn hình Cài đặt học & Bảng từ vựng (Lesson Detail & Mode Selection - Web 3: `/vocab/index/3`)
 - [ ] **Thanh cấu hình bài học:** Bộ lọc Trạng thái (Toàn bộ / Chưa thuộc / Đã thuộc), Số lượng từ (10, 20 từ, Tất cả), Thứ tự từ (Ngẫu nhiên / Thứ tự / Bảng chữ cái).
