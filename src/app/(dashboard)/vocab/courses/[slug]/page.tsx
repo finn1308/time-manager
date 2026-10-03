@@ -436,7 +436,6 @@ export default function VocabCourseDetailPage() {
             </div>
           </div>
         </div>
-        </div>
       )}
 
       {/* Add Words Modal (Screenshot 1: Thêm vào bộ từ) */}
