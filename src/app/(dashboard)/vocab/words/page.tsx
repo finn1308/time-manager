@@ -40,6 +40,7 @@ export default function VocabWordBankPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const fetchWords = useCallback(async () => {
     try {
@@ -108,14 +109,24 @@ export default function VocabWordBankPage() {
           </p>
         </div>
 
-        <Link
-          href="/api/export?format=csv&entity=courses"
-          target="_blank"
-          className="text-xs text-[#10b981] hover:underline font-bold flex items-center space-x-1"
-        >
-          <span>Xuất dữ liệu CSV</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </Link>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2 rounded-full bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold shadow-xs hover:shadow transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Thêm từ vựng</span>
+          </button>
+
+          <Link
+            href="/api/export?format=csv&entity=courses"
+            target="_blank"
+            className="text-xs text-[#10b981] hover:underline font-bold flex items-center space-x-1"
+          >
+            <span>Xuất CSV</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
 
       {/* Search & Filter Toolbar */}
@@ -282,6 +293,13 @@ export default function VocabWordBankPage() {
           </div>
         )}
       </div>
+
+      {/* Add Words Modal (Screenshot 1: Thêm vào bộ từ) */}
+      <AddWordsModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onWordsAdded={() => fetchWords()}
+      />
     </div>
   );
 }
