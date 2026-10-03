@@ -22,9 +22,9 @@ Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ cả semanti
 - [x] **Data Models & Database:** Schema Prisma cho User, Roadmap/VocabCourse, WordSet, VocabWord, UserWordProgress, VocabStudySession, ShopItem, UserPurchase. *(Hoàn thành: 2026-10-03 10:08 - `prisma/schema.prisma`, `prisma/seed-vocab.ts`)*
 
 ### 2. Màn hình Lộ trình học (Roadmap Screen - Web 1: `/vocab/index/1`)
-- [ ] **Header & Breadcrumbs / Ghi chú lộ trình đã ghim:** Tag độ khó, chứng chỉ A1, B1, C1, nút Ghim lộ trình yêu thích.
-- [ ] **Filter Bar:** Bộ lọc linh hoạt (Tất cả, THPT Quốc Gia, Sách IELTS Cambridge, TOEIC 4 kỹ năng, Lộ trình theo CEFR level A1-C2, Tìm kiếm từ khóa).
-- [ ] **Section Grid các lộ trình:** Thẻ card lộ trình chuẩn luyentu (Luyện thi HSA, Cambridge In Use, Destination, Oxford 3000... kèm progress bar, difficulty scale, số từ, và nút bắt đầu học).
+- [x] **Header & Breadcrumbs / Ghi chú lộ trình đã ghim:** Tag độ khó, chứng chỉ A1, B1, C1, nút Ghim lộ trình yêu thích. *(Hoàn thành: 2026-10-03 10:09 - `src/components/vocab/roadmap-screen.tsx`, `src/components/vocab/vocab-index-nav.tsx`)*
+- [x] **Filter Bar:** Bộ lọc linh hoạt (Tất cả, THPT Quốc Gia, Sách IELTS Cambridge, TOEIC 4 kỹ năng, Lộ trình theo CEFR level A1-C2, Tìm kiếm từ khóa). *(Hoàn thành: 2026-10-03 10:09 - `src/components/vocab/roadmap-screen.tsx`)*
+- [x] **Section Grid các lộ trình:** Thẻ card lộ trình chuẩn luyentu (Luyện thi HSA, Cambridge In Use, Destination, Oxford 3000... kèm progress bar, difficulty scale, số từ, và nút bắt đầu học). *(Hoàn thành: 2026-10-03 10:09 - `src/components/vocab/roadmap-screen.tsx`, `prisma/seed-vocab.ts`)*
 
 ### 3. Màn hình Chi tiết lộ trình / Danh sách bài học (Topic Set Overview - Web 2: `/vocab/index/2`)
 - [ ] **Topic Header:** Tiêu đề bộ từ, số lượng từ (e.g. 371 từ), thanh % hoàn thành, nút "Học ngắt quãng SM-2", nút "BXH", nút "Đã ghim".
