@@ -24,6 +24,8 @@ import {
   TrendingUp,
   GraduationCap,
   Briefcase,
+  Brain,
+  Languages,
 } from "lucide-react";
 import { subDays, parseISO } from "date-fns";
 import {
