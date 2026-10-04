@@ -55,11 +55,19 @@ interface CourseDetails {
   wordSets: WordSetSummary[];
 }
 
-interface TopicSetOverviewScreenProps {
+export interface TopicSetOverviewScreenProps {
   initialSlug?: string;
+  onSelectSet?: (setId: string) => void;
+  onNavigateStep?: (step: 1 | 2 | 3 | 4 | 5) => void;
+  hideNav?: boolean;
 }
 
-export function TopicSetOverviewScreen({ initialSlug }: TopicSetOverviewScreenProps) {
+export function TopicSetOverviewScreen({
+  initialSlug,
+  onSelectSet,
+  onNavigateStep,
+  hideNav = false,
+}: TopicSetOverviewScreenProps) {
   const params = useParams();
   const router = useRouter();
   const slug = initialSlug || (params?.slug as string) || "a1-0-3-0";
