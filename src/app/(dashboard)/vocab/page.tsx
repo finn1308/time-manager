@@ -1,4 +1,4 @@
-import { RoadmapScreen } from "@/components/vocab/roadmap-screen";
+import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
 import { getCourses } from "@/lib/vocab/service";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -11,5 +11,5 @@ export default async function VocabCoursesPage() {
   const user = await getCurrentUser();
   const initialCourses = await getCourses(user);
   
-  return <RoadmapScreen initialCourses={initialCourses} />;
+  return <VocabUnifiedWorkspace defaultStep={1} initialCourses={initialCourses} />;
 }
