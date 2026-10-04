@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { RoadmapScreen } from "@/components/vocab/roadmap-screen";
+import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
 
 export default function Index1Page() {
-  return <RoadmapScreen />;
+  return <VocabUnifiedWorkspace defaultStep={1} />;
 }

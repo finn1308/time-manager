@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Compass,
@@ -9,17 +9,17 @@ import {
   Layers,
   Gamepad2,
   ChevronRight,
-  ExternalLink,
   Sparkles,
   CheckCircle2,
-  Coins,
-  Flame,
-  Award,
-  BookOpen,
+  Zap,
+  Info,
+  LayoutGrid,
 } from "lucide-react";
-import { VocabIndexNav } from "@/components/vocab/vocab-index-nav";
+import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
 
 export default function IndexHubPage() {
+  const [showOverviewDoc, setShowOverviewDoc] = useState(false);
+
   const screens = [
     {
       id: "1",
@@ -114,113 +114,124 @@ export default function IndexHubPage() {
   ];
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-16 animate-in fade-in duration-300">
-      {/* Top Navigation Index Bar */}
-      <VocabIndexNav currentStep={1} />
-
-      {/* Hero Welcome Banner */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-green-700 text-white p-7 sm:p-9 shadow-xl overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-black uppercase tracking-wider text-emerald-100">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
-            <span>Chronomind • Luyện Từ Full-Stack Platform</span>
+    <div className="space-y-6 max-w-6xl mx-auto pb-16 animate-in fade-in duration-300">
+      {/* Top Controls Header */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center space-x-2">
+          <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+            <Zap className="w-5 h-5" />
           </div>
-
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
-            Hệ Thống 5 Giao Diện Học Từ Vựng Độc Lập
-          </h1>
-
-          <p className="text-sm sm:text-base text-emerald-100 font-medium leading-relaxed">
-            Mỗi giao diện tương ứng với một màn hình web riêng biệt (từ <code className="bg-black/20 px-2 py-0.5 rounded text-amber-300 font-bold">/index/1</code> đến <code className="bg-black/20 px-2 py-0.5 rounded text-amber-300 font-bold">/index/5</code>), được kết nối trực tiếp với Database Prisma, lưu tiến độ realtime, hỗ trợ phím tắt bàn phím và gamification Xu Chrono.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Link
-              href="/index/1"
-              className="px-5 py-3 rounded-2xl bg-white text-emerald-800 text-xs font-black shadow-md hover:bg-emerald-50 transition-all flex items-center space-x-2 active:scale-95"
-            >
-              <span>Bắt đầu từ Web 1 (Lộ trình học)</span>
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-
-            <Link
-              href="/vocab/spaced-repetition"
-              className="px-5 py-3 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-xs font-extrabold backdrop-blur-xs transition-all flex items-center space-x-2"
-            >
-              <span>Thuật toán SM-2 Lặp ngắt quãng</span>
-            </Link>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
+              Không Gian Học Từ Vựng Hợp Nhất
+            </h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Đã gộp 5 giao diện độc lập (index/1 - index/5) thành 1 hệ thống chuyển đổi tức thì
+            </p>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setShowOverviewDoc(!showOverviewDoc)}
+          className="px-3.5 py-1.5 rounded-xl border border-gray-200 dark:border-[#263d2e] bg-white dark:bg-[#16241b] text-xs font-bold text-gray-600 dark:text-gray-300 hover:text-emerald-600 flex items-center space-x-1.5 shadow-2xs transition-all cursor-pointer"
+        >
+          {showOverviewDoc ? (
+            <>
+              <LayoutGrid className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Vào Chế độ Gộp Nhanh</span>
+            </>
+          ) : (
+            <>
+              <Info className="w-3.5 h-3.5 text-gray-400" />
+              <span>Xem Giới thiệu 5 Màn hình</span>
+            </>
+          )}
+        </button>
       </div>
 
-      {/* Screen Cards Grid */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
-            <span>Danh Sách 5 Web Độc Lập</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold">
-              index/1 ➔ index/5
-            </span>
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {screens.map((screen) => {
-            const Icon = screen.icon;
-            return (
-              <div
-                key={screen.id}
-                className="p-6 rounded-3xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-sm hover:shadow-md hover:border-emerald-500 transition-all flex flex-col justify-between group"
+      {showOverviewDoc ? (
+        /* Detailed 5-screen documentation overview */
+        <div className="space-y-8 animate-in fade-in duration-200">
+          <div className="relative rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-green-700 text-white p-7 sm:p-9 shadow-xl overflow-hidden">
+            <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative z-10 max-w-3xl space-y-4">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-black uppercase tracking-wider text-emerald-100">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+                <span>Chronomind • Luyện Từ Full-Stack Platform</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+                Chi Tiết Kiến Trúc 5 Màn Hình Độc Lập
+              </h2>
+              <p className="text-sm text-emerald-100 font-medium leading-relaxed">
+                Tất cả 5 màn hình đều được gộp chung trong 1 Không gian làm việc, hỗ trợ phím tắt [1]-[5] và chuyển đổi tức thì 0ms.
+              </p>
+              <button
+                onClick={() => setShowOverviewDoc(false)}
+                className="px-5 py-2.5 rounded-2xl bg-white text-emerald-800 text-xs font-black shadow-md hover:bg-emerald-50 transition-all active:scale-95 cursor-pointer"
               >
-                <div className="space-y-3.5">
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${screen.gradient} text-white flex items-center justify-center shadow-md`}
-                    >
-                      <Icon className="w-6 h-6" />
+                Mở Không Gian Gộp Nhanh ngay ➔
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {screens.map((screen) => {
+              const Icon = screen.icon;
+              return (
+                <div
+                  key={screen.id}
+                  className="p-6 rounded-3xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-sm hover:shadow-md hover:border-emerald-500 transition-all flex flex-col justify-between group"
+                >
+                  <div className="space-y-3.5">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${screen.gradient} text-white flex items-center justify-center shadow-md`}
+                      >
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase ${screen.badgeColor}`}>
+                        {screen.tag}
+                      </span>
                     </div>
 
-                    <span className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase ${screen.badgeColor}`}>
-                      {screen.tag}
-                    </span>
+                    <div>
+                      <h3 className="text-lg font-black text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors">
+                        {screen.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed line-clamp-3">
+                        {screen.description}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 pt-1">
+                      {screen.features.map((feat, idx) => (
+                        <div key={idx} className="flex items-center space-x-2 text-[11px] text-gray-600 dark:text-gray-300">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <span className="line-clamp-1">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-lg font-black text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors">
-                      {screen.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed line-clamp-3">
-                      {screen.description}
-                    </p>
-                  </div>
-
-                  {/* Highlights list */}
-                  <div className="space-y-1.5 pt-1">
-                    {screen.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-center space-x-2 text-[11px] text-gray-600 dark:text-gray-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        <span className="line-clamp-1">{feat}</span>
-                      </div>
-                    ))}
+                  <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <Link
+                      href={screen.route}
+                      className="w-full py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-600 dark:hover:text-white text-xs font-black transition-all flex items-center justify-center space-x-1.5 active:scale-98 shadow-2xs"
+                    >
+                      <span>Mở màn hình {screen.route}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
-
-                <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
-                  <Link
-                    href={screen.route}
-                    className="w-full py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-600 dark:hover:text-white text-xs font-black transition-all flex items-center justify-center space-x-1.5 active:scale-98 shadow-2xs"
-                  >
-                    <span>Mở màn hình {screen.route}</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ) : (
+        /* The Unified 1-Click Fast Workspace */
+        <VocabUnifiedWorkspace defaultStep={1} />
+      )}
     </div>
   );
 }
