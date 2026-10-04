@@ -17,11 +17,65 @@ export async function GET() {
   const weekAgo = subDays(now, 7);
   const weekAhead = addDays(now, 7);
 
-  // Fetch all calendar events around this window to expand accurately
-  const allEventsAroundNow = await prisma.calendarEvent.findMany({
-    where: { userId: user.id },
-    include: { subject: true },
-  });
+  // Execute all independent database queries in parallel
+  const [
+    allEventsAroundNow,
+    todaySessions,
+    weekSessions,
+    allSessionsMinimal, // For streak and totals
+    overdueGoals,
+    subjects,
+    last7DaysSessions
+  ] = await Promise.all([
+    prisma.calendarEvent.findMany({
+      where: { userId: user.id },
+      include: { subject: true },
+    }),
+    prisma.studySession.findMany({
+      where: {
+        userId: user.id,
+        actualStart: { gte: todayStart, lte: todayEnd },
+      },
+      include: { subject: true },
+    }),
+    prisma.studySession.findMany({
+      where: {
+        userId: user.id,
+        actualStart: { gte: weekStart, lte: weekEnd },
+      },
+    }),
+    prisma.studySession.findMany({
+      where: { userId: user.id, actualDurationSeconds: { gt: 60 } },
+      select: { actualStart: true },
+      orderBy: { actualStart: "desc" },
+      take: 365, // Limit for streak calculation
+    }),
+    prisma.goal.findMany({
+      where: {
+        userId: user.id,
+        deadline: { lt: now },
+        status: { not: "COMPLETED" },
+      },
+      include: { subject: true },
+      orderBy: { deadline: "asc" },
+    }),
+    prisma.subject.findMany({
+      where: { userId: user.id },
+      include: {
+        goals: true,
+        studySessions: {
+          select: { actualDurationSeconds: true },
+        },
+      },
+      orderBy: { priority: "desc" },
+    }),
+    prisma.studySession.findMany({
+      where: {
+        userId: user.id,
+        actualStart: { gte: startOfDay(weekAgo), lte: todayEnd },
+      },
+    })
+  ]);
 
   const expandedEvents = expandRecurringEvents(allEventsAroundNow, weekAgo, weekAhead);
 
@@ -45,14 +99,7 @@ export async function GET() {
   const todayScheduledHours = todayEvents
     .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
 
-  // 2. Fetch Today's Study Sessions (Actual recorded by timer)
-  const todaySessions = await prisma.studySession.findMany({
-    where: {
-      userId: user.id,
-      actualStart: { gte: todayStart, lte: todayEnd },
-    },
-    include: { subject: true },
-  });
+  // 2. Today's Study Sessions (Actual recorded by timer)
 
   const todayActualSeconds = todaySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const todayActualHours = todayActualSeconds / 3600;
@@ -77,13 +124,7 @@ export async function GET() {
   const weekScheduledHours = weekEvents
     .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
 
-  // 4. Fetch This Week's Study Sessions (Actual)
-  const weekSessions = await prisma.studySession.findMany({
-    where: {
-      userId: user.id,
-      actualStart: { gte: weekStart, lte: weekEnd },
-    },
-  });
+  // 4. This Week's Study Sessions (Actual)
 
   const weekActualSeconds = weekSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const weekActualHours = weekActualSeconds / 3600;
@@ -93,14 +134,8 @@ export async function GET() {
     : (weekActualHours > 0 ? 100 : 0);
 
   // 5. Calculate Real Consecutive Study Streak
-  const allSessions = await prisma.studySession.findMany({
-    where: { userId: user.id, actualDurationSeconds: { gt: 60 } },
-    select: { actualStart: true },
-    orderBy: { actualStart: "desc" },
-  });
-
   const studyDaysSet = new Set(
-    allSessions.map((s) => format(s.actualStart, "yyyy-MM-dd"))
+    allSessionsMinimal.map((s) => format(s.actualStart, "yyyy-MM-dd"))
   );
 
   let currentStreak = 0;
@@ -130,28 +165,8 @@ export async function GET() {
     .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
     .slice(0, 5);
 
-  // 7. Overdue Goals
-  const overdueGoals = await prisma.goal.findMany({
-    where: {
-      userId: user.id,
-      deadline: { lt: now },
-      status: { not: "COMPLETED" },
-    },
-    include: { subject: true },
-    orderBy: { deadline: "asc" },
-  });
-
-  // 8. Subject Progress
-  const subjects = await prisma.subject.findMany({
-    where: { userId: user.id },
-    include: {
-      goals: true,
-      studySessions: {
-        select: { actualDurationSeconds: true },
-      },
-    },
-    orderBy: { priority: "desc" },
-  });
+  // 7. Overdue Goals (Fetched in parallel)
+  // 8. Subject Progress (Fetched in parallel)
 
   const subjectProgress = subjects.map((sub) => {
     const totalActualSeconds = sub.studySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
@@ -174,12 +189,6 @@ export async function GET() {
   // 9. Day-by-day Planned vs Actual for Chart (Last 7 days)
   // Self-study planned is compared with actual study sessions
   const chartData = [];
-  const last7DaysSessions = await prisma.studySession.findMany({
-    where: {
-      userId: user.id,
-      actualStart: { gte: startOfDay(weekAgo), lte: todayEnd },
-    },
-  });
 
   for (let i = 6; i >= 0; i--) {
     const day = subDays(now, i);
@@ -216,7 +225,7 @@ export async function GET() {
       weekScheduledHours: Math.round(weekScheduledHours * 10) / 10,
       completionPercentage,
       currentStreak,
-      totalSessionsCount: allSessions.length,
+      totalSessionsCount: allSessionsMinimal.length,
       activeSubjectsCount: subjects.length,
     },
     upcomingEvents,
