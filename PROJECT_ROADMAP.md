@@ -54,4 +54,11 @@ Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ truy cập t
 - [x] **Mode 4 - Ghép cặp (Matching Game):** Thanh đo sinh mệnh (5 trái tim), Timer đếm ngược 60s, 2 cột thẻ (Từ vựng tiếng Anh vs Nghĩa tiếng Việt), hiệu ứng khi click đúng/sai và hoàn thành vòng. *(Hoàn thành: 2026-10-03 10:13 - `src/components/vocab/interactive-study-modal.tsx` lines 1142-1240)*
 
 ---
+### 7. Simplify Information Architecture (6-Section Navigation)
+- [x] **FEATURE_MAPPING.md:** Map all features to the 6 new top-level sections (Home, Learn, Practice, Schedule, Progress, Settings). *(Hoàn thành: 2026-10-04 22:18 - `FEATURE_MAPPING.md`)*
+- [x] **Unified Navigation Sidebar:** Update `src/components/notion/sidebar.tsx` and `src/components/layout/bottom-nav.tsx` to display the 6 sections, remove `isVocab` split logic, hide admin routes. *(Hoàn thành: 2026-10-04 22:19 - `src/components/notion/sidebar.tsx`, `src/components/layout/bottom-nav.tsx`)*
+- [ ] **Routing & Layout Adjustments:** Create the placeholder pages/dashboards for `/learn`, `/practice`, `/schedule`, `/progress`, and `/settings` to handle the new mappings.
+- [ ] **Global Search & Create Actions:** Implement the unified search and global "+" button in the TopBar.
+
+---
 *Ghi chú: Mỗi mục sẽ được cập nhật [x] ngay khi hoàn tất kiểm tra và tích hợp.*
