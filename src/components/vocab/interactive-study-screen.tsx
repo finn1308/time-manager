@@ -111,7 +111,7 @@ export function InteractiveStudyScreen({
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-16 animate-in fade-in duration-300">
       {/* Web Index Switcher */}
-      <VocabIndexNav currentStep={4} />
+      {!hideNav && <VocabIndexNav currentStep={4} onStepChange={onNavigateStep} />}
 
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -134,14 +134,26 @@ export function InteractiveStudyScreen({
         <div className="flex items-center space-x-2">
           <Link
             href="/vocab/index/3"
-            className="px-3.5 py-2 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 flex items-center gap-1.5 shadow-2xs"
+            onClick={(e) => {
+              if (onNavigateStep) {
+                e.preventDefault();
+                onNavigateStep(3);
+              }
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 flex items-center gap-1.5 shadow-2xs cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Về Cài đặt (Web 3)</span>
           </Link>
           <Link
             href="/vocab/index/5"
-            className="px-3.5 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 text-xs font-bold flex items-center gap-1.5 border border-rose-200/80 dark:border-rose-900/50"
+            onClick={(e) => {
+              if (onNavigateStep) {
+                e.preventDefault();
+                onNavigateStep(5);
+              }
+            }}
+            className="px-3.5 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 text-xs font-bold flex items-center gap-1.5 border border-rose-200/80 dark:border-rose-900/50 cursor-pointer"
           >
             <span>Sang Mini-games (Web 5)</span>
             <ChevronRight className="w-3.5 h-3.5" />
