@@ -146,7 +146,7 @@ export function TopicSetOverviewScreen({
   if (loading) {
     return (
       <div className="space-y-6 max-w-6xl mx-auto pb-16">
-        <VocabIndexNav currentStep={2} />
+        {!hideNav && <VocabIndexNav currentStep={2} onStepChange={onNavigateStep} />}
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
           <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin" />
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -160,7 +160,7 @@ export function TopicSetOverviewScreen({
   if (error || !course) {
     return (
       <div className="space-y-6 max-w-6xl mx-auto pb-16">
-        <VocabIndexNav currentStep={2} />
+        {!hideNav && <VocabIndexNav currentStep={2} onStepChange={onNavigateStep} />}
         <div className="p-6 rounded-3xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 text-center space-y-3">
           <h3 className="font-bold text-base text-red-700 dark:text-red-400">
             Không tìm thấy bài học cho khóa: {slug}
@@ -168,7 +168,13 @@ export function TopicSetOverviewScreen({
           <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
           <Link
             href="/vocab"
-            className="inline-block px-4 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition-all"
+            onClick={(e) => {
+              if (onNavigateStep) {
+                e.preventDefault();
+                onNavigateStep(1);
+              }
+            }}
+            className="inline-block px-4 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition-all cursor-pointer"
           >
             Quay lại Lộ trình học (Web 1)
           </Link>
@@ -180,13 +186,19 @@ export function TopicSetOverviewScreen({
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16 animate-in fade-in duration-300">
       {/* Web Index Switcher */}
-      <VocabIndexNav currentStep={2} />
+      {!hideNav && <VocabIndexNav currentStep={2} onStepChange={onNavigateStep} />}
 
       {/* Top Navigation Links Bar matching image */}
       <div className="flex items-center justify-between">
         <Link
           href="/vocab/index/1"
-          className="w-10 h-10 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-xs flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#203626] transition-colors"
+          onClick={(e) => {
+            if (onNavigateStep) {
+              e.preventDefault();
+              onNavigateStep(1);
+            }
+          }}
+          className="w-10 h-10 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-xs flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#203626] transition-colors cursor-pointer"
           title="Quay lại Lộ trình học (Web 1)"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -371,7 +383,14 @@ export function TopicSetOverviewScreen({
                   {isUnlocked ? (
                     <Link
                       href={`/vocab/sets/${set.id}`}
-                      className="px-4 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-600 dark:hover:text-white text-xs font-extrabold transition-all flex items-center space-x-1.5 active:scale-95"
+                      onClick={(e) => {
+                        if (onSelectSet) {
+                          e.preventDefault();
+                          onSelectSet(set.id);
+                          if (onNavigateStep) onNavigateStep(3);
+                        }
+                      }}
+                      className="px-4 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-600 dark:hover:text-white text-xs font-extrabold transition-all flex items-center space-x-1.5 active:scale-95 cursor-pointer"
                     >
                       <span>Vào học (Web 3)</span>
                       <ChevronRight className="w-3.5 h-3.5" />
