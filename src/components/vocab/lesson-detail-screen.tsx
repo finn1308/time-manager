@@ -57,11 +57,21 @@ interface WordSetDetails {
   progressPercent: number;
 }
 
-interface LessonDetailScreenProps {
+export interface LessonDetailScreenProps {
   initialSetId?: string;
+  onStartStudy?: (mode: StudyMode) => void;
+  onOpenSpecialModes?: () => void;
+  onNavigateStep?: (step: 1 | 2 | 3 | 4 | 5) => void;
+  hideNav?: boolean;
 }
 
-export function LessonDetailScreen({ initialSetId }: LessonDetailScreenProps) {
+export function LessonDetailScreen({
+  initialSetId,
+  onStartStudy,
+  onOpenSpecialModes,
+  onNavigateStep,
+  hideNav = false,
+}: LessonDetailScreenProps) {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -69,6 +79,13 @@ export function LessonDetailScreen({ initialSetId }: LessonDetailScreenProps) {
   const [setId, setSetId] = useState<string | null>(
     initialSetId || (params?.id as string) || searchParams?.get("setId") || null
   );
+
+  // Sync setId if initialSetId changes from parent
+  useEffect(() => {
+    if (initialSetId && initialSetId !== setId) {
+      setSetId(initialSetId);
+    }
+  }, [initialSetId]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
