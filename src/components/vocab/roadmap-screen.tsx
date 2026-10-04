@@ -221,14 +221,28 @@ export function RoadmapScreen({
             <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-2.5">
               <Link
                 href={`/vocab/courses/${pinnedCourse.slug}`}
-                className="px-5 py-3 rounded-2xl bg-white text-emerald-800 text-xs font-black shadow-md hover:bg-emerald-50 transition-all flex items-center justify-center space-x-2 active:scale-95 text-center"
+                onClick={(e) => {
+                  if (onSelectCourse) {
+                    e.preventDefault();
+                    onSelectCourse(pinnedCourse.slug);
+                    if (onNavigateStep) onNavigateStep(2);
+                  }
+                }}
+                className="px-5 py-3 rounded-2xl bg-white text-emerald-800 text-xs font-black shadow-md hover:bg-emerald-50 transition-all flex items-center justify-center space-x-2 active:scale-95 text-center cursor-pointer"
               >
                 <span>Vào học lộ trình ngay (Web 2)</span>
                 <ChevronRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/vocab/index/2"
-                className="px-5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all text-center"
+                onClick={(e) => {
+                  if (onNavigateStep) {
+                    e.preventDefault();
+                    if (onSelectCourse) onSelectCourse(pinnedCourse.slug);
+                    onNavigateStep(2);
+                  }
+                }}
+                className="px-5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all text-center cursor-pointer"
               >
                 Xem chi tiết bài học →
               </Link>
@@ -385,6 +399,13 @@ export function RoadmapScreen({
 
                   <Link
                     href={`/vocab/courses/${c.slug}`}
+                    onClick={(e) => {
+                      if (onSelectCourse) {
+                        e.preventDefault();
+                        onSelectCourse(c.slug);
+                        if (onNavigateStep) onNavigateStep(2);
+                      }
+                    }}
                     className="w-full py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-600 dark:hover:text-white text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5 cursor-pointer active:scale-98"
                   >
                     <span>Xem danh sách bài học (Web 2)</span>
