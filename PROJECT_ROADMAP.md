@@ -4,20 +4,19 @@
 
 ---
 
-## 📌 QUY ƯỚC ĐIỀU HƯỚNG GIAO DIỆN (INDEX SCREEN URLS & DEDICATED FILES)
-Mỗi giao diện tương ứng một web riêng biệt (hỗ trợ truy cập trực tiếp qua `/index/1..5` và `/vocab/index/1..5`):
-- **Web 1 (Màn hình 1):** `/index/1` hoặc `/vocab/index/1` (Semantic: `/vocab`) - Lộ trình học (Roadmap Screen)
-  - Dedicated Route File: [`src/app/(dashboard)/index/1/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/1/page.tsx)
-- **Web 2 (Màn hình 2):** `/index/2` hoặc `/vocab/index/2` (Semantic: `/vocab/courses/a1-0-3-0`) - Chi tiết lộ trình / Danh sách bài học (Topic Set Overview)
-  - Dedicated Route File: [`src/app/(dashboard)/index/2/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/2/page.tsx)
-- **Web 3 (Màn hình 3):** `/index/3` hoặc `/vocab/index/3` (Semantic: `/vocab/sets/[id]`) - Cài đặt học & Bảng từ vựng (Lesson Detail & Mode Selection)
-  - Dedicated Route File: [`src/app/(dashboard)/index/3/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/3/page.tsx)
-- **Web 4 (Màn hình 4):** `/index/4` hoặc `/vocab/index/4` (Semantic: `/vocab/sets/[id]/study/[mode]`) - Giao diện & Engine luyện tập (Flashcard, Listening, Typing, Matching, Quiz)
-  - Dedicated Route File: [`src/app/(dashboard)/index/4/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/4/page.tsx)
-- **Web 5 (Màn hình 5):** `/index/5` hoặc `/vocab/index/5` (Semantic: `/vocab/special`) - Mini-games Arcade & Chế độ học đặc biệt
-  - Dedicated Route File: [`src/app/(dashboard)/index/5/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/5/page.tsx)
-- **Index Hub:** `/index` hoặc `/vocab/index` - Trung tâm điều hướng tổng quan 5 giao diện
-  - Dedicated Route File: [`src/app/(dashboard)/index/page.tsx`](file:///Users/huy/Downloads/Time%20manager/src/app/(dashboard)/index/page.tsx)
+## 📌 QUY ƯỚC ĐIỀU HƯỚNG GIAO DIỆN (CHẾ ĐỘ XEM GỘP NHANH - 1 BẤM CHUYỂN TỨC THÌ)
+Đã gộp toàn bộ 5 giao diện độc lập (index/1 - index/5) thành một **Không Gian Học Tập Hợp Nhất (VocabUnifiedWorkspace)** với thanh chuyển đổi 1 bấm (1-Click Fast Switcher) tức thì 0ms latency:
+- **Master Unified Workspace:** [`src/components/vocab/vocab-unified-workspace.tsx`](file:///Users/huy/Downloads/Time%20manager/src/components/vocab/vocab-unified-workspace.tsx)
+- **1-Click Fast Switcher Component:** [`src/components/vocab/vocab-index-nav.tsx`](file:///Users/huy/Downloads/Time%20manager/src/components/vocab/vocab-index-nav.tsx)
+  - Badge trạng thái: `⚡ Chế độ xem gộp nhanh • 1 Bấm chuyển tức thì (1-5)`
+  - Hỗ trợ phím tắt bàn phím: bấm trực tiếp `[1]`, `[2]`, `[3]`, `[4]`, `[5]` để chuyển màn hình trong 0ms.
+- **5 Màn hình được gộp chung & truyền state trực tiếp:**
+  - **Màn hình 1:** Lộ trình học (Roadmap Screen) - Phím `[1]`
+  - **Màn hình 2:** Chi tiết lộ trình / Danh sách bài học (Topic Set Overview) - Phím `[2]`
+  - **Màn hình 3:** Cài đặt học & Bảng từ vựng (Lesson Detail & Mode Selection) - Phím `[3]`
+  - **Màn hình 4:** Giao diện & Engine luyện tập (Flashcard, Listening, Typing, Matching, Quiz) - Phím `[4]`
+  - **Màn hình 5:** Mini-games Arcade & Chế độ học đặc biệt (Quán cơm tấm, Chim chăm chỉ...) - Phím `[5]`
+- **Tương thích toàn diện:** Các route `/index`, `/index/1..5`, `/vocab`, `/vocab/index/[step]` đều mount trực tiếp Không gian gộp nhanh này với tab tương ứng được chọn sẵn.
 
 ---
 
