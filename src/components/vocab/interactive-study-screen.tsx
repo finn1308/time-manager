@@ -24,9 +24,22 @@ import {
 } from "./interactive-study-modal";
 import { VocabIndexNav } from "./vocab-index-nav";
 
-export function InteractiveStudyScreen() {
+export interface InteractiveStudyScreenProps {
+  initialMode?: StudyMode;
+  initialSetId?: string;
+  onNavigateStep?: (step: 1 | 2 | 3 | 4 | 5) => void;
+  hideNav?: boolean;
+}
+
+export function InteractiveStudyScreen({
+  initialMode: propInitialMode,
+  initialSetId,
+  onNavigateStep,
+  hideNav = false,
+}: InteractiveStudyScreenProps = {}) {
   const searchParams = useSearchParams();
-  const initialMode = (searchParams?.get("mode")?.toUpperCase() as StudyMode) || "FLASHCARD";
+  const urlMode = (searchParams?.get("mode")?.toUpperCase() as StudyMode) || undefined;
+  const initialMode = propInitialMode || urlMode || "FLASHCARD";
 
   const [mode, setMode] = useState<StudyMode>(
     ["FLASHCARD", "QUIZ", "LISTENING", "TYPING", "MATCHING"].includes(initialMode)
@@ -34,15 +47,34 @@ export function InteractiveStudyScreen() {
       : "FLASHCARD"
   );
 
+  useEffect(() => {
+    if (propInitialMode && ["FLASHCARD", "QUIZ", "LISTENING", "TYPING", "MATCHING"].includes(propInitialMode)) {
+      setMode(propInitialMode);
+    }
+  }, [propInitialMode]);
+
   const [loading, setLoading] = useState(true);
   const [words, setWords] = useState<StudyWord[]>([]);
   const [wordSetTitle, setWordSetTitle] = useState("1. Lời chào hỏi");
-  const [wordSetId, setWordSetId] = useState<string>("");
+  const [wordSetId, setWordSetId] = useState<string>(initialSetId || "");
 
-  // Load words from Set 1 (or query setId)
+  // Load words from specific set (or Set 1 of A1)
   const loadWords = useCallback(async () => {
     try {
       setLoading(true);
+      const targetSetId = initialSetId || wordSetId;
+      if (targetSetId) {
+        const setRes = await fetch(`/api/vocab/sets/${targetSetId}`);
+        if (setRes.ok) {
+          const setData = await setRes.json();
+          if (setData.set) {
+            setWordSetTitle(`${setData.set.orderNumber || 1}. ${setData.set.title}`);
+          }
+          setWords(setData.allWords || []);
+          return;
+        }
+      }
+
       const res = await fetch("/api/vocab/courses/a1-0-3-0");
       if (res.ok) {
         const data = await res.json();
@@ -62,7 +94,7 @@ export function InteractiveStudyScreen() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [initialSetId, wordSetId]);
 
   useEffect(() => {
     loadWords();
