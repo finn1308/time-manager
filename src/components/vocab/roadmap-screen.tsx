@@ -41,7 +41,19 @@ interface CourseItem {
   isPinned: boolean;
 }
 
-export function RoadmapScreen({ initialCourses = [] }: { initialCourses?: CourseItem[] }) {
+export interface RoadmapScreenProps {
+  initialCourses?: CourseItem[];
+  onSelectCourse?: (slug: string) => void;
+  onNavigateStep?: (step: 1 | 2 | 3 | 4 | 5) => void;
+  hideNav?: boolean;
+}
+
+export function RoadmapScreen({
+  initialCourses = [],
+  onSelectCourse,
+  onNavigateStep,
+  hideNav = false,
+}: RoadmapScreenProps) {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState<CourseItem[]>(initialCourses);
   const [searchQuery, setSearchQuery] = useState("");
@@ -125,7 +137,7 @@ export function RoadmapScreen({ initialCourses = [] }: { initialCourses?: Course
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16 animate-in fade-in duration-300">
       {/* Web Index Switcher (Web 1 to Web 5) */}
-      <VocabIndexNav currentStep={1} />
+      {!hideNav && <VocabIndexNav currentStep={1} onStepChange={onNavigateStep} />}
 
       {/* Breadcrumbs & Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

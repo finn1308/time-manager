@@ -49,17 +49,17 @@ export async function GET(
       const allProgress = await prisma.userWordProgress.findMany({
         where: {
           userId: user.id,
-          word: { setId: { in: setIds } },
+          wordSetId: { in: setIds },
           status: { in: ["LEARNING", "MASTERED"] },
         },
         select: {
           status: true,
-          word: { select: { setId: true } },
+          wordSetId: true,
         },
       });
 
       allProgressMap = allProgress.reduce((acc, p) => {
-        const setId = p.word.setId;
+        const setId = p.wordSetId;
         if (!acc[setId]) acc[setId] = { learned: 0, mastered: 0 };
         acc[setId].learned++;
         if (p.status === "MASTERED") acc[setId].mastered++;
