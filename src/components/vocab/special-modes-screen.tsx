@@ -30,11 +30,21 @@ export type SpecialGameType =
   | "CHIM_CHAM_CHI"
   | "GIAI_CUU_KHI";
 
-export function SpecialModesScreen() {
+export interface SpecialModesScreenProps {
+  initialSetId?: string;
+  onNavigateStep?: (step: 1 | 2 | 3 | 4 | 5) => void;
+  hideNav?: boolean;
+}
+
+export function SpecialModesScreen({
+  initialSetId,
+  onNavigateStep,
+  hideNav = false,
+}: SpecialModesScreenProps = {}) {
   const [activeGame, setActiveGame] = useState<SpecialGameType | null>(null);
   const [words, setWords] = useState<StudyWord[]>([]);
   const [wordSetTitle, setWordSetTitle] = useState("1. Lời chào hỏi");
-  const [wordSetId, setWordSetId] = useState<string>("");
+  const [wordSetId, setWordSetId] = useState<string>(initialSetId || "");
   const [userCoins, setUserCoins] = useState(250);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,6 +52,30 @@ export function SpecialModesScreen() {
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
+      const targetSetId = initialSetId || wordSetId;
+      if (targetSetId) {
+        const [setRes, shopRes] = await Promise.all([
+          fetch(`/api/vocab/sets/${targetSetId}`),
+          fetch("/api/vocab/shop").catch(() => null),
+        ]);
+
+        if (setRes.ok) {
+          const setData = await setRes.json();
+          if (setData.set) {
+            setWordSetTitle(`${setData.set.orderNumber || 1}. ${setData.set.title}`);
+          }
+          setWords(setData.allWords || []);
+        }
+
+        if (shopRes && shopRes.ok) {
+          const shopData = await shopRes.json();
+          if (typeof shopData.userCoins === "number") {
+            setUserCoins(shopData.userCoins);
+          }
+        }
+        return;
+      }
+
       const [res, shopRes] = await Promise.all([
         fetch("/api/vocab/courses/a1-0-3-0"),
         fetch("/api/vocab/shop").catch(() => null),
@@ -151,7 +185,7 @@ export function SpecialModesScreen() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-16 animate-in fade-in duration-300">
       {/* Web Index Switcher */}
-      <VocabIndexNav currentStep={5} />
+      {!hideNav && <VocabIndexNav currentStep={5} onStepChange={onNavigateStep} />}
 
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -179,7 +213,13 @@ export function SpecialModesScreen() {
           </div>
           <Link
             href="/vocab/index/4"
-            className="px-3.5 py-1.5 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 flex items-center gap-1 shadow-2xs"
+            onClick={(e) => {
+              if (onNavigateStep) {
+                e.preventDefault();
+                onNavigateStep(4);
+              }
+            }}
+            className="px-3.5 py-1.5 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 flex items-center gap-1 shadow-2xs cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Về Web 4 Luyện tập</span>
