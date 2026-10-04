@@ -40,51 +40,21 @@ export function BottomNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { startTimer } = usePipTimer();
 
-  const isVocab = pathname.startsWith("/vocab");
-
-  const defaultNavItems = [
-    { label: "Tổng quan", href: "/", icon: LayoutDashboard },
-    { label: "Lịch học", href: "/calendar", icon: Calendar },
-    { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare },
-    { label: "Thói quen", href: "/habits", icon: Flame },
+  const navItems = [
+    { label: "Home", href: "/", icon: Home },
+    { label: "Learn", href: "/learn", icon: BookOpen },
+    { label: "Practice", href: "/practice", icon: Brain },
+    { label: "Progress", href: "/progress", icon: TrendingUp },
   ];
 
-  const vocabNavItems = [
-    { label: "Trang chủ", href: "/vocab", icon: Home },
-    { label: "Bộ từ", href: "/vocab/courses/a1-0-3-0", icon: LayoutGrid },
-    { label: "Học ngắt", href: "/vocab/spaced-repetition", icon: PlaySquare },
-    { label: "Cửa hàng", href: "/vocab/shop", icon: ShoppingBag },
+  const drawerItems = [
+    { label: "Home", href: "/", icon: Home },
+    { label: "Learn", href: "/learn", icon: BookOpen },
+    { label: "Practice", href: "/practice", icon: Brain },
+    { label: "Schedule", href: "/schedule", icon: Calendar },
+    { label: "Progress", href: "/progress", icon: TrendingUp },
+    { label: "Settings", href: "/settings", icon: Settings },
   ];
-
-  const defaultDrawerItems = [
-    { label: "LUYENTU (Học từ vựng)", href: "/vocab", icon: Languages, highlight: true },
-    { label: "Học thuật & GPA 4 năm", href: "/academic", icon: GraduationCap },
-    { label: "Hồ sơ & Nghề nghiệp", href: "/career", icon: Briefcase },
-    { label: "Môn học (Subjects)", href: "/subjects", icon: BookOpen },
-    { label: "Mục tiêu (Goals)", href: "/goals", icon: Target },
-    { label: "Deadline & Bài tập", href: "/deadlines", icon: Flame },
-    { label: "Flashcards (Anki SM-2)", href: "/flashcards", icon: Brain },
-    { label: "Ghi chú & Wiki", href: "/notes", icon: FileText },
-    { label: "Study Quest & Quiz", href: "/learning", icon: Sparkles },
-    { label: "Nhật ký phiên học", href: "/study-sessions", icon: History },
-    { label: "Đánh giá tuần AI", href: "/weekly-review", icon: TrendingUp },
-    { label: "Thống kê (Analytics)", href: "/analytics", icon: BarChart3 },
-    { label: "Cài đặt & Sao lưu", href: "/settings", icon: Settings },
-  ];
-
-  const vocabDrawerItems = [
-    { label: "Trang chủ Vocab", href: "/vocab", icon: Home },
-    { label: "Các bộ từ (A1)", href: "/vocab/courses/a1-0-3-0", icon: LayoutGrid },
-    { label: "Kho từ vựng", href: "/vocab/words", icon: BookOpen },
-    { label: "Học ngắt quãng", href: "/vocab/spaced-repetition", icon: PlaySquare },
-    { label: "Cửa hàng phần thưởng", href: "/vocab/shop", icon: ShoppingBag },
-    { label: "Bảng xếp hạng", href: "/vocab/leaderboard", icon: Award },
-    { label: "Quản trị nội dung", href: "/vocab/admin", icon: ShieldCheck },
-    { label: "Quay về ChronoMind OS", href: "/", icon: ArrowLeft, highlight: true },
-  ];
-
-  const navItems = isVocab ? vocabNavItems : defaultNavItems;
-  const drawerItems = isVocab ? vocabDrawerItems : defaultDrawerItems;
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });

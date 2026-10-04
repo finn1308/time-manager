@@ -61,37 +61,13 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { startTimer, activeSubject } = usePipTimer();
 
-  const isVocab = pathname.startsWith("/vocab");
-
-  const vocabNavItems = [
-    { label: "Trang chủ", href: "/vocab", icon: Home, iconColor: "text-sky-500" },
-    { label: "Học thích ứng AI", href: "/vocab/adaptive", icon: Brain, iconColor: "text-teal-500" },
-    { label: "Bộ từ vựng", href: "/vocab/courses/a1-0-3-0", icon: LayoutGrid, iconColor: "text-purple-500" },
-    { label: "Từ vựng", href: "/vocab/words", icon: BookOpen, iconColor: "text-emerald-500" },
-    { label: "Học từ vựng", href: "/vocab/spaced-repetition", icon: PlaySquare, iconColor: "text-orange-500" },
-    { label: "Cửa hàng", href: "/vocab/shop", icon: ShoppingBag, iconColor: "text-amber-500" },
-    { label: "Xếp hạng", href: "/vocab/leaderboard", icon: Award, iconColor: "text-rose-500" },
-    { label: "Quản lý nội dung", href: "/vocab/admin", icon: ShieldCheck, iconColor: "text-indigo-500" },
-  ];
-
   const navItems = [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard },
-    { label: "LUYENTU (Từ vựng)", href: "/vocab", icon: Languages, highlight: true },
-    { label: "Academic OS & GPA", href: "/academic", icon: GraduationCap },
-    { label: "Career & Portfolio", href: "/career", icon: Briefcase },
-    { label: "Calendar", href: "/calendar", icon: Calendar },
-    { label: "Tasks & Inbox", href: "/tasks", icon: CheckSquare },
-    { label: "Deadlines", href: "/deadlines", icon: Flame },
-    { label: "Study Quest & Quiz", href: "/learning", icon: Sparkles },
-    { label: "Flashcards", href: "/flashcards", icon: Brain },
-    { label: "Notes & Wiki", href: "/notes", icon: FileText },
-    { label: "Subjects", href: "/subjects", icon: BookOpen },
-    { label: "Goals", href: "/goals", icon: Target },
-    { label: "Habits & XP", href: "/habits", icon: CheckCircle2 },
-    { label: "Study Sessions", href: "/study-sessions", icon: History },
-    { label: "Weekly Review", href: "/weekly-review", icon: TrendingUp },
-    { label: "Statistics", href: "/analytics", icon: BarChart3 },
-    { label: "Settings", href: "/settings", icon: Settings },
+    { label: "Home", href: "/", icon: Home, iconColor: "text-sky-500" },
+    { label: "Learn", href: "/learn", icon: BookOpen, iconColor: "text-emerald-500" },
+    { label: "Practice", href: "/practice", icon: Brain, iconColor: "text-purple-500" },
+    { label: "Schedule", href: "/schedule", icon: Calendar, iconColor: "text-amber-500" },
+    { label: "Progress", href: "/progress", icon: TrendingUp, iconColor: "text-teal-500" },
+    { label: "Settings", href: "/settings", icon: Settings, iconColor: "text-slate-500" },
   ];
 
   const handleLogout = async () => {
@@ -99,8 +75,6 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
     router.push("/login");
     router.refresh();
   };
-
-  const currentItems = isVocab ? vocabNavItems : navItems;
 
   return (
     <>
@@ -115,44 +89,23 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
           <div className="flex items-center justify-between p-4 pb-3 border-b border-[#dbe7dd]/80 dark:border-[#263d2e]">
             {!collapsed && (
               <div className="flex items-center space-x-3 overflow-hidden">
-                {isVocab ? (
-                  <>
-                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-green-400 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
-                      LT
-                    </div>
-                    <div className="truncate">
-                      <h2 className="text-sm font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] truncate flex items-center gap-1.5">
-                        LUYENTU
-                        <span className="text-[9px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-1.5 py-0.5 rounded-full font-bold">
-                          PRO
-                        </span>
-                      </h2>
-                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-medium truncate">
-                        Học từ vựng thông minh
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
-                      CM
-                    </div>
-                    <div className="truncate">
-                      <h2 className="text-sm font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] truncate">
-                        ChronoMind
-                      </h2>
-                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-medium truncate">
-                        Study Operating System
-                      </p>
-                    </div>
-                  </>
-                )}
+                <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+                  CM
+                </div>
+                <div className="truncate">
+                  <h2 className="text-sm font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] truncate">
+                    ChronoMind
+                  </h2>
+                  <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-medium truncate">
+                    Study Operating System
+                  </p>
+                </div>
               </div>
             )}
 
             {collapsed && (
               <div className="w-9 h-9 mx-auto rounded-2xl bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white flex items-center justify-center font-bold text-xs shadow-sm">
-                {isVocab ? "LT" : "CM"}
+                CM
               </div>
             )}
 
@@ -167,9 +120,9 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
 
           {/* Navigation Items */}
           <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-280px)]">
-            {currentItems.map((item: any) => {
+            {navItems.map((item: any) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || (item.href !== "/vocab" && item.href !== "/" && pathname.startsWith(item.href));
+              const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               const iconColor = item.iconColor;
               const isHighlight = item.highlight;
 
@@ -209,37 +162,10 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
                 </Link>
               );
             })}
-
-            {/* Quick Switch to ChronoMind / LUYENTU */}
-            <div className="pt-2">
-              {isVocab ? (
-                <Link
-                  href="/"
-                  className="flex items-center space-x-2.5 px-3 py-2 rounded-2xl text-xs font-semibold text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all border border-dashed border-slate-200 dark:border-slate-800"
-                  title="Quay lại ChronoMind OS"
-                >
-                  <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 text-slate-600">
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                  </div>
-                  {!collapsed && <span className="truncate">Về ChronoMind OS</span>}
-                </Link>
-              ) : (
-                <Link
-                  href="/vocab"
-                  className="flex items-center space-x-2.5 px-3 py-2 rounded-2xl text-xs font-semibold text-emerald-700 bg-emerald-50/70 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:text-emerald-300 transition-all border border-dashed border-emerald-300 dark:border-emerald-700"
-                  title="Mở LUYENTU Luyện Từ"
-                >
-                  <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 text-[10px] font-bold">
-                    LT
-                  </div>
-                  {!collapsed && <span className="truncate">Mở LUYENTU App</span>}
-                </Link>
-              )}
-            </div>
           </nav>
 
-          {/* Quick Start Subjects List (Only in ChronoMind mode) */}
-          {!isVocab && !collapsed && (
+          {/* Quick Start Subjects List */}
+          {!collapsed && (
             <div className="px-3 pt-3 pb-2 border-t border-[#dbe7dd]/80 dark:border-[#263d2e] mt-1">
               <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#73927d] dark:text-[#8ba393] mb-2 px-1">
                 <span>Vào học nhanh</span>
