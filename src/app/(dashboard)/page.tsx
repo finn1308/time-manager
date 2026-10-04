@@ -440,6 +440,51 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* LUYENTU AI Recommendations & Continue Learning */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4 pb-2">
+        <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+              <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                <Brain className="w-4 h-4" />
+              </div>
+              <span>Đề xuất học tập cho bạn</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/40">
+              <h4 className="font-bold text-purple-900 dark:text-purple-100 text-sm mb-1">Cần ôn tập ngay (SM-2)</h4>
+              <p className="text-xs text-purple-700 dark:text-purple-300 mb-3">Bạn có 15 từ vựng yếu sắp quên. AI đề xuất bạn nên ôn tập ngay.</p>
+              <Link href="/vocab/spaced-repetition">
+                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl w-full font-bold">Ôn tập ngay</Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+              <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+                <Languages className="w-4 h-4" />
+              </div>
+              <span>Tiếp tục học (LUYENTU)</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+             <div className="flex items-center justify-between p-3 border border-[#dbe7dd] dark:border-[#263d2e] rounded-xl hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] transition-colors">
+                <div>
+                   <h4 className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">Khóa học IELTS Cambridge 16</h4>
+                   <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">Bài 3: Môi trường (Environment)</p>
+                </div>
+                <Link href="/vocab/courses/a1-0-3-0">
+                  <Button variant="outline" size="sm" className="rounded-xl font-bold"><Play className="w-3 h-3 mr-1.5"/> Tiếp tục</Button>
+                </Link>
+             </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Heatmap Section */}
       <StudyHeatmap subjects={subjects.map((s) => ({ id: s.id, name: s.name, color: s.color }))} />
 
