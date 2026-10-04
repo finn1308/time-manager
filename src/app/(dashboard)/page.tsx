@@ -97,7 +97,7 @@ export default async function DashboardPage() {
     }),
     prisma.calendarEvent.findMany({
       where: { userId: user.id },
-      select: { type: true, startTime: true, endTime: true },
+      select: { type: true, startTime: true, endTime: true, subjectId: true },
     }),
     prisma.studySession.aggregate({
       where: { userId: user.id },
@@ -106,16 +106,18 @@ export default async function DashboardPage() {
     }),
   ]);
 
+  const weeklyBudgetHours = userSettings?.weeklyStudyBudgetHours || 20.0;
+
   // Calculate Real Overall KPIs
   // Axiom: CALENDAR EVENT ≠ STUDY SESSION
   // Actual hours ONLY counts completed study sessions from timer.
-  const totalActualSeconds = allSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
+  const totalActualSeconds = sessionAggregates?._sum?.actualDurationSeconds || 0;
   const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
 
   // Planned study hours ONLY counts SELF_STUDY / STUDY events
-  const selfStudyEvents = allEvents.filter((ev) => ev.type === "SELF_STUDY" || ev.type === "STUDY");
-  const schoolEvents = allEvents.filter((ev) => ev.type === "SCHOOL");
-  const personalEvents = allEvents.filter((ev) => ev.type === "PERSONAL");
+  const selfStudyEvents = allEventsMinimal.filter((ev) => ev.type === "SELF_STUDY" || ev.type === "STUDY");
+  const schoolEvents = allEventsMinimal.filter((ev) => ev.type === "SCHOOL");
+  const personalEvents = allEventsMinimal.filter((ev) => ev.type === "PERSONAL");
 
   const totalPlannedHours = selfStudyEvents.reduce((acc, ev) => {
     const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
@@ -135,7 +137,7 @@ export default async function DashboardPage() {
   }, 0);
   const personalHours = Math.round(totalPersonalHours * 10) / 10;
 
-  const totalScheduledHours = allEvents.reduce((acc, ev) => {
+  const totalScheduledHours = allEventsMinimal.reduce((acc, ev) => {
     const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
     return acc + Math.max(0, diff);
   }, 0);
@@ -149,7 +151,7 @@ export default async function DashboardPage() {
       : 0;
 
   // This Week Budget & Actual (in Vietnam timezone week)
-  const thisWeekSessions = allSessions.filter(
+  const thisWeekSessions = recentSessions.filter(
     (s) => s.actualStart >= weekStartUTC && s.actualStart <= weekEndUTC
   );
   const weeklyActualSeconds = thisWeekSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
@@ -172,9 +174,7 @@ export default async function DashboardPage() {
 
   // Real Consecutive Streak (calculated on Vietnam calendar days)
   const uniqueStudyDays = new Set(
-    allSessions
-      .filter((s) => s.actualDurationSeconds > 60)
-      .map((s) => getDateKeyVN(s.actualStart))
+    streakData.map((s) => getDateKeyVN(s.actualStart))
   );
 
   let streak = 0;
@@ -197,12 +197,12 @@ export default async function DashboardPage() {
   }
 
   // Today's events in Vietnam timezone
-  const todayEvents = allEvents.filter(
+  const todayEvents = recentEvents.filter(
     (ev) => getDateKeyVN(ev.startTime) === todayKey
   );
 
   // Recent 5 Sessions
-  const recentSessions = allSessions.slice(0, 5);
+  const topRecentSessions = recentSessions.slice(0, 5);
 
   // Chart data for last 7 days aligned with Vietnam days
   const chartData = [];
@@ -211,11 +211,11 @@ export default async function DashboardPage() {
     const dRange = getDayRangeVN(dKey);
     const dayLabel = formatVN(dRange.startUTC, "EEE (dd/MM)");
 
-    const p = allEvents
+    const p = recentEvents
       .filter((e) => getDateKeyVN(e.startTime) === dKey && (e.type === "SELF_STUDY" || e.type === "STUDY"))
       .reduce((acc, e) => acc + (new Date(e.endTime).getTime() - new Date(e.startTime).getTime()) / (1000 * 3600), 0);
 
-    const a = allSessions
+    const a = recentSessions
       .filter((s) => getDateKeyVN(s.actualStart) === dKey)
       .reduce((acc, s) => acc + s.actualDurationSeconds / 3600, 0);
 
@@ -226,12 +226,12 @@ export default async function DashboardPage() {
     });
   }
 
-  // Personal Scheduling DNA Analysis based on Vietnam minute of day
+  // Personal Scheduling DNA Analysis based on Vietnam minute of day (from recent 30 days)
   let morningCount = 0;
   let afternoonCount = 0;
   let eveningCount = 0;
 
-  for (const s of allSessions) {
+  for (const s of recentSessions) {
     const minute = getMinuteOfDayVN(s.actualStart);
     if (minute >= 5 * 60 && minute < 12 * 60) morningCount++;
     else if (minute >= 12 * 60 && minute < 18 * 60) afternoonCount++;
@@ -245,8 +245,9 @@ export default async function DashboardPage() {
     bestFocusTimeSlot = "Buổi chiều (14:00 - 17:59)";
   }
 
+  const sessionCount = sessionAggregates?._count?.id || 0;
   const averageSessionMinutes =
-    allSessions.length > 0 ? Math.round(totalActualSeconds / allSessions.length / 60) : 0;
+    sessionCount > 0 ? Math.round(totalActualSeconds / sessionCount / 60) : 0;
 
   const estimationVariancePercent =
     plannedHours > 0
@@ -445,7 +446,7 @@ export default async function DashboardPage() {
 
         <div className="lg:col-span-4">
           <SchedulingDna
-            totalSessionsCount={allSessions.length}
+            totalSessionsCount={sessionCount}
             bestFocusTimeSlot={bestFocusTimeSlot}
             averageSessionMinutes={averageSessionMinutes}
             estimationVariancePercent={estimationVariancePercent}
@@ -650,7 +651,7 @@ export default async function DashboardPage() {
                 const actualH = Math.round((totalSecs / 3600) * 10) / 10;
 
                 // Planned hours from all calendar events for this subject
-                const plannedSecs = allEvents
+                const plannedSecs = allEventsMinimal
                   .filter((e) => e.subjectId === sub.id)
                   .reduce((acc, e) => {
                     const diff = (new Date(e.endTime).getTime() - new Date(e.startTime).getTime()) / 1000;
@@ -769,7 +770,7 @@ export default async function DashboardPage() {
             </CardHeader>
 
             <CardContent className="p-6 pt-0 space-y-3">
-              {recentSessions.map((session) => {
+              {topRecentSessions.map((session) => {
                 const mins = Math.round(session.actualDurationSeconds / 60);
                 return (
                   <div
@@ -809,7 +810,7 @@ export default async function DashboardPage() {
                 );
               })}
 
-              {recentSessions.length === 0 && (
+              {topRecentSessions.length === 0 && (
                 <div className="text-center py-8 text-xs text-[#526b5c] dark:text-[#a3bda9] bg-[#f8fbf8] dark:bg-[#142318] rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e]">
                   Chưa có dữ liệu thống kê
                 </div>
