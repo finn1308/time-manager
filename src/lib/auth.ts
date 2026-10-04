@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
@@ -60,7 +61,7 @@ export async function getSession(): Promise<SessionPayload | null> {
   }
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   const session = await getSession();
   if (session?.userId) {
     try {
@@ -108,7 +109,7 @@ export async function getCurrentUser() {
   }
 
   return null;
-}
+});
 
 export async function requireAuth() {
   const user = await getCurrentUser();

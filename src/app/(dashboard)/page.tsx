@@ -53,44 +53,58 @@ export default async function DashboardPage() {
   const weekStartUTC = getDayRangeVN(weekDays[0]).startUTC;
   const weekEndUTC = getDayRangeVN(weekDays[6]).endUTC;
 
-  // 1. Fetch User Settings for Budget
-  const userSettings = await prisma.userSettings.findUnique({
-    where: { userId: user.id },
-  });
-  const weeklyBudgetHours = userSettings?.weeklyStudyBudgetHours || 20.0;
+  // 1. Parallel Fetching to eliminate Request Waterfall
+  const thirtyDaysAgo = subDays(todayBase, 30);
+  const thirtyDaysAgoUTC = getDayRangeVN(getDateKeyVN(thirtyDaysAgo)).startUTC;
 
-  // 1b. Fetch Degree Program & Active Academic Context
-  const [degreeProgram, activeSemester] = await Promise.all([
+  const [
+    userSettings,
+    degreeProgram,
+    activeSemester,
+    subjects,
+    recentSessions,
+    recentEvents,
+    streakData,
+    allEventsMinimal,
+    sessionAggregates
+  ] = await Promise.all([
+    prisma.userSettings.findUnique({ where: { userId: user.id } }),
     prisma.degreeProgram.findUnique({ where: { userId: user.id } }),
     prisma.semester.findFirst({
       where: { userId: user.id, status: "ACTIVE" },
       include: { academicYear: true, subjects: true },
     }),
+    prisma.subject.findMany({
+      where: { userId: user.id },
+      include: { goals: true, studySessions: { where: { actualStart: { gte: thirtyDaysAgoUTC } } } },
+      orderBy: { priority: "desc" },
+    }),
+    prisma.studySession.findMany({
+      where: { userId: user.id, actualStart: { gte: thirtyDaysAgoUTC } },
+      include: { subject: true },
+      orderBy: { actualStart: "desc" },
+    }),
+    prisma.calendarEvent.findMany({
+      where: { userId: user.id, startTime: { gte: thirtyDaysAgoUTC } },
+      include: { subject: true },
+      orderBy: { startTime: "asc" },
+    }),
+    prisma.studySession.findMany({
+      where: { userId: user.id, actualDurationSeconds: { gt: 60 } },
+      select: { actualStart: true },
+      orderBy: { actualStart: "desc" },
+      take: 365, // Limit streak check to past year to avoid heavy memory usage
+    }),
+    prisma.calendarEvent.findMany({
+      where: { userId: user.id },
+      select: { type: true, startTime: true, endTime: true },
+    }),
+    prisma.studySession.aggregate({
+      where: { userId: user.id },
+      _sum: { actualDurationSeconds: true },
+      _count: { id: true },
+    }),
   ]);
-
-  // 2. Fetch Subjects with Goals & Study Sessions
-  const subjects = await prisma.subject.findMany({
-    where: { userId: user.id },
-    include: {
-      goals: true,
-      studySessions: true,
-    },
-    orderBy: { priority: "desc" },
-  });
-
-  // 3. Fetch all Study Sessions
-  const allSessions = await prisma.studySession.findMany({
-    where: { userId: user.id },
-    include: { subject: true },
-    orderBy: { actualStart: "desc" },
-  });
-
-  // 4. Fetch all Calendar Events
-  const allEvents = await prisma.calendarEvent.findMany({
-    where: { userId: user.id },
-    include: { subject: true },
-    orderBy: { startTime: "asc" },
-  });
 
   // Calculate Real Overall KPIs
   // Axiom: CALENDAR EVENT ≠ STUDY SESSION
