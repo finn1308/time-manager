@@ -98,17 +98,19 @@ export async function POST(
       },
     });
 
-    // Update Set Progress count
-    const totalSetWords = await prisma.vocabWord.count({
-      where: { wordSetId: word.wordSetId },
-    });
-    const completedSetWords = await prisma.userWordProgress.count({
-      where: {
-        userId: user.id,
-        wordSetId: word.wordSetId,
-        status: { in: ["LEARNING", "MASTERED"] },
-      },
-    });
+    // Update Set Progress count concurrently
+    const [totalSetWords, completedSetWords] = await Promise.all([
+      prisma.vocabWord.count({
+        where: { wordSetId: word.wordSetId },
+      }),
+      prisma.userWordProgress.count({
+        where: {
+          userId: user.id,
+          wordSetId: word.wordSetId,
+          status: { in: ["LEARNING", "MASTERED"] },
+        },
+      })
+    ]);
 
     await prisma.userWordSetProgress.upsert({
       where: {
