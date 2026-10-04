@@ -1,85 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { getCourses } from "@/lib/vocab/service";
 
 export async function GET() {
   const user = await getCurrentUser();
 
   try {
-    const courses = await prisma.vocabCourse.findMany({
-      where: { isPublished: true },
-      include: {
-        wordSets: {
-          select: {
-            id: true,
-            orderNumber: true,
-            title: true,
-            isPro: true,
-            _count: {
-              select: { words: true },
-            },
-          },
-          orderBy: { orderNumber: "asc" },
-        },
-        enrollments: user
-          ? {
-              where: { userId: user.id },
-            }
-          : false,
-      },
-      orderBy: { order: "asc" },
-    });
-
-    // Compute metrics for each course
-    const formattedCourses = await Promise.all(
-      courses.map(async (course) => {
-        const totalWordSets = course.wordSets.length;
-        const totalWords = course.wordSets.reduce(
-          (acc, set) => acc + set._count.words,
-          0
-        );
-
-        let isPinned = false;
-        let learnedWordsCount = 0;
-
-        if (user) {
-          const enrollment = course.enrollments?.[0];
-          isPinned = Boolean(enrollment?.isPinned);
-
-          // Count words mastered or learning by user in this course
-          const setIds = course.wordSets.map((s) => s.id);
-          learnedWordsCount = await prisma.userWordProgress.count({
-            where: {
-              userId: user.id,
-              wordSetId: { in: setIds },
-              status: { in: ["LEARNING", "MASTERED"] },
-            },
-          });
-        }
-
-        const completionPercent =
-          totalWords > 0 ? Math.round((learnedWordsCount / totalWords) * 100) : 0;
-
-        return {
-          id: course.id,
-          slug: course.slug,
-          title: course.title,
-          subtitle: course.subtitle,
-          description: course.description,
-          icon: course.icon,
-          coverColor: course.coverColor,
-          level: course.level,
-          isPro: course.isPro,
-          totalWordSets,
-          totalWords,
-          learnedWordsCount,
-          completionPercent,
-          isPinned,
-          wordSets: course.wordSets,
-        };
-      })
-    );
-
+    const formattedCourses = await getCourses(user);
     return NextResponse.json({ success: true, courses: formattedCourses });
   } catch (error: any) {
     console.error("GET /api/vocab/courses error:", error);

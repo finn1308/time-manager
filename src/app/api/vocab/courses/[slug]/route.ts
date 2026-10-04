@@ -15,8 +15,8 @@ export async function GET(
       include: {
         wordSets: {
           include: {
-            words: {
-              select: { id: true },
+            _count: {
+              select: { words: true },
             },
             userProgresses: user
               ? {
@@ -42,64 +42,71 @@ export async function GET(
     const isPinned = Boolean(enrollment?.isPinned);
     const userIsPro = Boolean(user?.isPro);
 
-    // Compute progress for each word set
+    // Compute progress for each word set in a single bulk query if user exists
+    let allProgressMap: Record<string, { learned: number; mastered: number }> = {};
+    if (user) {
+      const setIds = course.wordSets.map(s => s.id);
+      const allProgress = await prisma.userWordProgress.findMany({
+        where: {
+          userId: user.id,
+          word: { setId: { in: setIds } },
+          status: { in: ["LEARNING", "MASTERED"] },
+        },
+        select: {
+          status: true,
+          word: { select: { setId: true } },
+        },
+      });
+
+      allProgressMap = allProgress.reduce((acc, p) => {
+        const setId = p.word.setId;
+        if (!acc[setId]) acc[setId] = { learned: 0, mastered: 0 };
+        acc[setId].learned++;
+        if (p.status === "MASTERED") acc[setId].mastered++;
+        return acc;
+      }, {} as Record<string, { learned: number; mastered: number }>);
+    }
+
     let totalWordsInCourse = 0;
     let totalLearnedWordsInCourse = 0;
 
-    const wordSetsWithProgress = await Promise.all(
-      course.wordSets.map(async (set) => {
-        const totalWords = set.words.length;
-        totalWordsInCourse += totalWords;
+    const wordSetsWithProgress = course.wordSets.map((set) => {
+      const totalWords = set._count.words;
+      totalWordsInCourse += totalWords;
 
-        let learnedWordsCount = 0;
-        let isMastered = false;
-        let isUnlocked = !set.isPro || userIsPro;
+      let learnedWordsCount = 0;
+      let isMastered = false;
+      let isUnlocked = !set.isPro || userIsPro;
 
-        if (user) {
-          // Check if user specifically unlocked this set
-          const setProgress = set.userProgresses?.[0];
-          if (setProgress?.isUnlocked) {
-            isUnlocked = true;
-          }
-
-          const wordIds = set.words.map((w) => w.id);
-          learnedWordsCount = await prisma.userWordProgress.count({
-            where: {
-              userId: user.id,
-              wordId: { in: wordIds },
-              status: { in: ["LEARNING", "MASTERED"] },
-            },
-          });
-
-          const masteredCount = await prisma.userWordProgress.count({
-            where: {
-              userId: user.id,
-              wordId: { in: wordIds },
-              status: "MASTERED",
-            },
-          });
-
-          isMastered = totalWords > 0 && masteredCount === totalWords;
+      if (user) {
+        // Check if user specifically unlocked this set
+        const setProgress = set.userProgresses?.[0];
+        if (setProgress?.isUnlocked) {
+          isUnlocked = true;
         }
 
-        totalLearnedWordsInCourse += learnedWordsCount;
-        const progressPercent =
-          totalWords > 0 ? Math.round((learnedWordsCount / totalWords) * 100) : 0;
+        const stats = allProgressMap[set.id] || { learned: 0, mastered: 0 };
+        learnedWordsCount = stats.learned;
+        isMastered = totalWords > 0 && stats.mastered === totalWords;
+      }
 
-        return {
-          id: set.id,
-          orderNumber: set.orderNumber,
-          title: set.title,
-          description: set.description,
-          isPro: set.isPro,
-          isLocked: !isUnlocked,
-          totalWords,
-          learnedWordsCount,
-          progressPercent,
-          isMastered,
-        };
-      })
-    );
+      totalLearnedWordsInCourse += learnedWordsCount;
+      const progressPercent =
+        totalWords > 0 ? Math.round((learnedWordsCount / totalWords) * 100) : 0;
+
+      return {
+        id: set.id,
+        orderNumber: set.orderNumber,
+        title: set.title,
+        description: set.description,
+        isPro: set.isPro,
+        isLocked: !isUnlocked,
+        totalWords,
+        learnedWordsCount,
+        progressPercent,
+        isMastered,
+      };
+    });
 
     const completionPercent =
       totalWordsInCourse > 0

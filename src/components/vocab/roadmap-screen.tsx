@@ -41,9 +41,9 @@ interface CourseItem {
   isPinned: boolean;
 }
 
-export function RoadmapScreen() {
-  const [loading, setLoading] = useState(true);
-  const [courses, setCourses] = useState<CourseItem[]>([]);
+export function RoadmapScreen({ initialCourses = [] }: { initialCourses?: CourseItem[] }) {
+  const [loading, setLoading] = useState(false);
+  const [courses, setCourses] = useState<CourseItem[]>(initialCourses);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedLevel, setSelectedLevel] = useState<string>("ALL");
@@ -65,8 +65,10 @@ export function RoadmapScreen() {
   }, []);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+    if (initialCourses.length === 0) {
+      fetchCourses();
+    }
+  }, [initialCourses.length, fetchCourses]);
 
   const categories = [
     { id: "ALL", label: "Tất cả lộ trình" },
