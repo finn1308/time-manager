@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { SpecialModesScreen } from "@/components/vocab/special-modes-screen";
+import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
 
 export default function Index5Page() {
-  return <SpecialModesScreen />;
+  return <VocabUnifiedWorkspace defaultStep={5} />;
 }

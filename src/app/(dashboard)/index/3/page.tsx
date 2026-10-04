@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { LessonDetailScreen } from "@/components/vocab/lesson-detail-screen";
+import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
 
 export default function Index3Page() {
-  return <LessonDetailScreen />;
+  return <VocabUnifiedWorkspace defaultStep={3} />;
 }
