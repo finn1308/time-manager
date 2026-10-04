@@ -214,7 +214,7 @@ export function LessonDetailScreen({
   if (loading) {
     return (
       <div className="space-y-6 max-w-6xl mx-auto pb-16">
-        <VocabIndexNav currentStep={3} />
+        {!hideNav && <VocabIndexNav currentStep={3} onStepChange={onNavigateStep} />}
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
           <RefreshCw className="w-8 h-8 text-purple-600 animate-spin" />
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -228,7 +228,7 @@ export function LessonDetailScreen({
   if (error || !setDetails) {
     return (
       <div className="space-y-6 max-w-6xl mx-auto pb-16">
-        <VocabIndexNav currentStep={3} />
+        {!hideNav && <VocabIndexNav currentStep={3} onStepChange={onNavigateStep} />}
         <div className="p-6 rounded-3xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 text-center space-y-3">
           <h3 className="font-bold text-base text-red-700 dark:text-red-400">
             Không tìm thấy bài học
@@ -236,7 +236,13 @@ export function LessonDetailScreen({
           <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
           <Link
             href="/vocab/index/2"
-            className="inline-block px-4 py-2 bg-purple-600 text-white text-xs font-semibold rounded-xl hover:bg-purple-700 transition-all"
+            onClick={(e) => {
+              if (onNavigateStep) {
+                e.preventDefault();
+                onNavigateStep(2);
+              }
+            }}
+            className="inline-block px-4 py-2 bg-purple-600 text-white text-xs font-semibold rounded-xl hover:bg-purple-700 transition-all cursor-pointer"
           >
             Quay lại Danh sách bài học (Web 2)
           </Link>
@@ -248,7 +254,7 @@ export function LessonDetailScreen({
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16 animate-in fade-in duration-300">
       {/* Web Index Switcher */}
-      <VocabIndexNav currentStep={3} />
+      {!hideNav && <VocabIndexNav currentStep={3} onStepChange={onNavigateStep} />}
 
       {/* Top Header Card matching Image 2 */}
       <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-sm space-y-4">
@@ -256,7 +262,13 @@ export function LessonDetailScreen({
           <div className="flex items-center space-x-3.5">
             <Link
               href={`/vocab/courses/${setDetails.course?.slug || "a1-0-3-0"}`}
-              className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center transition-colors shadow-xs shrink-0"
+              onClick={(e) => {
+                if (onNavigateStep) {
+                  e.preventDefault();
+                  onNavigateStep(2);
+                }
+              }}
+              className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 flex items-center justify-center transition-colors shadow-xs shrink-0 cursor-pointer"
               title="Quay lại danh sách bài học (Web 2)"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -408,7 +420,13 @@ export function LessonDetailScreen({
 
           <Link
             href="/vocab/index/4"
-            className="text-xs font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1"
+            onClick={(e) => {
+              if (onNavigateStep) {
+                e.preventDefault();
+                onNavigateStep(4);
+              }
+            }}
+            className="text-xs font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1 cursor-pointer"
           >
             <span>Mở Web 4 luyện tập toàn màn hình →</span>
           </Link>
