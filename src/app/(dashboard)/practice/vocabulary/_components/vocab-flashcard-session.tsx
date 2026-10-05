@@ -23,7 +23,7 @@ interface VocabFlashcardSessionProps {
 
 export function VocabFlashcardSession({ wordSetId, wordSetTitle, courseTitle, subjectId, words }: VocabFlashcardSessionProps) {
   const router = useRouter();
-  const { startTimer, stopTimer, activeSubject } = usePipTimer();
+  const { startTimer, stopTimer, isRunning, taskId } = usePipTimer();
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -34,7 +34,7 @@ export function VocabFlashcardSession({ wordSetId, wordSetTitle, courseTitle, su
 
   // Start PIP Timer when session starts
   useEffect(() => {
-    if (!timerState.isRunning) {
+    if (!isRunning) {
       startTimer({
         taskId: `vocab_${wordSetId}`,
         title: `Học từ vựng: ${wordSetTitle}`,
@@ -63,7 +63,7 @@ export function VocabFlashcardSession({ wordSetId, wordSetTitle, courseTitle, su
     const durationSeconds = Math.round((endTime.getTime() - startTime.getTime()) / 1000);
     
     // Stop PIP timer if we started it for this vocab task
-    if (timerState.taskId === `vocab_${wordSetId}`) {
+    if (taskId === `vocab_${wordSetId}`) {
       stopTimer();
     }
 
@@ -155,7 +155,7 @@ export function VocabFlashcardSession({ wordSetId, wordSetTitle, courseTitle, su
       <div className="h-16 bg-white border-b border-gray-200 px-4 md:px-8 flex items-center justify-between shrink-0">
         <button 
           onClick={() => {
-            if (timerState.taskId === `vocab_${wordSetId}`) stopTimer();
+            if (taskId === `vocab_${wordSetId}`) stopTimer();
             router.back();
           }}
           className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-medium transition-colors p-2 -ml-2 rounded-lg hover:bg-gray-100"
