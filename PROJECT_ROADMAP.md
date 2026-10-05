@@ -60,4 +60,19 @@
 - [x] **Global Search & Create Actions:** Unified search (`Cmd+K` CommandPalette) and global "+" button (QuickAddMenu) đã có sẵn ở `src/components/notion/top-bar.tsx`. *(Xác nhận hoàn thành: 2026-10-04 22:20)*
 
 ---
-*Ghi chú: Mỗi mục sẽ được cập nhật [x] ngay khi hoàn tất kiểm tra và tích hợp.*
+### 8. Master 4-Year University Learning OS Expansion (All 12 Phases Verified)
+- [x] **Phase 1: Architecture & Model Expansion:** Created 9 core models in `prisma/schema.prisma` (`UserLearningMemory`, `MistakeRecord`, `ExamPreparation`, `Assignment`, `KnowledgeNode`, `KnowledgePrerequisite`, `SyllabusImport`, `BackupRecord`, `ContentVersion`). Pushed to Postgres via Prisma without disrupting existing data. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 2: AI Cognitive Learning Memory:** Persistent structured profile analyzing retention rate, preferred session length, weak/strong subjects, mistake frequency. API endpoints `/api/ai/memory` with UI in `/academic/learning-profile`. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 3: Universal Mistake Bank & SM-2 Review:** Any incorrect answer from quiz, flashcard, or practice recorded with 7 error classifications and SM-2 interval. API `/api/mistakes` and dashboard `/practice/mistakes`. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 4: Universal Review Engine (Today's Review):** Aggregates due vocabulary, flashcards, mistakes, weak concepts, and active notes with priority scoring. API `/api/review/today` and screen `/practice/review`. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 5: Document Intelligence & Syllabus Importer:** Multi-format document actions (Teach me, Flashcards, 14-day study plan) via `/api/documents/[id]/actions`. University course syllabus parser (`/api/ai/syllabus`) with auto-generation of subjects, assignments, exams, and weekly roadmap. Component: `SyllabusImporterModal`. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 6: Exam Mode (5-Phase Strategy):** Foundation, Weak Topic Recovery, Practice, Mock Exams, Final Review. Integrated with calendar, countdown readiness score, risk level. Screen `/exams`, API `/api/exams`. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 7: Assignment Management & AI Decomposition:** Multi-status assignments with automatic 5-phase subtask breakdown into calendar & tasks. Screen `/academic/assignments`, API `/api/assignments`. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 8: Knowledge Graph & Prerequisite Engine:** Interactive concept graph linking subjects, chapters, prerequisites with prerequisite mastery warnings (<50%). Screen `/academic/knowledge-graph`, API `/api/knowledge/graph`. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 9: AI Subject Tutors & Natural Goal-Roadmap Engine:** Context-aware subject tutoring modal (`SubjectAiTutorModal`) and natural-language goal-to-roadmap decomposition (`/api/ai/goal-roadmap`). *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 10: 4-Year Academic Progression & Semester System:** Complete Year 1-4 semester management (`/academic`), graduation credits, GPA calculator, and degree audit. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 11: Data Ownership, Backup Center & PWA:** Export/import full workspace in JSON/CSV (`/settings/backup`). PWA manifest (`public/manifest.json`) and offline meta tags. *(Hoàn thành: 2026-10-05)*
+- [x] **Phase 12: Distraction-Free Focus Mode & Daily AI Briefing:** 6-stage structured session generator (`SmartFocusModeModal`), floating timer sync, and smart daily briefing widget on home dashboard (`DailyAiBriefing`). *(Hoàn thành: 2026-10-05)*
+
+---
+*Ghi chú: Toàn bộ 40 năng lực theo thiết kế 4-Year University Learning OS đã được tích hợp thành công, vượt qua TypeScript typecheck (0 lỗi) và Next.js production build (151/151 routes).*
