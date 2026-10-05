@@ -119,6 +119,76 @@ export async function GET(req: Request) {
         },
         take: 5,
       }),
+
+      // 8. Search Mistakes (Mistake Bank)
+      prisma.mistakeRecord.findMany({
+        where: {
+          userId: user.id,
+          OR: [
+            { question: { contains: query, mode: "insensitive" } },
+            { concept: { contains: query, mode: "insensitive" } },
+            { topic: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        include: {
+          subject: { select: { name: true, color: true } },
+        },
+        take: 4,
+      }),
+
+      // 9. Search Assignments
+      prisma.assignment.findMany({
+        where: {
+          userId: user.id,
+          OR: [
+            { title: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        include: {
+          subject: { select: { name: true, color: true } },
+        },
+        take: 4,
+      }),
+
+      // 10. Search Exams
+      prisma.examPreparation.findMany({
+        where: {
+          userId: user.id,
+          title: { contains: query, mode: "insensitive" },
+        },
+        include: {
+          subject: { select: { name: true, color: true } },
+        },
+        take: 4,
+      }),
+
+      // 11. Search Knowledge Nodes
+      prisma.knowledgeNode.findMany({
+        where: {
+          userId: user.id,
+          OR: [
+            { title: { contains: query, mode: "insensitive" } },
+            { chapter: { contains: query, mode: "insensitive" } },
+            { topic: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        include: {
+          subject: { select: { name: true, color: true } },
+        },
+        take: 4,
+      }),
+
+      // 12. Search Vocabulary Words
+      prisma.vocabWord.findMany({
+        where: {
+          OR: [
+            { term: { contains: query, mode: "insensitive" } },
+            { meaning: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        take: 4,
+      }),
     ]);
 
     return NextResponse.json({
@@ -129,6 +199,11 @@ export async function GET(req: Request) {
       events,
       flashcards,
       tags,
+      mistakes,
+      assignments,
+      exams,
+      knowledgeNodes,
+      vocabWords,
     });
   } catch (err: any) {
     console.error("GET /api/search error:", err);

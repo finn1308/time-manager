@@ -1,0 +1,17 @@
+{
+  "name": "LUYENTU & ChronoMind - 4-Year University Learning OS",
+  "short_name": "LUYENTU",
+  "description": "Hệ điều hành học tập cá nhân 4 năm đại học: Quản lý học phần, từ vựng, tài liệu, AI xếp lịch, ngân hàng lỗi sai, ôn thi và đồ án.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6faf7",
+  "theme_color": "#408257",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
