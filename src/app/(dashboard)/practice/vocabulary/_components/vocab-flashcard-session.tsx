@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, Volume2, Check, RotateCcw, ChevronLeft, ChevronRight, Award, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTimer } from "@/components/providers/timer-provider";
+import { usePipTimer } from "@/components/timer/pip-timer-provider";
 
 interface VocabFlashcardSessionProps {
   wordSetId: string;
@@ -23,7 +23,7 @@ interface VocabFlashcardSessionProps {
 
 export function VocabFlashcardSession({ wordSetId, wordSetTitle, courseTitle, subjectId, words }: VocabFlashcardSessionProps) {
   const router = useRouter();
-  const { startTimer, stopTimer, state: timerState } = useTimer();
+  const { startTimer, stopTimer, activeSubject } = usePipTimer();
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
