@@ -174,7 +174,7 @@ export default function FlashcardsIndexPage() {
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-wrap gap-y-2">
           <Button
             onClick={() => setIsAiGenOpen(true)}
             variant="outline"
