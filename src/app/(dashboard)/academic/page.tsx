@@ -459,7 +459,36 @@ export default function AcademicHubPage() {
             </div>
             <p className="text-[11px] text-[#d8f3dc]/70 mt-2">Mục tiêu: {degree?.targetGpa?.toFixed(2) || "3.60"}</p>
           </div>
-        </div>
+      </div>
+    </div>
+
+      {/* 4-Year Academic OS Subsystem Quick Links */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+        <Link href="/academic">
+          <Badge className="bg-[#2d6a4f] text-white py-1.5 px-3 rounded-xl cursor-pointer">
+            🎓 Học kỳ & Môn học
+          </Badge>
+        </Link>
+        <Link href="/academic/assignments">
+          <Badge variant="outline" className="py-1.5 px-3 rounded-xl hover:bg-emerald-50 dark:hover:bg-[#1a2f22] cursor-pointer">
+            📝 Bài tập lớn & Đồ án
+          </Badge>
+        </Link>
+        <Link href="/exams">
+          <Badge variant="outline" className="py-1.5 px-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/20 text-amber-700 dark:text-amber-300 border-amber-200 cursor-pointer">
+            🎯 Luyện thi 5 giai đoạn
+          </Badge>
+        </Link>
+        <Link href="/academic/knowledge-graph">
+          <Badge variant="outline" className="py-1.5 px-3 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-950/20 text-purple-700 dark:text-purple-300 border-purple-200 cursor-pointer">
+            🌿 Cây tri thức & Tiên quyết
+          </Badge>
+        </Link>
+        <Link href="/academic/learning-profile">
+          <Badge variant="outline" className="py-1.5 px-3 rounded-xl hover:bg-teal-50 dark:hover:bg-teal-950/20 text-teal-700 dark:text-teal-300 border-teal-200 cursor-pointer">
+            🧠 Hồ sơ nhận thức AI
+          </Badge>
+        </Link>
       </div>
 
       {/* Main Academic Workspace: Years Navigation */}
@@ -569,6 +598,14 @@ export default function AcademicHubPage() {
                       <span>Kết chuyển học kỳ & Chốt điểm</span>
                     </button>
                   )}
+
+                  <button
+                    onClick={() => setShowSyllabusModal(true)}
+                    className="px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-[#1a2f22] border border-emerald-200 dark:border-[#263d2e] text-emerald-800 dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-100 transition-all flex items-center space-x-1.5 shadow-xs"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Nhập đề cương AI</span>
+                  </button>
 
                   <button
                     onClick={() => {
@@ -1261,6 +1298,14 @@ export default function AcademicHubPage() {
           </div>
         </div>
       )}
+
+      {/* Syllabus Importer AI Modal */}
+      <SyllabusImporterModal
+        open={showSyllabusModal}
+        onClose={() => setShowSyllabusModal(false)}
+        onSuccess={fetchAcademicData}
+        semesterId={selectedSemesterId}
+      />
     </div>
   );
 }
