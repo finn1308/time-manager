@@ -17,9 +17,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { id: quizId } = await params;
 
   try {
-    const { mode = "PRACTICE", answers = [] } = (await req.json()) as {
+    const { mode = "PRACTICE", answers = [], isTimerRunning = false } = (await req.json()) as {
       mode?: string;
       answers: SubmittedAnswerItem[];
+      isTimerRunning?: boolean;
     };
 
     const quiz = await prisma.quiz.findUnique({
@@ -167,6 +168,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             xp: { increment: xpEarned },
           },
         });
+
+        // 3. Create StudySession if not handled by PIP timer
+        if (!isTimerRunning && quiz.subjectId && totalTimeSpent > 0) {
+          await tx.studySession.create({
+            data: {
+              userId: user.id,
+              subjectId: quiz.subjectId,
+              actualStart: new Date(Date.now() - totalTimeSpent * 1000),
+              actualEnd: new Date(),
+              actualDurationSeconds: totalTimeSpent,
+              status: "COMPLETED",
+              source: "PRACTICE_QUIZ",
+            }
+          });
+        }
 
       // 4. UNLOCK NEXT DAY LOGIC (If user passed and quiz is attached to a Roadmap Stage)
       if (isPassed && quiz.stageId && quiz.stage) {
