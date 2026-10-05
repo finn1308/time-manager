@@ -288,7 +288,7 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
         </div>
 
         {/* Time Filter Pills */}
-        <div className="flex items-center space-x-1.5 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl shadow-2xs">
+        <div className="flex items-center space-x-1.5 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl shadow-2xs overflow-x-auto max-w-full">
           {[
             { id: "7", label: "7 ngày" },
             { id: "30", label: "30 ngày" },
@@ -423,7 +423,7 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
       {/* Quick Launchers: What-If Simulator & Weekly Review Banner */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Weekly Review Banner */}
-        <div className="p-5 rounded-[26px] bg-gradient-to-br from-[#1b4332] to-[#2d6a4f] text-white flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-[26px] bg-gradient-to-br from-[#1b4332] to-[#2d6a4f] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
           <div className="space-y-1">
             <div className="flex items-center space-x-2 text-xs font-bold text-[#52b788]">
               <Sparkles className="w-4 h-4 fill-current" />
@@ -441,7 +441,7 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
         </div>
 
         {/* What-If Simulator Banner */}
-        <div className="p-5 rounded-[26px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs flex items-center justify-between">
+        <div className="p-5 rounded-[26px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center space-x-2 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
               <Target className="w-4 h-4" />
