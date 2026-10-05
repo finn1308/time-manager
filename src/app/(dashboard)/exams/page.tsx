@@ -295,13 +295,13 @@ export default function ExamModePage() {
                 {/* Bottom Actions */}
                 <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-emerald-50 dark:border-[#263d2e]">
                   <div className="flex items-center gap-2">
-                    <Link href={`/vocab/mistakes?subjectId=${exam.subjectId || "ALL"}`}>
+                    <Link href={`/practice/mistakes?subjectId=${exam.subjectId || "ALL"}`}>
                       <Button variant="outline" size="sm" className="rounded-xl text-xs">
                         <AlertTriangle className="w-3.5 h-3.5 mr-1.5 text-rose-500" />
                         Ôn câu sai môn này
                       </Button>
                     </Link>
-                    <Link href="/vocab/review">
+                    <Link href="/practice/review">
                       <Button variant="outline" size="sm" className="rounded-xl text-xs">
                         <BookOpen className="w-3.5 h-3.5 mr-1.5 text-purple-500" />
                         Luyện thẻ ghi nhớ
