@@ -100,8 +100,17 @@ async function runAcceptanceTests() {
 
   // TEST 06: Review / Spaced Repetition logic
   console.log("▶ TEST 06: Checking Review Due Items (SuperMemo SM-2)...");
-  const user = await prisma.user.findFirst();
-  if (!user) throw new Error("No user found");
+  const ieltsSubject = await prisma.subject.findFirst({
+    where: {
+      OR: [
+        { code: "IELTS" },
+        { name: { contains: "IELTS", mode: "insensitive" } },
+      ],
+    },
+    include: { user: true },
+  });
+  if (!ieltsSubject) throw new Error("IELTS subject not found");
+  const user = ieltsSubject.user;
 
   const now = new Date();
   const dueWords = await prisma.userWordProgress.findMany({
@@ -156,11 +165,6 @@ async function runAcceptanceTests() {
 
   // TEST 09 & 13: Study Time & No Duplicate StudyRecord
   console.log("▶ TEST 09 & 13: Testing Study Time Recording & Idempotency...");
-  const ieltsSubject = await prisma.subject.findFirst({
-    where: { userId: user.id, code: "IELTS" },
-  });
-
-  if (!ieltsSubject) throw new Error("IELTS subject not found");
 
   // Create 20 min session via simulated API call logic
   const durationSecs = 1200; // 20m
