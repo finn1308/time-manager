@@ -24,6 +24,72 @@ export async function POST(req: Request) {
 
     let session;
 
+    let resolvedEventId = calendarEventId || null;
+
+    // If linked to a calendar event, resolve recurring exception if needed and mark completed
+    if (calendarEventId) {
+      try {
+        const isRecurringOcc = calendarEventId.includes("_");
+        const cleanId = isRecurringOcc ? calendarEventId.split("_")[0] : calendarEventId;
+        const targetDateKey = isRecurringOcc ? calendarEventId.split("_")[1] : null;
+
+        let targetEvent = await prisma.calendarEvent.findFirst({
+          where: { id: cleanId, userId: user.id },
+        });
+
+        if (isRecurringOcc && targetDateKey && targetEvent) {
+          let existingEx = await prisma.calendarEvent.findFirst({
+            where: { parentId: cleanId, exceptionDate: targetDateKey, userId: user.id },
+          });
+
+          if (!existingEx) {
+            existingEx = await prisma.calendarEvent.create({
+              data: {
+                userId: user.id,
+                parentId: cleanId,
+                exceptionDate: targetDateKey,
+                isException: true,
+                title: targetEvent.title,
+                description: targetEvent.description,
+                location: targetEvent.location,
+                subjectId: targetEvent.subjectId,
+                taskId: targetEvent.taskId,
+                goalId: targetEvent.goalId,
+                startTime: now,
+                endTime: now,
+                type: targetEvent.type,
+                completed: true,
+                completedAt: now,
+                actualDurationMinutes: Math.round(durationSeconds / 60),
+              },
+            });
+          } else {
+            await prisma.calendarEvent.update({
+              where: { id: existingEx.id },
+              data: {
+                completed: true,
+                completedAt: now,
+                actualDurationMinutes: Math.round(durationSeconds / 60),
+              },
+            });
+          }
+          resolvedEventId = existingEx.id;
+        } else if (targetEvent) {
+          await prisma.calendarEvent.update({
+            where: { id: targetEvent.id },
+            data: {
+              completed: true,
+              completedAt: now,
+              actualDurationMinutes: Math.round(durationSeconds / 60),
+            },
+          });
+          resolvedEventId = targetEvent.id;
+        }
+      } catch (e) {
+        console.warn("Could not mark calendar event completed from timer:", e);
+      }
+    }
+
     if (sessionId) {
       // Update existing in-progress session
       session = await prisma.studySession.update({
@@ -32,6 +98,7 @@ export async function POST(req: Request) {
           actualEnd: now,
           actualDurationSeconds: durationSeconds,
           status: "COMPLETED",
+          calendarEventId: resolvedEventId || undefined,
           notes: notes?.trim() || null,
           productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
           taskId: taskId || undefined,
@@ -46,7 +113,7 @@ export async function POST(req: Request) {
         data: {
           userId: user.id,
           subjectId,
-          calendarEventId: calendarEventId || null,
+          calendarEventId: resolvedEventId || null,
           taskId: taskId || null,
           goalId: goalId || null,
           actualStart: start,
@@ -63,16 +130,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Thiếu sessionId hoặc subjectId" }, { status: 400 });
     }
 
-    // Accumulate actual study time into Subject.completedHours
-    if (durationSeconds > 0 && session.subjectId) {
-      const addedHours = durationSeconds / 3600;
+    // Accumulate actual study time into Subject.completedHours via aggregate to prevent any drift
+    if (session.subjectId) {
+      const agg = await prisma.studySession.aggregate({
+        where: { subjectId: session.subjectId, userId: user.id, status: "COMPLETED" },
+        _sum: { actualDurationSeconds: true },
+      });
+      const totalHours = Math.round(((agg._sum.actualDurationSeconds || 0) / 3600) * 10) / 10;
       await prisma.subject.update({
         where: { id: session.subjectId, userId: user.id },
-        data: {
-          completedHours: {
-            increment: addedHours,
-          },
-        },
+        data: { completedHours: totalHours },
       }).catch((e) => console.error("Error updating subject completedHours:", e));
     }
 
