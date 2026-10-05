@@ -724,7 +724,7 @@ export function InteractiveStudyModal({
                 <div className="p-4 rounded-3xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-center">
                   <div className="flex items-center justify-center space-x-1.5 text-amber-600 dark:text-amber-300">
                     <Coins className="w-5 h-5" />
-                    <span className="text-lg font-black">+{earnedCoins} Xu</span>
+                    <span className="text-lg font-black">+{earnedCoins} XP</span>
                   </div>
                   <span className="text-[10px] font-bold text-gray-500">Thưởng hoàn thành</span>
                 </div>
@@ -1255,7 +1255,7 @@ export function InteractiveStudyModal({
               {mode === "SPECIAL" && currentWord && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 text-xs font-black animate-pulse">
-                    <span>🔥 THỬ THÁCH ĐẶC BIỆT (+20 XU)</span>
+                    <span>🔥 THỬ THÁCH ĐẶC BIỆT (+20 XP)</span>
                   </div>
 
                   <div className="p-6 rounded-3xl bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20 border-2 border-rose-200 dark:border-rose-900/40 space-y-2">

@@ -101,11 +101,11 @@ export function InteractiveStudyScreen({
   }, [loadWords]);
 
   const modeTabs: { id: StudyMode; title: string; reward: string; icon: any; color: string }[] = [
-    { id: "FLASHCARD", title: "Flashcard", reward: "+5 Xu", icon: Layers, color: "from-purple-500 to-indigo-600" },
-    { id: "QUIZ", title: "Trắc nghiệm Quiz", reward: "+10 Xu", icon: CheckCircle2, color: "from-amber-500 to-orange-600" },
-    { id: "LISTENING", title: "Nghe chép Listening", reward: "+15 Xu", icon: Headphones, color: "from-sky-500 to-blue-600" },
-    { id: "TYPING", title: "Gõ từ Typing", reward: "+10 Xu", icon: Keyboard, color: "from-emerald-500 to-green-600" },
-    { id: "MATCHING", title: "Ghép cặp Matching", reward: "+10 Xu", icon: Grid2X2, color: "from-blue-500 to-cyan-600" },
+    { id: "FLASHCARD", title: "Flashcard", reward: "+5 XP", icon: Layers, color: "from-purple-500 to-indigo-600" },
+    { id: "QUIZ", title: "Trắc nghiệm Quiz", reward: "+10 XP", icon: CheckCircle2, color: "from-amber-500 to-orange-600" },
+    { id: "LISTENING", title: "Nghe chép Listening", reward: "+15 XP", icon: Headphones, color: "from-sky-500 to-blue-600" },
+    { id: "TYPING", title: "Gõ từ Typing", reward: "+10 XP", icon: Keyboard, color: "from-emerald-500 to-green-600" },
+    { id: "MATCHING", title: "Ghép cặp Matching", reward: "+10 XP", icon: Grid2X2, color: "from-blue-500 to-cyan-600" },
   ];
 
   return (
