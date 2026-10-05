@@ -94,6 +94,7 @@ export default function AcademicHubPage() {
   const [showEditCourseModal, setShowEditCourseModal] = useState<any | null>(null);
   const [showTransitionModal, setShowTransitionModal] = useState<SemesterData | null>(null);
   const [showEditDegreeModal, setShowEditDegreeModal] = useState(false);
+  const [showSyllabusModal, setShowSyllabusModal] = useState(false);
 
   // Form states
   const [newYearName, setNewYearName] = useState("");
