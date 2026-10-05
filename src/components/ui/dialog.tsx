@@ -24,14 +24,14 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-[#101c14]/40 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
         onClick={() => onOpenChange(false)}
       />
       {/* Container */}
-      <div className="relative z-50 w-full max-w-lg">{children}</div>
+      <div className="relative z-50 w-full max-w-lg my-auto">{children}</div>
     </div>
   );
 }
@@ -48,7 +48,7 @@ export function DialogContent({
   return (
     <div
       className={cn(
-        "relative w-full rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-7 shadow-2xl transition-all animate-in zoom-in-95 duration-150 text-[#192e22] dark:text-[#f0f7f2]",
+        "relative w-full rounded-[24px] sm:rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-5 sm:p-7 shadow-2xl max-h-[90dvh] overflow-y-auto transition-all animate-in zoom-in-95 duration-150 text-[#192e22] dark:text-[#f0f7f2]",
         className
       )}
     >
