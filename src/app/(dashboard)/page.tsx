@@ -79,7 +79,20 @@ export default async function DashboardPage() {
     }),
     prisma.subject.findMany({
       where: { userId: user.id },
-      include: { goals: true, studySessions: true },
+      include: {
+        goals: true,
+        studySessions: true,
+        vocabWords: {
+          include: {
+            userProgress: {
+              where: { userId: user.id },
+            },
+          },
+        },
+        vocabStudySessions: {
+          where: { userId: user.id },
+        },
+      },
       orderBy: { priority: "desc" },
     }),
     prisma.studySession.findMany({
@@ -478,8 +491,8 @@ export default async function DashboardPage() {
           <CardContent className="space-y-4">
             <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/40">
               <h4 className="font-bold text-purple-900 dark:text-purple-100 text-sm mb-1">Cần ôn tập ngay (SM-2)</h4>
-              <p className="text-xs text-purple-700 dark:text-purple-300 mb-3">Bạn có 15 từ vựng yếu sắp quên. AI đề xuất bạn nên ôn tập ngay.</p>
-              <Link href="/vocab/spaced-repetition">
+              <p className="text-xs text-purple-700 dark:text-purple-300 mb-3">Từ vựng đến chu kỳ ôn tập ngắt quãng để khắc sâu vào trí nhớ dài hạn.</p>
+              <Link href="/practice/vocabulary/review">
                 <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl w-full font-bold">Ôn tập ngay</Button>
               </Link>
             </div>
@@ -489,20 +502,20 @@ export default async function DashboardPage() {
         <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-              <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
                 <Languages className="w-4 h-4" />
               </div>
-              <span>Tiếp tục học (LUYENTU)</span>
+              <span>Luyện tập từ vựng (Practice)</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
              <div className="flex items-center justify-between p-3 border border-[#dbe7dd] dark:border-[#263d2e] rounded-xl hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] transition-colors">
                 <div>
-                   <h4 className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">Khóa học IELTS Cambridge 16</h4>
-                   <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">Bài 3: Môi trường (Environment)</p>
+                   <h4 className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">IELTS Academic Vocabulary</h4>
+                   <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">Integration Test - 10 Words</p>
                 </div>
-                <Link href="/vocab/courses/a1-0-3-0">
-                  <Button variant="outline" size="sm" className="rounded-xl font-bold"><Play className="w-3 h-3 mr-1.5"/> Tiếp tục</Button>
+                <Link href="/practice/vocabulary">
+                  <Button variant="outline" size="sm" className="rounded-xl font-bold"><Play className="w-3 h-3 mr-1.5"/> Luyện tập</Button>
                 </Link>
              </div>
           </CardContent>
@@ -785,6 +798,34 @@ export default async function DashboardPage() {
                         </div>
                       )}
                     </div>
+
+                    {/* Integrated Vocabulary Metrics if subject has vocabulary */}
+                    {(sub as any).vocabWords && (sub as any).vocabWords.length > 0 && (
+                      <div className="mt-2.5 pt-2.5 border-t border-[#dbe7dd]/50 dark:border-[#263d2e] flex items-center justify-between flex-wrap gap-2 text-xs">
+                        <div className="flex items-center space-x-2 text-[#526b5c] dark:text-[#a3bda9]">
+                          <Brain className="w-3.5 h-3.5 text-[#2d6a4f] dark:text-[#52b788]" />
+                          <span>Từ vựng: <strong>{(sub as any).vocabWords.length} từ</strong></span>
+                          <span>•</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                            {(sub as any).vocabWords.filter((w: any) => w.userProgress?.[0]?.status === "MASTERED").length} đã thuộc
+                          </span>
+                          <span>•</span>
+                          <span className="text-rose-600 dark:text-rose-400 font-bold">
+                            {(sub as any).vocabWords.filter((w: any) => {
+                              const p = w.userProgress?.[0];
+                              return p && ((p.nextReviewDate && new Date(p.nextReviewDate) <= new Date()) || (!p.nextReviewDate && p.status === "LEARNING"));
+                            }).length} đến hạn ôn
+                          </span>
+                        </div>
+                        <Link
+                          href="/practice/vocabulary"
+                          className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#52b788] hover:underline flex items-center space-x-1"
+                        >
+                          <span>Luyện tập ngay</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 );
               })}
