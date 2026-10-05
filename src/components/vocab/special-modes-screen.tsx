@@ -29,7 +29,9 @@ export type SpecialGameType =
   | "SENTENCE"
   | "COM_TAM"
   | "CHIM_CHAM_CHI"
-  | "GIAI_CUU_KHI";
+  | "GIAI_CUU_KHI"
+  | "REVIEW"
+  | "MISTAKES";
 
 export interface SpecialModesScreenProps {
   initialSetId?: string;
@@ -105,6 +107,15 @@ export function SpecialModesScreen({
   const handleSelectGame = (type: SpecialGameType) => {
     setWarningMessage(null);
 
+    if (type === "REVIEW") {
+      router.push("/vocab/review");
+      return;
+    }
+    if (type === "MISTAKES") {
+      router.push("/vocab/mistakes");
+      return;
+    }
+
     if (type === "CHIM_CHAM_CHI") {
       if (words.length < 4) {
         setWarningMessage("Cần tối thiểu 4 từ vựng để chơi Chim chăm chỉ!");
@@ -116,6 +127,24 @@ export function SpecialModesScreen({
   };
 
   const games = [
+    {
+      type: "REVIEW" as SpecialGameType,
+      title: "Ôn tập tổng hợp",
+      desc: "Tổng hợp từ vựng đến hạn, flashcards và lỗi sai trong 1 phiên tập trung.",
+      badge: "KHUYÊN DÙNG",
+      badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
+      icon: RefreshCw,
+      bg: "from-emerald-500 to-green-600",
+    },
+    {
+      type: "MISTAKES" as SpecialGameType,
+      title: "Ngân hàng lỗi sai",
+      desc: "Quản lý và ôn tập các câu hỏi từng làm sai từ quiz, flashcard và đề thi.",
+      badge: "TRỌNG TÂM",
+      badgeColor: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
+      icon: Target,
+      bg: "from-rose-500 to-red-600",
+    },
     {
       type: "MIXED" as SpecialGameType,
       title: "Luyện tập hỗn hợp",
