@@ -31,15 +31,15 @@ export function VocabIndexNav({
   // Determine active step from pathname if not provided
   let activeStep = currentStep;
   if (!activeStep) {
-    if (pathname.includes("/index/1") || pathname === "/vocab" || pathname === "/vocab/courses") {
+    if (pathname?.includes("/index/1") || pathname === "/vocab" || pathname === "/vocab/courses") {
       activeStep = 1;
-    } else if (pathname.includes("/index/2") || pathname.includes("/vocab/courses/")) {
+    } else if (pathname?.includes("/index/2") || pathname?.includes("/vocab/courses/")) {
       activeStep = 2;
-    } else if (pathname.includes("/index/3") || (pathname.includes("/vocab/sets/") && !pathname.includes("/study"))) {
+    } else if (pathname?.includes("/index/3") || (pathname?.includes("/vocab/sets/") && !pathname?.includes("/study"))) {
       activeStep = 3;
-    } else if (pathname.includes("/index/4") || pathname.includes("/study")) {
+    } else if (pathname?.includes("/index/4") || pathname?.includes("/study")) {
       activeStep = 4;
-    } else if (pathname.includes("/index/5") || pathname.includes("/special")) {
+    } else if (pathname?.includes("/index/5") || pathname?.includes("/special")) {
       activeStep = 5;
     } else {
       activeStep = 1;
@@ -51,7 +51,6 @@ export function VocabIndexNav({
     if (!onStepChange) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input, textarea, or contentEditable
       const target = e.target as HTMLElement;
       if (
         target &&
@@ -81,8 +80,8 @@ export function VocabIndexNav({
     {
       step: 1 as const,
       hotkey: "1",
-      title: "1. Lộ trình học",
-      shortTitle: "Lộ trình",
+      title: "1. Lộ trình",
+      fullTitle: "1. Lộ trình học",
       subtitle: "Roadmap Screen",
       href: `${prefix}/1`,
       icon: Compass,
@@ -93,8 +92,8 @@ export function VocabIndexNav({
     {
       step: 2 as const,
       hotkey: "2",
-      title: "2. Danh sách bài",
-      shortTitle: "Bài học",
+      title: "2. Bài học",
+      fullTitle: "2. Danh sách bài",
       subtitle: "Topic Set Overview",
       href: `${prefix}/2`,
       icon: ListOrdered,
@@ -106,7 +105,7 @@ export function VocabIndexNav({
       step: 3 as const,
       hotkey: "3",
       title: "3. Cài đặt & Từ",
-      shortTitle: "Cài đặt & Từ",
+      fullTitle: "3. Cài đặt & Từ",
       subtitle: "Lesson Detail & Modes",
       href: `${prefix}/3`,
       icon: Sliders,
@@ -118,7 +117,7 @@ export function VocabIndexNav({
       step: 4 as const,
       hotkey: "4",
       title: "4. Luyện tập",
-      shortTitle: "Luyện tập",
+      fullTitle: "4. Luyện tập",
       subtitle: "Game & Study Engine",
       href: `${prefix}/4`,
       icon: Layers,
@@ -130,7 +129,7 @@ export function VocabIndexNav({
       step: 5 as const,
       hotkey: "5",
       title: "5. Mini-games",
-      shortTitle: "Arcade Games",
+      fullTitle: "5. Mini-games",
       subtitle: "Special Arcade & Story",
       href: `${prefix}/5`,
       icon: Gamepad2,
@@ -142,29 +141,31 @@ export function VocabIndexNav({
 
   return (
     <div
-      className={`rounded-2xl bg-white dark:bg-[#16241b] border border-gray-200/90 dark:border-[#263d2e] p-2 sm:p-2.5 shadow-sm transition-all ${className}`}
+      className={`rounded-2xl bg-white dark:bg-[#16241b] border border-gray-200/90 dark:border-[#263d2e] p-2 sm:p-2.5 shadow-sm transition-all max-w-full overflow-hidden ${className}`}
     >
-      <div className="flex flex-wrap items-center justify-between gap-1.5 px-2 pb-2 mb-1.5 border-b border-gray-100 dark:border-gray-800 text-[11px] font-bold text-gray-500 dark:text-gray-400">
-        <div className="flex items-center space-x-1.5 text-emerald-600 dark:text-emerald-400">
-          <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-          <span className="uppercase tracking-wider font-extrabold text-[10.5px]">
-            Hệ thống Luyện Từ • 1-Click Fast Switcher
+      {/* Header bar: Responsive flex */}
+      <div className="flex flex-wrap items-center justify-between gap-1 px-1 sm:px-2 pb-2 mb-1.5 border-b border-gray-100 dark:border-gray-800 text-[10px] sm:text-[11px] font-bold text-gray-500 dark:text-gray-400">
+        <div className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 min-w-0">
+          <Sparkles className="w-3.5 h-3.5 animate-pulse shrink-0" />
+          <span className="uppercase tracking-wider font-extrabold text-[10px] sm:text-[10.5px] truncate">
+            Luyện Từ • 1-Click Fast Switcher
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <span className="hidden sm:inline-flex items-center gap-1 text-[9.5px] text-gray-400 dark:text-gray-500 font-semibold bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md">
+        <div className="flex items-center gap-1 shrink-0">
+          <span className="hidden md:inline-flex items-center gap-1 text-[9.5px] text-gray-400 dark:text-gray-500 font-semibold bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md">
             Phím tắt: <kbd className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">[1]</kbd>-<kbd className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">[5]</kbd>
           </span>
 
-          <span className="inline-flex items-center gap-1 text-[10px] bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/80 dark:to-teal-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40 px-2.5 py-0.5 rounded-full font-black shadow-2xs">
-            <Zap className="w-3 h-3 text-amber-500 fill-amber-400" />
-            <span>⚡ Chế độ xem gộp nhanh • 1 Bấm chuyển tức thì</span>
+          <span className="inline-flex items-center gap-1 text-[9.5px] sm:text-[10px] bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/80 dark:to-teal-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40 px-2 sm:px-2.5 py-0.5 rounded-full font-black shadow-2xs">
+            <Zap className="w-3 h-3 text-amber-500 fill-amber-400 shrink-0" />
+            <span>⚡ Chế độ gộp nhanh</span>
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1.5">
+      {/* Tabs Container: Horizontal scroll with smooth inertia on mobile, grid on sm/lg */}
+      <div className="flex sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-1.5 overflow-x-auto no-scrollbar pb-0.5 pt-0.5 scroll-smooth">
         {steps.map((s) => {
           const Icon = s.icon;
           const isActive = activeStep === s.step;
@@ -182,7 +183,10 @@ export function VocabIndexNav({
               </div>
               <div className="truncate text-left flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1">
-                  <p className="truncate font-black text-xs leading-tight">{s.title}</p>
+                  <p className="truncate font-black text-xs leading-tight">
+                    <span className="sm:hidden">{s.title}</span>
+                    <span className="hidden sm:inline">{s.fullTitle}</span>
+                  </p>
                   <span
                     className={`text-[8.5px] font-mono px-1 py-0.2 rounded font-black shrink-0 ${
                       isActive
@@ -195,7 +199,7 @@ export function VocabIndexNav({
                 </div>
                 {!compact && (
                   <p
-                    className={`text-[9px] truncate font-medium mt-0.5 ${
+                    className={`text-[9px] truncate font-medium mt-0.5 hidden sm:block ${
                       isActive ? "text-white/80" : "text-gray-400 dark:text-gray-500"
                     }`}
                   >
@@ -206,18 +210,20 @@ export function VocabIndexNav({
             </>
           );
 
+          const itemClasses = `group flex items-center space-x-2 px-2.5 sm:px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-left shrink-0 min-w-[125px] sm:min-w-0 flex-1 ${
+            isActive
+              ? `${s.activeBg} shadow-md scale-[1.01]`
+              : "bg-gray-50 dark:bg-[#1f3325] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#27402f] hover:text-gray-900 active:scale-98"
+          }`;
+
           if (onStepChange) {
             return (
               <button
                 key={s.step}
                 type="button"
                 onClick={() => onStepChange(s.step)}
-                className={`group flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer text-left ${
-                  isActive
-                    ? `${s.activeBg} shadow-md scale-[1.02]`
-                    : "bg-gray-50 dark:bg-[#1f3325] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#27402f] hover:text-gray-900 active:scale-98"
-                }`}
-                title={`Chuyển sang ${s.title} (Phím [${s.hotkey}])`}
+                className={itemClasses}
+                title={`Chuyển sang ${s.fullTitle} (Phím [${s.hotkey}])`}
               >
                 {buttonContent}
               </button>
@@ -228,11 +234,7 @@ export function VocabIndexNav({
             <Link
               key={s.step}
               href={s.href}
-              className={`group flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                isActive
-                  ? `${s.activeBg} shadow-md scale-[1.02]`
-                  : "bg-gray-50 dark:bg-[#1f3325] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#27402f] hover:text-gray-900 active:scale-98"
-              }`}
+              className={itemClasses}
             >
               {buttonContent}
             </Link>
