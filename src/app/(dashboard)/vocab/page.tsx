@@ -1,15 +1,5 @@
-import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
-import { getCourses } from "@/lib/vocab/service";
-import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Lộ trình học Từ vựng • LUYENTU",
-  description: "Bản đồ lộ trình học từ vựng tiếng Anh theo phương pháp Spaced Repetition",
-};
-
-export default async function VocabCoursesPage() {
-  const user = await getCurrentUser();
-  const initialCourses = await getCourses(user);
-  
-  return <VocabUnifiedWorkspace defaultStep={1} initialCourses={initialCourses} />;
+export default function OldVocabRedirectPage() {
+  redirect("/practice/vocabulary");
 }
