@@ -41,13 +41,12 @@ export function SpecialModesScreen({
   onNavigateStep,
   hideNav = false,
 }: SpecialModesScreenProps = {}) {
-  const [activeGame, setActiveGame] = useState<SpecialGameType | null>(null);
   const [words, setWords] = useState<StudyWord[]>([]);
   const [wordSetTitle, setWordSetTitle] = useState("1. Lời chào hỏi");
   const [wordSetId, setWordSetId] = useState<string>(initialSetId || "");
-  const [userCoins, setUserCoins] = useState(250);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const loadData = useCallback(async () => {
     try {
@@ -122,7 +121,7 @@ export function SpecialModesScreen({
       }
     }
 
-    setActiveGame(type);
+    router.push(`/vocab/games/${type}?setId=${wordSetId}&title=${encodeURIComponent(wordSetTitle)}`);
   };
 
   const games = [
@@ -226,83 +225,7 @@ export function SpecialModesScreen({
         </div>
       )}
 
-      {/* Render Active Game or Game List Grid */}
-      {activeGame ? (
-        <div className="rounded-3xl bg-white dark:bg-[#15251a] border border-gray-200 dark:border-[#263d2e] p-4 sm:p-6 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-            <button
-              onClick={() => setActiveGame(null)}
-              className="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Quay lại menu game</span>
-            </button>
-            <span className="text-xs font-extrabold text-gray-500">
-              Đang chơi: {games.find((g) => g.type === activeGame)?.title}
-            </span>
-          </div>
-
-          {activeGame === "MIXED" && (
-            <MixedPracticeGame
-              words={words}
-              wordSetId={wordSetId}
-              wordSetTitle={wordSetTitle}
-              onClose={() => {
-                setActiveGame(null);
-                loadData();
-              }}
-            />
-          )}
-
-          {activeGame === "SENTENCE" && (
-            <SentenceCraftGame
-              words={words}
-              wordSetId={wordSetId}
-              isUserPro={true}
-              onClose={() => {
-                setActiveGame(null);
-                loadData();
-              }}
-            />
-          )}
-
-          {activeGame === "COM_TAM" && (
-            <ComTamGame
-              words={words}
-              wordSetId={wordSetId}
-              initialCoins={150}
-              onUpdateCoins={() => {}}
-              onClose={() => {
-                setActiveGame(null);
-                loadData();
-              }}
-            />
-          )}
-
-          {activeGame === "CHIM_CHAM_CHI" && (
-            <FlappyBirdGame
-              words={words}
-              wordSetId={wordSetId}
-              onClose={() => {
-                setActiveGame(null);
-                loadData();
-              }}
-            />
-          )}
-
-          {activeGame === "GIAI_CUU_KHI" && (
-            <MonkeyRescueGame
-              words={words}
-              wordSetId={wordSetId}
-              onClose={() => {
-                setActiveGame(null);
-                loadData();
-              }}
-            />
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {games.map((g) => {
             const Icon = g.icon;
             return (
@@ -343,7 +266,6 @@ export function SpecialModesScreen({
             );
           })}
         </div>
-      )}
     </div>
   );
 }
