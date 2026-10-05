@@ -261,6 +261,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
+      {/* Real-time Dashboard Refresher on Calendar/Study updates */}
+      <DashboardRefresher />
+
       {/* Smart Daily AI Briefing Widget */}
       <DailyAiBriefing />
 
@@ -544,71 +547,112 @@ export default async function DashboardPage() {
                 const TypeIcon = typeConfig.icon;
                 const canStudy = canStartStudyTimer(ev.type);
 
+                const isStudy = ev.type === "SELF_STUDY" || ev.type === "STUDY" || Boolean(ev.subjectId);
+                const plannedMins =
+                  ev.plannedDurationMinutes ||
+                  Math.max(15, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 60)));
+
                 return (
                   <div
                     key={ev.id}
-                    className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#74a882] transition-all"
-                    style={{ borderLeftColor: ev.subject?.color || typeConfig.borderLeftColor || "#2d6a4f", borderLeftWidth: "4px" }}
+                    className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all text-xs ${
+                      ev.completed
+                        ? "border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/20"
+                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                    }`}
+                    style={{
+                      borderLeftColor: ev.completed
+                        ? "#10b981"
+                        : ev.subject?.color || typeConfig.borderLeftColor || "#2d6a4f",
+                      borderLeftWidth: "4px",
+                    }}
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
-                          {ev.title}
-                        </span>
-                        <span
-                          className="px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center space-x-1"
-                          style={{ backgroundColor: typeConfig.badgeBg, color: typeConfig.badgeText }}
-                        >
-                          <TypeIcon className="w-2.5 h-2.5" />
-                          <span>{typeConfig.shortLabel || typeConfig.label}</span>
-                        </span>
-                        {ev.isLocked && (
-                          <Badge variant="yellow" className="text-[10px]">
-                            <Lock className="w-2.5 h-2.5 mr-1" />
-                            Đã khóa
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap items-center gap-x-2 text-[#526b5c] dark:text-[#a3bda9]">
-                        {ev.subject && (
-                          <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
-                            {ev.subject.name}
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <EventCompleteCheckbox
+                        eventId={ev.id}
+                        initialCompleted={ev.completed}
+                        isStudyEvent={isStudy}
+                        title={ev.title}
+                        plannedMinutes={plannedMins}
+                        actualMinutes={ev.actualDurationMinutes || undefined}
+                      />
+                      <div className="space-y-1 min-w-0">
+                        <div className="flex items-center space-x-2">
+                          <span
+                            className={`font-bold text-sm truncate ${
+                              ev.completed
+                                ? "line-through text-emerald-800/70 dark:text-emerald-300/70"
+                                : "text-[#192e22] dark:text-[#f0f7f2]"
+                            }`}
+                          >
+                            {ev.title}
                           </span>
-                        )}
-                        <span>•</span>
-                        <span className="font-mono font-medium">
-                          {formatVN(new Date(ev.startTime), "HH:mm")} – {formatVN(new Date(ev.endTime), "HH:mm")}
-                        </span>
-                        {ev.location && (
-                          <>
-                            <span>•</span>
-                            <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
-                              📍 {ev.location}
+                          <span
+                            className="px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center space-x-1 shrink-0"
+                            style={{ backgroundColor: typeConfig.badgeBg, color: typeConfig.badgeText }}
+                          >
+                            <TypeIcon className="w-2.5 h-2.5" />
+                            <span>{typeConfig.shortLabel || typeConfig.label}</span>
+                          </span>
+                          {ev.completed && (
+                            <Badge variant="green" className="text-[10px] px-1.5 py-0 font-bold shrink-0">
+                              ✓ Đã học {ev.actualDurationMinutes ? `${Math.round(ev.actualDurationMinutes / 60 * 10) / 10}h` : ""}
+                            </Badge>
+                          )}
+                          {ev.isLocked && (
+                            <Badge variant="yellow" className="text-[10px] shrink-0">
+                              <Lock className="w-2.5 h-2.5 mr-1" />
+                              Đã khóa
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-2 text-[#526b5c] dark:text-[#a3bda9]">
+                          {ev.subject && (
+                            <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                              {ev.subject.name}
                             </span>
-                          </>
-                        )}
+                          )}
+                          <span>•</span>
+                          <span className="font-mono font-medium">
+                            {formatVN(new Date(ev.startTime), "HH:mm")} – {formatVN(new Date(ev.endTime), "HH:mm")}
+                          </span>
+                          {ev.location && (
+                            <>
+                              <span>•</span>
+                              <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                                📍 {ev.location}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <Link href="/calendar">
-                      <Button
-                        variant={canStudy ? "default" : "outline"}
-                        size="sm"
-                        className={`font-semibold space-x-1 rounded-xl ${canStudy ? "bg-[#2d6a4f] hover:bg-[#1b4332] text-white" : ""}`}
-                      >
-                        {canStudy ? (
-                          <>
-                            <Play className="w-3 h-3 fill-current" />
-                            <span>Bắt đầu học</span>
-                          </>
-                        ) : (
-                          <>
-                            <CalendarIcon className="w-3 h-3" />
-                            <span>Xem lịch</span>
-                          </>
-                        )}
-                      </Button>
-                    </Link>
+                    <div className="shrink-0 ml-3">
+                      <Link href="/calendar">
+                        <Button
+                          variant={canStudy && !ev.completed ? "default" : "outline"}
+                          size="sm"
+                          className={`font-semibold space-x-1 rounded-xl text-xs ${
+                            canStudy && !ev.completed
+                              ? "bg-[#2d6a4f] hover:bg-[#1b4332] text-white"
+                              : ""
+                          }`}
+                        >
+                          {canStudy && !ev.completed ? (
+                            <>
+                              <Play className="w-3 h-3 fill-current" />
+                              <span className="hidden sm:inline">Bắt đầu học</span>
+                            </>
+                          ) : (
+                            <>
+                              <CalendarIcon className="w-3 h-3" />
+                              <span className="hidden sm:inline">Chi tiết</span>
+                            </>
+                          )}
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 );
               })}
