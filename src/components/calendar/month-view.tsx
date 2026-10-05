@@ -105,8 +105,8 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
   return (
     <div className="flex flex-col space-y-4">
       {/* Month Navigation */}
-      <div className="flex items-center justify-between bg-white dark:bg-[#17261c] p-3.5 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
-        <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-between bg-white dark:bg-[#17261c] p-3.5 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow flex-wrap gap-2">
+        <div className="flex items-center space-x-2 flex-wrap gap-y-1">
           <Button
             variant="pill"
             size="sm"
@@ -133,7 +133,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-          <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] px-2">
+          <span className="font-bold text-xs sm:text-sm text-[#192e22] dark:text-[#f0f7f2] px-1 sm:px-2">
             Tháng {formatVN(currentMonth, "MM/yyyy")}
           </span>
         </div>
@@ -155,13 +155,13 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
       {/* Grid Layout: Calendar + Side Info */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Month Matrix */}
-        <div className="lg:col-span-3 bg-white dark:bg-[#17261c] p-4 rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
+        <div className="lg:col-span-3 bg-white dark:bg-[#17261c] p-3 sm:p-4 rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
           {/* Day Name Header */}
           <div className="grid grid-cols-7 mb-2 border-b border-[#dbe7dd]/60 dark:border-[#263d2e] pb-2 text-center">
             {dayNamesVN.map((name) => (
               <div
                 key={name}
-                className="text-[11px] font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]"
+                className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]"
               >
                 {name}
               </div>
@@ -169,7 +169,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
           </div>
 
           {/* Days Grid */}
-          <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {days.map((d) => {
               const dKey = getDateKeyVN(d);
               const isSelected = dKey === selectedDayKey;
@@ -185,7 +185,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                 <div
                   key={dKey}
                   onClick={() => setSelectedDay(d)}
-                  className={`min-h-[70px] sm:min-h-[90px] p-1.5 sm:p-2 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                  className={`min-h-[52px] sm:min-h-[90px] p-1 sm:p-2 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                     isSelected
                       ? "border-[#52b788] bg-[#d8ebe0]/30 dark:bg-[#1d3827]/40 ring-2 ring-[#52b788]/20"
                       : isToday
@@ -197,7 +197,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                 >
                   <div className="flex items-center justify-between">
                     <span
-                      className={`text-xs font-bold inline-flex items-center justify-center w-5 h-5 rounded-full ${
+                      className={`text-[11px] sm:text-xs font-bold inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full ${
                         isToday
                           ? "bg-[#2d6a4f] text-white"
                           : "text-[#192e22] dark:text-[#f0f7f2]"
@@ -207,34 +207,54 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                     </span>
 
                     {dayEvs.length > 0 && (
-                      <span className="text-[10px] font-mono font-semibold px-1 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#203c2a] dark:text-[#a3bda9]">
+                      <span className="text-[9px] sm:text-[10px] font-mono font-semibold px-1 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#203c2a] dark:text-[#a3bda9]">
                         {dayEvs.length}
                       </span>
                     )}
                   </div>
 
-                  {/* Tiny Event Pills Preview */}
-                  <div className="space-y-1 mt-1 overflow-hidden">
-                    {dayEvs.slice(0, 2).map((ev) => {
-                      const typeCfg = getEventTypeConfig(ev.type);
-                      return (
-                        <div
-                          key={ev.id}
-                          className="truncate text-[9px] font-medium px-1.5 py-0.5 rounded-md border border-[#dbe7dd]/80 dark:border-[#263d2e]"
-                          style={{
-                            backgroundColor: typeCfg.badgeBg,
-                            color: typeCfg.badgeText,
-                          }}
-                        >
-                          {ev.title}
+                  {/* Event Indicators: Dots on mobile, pills on sm+ */}
+                  <div className="mt-1">
+                    {/* Mobile Dots */}
+                    <div className="flex sm:hidden items-center justify-center gap-0.5 flex-wrap">
+                      {dayEvs.slice(0, 3).map((ev) => {
+                        const typeCfg = getEventTypeConfig(ev.type);
+                        return (
+                          <span
+                            key={ev.id}
+                            className="w-1.5 h-1.5 rounded-full"
+                            style={{ backgroundColor: typeCfg.badgeText || "#2d6a4f" }}
+                          />
+                        );
+                      })}
+                      {dayEvs.length > 3 && (
+                        <span className="text-[7px] text-[#73927d] leading-none">+</span>
+                      )}
+                    </div>
+
+                    {/* Desktop / Tablet Pills */}
+                    <div className="hidden sm:block space-y-1 overflow-hidden">
+                      {dayEvs.slice(0, 2).map((ev) => {
+                        const typeCfg = getEventTypeConfig(ev.type);
+                        return (
+                          <div
+                            key={ev.id}
+                            className="truncate text-[9px] font-medium px-1.5 py-0.5 rounded-md border border-[#dbe7dd]/80 dark:border-[#263d2e]"
+                            style={{
+                              backgroundColor: typeCfg.badgeBg,
+                              color: typeCfg.badgeText,
+                            }}
+                          >
+                            {ev.title}
+                          </div>
+                        );
+                      })}
+                      {dayEvs.length > 2 && (
+                        <div className="text-[8px] text-[#73927d] pl-1">
+                          +{dayEvs.length - 2} buổi khác
                         </div>
-                      );
-                    })}
-                    {dayEvs.length > 2 && (
-                      <div className="text-[8px] text-[#73927d] pl-1">
-                        +{dayEvs.length - 2} buổi khác
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               );
