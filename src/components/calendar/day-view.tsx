@@ -37,6 +37,8 @@ import { EventModal } from "./event-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 import { getEventTypeConfig, canStartStudyTimer, isSelfStudyEvent, isSchoolEvent, isPersonalEvent } from "@/lib/calendar/event-types";
+import { EventCompleteCheckbox } from "./event-complete-checkbox";
+import { EventQuickModal } from "./event-quick-modal";
 
 interface DayViewProps {
   initialEvents: Array<{
@@ -48,6 +50,10 @@ interface DayViewProps {
     endTime: string;
     type?: string;
     isLocked?: boolean;
+    completed?: boolean;
+    completedAt?: string | null;
+    actualDurationMinutes?: number | null;
+    plannedDurationMinutes?: number | null;
     subject: {
       id: string;
       name: string;
@@ -147,7 +153,9 @@ export function DayView({
 
   dayEvents.forEach((ev) => {
     const allocation = calculateEventPeriodAllocation(ev.startTime, ev.endTime);
-    const evActualSeconds = ev.studySessions?.reduce((sum, s) => sum + s.actualDurationSeconds, 0) || 0;
+    const evActualSeconds = ev.completed
+      ? ((ev.actualDurationMinutes || Math.round(allocation.totalMinutes)) * 60)
+      : (ev.studySessions?.reduce((sum, s) => sum + s.actualDurationSeconds, 0) || 0);
     const evActualMinutes = Math.round(evActualSeconds / 60);
 
     totalScheduledMinutes += allocation.totalMinutes;
@@ -493,7 +501,9 @@ export function DayView({
                       onDragStart={(e) => handleDragStart(e, ev)}
                       onClick={() => setSelectedSessionEvent(ev)}
                       className={`group relative p-3.5 rounded-[20px] border transition-all cursor-pointer select-none ${
-                        isTimerActive
+                        ev.completed
+                          ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
+                          : isTimerActive
                           ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] ring-2 ring-[#2d6a4f]/30"
                           : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs"
                       }`}
@@ -512,6 +522,12 @@ export function DayView({
                             </span>
                             {ev.isLocked && (
                               <Lock className="w-3 h-3 text-[#a3a86c] shrink-0" />
+                            )}
+                            {ev.completed && (
+                              <span className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+                                <CheckCircle2 className="w-2.5 h-2.5" />
+                                <span>Đã học {ev.actualMinutes || Math.round(allocation.totalMinutes)}p</span>
+                              </span>
                             )}
                           </div>
 
@@ -544,8 +560,18 @@ export function DayView({
                           )}
                         </div>
 
-                        {/* Quick Timer Trigger - ONLY for SELF_STUDY */}
+                        {/* Quick Action Trigger: Checkbox + Timer */}
                         <div className="flex items-center space-x-1.5" onClick={(e) => e.stopPropagation()}>
+                          <EventCompleteCheckbox
+                            eventId={ev.id}
+                            isCompleted={Boolean(ev.completed)}
+                            actualDurationMinutes={ev.actualDurationMinutes}
+                            plannedDurationMinutes={ev.plannedDurationMinutes}
+                            size="md"
+                            onToggled={() => {
+                              if (onEventsChange) onEventsChange();
+                            }}
+                          />
                           {isTimerActive ? (
                             <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#2d6a4f] text-white text-[10px] font-mono animate-pulse">
                               <span>⏱ {formatTime(secondsElapsed)}</span>
@@ -575,7 +601,7 @@ export function DayView({
                               </button>
                             </div>
                           ) : (
-                            canStartStudyTimer(ev.type) && ev.subject && (
+                            canStartStudyTimer(ev.type) && ev.subject && !ev.completed && (
                               <button
                                 onClick={() =>
                                   startTimer(

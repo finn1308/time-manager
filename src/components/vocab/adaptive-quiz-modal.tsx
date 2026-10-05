@@ -57,7 +57,10 @@ export function AdaptiveQuizModal({
   const [sessionXpEarned, setSessionXpEarned] = useState(0);
   const [recentVocabularyIds, setRecentVocabularyIds] = useState<string[]>([]);
 
-  const questionStartTimeRef = useRef<number>(Date.now());
+  const questionStartTimeRef = useRef<number>(0);
+  useEffect(() => {
+    questionStartTimeRef.current = Date.now();
+  }, []);
 
   // Web Speech Audio
   const playAudio = useCallback((text?: string) => {

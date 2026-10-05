@@ -59,7 +59,10 @@ export function MixedPracticeGame({
   // Mode: Flashcard state
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const startTimeRef = useRef<number>(Date.now());
+  const startTimeRef = useRef<number>(0);
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
 
   // Initialize random question types
   useEffect(() => {
