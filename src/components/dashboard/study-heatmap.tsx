@@ -192,7 +192,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
           </div>
 
           {/* Filter Controls */}
-          <div className="flex items-center space-x-2.5">
+          <div className="flex items-center space-x-2 flex-wrap gap-2">
             {/* Subject Filter */}
             <select
               value={selectedSubjectId}
