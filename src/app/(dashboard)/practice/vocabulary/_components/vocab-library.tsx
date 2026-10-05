@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Search, Library } from "lucide-react";
 
@@ -74,8 +73,7 @@ export function VocabLibrary({ allCourses }: VocabLibraryProps) {
 
             return (
               <Link key={course.id} href={`/practice/vocabulary/roadmap/${course.slug}`}>
-                <motion.div 
-                  whileHover={{ y: -2 }}
+                <div 
                   className="bg-white p-4 rounded-2xl border border-gray-100 hover:border-gray-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all h-full flex flex-col"
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -94,7 +92,7 @@ export function VocabLibrary({ allCourses }: VocabLibraryProps) {
                     <div className="w-1 h-1 bg-gray-300 rounded-full" />
                     <span>{totalWords} từ</span>
                   </div>
-                </motion.div>
+                </div>
               </Link>
             )
           })}

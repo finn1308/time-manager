@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { BookOpen, Pin } from "lucide-react";
 
@@ -51,8 +50,7 @@ export function VocabRoadmaps({ pinnedCourses }: VocabRoadmapsProps) {
           
           return (
             <Link key={enrollment.id} href={`/practice/vocabulary/roadmap/${course.slug}`}>
-              <motion.div 
-                whileHover={{ y: -2 }}
+              <div 
                 className="p-5 rounded-2xl border border-gray-200/80 bg-white shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
               >
                 {/* Decoration strip */}
@@ -97,7 +95,7 @@ export function VocabRoadmaps({ pinnedCourses }: VocabRoadmapsProps) {
                     />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </Link>
           );
         })}
