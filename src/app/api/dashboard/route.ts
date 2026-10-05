@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays, format, addDays } from "date-fns";
+import { startOfDay, endOfDay, startOfWeek, endOfWeek, subDays, format, addDays, startOfMonth, startOfYear } from "date-fns";
 import { expandRecurringEvents } from "@/lib/scheduling/recurrence";
 import { isSelfStudyEvent, isSchoolEvent, isPersonalEvent } from "@/lib/calendar/event-types";
 
@@ -16,12 +16,19 @@ export async function GET() {
   const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
   const weekAgo = subDays(now, 7);
   const weekAhead = addDays(now, 7);
+  const yesterdayStart = startOfDay(subDays(now, 1));
+  const yesterdayEnd = endOfDay(subDays(now, 1));
+  const monthStart = startOfMonth(now);
+  const yearStart = startOfYear(now);
 
   // Execute all independent database queries in parallel
   const [
     allEventsAroundNow,
     todaySessions,
     weekSessions,
+    yesterdaySessions,
+    monthSessions,
+    yearSessions,
     allSessionsMinimal, // For streak and totals
     overdueGoals,
     subjects,
@@ -43,6 +50,28 @@ export async function GET() {
         userId: user.id,
         actualStart: { gte: weekStart, lte: weekEnd },
       },
+      include: { subject: true },
+    }),
+    prisma.studySession.findMany({
+      where: {
+        userId: user.id,
+        actualStart: { gte: yesterdayStart, lte: yesterdayEnd },
+      },
+      include: { subject: true },
+    }),
+    prisma.studySession.findMany({
+      where: {
+        userId: user.id,
+        actualStart: { gte: monthStart, lte: todayEnd },
+      },
+      include: { subject: true },
+    }),
+    prisma.studySession.findMany({
+      where: {
+        userId: user.id,
+        actualStart: { gte: yearStart, lte: todayEnd },
+      },
+      include: { subject: true },
     }),
     prisma.studySession.findMany({
       where: { userId: user.id, actualDurationSeconds: { gt: 60 } },
@@ -172,6 +201,7 @@ export async function GET() {
     const totalActualSeconds = sub.studySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
     const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
     const targetHours = sub.targetHours;
+    const remainingHours = targetHours ? Math.max(0, Math.round((targetHours - actualHours) * 10) / 10) : null;
     const progressPercent = targetHours ? Math.min(100, Math.round((actualHours / targetHours) * 100)) : null;
 
     return {
@@ -181,10 +211,58 @@ export async function GET() {
       color: sub.color,
       targetHours,
       actualHours,
+      remainingHours,
       progressPercent,
       activeGoalsCount: sub.goals.filter((g) => g.status === "ACTIVE").length,
     };
   });
+
+  // Multi-Period Actual Study Stats Helper
+  const groupSessionsBySubject = (sessionList: any[]) => {
+    const map: Record<string, { id: string; name: string; color: string; hours: number }> = {};
+    let totalSecs = 0;
+
+    for (const s of sessionList) {
+      totalSecs += s.actualDurationSeconds;
+      if (!map[s.subjectId]) {
+        map[s.subjectId] = {
+          id: s.subject?.id || s.subjectId,
+          name: s.subject?.name || "Môn học",
+          color: s.subject?.color || "#2d6a4f",
+          hours: 0,
+        };
+      }
+      map[s.subjectId].hours += s.actualDurationSeconds / 3600;
+    }
+
+    return {
+      totalHours: Math.round((totalSecs / 3600) * 10) / 10,
+      bySubject: Object.values(map).map((item) => ({
+        ...item,
+        hours: Math.round(item.hours * 10) / 10,
+      })),
+    };
+  };
+
+  const multiPeriodStats = {
+    today: groupSessionsBySubject(todaySessions),
+    yesterday: groupSessionsBySubject(yesterdaySessions),
+    thisWeek: groupSessionsBySubject(weekSessions),
+    last7Days: groupSessionsBySubject(last7DaysSessions),
+    thisMonth: groupSessionsBySubject(monthSessions),
+    thisYear: groupSessionsBySubject(yearSessions),
+    allTime: {
+      totalHours: Math.round(
+        (subjects.reduce((sum, sub) => sum + sub.studySessions.reduce((sSum, s) => sSum + s.actualDurationSeconds, 0), 0) / 3600) * 10
+      ) / 10,
+      bySubject: subjects.map((sub) => ({
+        id: sub.id,
+        name: sub.name,
+        color: sub.color,
+        hours: Math.round((sub.studySessions.reduce((sSum, s) => sSum + s.actualDurationSeconds, 0) / 3600) * 10) / 10,
+      })),
+    },
+  };
 
   // 9. Day-by-day Planned vs Actual for Chart (Last 7 days)
   // Self-study planned is compared with actual study sessions
@@ -231,6 +309,7 @@ export async function GET() {
     upcomingEvents,
     overdueGoals,
     subjectProgress,
+    multiPeriodStats,
     chartData,
   });
 }
