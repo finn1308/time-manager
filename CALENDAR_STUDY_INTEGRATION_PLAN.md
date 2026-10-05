@@ -6,16 +6,16 @@
 ## 📋 Danh Sách Hạng Mục & Tiến Độ
 
 ### I. Database & Data Models
-- [ ] **1.1. Cập nhật Prisma Schema cho `CalendarEvent`**:
+- [x] **1.1. Cập nhật Prisma Schema cho `CalendarEvent`**:
   - Thêm `completed Boolean @default(false)`
   - Thêm `completedAt DateTime?`
   - Thêm `actualDurationMinutes Int?`
   - Thêm `plannedDurationMinutes Int?`
   - Thêm các index: `@@index([userId, subjectId])`, `@@index([userId, completed])`
-- [ ] **1.2. Tối ưu hóa Model `StudySession` (StudyRecord)**:
+- [x] **1.2. Tối ưu hóa Model `StudySession` (StudyRecord)**:
   - Kiểm tra các trường: `userId`, `subjectId`, `calendarEventId`, `actualDurationSeconds`, `actualStart`, `actualEnd`, `source` ("CALENDAR_CHECKBOX" | "PIP_TIMER" | "MANUAL"), `status`
   - Thêm index: `@@index([calendarEventId])`, `@@index([userId, subjectId])`
-- [ ] **1.3. Đồng bộ Database Migration (`npx prisma db push`) & Generate Prisma Client**
+- [x] **1.3. Đồng bộ Database Migration (`npx prisma db push`) & Generate Prisma Client**
 
 ---
 

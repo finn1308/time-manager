@@ -26,6 +26,10 @@ export interface ExpandedEvent {
   parentId: string | null;
   isException: boolean;
   isCancelled: boolean;
+  completed?: boolean;
+  completedAt?: Date | null;
+  actualDurationMinutes?: number | null;
+  plannedDurationMinutes?: number | null;
   subject?: any;
   goal?: any;
   task?: any;
@@ -124,13 +128,17 @@ export function expandRecurringEvents(
           continue;
         }
 
-        // Add instance
+        // Add instance - by default uncompleted until marked/created as exception
         expanded.push({
           ...master,
           id: `${master.id}_${occDateKey}`, // dynamic ID
           originalId: master.id,
           startTime: realStartUTC,
           endTime: realEndUTC,
+          completed: false,
+          completedAt: null,
+          actualDurationMinutes: null,
+          studySessions: [],
         });
       }
     } catch (err) {
