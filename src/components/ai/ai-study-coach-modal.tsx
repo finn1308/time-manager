@@ -67,7 +67,7 @@ export function AiStudyCoachModal({ open, onClose }: AiStudyCoachModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xl flex flex-col h-[600px] max-h-[85vh]">
+      <DialogContent onClose={onClose} className="max-w-xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 sm:p-6 shadow-2xl flex flex-col h-[min(600px,85dvh)] max-h-[85dvh]">
         <DialogHeader className="shrink-0 pb-3 border-b border-[#dbe7dd]/60 dark:border-[#263d2e]">
           <div className="flex items-center space-x-2 text-xs font-semibold text-[#2d6a4f] dark:text-[#52b788] mb-1">
             <Sparkles className="w-4 h-4" />
@@ -101,7 +101,7 @@ export function AiStudyCoachModal({ open, onClose }: AiStudyCoachModalProps) {
               </div>
 
               <div
-                className={`max-w-[85%] p-3.5 rounded-2xl whitespace-pre-line leading-relaxed ${
+                className={`max-w-[85%] p-3.5 rounded-2xl whitespace-pre-line leading-relaxed break-words ${
                   m.role === "user"
                     ? "bg-[#2d6a4f] text-white rounded-tr-xs"
                     : "bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] rounded-tl-xs"
