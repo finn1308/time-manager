@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StudyBunnyMascot } from "./study-bunny-mascot";
+import { usePipTimer } from "@/components/timer/pip-timer-provider";
 
 export interface QuizQuestionData {
   id: string;
@@ -83,6 +84,7 @@ export function QuizPlayer({ quiz, onFinish, onScheduleStudy }: QuizPlayerProps)
 
   // Time tracker
   const [seconds, setSeconds] = useState(0);
+  const { isRunning: isTimerRunning } = usePipTimer();
 
   // Final submission state
   const [submitting, setSubmitting] = useState(false);
@@ -184,6 +186,7 @@ export function QuizPlayer({ quiz, onFinish, onScheduleStudy }: QuizPlayerProps)
         body: JSON.stringify({
           mode,
           answers: formattedAnswers,
+          isTimerRunning,
         }),
       });
 
