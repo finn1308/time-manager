@@ -243,6 +243,10 @@ model Subject {
   examPreparations ExamPreparation[]
   knowledgeNodes   KnowledgeNode[]
   syllabusImports  SyllabusImport[]
+  vocabCourses     VocabCourse[]
+  wordSets         WordSet[]
+  vocabWords       VocabWord[]
+  vocabStudySessions VocabStudySession[]
 
   @@index([userId])
   @@index([semesterId])
@@ -1080,10 +1084,14 @@ model VocabCourse {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  subjectId   String?
+  subject     Subject?  @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
   wordSets    WordSet[]
   enrollments UserCourseEnrollment[]
 
   @@index([isPublished, order])
+  @@index([subjectId])
 }
 
 model WordSet {
@@ -1097,13 +1105,16 @@ model WordSet {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  subjectId   String?
   course         VocabCourse           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  subject        Subject?              @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   words          VocabWord[]
   userProgresses UserWordSetProgress[]
   studySessions  VocabStudySession[]
 
   @@unique([courseId, orderNumber])
   @@index([courseId])
+  @@index([subjectId])
 }
 
 model VocabWord {
@@ -1122,12 +1133,18 @@ model VocabWord {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  subjectId       String?
+  difficulty      String?  @default("B1")
+  topic           String?  @default("General English")
+
   wordSet        WordSet                 @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+  subject        Subject?                @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   userProgress   UserWordProgress[]
   masteryRecords UserVocabularyMastery[]
   learningEvents LearningEvent[]
 
   @@index([wordSetId, order])
+  @@index([subjectId])
 }
 
 model UserCourseEnrollment {
@@ -1207,10 +1224,14 @@ model VocabStudySession {
   xpEarned        Int      @default(0)
   createdAt       DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  wordSet WordSet @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+  subjectId       String?
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wordSet WordSet  @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
 
   @@index([userId, createdAt])
+  @@index([subjectId])
 }
 
 model ShopItem {
