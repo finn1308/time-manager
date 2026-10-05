@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Play, Edit2, Trash2, Plus, FolderOpen, Calendar, Award, Bot } from "lucide-react";
@@ -50,6 +50,17 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
   const [editingSubject, setEditingSubject] = useState<any | null>(null);
   const [selectedResourceSubject, setSelectedResourceSubject] = useState<any | null>(null);
   const [tutorSubject, setTutorSubject] = useState<SubjectItem | null>(null);
+
+  useEffect(() => {
+    const handleStudyUpdated = () => {
+      router.refresh();
+    };
+
+    window.addEventListener("chronomind-study-updated", handleStudyUpdated);
+    return () => {
+      window.removeEventListener("chronomind-study-updated", handleStudyUpdated);
+    };
+  }, [router]);
 
   const handleDeleteSubject = async (id: string, name: string) => {
     if (!confirm(`Bạn có chắc muốn xóa môn học "${name}" và toàn bộ lịch liên quan?`)) return;
