@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { X, Volume2, Check, RotateCcw, ChevronLeft, ChevronRight, Award, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTimer } from "@/components/providers/timer-provider";
@@ -183,90 +182,78 @@ export function VocabFlashcardSession({ wordSetId, wordSetTitle, courseTitle, su
 
       {/* Main Flashcard Area */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 perspective-1000">
-        <AnimatePresence mode="wait">
-          <motion.div 
-            key={currentWord.id + (isFlipped ? '-back' : '-front')}
-            initial={{ opacity: 0, rotateX: isFlipped ? -90 : 90, scale: 0.95 }}
-            animate={{ opacity: 1, rotateX: 0, scale: 1 }}
-            exit={{ opacity: 0, rotateX: isFlipped ? 90 : -90, scale: 0.95 }}
-            transition={{ duration: 0.25, type: "spring", damping: 20 }}
-            className="w-full max-w-2xl bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 min-h-[400px] flex flex-col cursor-pointer"
-            onClick={() => setIsFlipped(!isFlipped)}
-          >
-            {!isFlipped ? (
-              // FRONT
-              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center relative">
-                {currentWord.partOfSpeech && (
-                  <div className="absolute top-8 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold uppercase tracking-widest">
-                    {currentWord.partOfSpeech}
-                  </div>
-                )}
-                
-                <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">{currentWord.term}</h2>
-                
-                {currentWord.phonetic && (
-                  <p className="text-xl text-gray-400 font-mono mb-8">{currentWord.phonetic}</p>
-                )}
-                
-                <div className="absolute bottom-8 text-sm font-medium text-gray-400 flex items-center gap-2">
-                  <RotateCcw className="w-4 h-4" /> Click để lật thẻ
+        
+        <div 
+          key={currentWord.id + (isFlipped ? '-back' : '-front')}
+          className="w-full max-w-2xl bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 min-h-[400px] flex flex-col cursor-pointer transition-transform duration-300 transform"
+          onClick={() => setIsFlipped(!isFlipped)}
+        >
+          {!isFlipped ? (
+            // FRONT
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center relative">
+              {currentWord.partOfSpeech && (
+                <div className="absolute top-8 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold uppercase tracking-widest">
+                  {currentWord.partOfSpeech}
                 </div>
+              )}
+              
+              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">{currentWord.term}</h2>
+              
+              {currentWord.phonetic && (
+                <p className="text-xl text-gray-400 font-mono mb-8">{currentWord.phonetic}</p>
+              )}
+              
+              <div className="absolute bottom-8 text-sm font-medium text-gray-400 flex items-center gap-2">
+                <RotateCcw className="w-4 h-4" /> Click để lật thẻ
               </div>
-            ) : (
-              // BACK
-              <div className="flex-1 flex flex-col justify-center p-8 md:p-12 text-center relative bg-emerald-50/30 rounded-[2rem]">
-                <h3 className="text-3xl font-bold text-emerald-700 mb-6">{currentWord.meaning}</h3>
-                
-                {currentWord.exampleSentence && (
-                  <div className="bg-white/80 p-6 rounded-2xl border border-emerald-100/50">
-                    <p className="text-lg font-medium text-gray-700 mb-2 italic">
-                      "{currentWord.exampleSentence}"
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+            </div>
+          ) : (
+            // BACK
+            <div className="flex-1 flex flex-col justify-center p-8 md:p-12 text-center relative bg-emerald-50/30 rounded-[2rem]">
+              <h3 className="text-3xl font-bold text-emerald-700 mb-6">{currentWord.meaning}</h3>
+              
+              {currentWord.exampleSentence && (
+                <div className="bg-white/80 p-6 rounded-2xl border border-emerald-100/50">
+                  <p className="text-lg font-medium text-gray-700 mb-2 italic">
+                    "{currentWord.exampleSentence}"
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Actions Area */}
         <div className="mt-8 md:mt-12 w-full max-w-2xl flex flex-col items-center">
-          <AnimatePresence>
-            {!isFlipped ? (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="text-gray-400 font-medium flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
-                onClick={() => setIsFlipped(true)}
+          {!isFlipped ? (
+            <div 
+              className="text-gray-400 font-medium flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => setIsFlipped(true)}
+            >
+              Nhấn Space hoặc Click để xem nghĩa
+            </div>
+          ) : (
+            <div 
+              className="flex items-center gap-4 w-full transition-all"
+            >
+              <button 
+                onClick={() => handleNext(false)}
+                className="flex-1 py-4 bg-white border border-red-200 text-red-600 rounded-2xl font-bold text-lg hover:bg-red-50 transition-colors shadow-sm"
               >
-                Nhấn Space hoặc Click để xem nghĩa
-              </motion.div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-4 w-full"
+                <div className="flex items-center justify-center gap-2">
+                  <X className="w-5 h-5 stroke-[3]" /> Quên
+                </div>
+              </button>
+              <button 
+                onClick={() => handleNext(true)}
+                className="flex-1 py-4 bg-emerald-500 text-white rounded-2xl font-bold text-lg hover:bg-emerald-600 transition-colors shadow-sm"
               >
-                <button 
-                  onClick={() => handleNext(false)}
-                  className="flex-1 py-4 bg-white border border-red-200 text-red-600 rounded-2xl font-bold text-lg hover:bg-red-50 transition-colors shadow-sm"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <X className="w-5 h-5 stroke-[3]" /> Quên
-                  </div>
-                </button>
-                <button 
-                  onClick={() => handleNext(true)}
-                  className="flex-1 py-4 bg-emerald-500 text-white rounded-2xl font-bold text-lg hover:bg-emerald-600 transition-colors shadow-sm"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Check className="w-5 h-5 stroke-[3]" /> Đã thuộc
-                  </div>
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <div className="flex items-center justify-center gap-2">
+                  <Check className="w-5 h-5 stroke-[3]" /> Đã thuộc
+                </div>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
