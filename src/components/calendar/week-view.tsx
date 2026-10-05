@@ -10,13 +10,16 @@ import {
 } from "@/lib/date-utils";
 import { addWeeks, subWeeks } from "date-fns";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play, Trash2, Video, FolderOpen, FileText, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Plus, Lock, Play, Trash2, Video, FolderOpen, FileText, MapPin, CheckCircle2, Clock } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { AiSchedulePreviewModal } from "./ai-schedule-preview-modal";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { AiResourceReminderBanner } from "../study/ai-resource-reminder-banner";
 import { useRouter } from "next/navigation";
 import { getEventTypeConfig, canStartStudyTimer } from "@/lib/calendar/event-types";
+import { EventCompleteCheckbox } from "./event-complete-checkbox";
+import { EventQuickModal } from "./event-quick-modal";
+import { formatMinutesVN } from "@/lib/date-utils";
 
 interface WeekViewProps {
   initialEvents: Array<{
@@ -32,6 +35,10 @@ interface WeekViewProps {
     recurrence?: string;
     recurrenceRule?: string | null;
     originalId?: string;
+    completed?: boolean;
+    completedAt?: string | null;
+    actualDurationMinutes?: number | null;
+    plannedDurationMinutes?: number | null;
     resources?: Array<{
       id: string;
       title: string;
@@ -81,10 +88,36 @@ export function WeekView({
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [modalDefaultDate, setModalDefaultDate] = useState<string>(getDateKeyVN(new Date()));
   const [editingEvent, setEditingEvent] = useState<any | null>(null);
+  const [selectedQuickEvent, setSelectedQuickEvent] = useState<any | null>(null);
 
   const { startTimer } = usePipTimer();
 
   const weekDays = getWeekDaysDetailedVN(currentWeekRef);
+
+  // Compute Weekly Study Progress
+  const weekStartKey = weekDays[0].dateKey;
+  const weekEndKey = weekDays[6].dateKey;
+
+  const currentWeekEvents = initialEvents.filter((ev) => {
+    const dKey = getDateKeyVN(ev.startTime);
+    return dKey >= weekStartKey && dKey <= weekEndKey;
+  });
+
+  const weekPlannedMins = currentWeekEvents
+    .filter((ev) => ev.subject && (ev.type === "SELF_STUDY" || ev.type === "STUDY"))
+    .reduce((acc, ev) => {
+      const p = ev.plannedDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000));
+      return acc + p;
+    }, 0);
+
+  const weekActualMins = currentWeekEvents
+    .filter((ev) => ev.subject && ev.completed)
+    .reduce((acc, ev) => {
+      const p = ev.plannedDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000));
+      return acc + (ev.actualDurationMinutes ?? p);
+    }, 0);
+
+  const weekProgressPct = weekPlannedMins > 0 ? Math.min(100, Math.round((weekActualMins / weekPlannedMins) * 100)) : (weekActualMins > 0 ? 100 : 0);
 
   // Quick delete directly from card
   const handleQuickDelete = async (e: React.MouseEvent, ev: any) => {
@@ -304,6 +337,39 @@ export function WeekView({
         </div>
       </div>
 
+      {/* Weekly Planned vs Actual Statistics Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs text-xs">
+        <div className="flex items-center space-x-2">
+          <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+          <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            Tiến độ học tuần này:
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 text-xs">
+          <div>
+            <span className="text-[#526b5c] dark:text-[#a3bda9]">Kế hoạch: </span>
+            <strong className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              {formatMinutesVN(weekPlannedMins)}
+            </strong>
+          </div>
+          <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
+          <div>
+            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đã học thực tế: </span>
+            <strong className="font-bold text-[#2d6a4f] dark:text-[#52b788]">
+              {formatMinutesVN(weekActualMins)}
+            </strong>
+          </div>
+          <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
+          <div className="flex items-center space-x-1.5">
+            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đạt: </span>
+            <span className="px-2 py-0.5 rounded-full font-bold bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1f3828] dark:text-[#74c69d]">
+              {weekProgressPct}%
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Week Grid */}
       <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
         {weekDays.map((day) => {
@@ -363,6 +429,24 @@ export function WeekView({
                 >
                   {day.dayOfMonth}
                 </div>
+
+                {/* Day Study Stats if has study events */}
+                {(() => {
+                  const dayPlanned = dayEvents
+                    .filter((ev) => ev.subject && (ev.type === "SELF_STUDY" || ev.type === "STUDY"))
+                    .reduce((acc, ev) => acc + (ev.plannedDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000))), 0);
+                  const dayActual = dayEvents
+                    .filter((ev) => ev.subject && ev.completed)
+                    .reduce((acc, ev) => acc + (ev.actualDurationMinutes || ev.plannedDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000))), 0);
+
+                  if (dayPlanned === 0 && dayActual === 0) return null;
+                  return (
+                    <div className="text-[9px] font-mono mt-1 text-[#526b5c] dark:text-[#a3bda9]">
+                      <span className="text-[#2d6a4f] dark:text-[#52b788] font-bold">{formatMinutesVN(dayActual)}</span>
+                      {dayPlanned > 0 && <span className="opacity-70"> / {formatMinutesVN(dayPlanned)}</span>}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Day Body: Events & Blocked Slots */}
@@ -399,28 +483,15 @@ export function WeekView({
                       key={ev.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, ev)}
-                      onClick={() => {
-                        setEditingEvent({
-                          id: ev.id,
-                          originalId: (ev as any).originalId,
-                          title: ev.title,
-                          description: ev.description,
-                          location: (ev as any).location,
-                          subjectId: ev.subject?.id || null,
-                          startTime: ev.startTime,
-                          endTime: ev.endTime,
-                          type: ev.type,
-                          isLocked: ev.isLocked,
-                          recurrence: (ev as any).recurrence,
-                          recurrenceRule: (ev as any).recurrenceRule,
-                        });
-                        setModalInitialTab("schedule");
-                        setIsEventModalOpen(true);
-                      }}
-                      className="group relative p-2.5 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs transition-all cursor-pointer text-xs"
+                      onClick={() => setSelectedQuickEvent(ev)}
+                      className={`group relative p-2.5 rounded-[16px] border transition-all cursor-pointer text-xs ${
+                        ev.completed
+                          ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
+                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs"
+                      }`}
                       style={{ borderLeftColor: typeCfg.borderLeftColor || subjectColor, borderLeftWidth: "4px" }}
                     >
-                      {/* Event Type & Lock header */}
+                      {/* Event Type & Action header */}
                       <div className="flex items-center justify-between mb-1">
                         <span
                           className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md"
@@ -434,6 +505,16 @@ export function WeekView({
                           {ev.isLocked && (
                             <Lock className="w-3 h-3 text-[#a3a86c]" />
                           )}
+                          <EventCompleteCheckbox
+                            eventId={ev.id}
+                            isCompleted={Boolean(ev.completed)}
+                            actualDurationMinutes={ev.actualDurationMinutes}
+                            plannedDurationMinutes={ev.plannedDurationMinutes}
+                            size="sm"
+                            onToggled={() => {
+                              if (onEventsChange) onEventsChange();
+                            }}
+                          />
                           <button
                             type="button"
                             onClick={(e) => handleQuickDelete(e, ev)}
@@ -444,6 +525,14 @@ export function WeekView({
                           </button>
                         </div>
                       </div>
+
+                      {/* Completed badge if completed */}
+                      {ev.completed && (
+                        <div className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 mb-1">
+                          <CheckCircle2 className="w-2.5 h-2.5" />
+                          <span>Đã học {formatMinutesVN(ev.actualDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000)))}</span>
+                        </div>
+                      )}
 
                       {/* Title on Card */}
                       <div className="flex items-start justify-between">

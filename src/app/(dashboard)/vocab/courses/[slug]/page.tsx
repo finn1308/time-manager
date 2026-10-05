@@ -1,10 +1,12 @@
-import { TopicSetOverviewScreen } from "@/components/vocab/topic-set-overview-screen";
+"use client";
 
-export const metadata = {
-  title: "Chi tiết lộ trình & Danh sách bài học • LUYENTU",
-  description: "Danh sách bài học và chủ đề từ vựng trong lộ trình học",
-};
+import React from "react";
+import { useParams } from "next/navigation";
+import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
 
 export default function VocabCourseDetailPage() {
-  return <TopicSetOverviewScreen />;
+  const params = useParams();
+  const slug = (params?.slug as string) || "a1-0-3-0";
+
+  return <VocabUnifiedWorkspace defaultStep={2} initialCourseSlug={slug} />;
 }
