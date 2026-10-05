@@ -13,10 +13,13 @@ import {
   isSameMonth,
 } from "date-fns";
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight, Plus, Calendar, Trash2, FolderOpen, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Calendar, Trash2, FolderOpen, MapPin, CheckCircle2, Clock } from "lucide-react";
 import { EventModal } from "./event-modal";
 import { useRouter } from "next/navigation";
 import { getEventTypeConfig } from "@/lib/calendar/event-types";
+import { EventCompleteCheckbox } from "./event-complete-checkbox";
+import { EventQuickModal } from "./event-quick-modal";
+import { formatMinutesVN } from "@/lib/date-utils";
 
 interface MonthViewProps {
   initialEvents: Array<{
@@ -31,6 +34,10 @@ interface MonthViewProps {
     recurrence?: string;
     recurrenceRule?: string | null;
     originalId?: string;
+    completed?: boolean;
+    completedAt?: string | null;
+    actualDurationMinutes?: number | null;
+    plannedDurationMinutes?: number | null;
     resources?: any[];
     subject: {
       id: string;
@@ -54,11 +61,37 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<any | null>(null);
+  const [selectedQuickEvent, setSelectedQuickEvent] = useState<any | null>(null);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
   const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+
+  // Calculate Monthly Study Progress
+  const monthStartKey = getDateKeyVN(monthStart);
+  const monthEndKey = getDateKeyVN(monthEnd);
+
+  const currentMonthEvents = initialEvents.filter((ev) => {
+    const dKey = getDateKeyVN(ev.startTime);
+    return dKey >= monthStartKey && dKey <= monthEndKey;
+  });
+
+  const monthPlannedMins = currentMonthEvents
+    .filter((ev) => ev.subject && (ev.type === "SELF_STUDY" || ev.type === "STUDY"))
+    .reduce((acc, ev) => {
+      const p = ev.plannedDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000));
+      return acc + p;
+    }, 0);
+
+  const monthActualMins = currentMonthEvents
+    .filter((ev) => ev.subject && ev.completed)
+    .reduce((acc, ev) => {
+      const p = ev.plannedDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000));
+      return acc + (ev.actualDurationMinutes ?? p);
+    }, 0);
+
+  const monthProgressPct = monthPlannedMins > 0 ? Math.min(100, Math.round((monthActualMins / monthPlannedMins) * 100)) : (monthActualMins > 0 ? 100 : 0);
 
   const days: Date[] = [];
   let day = startDate;
@@ -277,45 +310,67 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                 return (
                   <div
                     key={ev.id}
-                    onClick={() => {
-                      setEditingEvent({
-                        ...ev,
-                        originalId: (ev as any).originalId || ev.id,
-                      });
-                      setIsEventModalOpen(true);
-                    }}
-                    className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs hover:border-[#52b788] transition-all cursor-pointer group"
+                    onClick={() => setSelectedQuickEvent(ev)}
+                    className={`p-3 rounded-2xl border text-xs transition-all cursor-pointer group ${
+                      ev.completed
+                        ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
+                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#52b788]"
+                    }`}
                     style={{ borderLeftColor: typeCfg.borderLeftColor || ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
                   >
-                    <div className="flex items-center space-x-1.5 mb-1">
-                      <span
-                        className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.2 rounded-md"
-                        style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
-                      >
-                        <TypeIcon className="w-2.5 h-2.5 shrink-0" />
-                        <span>{typeCfg.shortLabel || typeCfg.label}</span>
-                      </span>
-                      {ev.subject && (
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center space-x-1.5">
                         <span
-                          className="text-[9px] font-bold px-1.5 py-0.2 rounded-md text-white"
-                          style={{ backgroundColor: ev.subject.color || "#2d6a4f" }}
+                          className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.2 rounded-md"
+                          style={{ backgroundColor: typeCfg.badgeBg, color: typeCfg.badgeText }}
                         >
-                          {ev.subject.name}
+                          <TypeIcon className="w-2.5 h-2.5 shrink-0" />
+                          <span>{typeCfg.shortLabel || typeCfg.label}</span>
                         </span>
-                      )}
+                        {ev.subject && (
+                          <span
+                            className="text-[9px] font-bold px-1.5 py-0.2 rounded-md text-white"
+                            style={{ backgroundColor: ev.subject.color || "#2d6a4f" }}
+                          >
+                            {ev.subject.name}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center space-x-1 shrink-0">
+                        <EventCompleteCheckbox
+                          eventId={ev.id}
+                          isCompleted={Boolean(ev.completed)}
+                          actualDurationMinutes={ev.actualDurationMinutes}
+                          plannedDurationMinutes={ev.plannedDurationMinutes}
+                          size="sm"
+                          onToggled={() => {
+                            if (onEventsChange) onEventsChange();
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => handleQuickDelete(e, ev)}
+                          title="Xóa lịch này"
+                          className="opacity-60 group-hover:opacity-100 text-gray-400 hover:text-rose-600 p-1 rounded-md"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
+
+                    {/* Completed Tag if completed */}
+                    {ev.completed && (
+                      <div className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 mb-1">
+                        <CheckCircle2 className="w-2.5 h-2.5" />
+                        <span>Đã học {formatMinutesVN(ev.actualDurationMinutes || Math.max(1, Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / 60000)))}</span>
+                      </div>
+                    )}
+
                     <div className="flex items-start justify-between">
                       <div className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex-1">
                         {ev.title}
                       </div>
-                      <button
-                        type="button"
-                        onClick={(e) => handleQuickDelete(e, ev)}
-                        title="Xóa lịch này"
-                        className="opacity-60 group-hover:opacity-100 text-gray-400 hover:text-rose-600 p-1 rounded-md"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
                     </div>
 
                     {(ev as any).location && (
@@ -354,6 +409,39 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
         </div>
       </div>
 
+      {/* Monthly Planned vs Actual Statistics Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs text-xs">
+        <div className="flex items-center space-x-2">
+          <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+          <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            Tiến độ học trong tháng ({formatVN(currentMonth, "MM/yyyy")}):
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 text-xs">
+          <div>
+            <span className="text-[#526b5c] dark:text-[#a3bda9]">Kế hoạch: </span>
+            <strong className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              {formatMinutesVN(monthPlannedMins)}
+            </strong>
+          </div>
+          <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
+          <div>
+            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đã học thực tế: </span>
+            <strong className="font-bold text-[#2d6a4f] dark:text-[#52b788]">
+              {formatMinutesVN(monthActualMins)}
+            </strong>
+          </div>
+          <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
+          <div className="flex items-center space-x-1.5">
+            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đạt: </span>
+            <span className="px-2 py-0.5 rounded-full font-bold bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1f3828] dark:text-[#74c69d]">
+              {monthProgressPct}%
+            </span>
+          </div>
+        </div>
+      </div>
+
       {isEventModalOpen && (
         <EventModal
           open={isEventModalOpen}
@@ -365,6 +453,28 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
           defaultDate={selectedDayKey}
           editingEvent={editingEvent}
           onSuccess={onEventsChange}
+        />
+      )}
+
+      {/* Quick Action Modal on Event Click */}
+      {selectedQuickEvent && (
+        <EventQuickModal
+          open={!!selectedQuickEvent}
+          event={selectedQuickEvent}
+          onClose={() => setSelectedQuickEvent(null)}
+          onOpenEditModal={(evToEdit) => {
+            setEditingEvent({
+              ...evToEdit,
+              originalId: evToEdit.originalId || evToEdit.id,
+            });
+            setIsEventModalOpen(true);
+          }}
+          onDeleted={() => {
+            if (onEventsChange) onEventsChange();
+          }}
+          onUpdated={() => {
+            if (onEventsChange) onEventsChange();
+          }}
         />
       )}
     </div>
