@@ -32,6 +32,7 @@ import {
 import { AddWordsModal } from "@/components/vocab/add-words-modal";
 import { SpecialModesModal } from "@/components/vocab/special-modes-modal";
 import { VocabIndexNav } from "./vocab-index-nav";
+import { useVocabWorkspace } from "./vocab-workspace-context";
 
 interface WordItem extends StudyWord {
   status: string;
@@ -76,130 +77,41 @@ export function LessonDetailScreen({
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [setId, setSetId] = useState<string | null>(
-    initialSetId || (params?.id as string) || searchParams?.get("setId") || null
-  );
+  const {
+    setId,
+    setSetId,
+    loading,
+    error,
+    setDetails,
+    allWords,
+    filteredWords,
+    tableSearch,
+    setTableSearch,
+    statusFilter,
+    setStatusFilter,
+    quantityFilter,
+    setQuantityFilter,
+    orderFilter,
+    setOrderFilter,
+    userCoins,
+    isPro,
+    fetchSetData,
+    toggleFavorite,
+  } = useVocabWorkspace();
 
   // Sync setId if initialSetId changes from parent
   useEffect(() => {
     if (initialSetId && initialSetId !== setId) {
       setSetId(initialSetId);
     }
-  }, [initialSetId]);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [setDetails, setSetDetails] = useState<WordSetDetails | null>(null);
-  const [allWords, setAllWords] = useState<WordItem[]>([]);
-  const [filteredWords, setFilteredWords] = useState<WordItem[]>([]);
-  const [tableSearch, setTableSearch] = useState("");
-
-  // Filter States matching Image 2
-  const [statusFilter, setStatusFilter] = useState("ALL");
-  const [quantityFilter, setQuantityFilter] = useState("20");
-  const [orderFilter, setOrderFilter] = useState("DEFAULT");
+  }, [initialSetId, setId, setSetId]);
 
   // Study Modal states
   const [activeStudyMode, setActiveStudyMode] = useState<StudyMode | null>(null);
   const [showSpecialModesModal, setShowSpecialModesModal] = useState(false);
   const [showAddWordsModal, setShowAddWordsModal] = useState(false);
-  const [userCoins, setUserCoins] = useState(150);
-  const [isPro, setIsPro] = useState(false);
 
-  // If setId is missing (e.g. directly opened /vocab/index/3), resolve the first set of A1
-  useEffect(() => {
-    async function resolveDefaultSet() {
-      if (!setId) {
-        try {
-          const res = await fetch("/api/vocab/courses/a1-0-3-0");
-          if (res.ok) {
-            const data = await res.json();
-            const firstSet = data.course?.wordSets?.[0];
-            if (firstSet) {
-              setSetId(firstSet.id);
-            }
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    }
-    resolveDefaultSet();
-  }, [setId]);
-
-  const fetchSetData = useCallback(async () => {
-    if (!setId) return;
-    try {
-      setLoading(true);
-      setError(null);
-
-      const queryParams = new URLSearchParams({
-        status: statusFilter,
-        limit: quantityFilter,
-        sort: orderFilter,
-      });
-
-      const [res, shopRes] = await Promise.all([
-        fetch(`/api/vocab/sets/${setId}?${queryParams.toString()}`),
-        fetch("/api/vocab/shop").catch(() => null),
-      ]);
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Không thể tải bộ từ");
-
-      setSetDetails(data.wordSet);
-      setAllWords(data.allWords || []);
-      setFilteredWords(data.filteredWords || []);
-
-      if (shopRes && shopRes.ok) {
-        const shopData = await shopRes.json();
-        setUserCoins(shopData.userCoins || 100);
-        setIsPro(Boolean(shopData.isPro));
-      }
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Đã xảy ra lỗi");
-    } finally {
-      setLoading(false);
-    }
-  }, [setId, statusFilter, quantityFilter, orderFilter]);
-
-  useEffect(() => {
-    if (setId) {
-      fetchSetData();
-    }
-  }, [setId, fetchSetData]);
-
-  // Audio speech synthesis helper
-  const playWordAudio = (text: string) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      utterance.rate = 0.9;
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  // Toggle favorite
-  const toggleFavorite = async (wordId: string, currentFav: boolean) => {
-    try {
-      await fetch(`/api/vocab/words/${wordId}/favorite`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isFavorite: !currentFav }),
-      });
-
-      setAllWords((prev) =>
-        prev.map((w) => (w.id === wordId ? { ...w, isFavorite: !currentFav } : w))
-      );
-      setFilteredWords((prev) =>
-        prev.map((w) => (w.id === wordId ? { ...w, isFavorite: !currentFav } : w))
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  // Toggle favorite is now handled by Context
 
   const displayedWordsInTable = allWords.filter((w) => {
     if (!tableSearch.trim()) return true;
