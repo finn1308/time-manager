@@ -42,11 +42,11 @@
 ---
 
 ### III. Tích hợp PIP Timer & Đồng bộ Hai Chiều
-- [ ] **3.1. Đồng bộ khi hoàn thành học bằng PIP Timer (`/api/timer/stop`)**:
+- [x] **3.1. Đồng bộ khi hoàn thành học bằng PIP Timer (`/api/timer/stop` & `/api/timer/save-log`)**:
   - Khi timer kết thúc có `calendarEventId`:
     - Đánh dấu `CalendarEvent.completed = true`, `completedAt = now`, `actualDurationMinutes = round(seconds/60)`.
     - Tạo `StudySession` với `source = "PIP_TIMER"` liên kết `calendarEventId`.
-- [ ] **3.2. Chống Double Counting giữa Checkbox & PIP Timer**:
+- [x] **3.2. Chống Double Counting giữa Checkbox & PIP Timer**:
   - Nếu một event đã được hoàn thành bằng Timer, event hiển thị đã học trên Calendar.
   - Khi người dùng click bỏ tick hoặc tick lại, hệ thống nhận diện đúng `calendarEventId` và không nhân đôi thời gian.
 
