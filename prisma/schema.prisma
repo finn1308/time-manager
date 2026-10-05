@@ -73,6 +73,16 @@ model User {
   certificates          Certificate[]
   careerApplications    CareerApplication[]
   auditLogs             AuditLog[]
+
+  // 4-Year University Learning OS Master Models
+  learningProfile       UserLearningMemory?
+  mistakeRecords        MistakeRecord[]
+  examPreparations      ExamPreparation[]
+  assignments           Assignment[]
+  knowledgeNodes        KnowledgeNode[]
+  syllabusImports       SyllabusImport[]
+  backupRecords         BackupRecord[]
+  contentVersions       ContentVersion[]
 }
 
 model Account {
@@ -228,6 +238,11 @@ model Subject {
   notes            Note[]
   habits           Habit[]
   projects         Project[]
+  assignments      Assignment[]
+  mistakeRecords   MistakeRecord[]
+  examPreparations ExamPreparation[]
+  knowledgeNodes   KnowledgeNode[]
+  syllabusImports  SyllabusImport[]
 
   @@index([userId])
   @@index([semesterId])
@@ -925,6 +940,7 @@ model Semester {
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
   subjects     Subject[]
+  assignments  Assignment[]
 
   @@index([userId, status])
   @@index([academicYearId])
@@ -1313,6 +1329,202 @@ model UserAiLearningReport {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+// ==============================================================================
+// 4-YEAR UNIVERSITY MASTER LEARNING OS EXPANSION MODELS
+// ==============================================================================
+
+model UserLearningMemory {
+  id                       String   @id @default(cuid())
+  userId                   String   @unique
+  overallLevel             String   @default("INTERMEDIATE")
+  strengthsJson            String   @default("[]") @db.Text
+  weaknessesJson           String   @default("[]") @db.Text
+  retentionRate            Float    @default(0.8)
+  learningSpeed            Float    @default(1.0)
+  preferredDurationMins    Int      @default(45)
+  preferredTimeOfDay       String   @default("EVENING") // MORNING, AFTERNOON, EVENING, NIGHT
+  frequentMistakeTypesJson String   @default("[]") @db.Text
+  subjectMasteryJson       String   @default("{}") @db.Text
+  retentionRatesJson       String   @default("{}") @db.Text
+  cognitiveSummary         String?  @db.Text
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model MistakeRecord {
+  id              String    @id @default(cuid())
+  userId          String
+  subjectId       String?
+  sourceType      String    // QUIZ, EXAM, FLASHCARD, TYPING, PRACTICE, AI_SESSION, DOCUMENT
+  sourceId        String?
+  question        String    @db.Text
+  correctAnswer   String    @db.Text
+  userAnswer      String    @db.Text
+  concept         String?
+  topic           String?
+  errorType       String    @default("KNOWLEDGE_GAP") // KNOWLEDGE_GAP, MISUNDERSTANDING, CARELESS, MEMORY_FAILURE, CALCULATION, VOCABULARY, CONCEPT_CONFUSION
+  difficulty      String    @default("MEDIUM") // EASY, MEDIUM, HARD
+  repetitionCount Int       @default(1)
+  masteryLevel    Int       @default(0) // 0 to 5
+  isResolved      Boolean   @default(false)
+  nextReviewDate  DateTime?
+  lastReviewedAt  DateTime?
+  explanation     String?   @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  @@index([userId, isResolved])
+  @@index([userId, nextReviewDate])
+  @@index([subjectId])
+}
+
+model ExamPreparation {
+  id                  String    @id @default(cuid())
+  userId              String
+  subjectId           String?
+  title               String
+  examDate            DateTime
+  targetScore         Float     @default(8.5)
+  currentScore        Float     @default(5.0)
+  availableStudyHours Float     @default(40.0)
+  currentPhase        String    @default("FOUNDATION") // FOUNDATION, WEAK_TOPIC_RECOVERY, PRACTICE, MOCK_EXAM, FINAL_REVIEW
+  readinessScore      Float     @default(0.0) // 0 to 100%
+  estimatedScore      Float     @default(5.0)
+  weakTopicsJson      String?   @db.Text // ["Limits", "Integration by parts"]
+  studyPlanJson       String?   @db.Text // structured phases and daily tasks
+  riskLevel           String    @default("MODERATE") // LOW, MODERATE, HIGH, CRITICAL
+  status              String    @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([userId, examDate])
+  @@index([subjectId])
+}
+
+model Assignment {
+  id                       String    @id @default(cuid())
+  userId                   String
+  subjectId                String?
+  semesterId               String?
+  title                    String
+  description              String?   @db.Text
+  deadline                 DateTime
+  priority                 String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  estimatedWorkloadMinutes Int       @default(120)
+  status                   String    @default("NOT_STARTED") // NOT_STARTED, PLANNING, IN_PROGRESS, REVIEWING, COMPLETED, SUBMITTED
+  progressPercent          Int       @default(0)
+  submissionDate           DateTime?
+  grade                    Float?
+  attachmentsJson          String?   @db.Text
+  notes                    String?   @db.Text
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject  Subject?  @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  semester Semester? @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([userId, deadline])
+  @@index([subjectId])
+  @@index([semesterId])
+}
+
+model KnowledgeNode {
+  id           String   @id @default(cuid())
+  userId       String
+  subjectId    String?
+  title        String
+  chapter      String?
+  topic        String?
+  description  String?  @db.Text
+  masteryScore Float    @default(0.0) // 0.0 to 1.0
+  importance   String   @default("CORE") // CORE, ELECTIVE, ADVANCED
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject?                @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  prerequisites KnowledgePrerequisite[] @relation("NodePrerequisites")
+  dependents    KnowledgePrerequisite[] @relation("PrerequisiteOfNodes")
+
+  @@index([userId])
+  @@index([subjectId])
+}
+
+model KnowledgePrerequisite {
+  id              String   @id @default(cuid())
+  nodeId          String
+  prerequisiteId  String
+  requiredMastery Float    @default(0.6)
+  createdAt       DateTime @default(now())
+
+  node         KnowledgeNode @relation("NodePrerequisites", fields: [nodeId], references: [id], onDelete: Cascade)
+  prerequisite KnowledgeNode @relation("PrerequisiteOfNodes", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([nodeId, prerequisiteId])
+  @@index([nodeId])
+  @@index([prerequisiteId])
+}
+
+model SyllabusImport {
+  id             String   @id @default(cuid())
+  userId         String
+  subjectId      String?
+  rawText        String   @db.Text
+  parsedDataJson String   @db.Text
+  status         String   @default("PARSED") // PARSED, APPLIED, DISCARDED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([subjectId])
+}
+
+model BackupRecord {
+  id              String   @id @default(cuid())
+  userId          String
+  version         String   @default("1.0")
+  sizeBytes       Int      @default(0)
+  modulesIncluded String   // "ALL" or comma-separated list
+  checksum        String?
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model ContentVersion {
+  id            String   @id @default(cuid())
+  userId        String
+  entityType    String   // NOTE, ROADMAP, FLASHCARD_DECK
+  entityId      String
+  versionNumber Int      @default(1)
+  snapshotJson  String   @db.Text
+  changeSummary String?
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, entityType, entityId])
 }
 
 
