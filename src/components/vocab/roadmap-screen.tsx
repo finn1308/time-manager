@@ -283,8 +283,8 @@ export function RoadmapScreen({
             />
           </div>
 
-          <div className="flex items-center space-x-2 shrink-0">
-            <span className="text-[11px] font-bold text-gray-400 uppercase flex items-center gap-1">
+          <div className="flex items-center space-x-2 shrink-0 overflow-x-auto max-w-full pb-1 scrollbar-none">
+            <span className="text-[11px] font-bold text-gray-400 uppercase flex items-center gap-1 shrink-0">
               <Filter className="w-3 h-3" />
               <span>Độ khó:</span>
             </span>
@@ -292,7 +292,7 @@ export function RoadmapScreen({
               <button
                 key={lvl}
                 onClick={() => setSelectedLevel(lvl)}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 min-h-[36px] flex items-center ${
                   selectedLevel === lvl
                     ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-black shadow-xs"
                     : "bg-white dark:bg-[#18281d] text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-[#263d2e] hover:bg-gray-50"

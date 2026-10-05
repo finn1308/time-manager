@@ -423,12 +423,12 @@ export function FlappyBirdGame({
 
         {/* Current Target Word Prompter Banner */}
         {isPlaying && currentWord && (
-          <div className="px-6 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900/40 flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-2 sm:py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
             <span className="text-xs font-bold text-amber-900 dark:text-amber-200">
               🎯 Từ cần tìm: <strong className="text-sm font-black text-amber-600 dark:text-amber-400 uppercase tracking-wide">{currentWord.term}</strong>
             </span>
-            <span className="text-[11px] text-gray-500">
-              Nhấn <strong>Phím Cách</strong> hoặc chạm màn hình để đập cánh bay!
+            <span className="text-[10px] sm:text-[11px] text-gray-500">
+              Chạm màn hình hoặc nhấn <strong>Phím Cách</strong> để bay!
             </span>
           </div>
         )}
@@ -436,13 +436,13 @@ export function FlappyBirdGame({
         {/* Canvas Game Arena */}
         <div
           onClick={jump}
-          className="relative w-full h-[380px] bg-sky-200 cursor-pointer select-none overflow-hidden"
+          className="relative w-full max-w-full h-[280px] sm:h-[380px] bg-sky-200 cursor-pointer select-none overflow-hidden"
         >
           <canvas
             ref={canvasRef}
             width={600}
             height={380}
-            className="w-full h-full block"
+            className="w-full h-full block touch-none"
           />
 
           {/* Start Screen Overlay */}

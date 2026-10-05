@@ -189,7 +189,7 @@ export function TopicSetOverviewScreen({
       {!hideNav && <VocabIndexNav currentStep={2} onStepChange={onNavigateStep} />}
 
       {/* Top Navigation Links Bar matching image */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
         <Link
           href="/vocab/index/1"
           onClick={(e) => {
@@ -198,41 +198,41 @@ export function TopicSetOverviewScreen({
               onNavigateStep(1);
             }
           }}
-          className="w-10 h-10 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-xs flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#203626] transition-colors cursor-pointer"
+          className="w-10 h-10 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] shadow-xs flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#203626] transition-colors cursor-pointer shrink-0"
           title="Quay lại Lộ trình học (Web 1)"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
 
         {/* Action Buttons: Thêm từ vựng, Đã ghim, BXH, Học ngắt quãng */}
-        <div className="flex items-center space-x-2.5 flex-wrap gap-y-2">
+        <div className="flex items-center space-x-2 flex-wrap gap-y-2 justify-end">
           {/* Thêm từ vựng button */}
           <button
             onClick={() => setShowAddWordsModal(true)}
-            className="px-4 py-2 rounded-2xl bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs cursor-pointer active:scale-95"
+            className="px-3 sm:px-4 py-2 rounded-2xl bg-[#16a34a] hover:bg-[#15803d] text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs cursor-pointer active:scale-95 min-h-[38px]"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Thêm từ vựng</span>
+            <span>Thêm từ</span>
           </button>
 
           {/* Ghim / Đã ghim Button */}
           <button
             onClick={handleTogglePin}
             disabled={pinLoading}
-            className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs cursor-pointer active:scale-95 ${
+            className={`px-3 sm:px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs cursor-pointer active:scale-95 min-h-[38px] ${
               course.isPinned
                 ? "bg-[#e68a00] hover:bg-[#cc7a00] text-white"
                 : "bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-amber-950 dark:text-amber-200"
             }`}
           >
             <Pin className={`w-3.5 h-3.5 ${course.isPinned ? "fill-white" : ""}`} />
-            <span>{course.isPinned ? "📌 Đã ghim" : "Ghim"}</span>
+            <span>{course.isPinned ? "Đã ghim" : "Ghim"}</span>
           </button>
 
           {/* BXH Button */}
           <Link
             href="/vocab/leaderboard"
-            className="px-4 py-2 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] hover:bg-gray-50 dark:hover:bg-[#203626] text-xs font-bold text-gray-800 dark:text-gray-200 transition-all flex items-center space-x-1.5 shadow-xs"
+            className="px-3 sm:px-4 py-2 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] hover:bg-gray-50 dark:hover:bg-[#203626] text-xs font-bold text-gray-800 dark:text-gray-200 transition-all flex items-center space-x-1.5 shadow-xs min-h-[38px]"
           >
             <Trophy className="w-3.5 h-3.5 text-amber-500" />
             <span>BXH</span>
@@ -241,10 +241,11 @@ export function TopicSetOverviewScreen({
           {/* Học ngắt quãng Button (Spaced Repetition) */}
           <Link
             href="/vocab/spaced-repetition"
-            className="px-4 py-2 rounded-2xl bg-[#10b981] hover:bg-[#059669] text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs"
+            className="px-3 sm:px-4 py-2 rounded-2xl bg-[#10b981] hover:bg-[#059669] text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs min-h-[38px]"
           >
             <Clock className="w-3.5 h-3.5" />
-            <span>⏱️ Học ngắt quãng</span>
+            <span className="hidden xs:inline">⏱️ Học ngắt quãng</span>
+            <span className="xs:hidden">SM-2</span>
           </Link>
         </div>
       </div>
