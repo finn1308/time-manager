@@ -95,6 +95,19 @@ export async function GET() {
         studySessions: {
           select: { actualDurationSeconds: true },
         },
+        vocabWords: {
+          select: {
+            id: true,
+            userProgress: {
+              where: { userId: user.id },
+              select: { status: true, nextReviewDate: true },
+            },
+          },
+        },
+        vocabStudySessions: {
+          where: { userId: user.id },
+          select: { id: true, durationSeconds: true },
+        },
       },
       orderBy: { priority: "desc" },
     }),
@@ -197,12 +210,18 @@ export async function GET() {
   // 7. Overdue Goals (Fetched in parallel)
   // 8. Subject Progress (Fetched in parallel)
 
-  const subjectProgress = subjects.map((sub) => {
-    const totalActualSeconds = sub.studySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
-    const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
-    const targetHours = sub.targetHours;
-    const remainingHours = targetHours ? Math.max(0, Math.round((targetHours - actualHours) * 10) / 10) : null;
-    const progressPercent = targetHours ? Math.min(100, Math.round((actualHours / targetHours) * 100)) : null;
+    const totalVocabWords = (sub as any).vocabWords?.length || 0;
+    let vocabMastered = 0;
+    let vocabLearning = 0;
+    let vocabReviewDue = 0;
+    for (const vw of ((sub as any).vocabWords || [])) {
+      const p = vw.userProgress?.[0];
+      if (p?.status === "MASTERED") vocabMastered++;
+      else if (p?.status === "LEARNING") vocabLearning++;
+      if (p && ((p.nextReviewDate && p.nextReviewDate <= now) || (!p.nextReviewDate && p.status === "LEARNING"))) {
+        vocabReviewDue++;
+      }
+    }
 
     return {
       id: sub.id,
@@ -214,6 +233,13 @@ export async function GET() {
       remainingHours,
       progressPercent,
       activeGoalsCount: sub.goals.filter((g) => g.status === "ACTIVE").length,
+      vocabulary: {
+        totalWords: totalVocabWords,
+        mastered: vocabMastered,
+        learning: vocabLearning,
+        reviewDue: vocabReviewDue,
+        practiceSessions: (sub as any).vocabStudySessions?.length || 0,
+      },
     };
   });
 
