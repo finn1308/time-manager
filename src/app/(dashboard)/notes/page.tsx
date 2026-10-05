@@ -31,6 +31,7 @@ import {
   Sparkles,
   Tag as TagIcon,
   FolderOpen,
+  ArrowLeft,
 } from "lucide-react";
 
 export default function NotesPage() {
@@ -327,13 +328,37 @@ export default function NotesPage() {
           </h1>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-wrap gap-2">
+          {/* Mobile view toggle */}
+          <div className="flex lg:hidden items-center p-1 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-xs">
+            <button
+              onClick={() => setMobileViewTab("list")}
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                mobileViewTab === "list"
+                  ? "bg-[#2d6a4f] text-white shadow-2xs"
+                  : "text-[#526b5c] dark:text-[#a3bda9]"
+              }`}
+            >
+              Danh sách ({notes.length})
+            </button>
+            <button
+              onClick={() => setMobileViewTab("editor")}
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                mobileViewTab === "editor"
+                  ? "bg-[#2d6a4f] text-white shadow-2xs"
+                  : "text-[#526b5c] dark:text-[#a3bda9]"
+              }`}
+            >
+              Soạn thảo
+            </button>
+          </div>
+
           <Button
             onClick={handleCreateNewNote}
             className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 h-9"
           >
             <Plus className="w-4 h-4" />
-            <span>Tạo ghi chú mới</span>
+            <span>Tạo mới</span>
           </Button>
         </div>
       </div>
@@ -341,7 +366,7 @@ export default function NotesPage() {
       {/* Main 2-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column: Notes List (4 cols) */}
-        <div className="lg:col-span-4 space-y-3">
+        <div className={`lg:col-span-4 space-y-3 ${mobileViewTab === "editor" && selectedNoteId ? "hidden lg:block" : "block"}`}>
           <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-sm space-y-3">
             {/* Search & Subject filter */}
             <div className="space-y-2">
@@ -446,15 +471,23 @@ export default function NotesPage() {
         </div>
 
         {/* Right Column: Notion-style Editor Pane (8 cols) */}
-        <div className="lg:col-span-8">
+        <div className={`lg:col-span-8 ${mobileViewTab === "list" ? "hidden lg:block" : "block"}`}>
           {selectedNoteId ? (
-            <Card className="rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 sm:p-8 shadow-sm space-y-4 min-h-[640px] flex flex-col justify-between">
+            <Card className="rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 sm:p-8 shadow-sm space-y-4 min-h-[640px] flex flex-col justify-between">
               <div className="space-y-4">
                 {/* Save status & View switcher */}
-                <div className="flex items-center justify-between text-xs pb-3 border-b border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                <div className="flex items-center justify-between text-xs pb-3 border-b border-[#dbe7dd]/60 dark:border-[#263d2e] flex-wrap gap-2">
                   <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => setMobileViewTab("list")}
+                      className="lg:hidden px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-gray-800 text-[#2d6a4f] dark:text-[#52b788] font-bold text-xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Danh sách</span>
+                    </button>
                     <span className="text-[11px] font-semibold text-[#73927d]">
-                      {saveStatus === "saving" ? "Đang lưu..." : saveStatus === "saved" ? "✓ Đã lưu đám mây" : "Chưa lưu"}
+                      {saveStatus === "saving" ? "Đang lưu..." : saveStatus === "saved" ? "✓ Đã lưu" : "Chưa lưu"}
                     </span>
                     <button
                       type="button"
