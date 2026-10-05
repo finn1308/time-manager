@@ -257,9 +257,9 @@ export function InteractiveStudyModal({
   };
 
   // Complete session and save rewards
-  const finishSession = async (finalCorrect: number, finalIncorrect: number) => {
+  const finishSession = useCallback(async (finalCorrect: number, finalIncorrect: number) => {
     setIsCompleted(true);
-    const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+    const durationSeconds = startTimeRef.current ? Math.round((Date.now() - startTimeRef.current) / 1000) : 0;
 
     try {
       setSavingSession(true);
@@ -286,7 +286,7 @@ export function InteractiveStudyModal({
     } finally {
       setSavingSession(false);
     }
-  };
+  }, [wordSetId, mode, words.length, onSessionComplete]);
 
   // Advance question
   const handleNextQuestion = (wasCorrect: boolean, quality = 4) => {

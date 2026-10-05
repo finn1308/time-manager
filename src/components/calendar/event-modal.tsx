@@ -32,6 +32,7 @@ import {
   isPersonalEvent,
 } from "@/lib/calendar/event-types";
 import { usePipTimer } from "../timer/pip-timer-provider";
+import { EventCompleteCheckbox } from "./event-complete-checkbox";
 
 interface EventModalProps {
   open: boolean;
@@ -62,6 +63,10 @@ interface EventModalProps {
     recurrence?: string;
     recurrenceRule?: string | null;
     recurrenceEnd?: string | Date | null;
+    completed?: boolean;
+    completedAt?: string | Date | null;
+    actualDurationMinutes?: number | null;
+    plannedDurationMinutes?: number | null;
     subject?: { id: string; name: string; code: string | null; color: string } | null;
   } | null;
 }
@@ -562,27 +567,40 @@ export function EventModal({
               </DialogDescription>
             </DialogHeader>
 
-            {/* Quick Action Banner for SELF_STUDY: Start Timer Button */}
-            {editingEvent && isSelfStudyEvent(eventType) && (
-              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-[#eef5f0] to-[#d8ebe0] dark:from-[#1b3426] dark:to-[#17261c] border border-[#b7d8c3] dark:border-[#263d2e] my-3">
-                <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-[#1b4332] dark:text-[#f0f7f2] flex items-center space-x-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#2d6a4f] dark:text-[#52b788]" />
-                    <span>Phiên tự học tại nhà</span>
-                  </span>
-                  <p className="text-[11px] text-[#408257] dark:text-[#a3bda9]">
-                    Bấm giờ để ghi nhận thời gian học thực tế vào Study Hours & Dashboard
-                  </p>
+            {/* Quick Action Banner for Completion & Study Timer */}
+            {editingEvent && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#eef5f0] to-[#d8ebe0] dark:from-[#1b3426] dark:to-[#17261c] border border-[#b7d8c3] dark:border-[#263d2e] my-3">
+                <div className="flex items-center space-x-3">
+                  <EventCompleteCheckbox
+                    eventId={editingEvent.id}
+                    isCompleted={Boolean(editingEvent.completed)}
+                    actualDurationMinutes={editingEvent.actualDurationMinutes}
+                    plannedDurationMinutes={editingEvent.plannedDurationMinutes}
+                    size="lg"
+                    showLabel
+                    onToggled={() => {
+                      if (onSuccess) onSuccess();
+                      router.refresh();
+                    }}
+                  />
+                  {editingEvent.completed && (
+                    <span className="text-xs font-mono font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                      (Đã học: {editingEvent.actualDurationMinutes || 0} phút)
+                    </span>
+                  )}
                 </div>
-                <Button
-                  type="button"
-                  onClick={handleStartTimer}
-                  size="sm"
-                  className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl text-xs font-bold space-x-1.5 shadow-2xs"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>Start Study Timer</span>
-                </Button>
+
+                {isSelfStudyEvent(eventType) && !editingEvent.completed && (
+                  <Button
+                    type="button"
+                    onClick={handleStartTimer}
+                    size="sm"
+                    className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl text-xs font-bold space-x-1.5 shadow-2xs self-start sm:self-auto"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Start Study Timer</span>
+                  </Button>
+                )}
               </div>
             )}
 

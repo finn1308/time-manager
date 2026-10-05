@@ -17,13 +17,16 @@ import {
   ChevronRight,
   Filter,
   MapPin,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { VIETNAM_TIMEZONE, formatVN } from "@/lib/date-utils";
+import { VIETNAM_TIMEZONE, formatVN, formatMinutesVN } from "@/lib/date-utils";
 import { getEventTypeConfig, ALL_EVENT_TYPES, CalendarEventType, canStartStudyTimer } from "@/lib/calendar/event-types";
 import { usePipTimer } from "@/components/timer/pip-timer-provider";
 import { EventModal } from "./event-modal";
+import { EventCompleteCheckbox } from "./event-complete-checkbox";
+import { EventQuickModal } from "./event-quick-modal";
 
 interface AgendaViewProps {
   initialEvents?: any[];
@@ -39,6 +42,7 @@ export function AgendaView({
   const [timeRangeDays, setTimeRangeDays] = useState<number>(14);
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("ALL");
   const [editingEvent, setEditingEvent] = useState<any | null>(null);
+  const [selectedQuickEvent, setSelectedQuickEvent] = useState<any | null>(null);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [modalDefaultDate, setModalDefaultDate] = useState<string>(format(new Date(), "yyyy-MM-dd"));
 
@@ -263,14 +267,12 @@ export function AgendaView({
                   return (
                     <div
                       key={ev.id}
-                      onClick={() => {
-                        setEditingEvent({
-                          ...ev,
-                          originalId: (ev as any).originalId || ev.id,
-                        });
-                        setIsEventModalOpen(true);
-                      }}
-                      className="group relative p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882] hover:shadow-2xs transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                      onClick={() => setSelectedQuickEvent(ev)}
+                      className={`group relative p-3.5 rounded-[22px] border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                        ev.completed
+                          ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
+                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882] hover:shadow-2xs"
+                      }`}
                       style={{ borderLeftColor: typeCfg.borderLeftColor, borderLeftWidth: "4.5px" }}
                     >
                       {/* Left: Time & Type & Subject */}
@@ -314,6 +316,13 @@ export function AgendaView({
                                 <span>Khóa</span>
                               </span>
                             )}
+
+                            {ev.completed && (
+                              <span className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+                                <CheckCircle2 className="w-2.5 h-2.5" />
+                                <span>Đã học {formatMinutesVN(ev.actualDurationMinutes || durationMins)}</span>
+                              </span>
+                            )}
                           </div>
 
                           <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
@@ -337,8 +346,19 @@ export function AgendaView({
 
                       {/* Right: Quick Action Controls */}
                       <div className="flex items-center space-x-1.5 shrink-0 self-end sm:self-center" onClick={(e) => e.stopPropagation()}>
+                        <EventCompleteCheckbox
+                          eventId={ev.id}
+                          isCompleted={Boolean(ev.completed)}
+                          actualDurationMinutes={ev.actualDurationMinutes}
+                          plannedDurationMinutes={ev.plannedDurationMinutes}
+                          size="md"
+                          onToggled={() => {
+                            if (onEventsChange) onEventsChange();
+                          }}
+                        />
+
                         {/* Play Timer Button - ONLY for SELF_STUDY */}
-                        {canStartStudyTimer(ev.type) && ev.subject && (
+                        {canStartStudyTimer(ev.type) && ev.subject && !ev.completed && (
                           <button
                             type="button"
                             onClick={() => {
@@ -419,6 +439,28 @@ export function AgendaView({
           if (onEventsChange) onEventsChange();
         }}
       />
+
+      {/* Quick Action Modal on Event Click */}
+      {selectedQuickEvent && (
+        <EventQuickModal
+          open={!!selectedQuickEvent}
+          event={selectedQuickEvent}
+          onClose={() => setSelectedQuickEvent(null)}
+          onOpenEditModal={(evToEdit) => {
+            setEditingEvent({
+              ...evToEdit,
+              originalId: evToEdit.originalId || evToEdit.id,
+            });
+            setIsEventModalOpen(true);
+          }}
+          onDeleted={() => {
+            if (onEventsChange) onEventsChange();
+          }}
+          onUpdated={() => {
+            if (onEventsChange) onEventsChange();
+          }}
+        />
+      )}
     </div>
   );
 }
