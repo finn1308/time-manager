@@ -10,7 +10,7 @@ import { InteractiveStudyScreen } from "./interactive-study-screen";
 import { SpecialModesScreen } from "./special-modes-screen";
 import { StudyMode } from "./interactive-study-modal";
 
-import { VocabWorkspaceProvider } from "./vocab-workspace-context";
+import { VocabWorkspaceProvider, useVocabWorkspace } from "./vocab-workspace-context";
 
 export interface VocabUnifiedWorkspaceProps {
   defaultStep?: 1 | 2 | 3 | 4 | 5;
@@ -29,6 +29,7 @@ function VocabUnifiedWorkspaceContent({
 }: VocabUnifiedWorkspaceProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const { setSetId } = useVocabWorkspace();
 
   const resolveInitialStep = (): 1 | 2 | 3 | 4 | 5 => {
     const queryStep = searchParams?.get("step");
@@ -95,6 +96,7 @@ function VocabUnifiedWorkspaceContent({
           <TopicSetOverviewScreen
             initialSlug={courseSlug}
             onSelectSet={(selectedSetId) => {
+              setSetId(selectedSetId);
               handleStepChange(3);
             }}
             onNavigateStep={handleStepChange}
