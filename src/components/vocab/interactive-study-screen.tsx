@@ -153,7 +153,7 @@ export function InteractiveStudyScreen({
       </div>
 
       {/* Active Study Engine Rendered in Full-Page View */}
-      {loading ? (
+      {loading || (!setDetails && words.length === 0) ? (
         <div className="flex flex-col items-center justify-center min-h-[45vh] space-y-3">
           <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin" />
           <p className="text-xs font-semibold text-gray-400">Đang khởi tạo Engine bài học...</p>

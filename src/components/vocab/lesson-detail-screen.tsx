@@ -134,7 +134,7 @@ export function LessonDetailScreen({
     );
   });
 
-  if (loading) {
+  if (loading || (!setDetails && !error)) {
     return (
       <div className="space-y-6 max-w-6xl mx-auto pb-16">
         {!hideNav && <VocabIndexNav currentStep={3} onStepChange={onNavigateStep} />}
@@ -156,7 +156,7 @@ export function LessonDetailScreen({
           <h3 className="font-bold text-base text-red-700 dark:text-red-400">
             Không tìm thấy bài học
           </h3>
-          <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
+          <p className="text-xs text-red-600 dark:text-red-400">{error || "Vui lòng chọn bài học từ danh sách để tiếp tục."}</p>
           <Link
             href="/vocab/index/2"
             onClick={(e) => {
