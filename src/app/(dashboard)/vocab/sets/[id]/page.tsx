@@ -1,10 +1,12 @@
-import { LessonDetailScreen } from "@/components/vocab/lesson-detail-screen";
+"use client";
 
-export const metadata = {
-  title: "Cấu hình bài học & Từ vựng • LUYENTU",
-  description: "Cài đặt chế độ học và danh sách từ vựng chi tiết",
-};
+import React from "react";
+import { useParams } from "next/navigation";
+import { VocabUnifiedWorkspace } from "@/components/vocab/vocab-unified-workspace";
 
 export default function WordSetDetailPage() {
-  return <LessonDetailScreen />;
+  const params = useParams();
+  const setId = (params?.id as string) || "";
+
+  return <VocabUnifiedWorkspace defaultStep={3} initialSetId={setId} />;
 }
