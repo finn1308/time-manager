@@ -335,53 +335,57 @@ export default function SettingsPage() {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center space-x-1 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs font-bold w-fit shadow-2xs">
+      <div className="flex items-center space-x-1 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs font-bold shadow-2xs overflow-x-auto max-w-full pb-1 scrollbar-none">
         <button
           onClick={() => setActiveTab("AI_KEYS")}
-          className={`px-4 py-2 rounded-xl transition-all flex items-center space-x-2 cursor-pointer ${
+          className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "AI_KEYS"
               ? "bg-[#2d6a4f] text-white shadow-2xs"
               : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
           }`}
         >
-          <Key className="w-3.5 h-3.5" />
-          <span>AI API Keys (BYOK)</span>
+          <Key className="w-3.5 h-3.5 shrink-0" />
+          <span className="hidden sm:inline">AI API Keys (BYOK)</span>
+          <span className="sm:hidden">AI Keys</span>
         </button>
 
         <button
           onClick={() => setActiveTab("STUDY_PREFS")}
-          className={`px-4 py-2 rounded-xl transition-all flex items-center space-x-2 cursor-pointer ${
+          className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "STUDY_PREFS"
               ? "bg-[#2d6a4f] text-white shadow-2xs"
               : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
           }`}
         >
-          <Clock className="w-3.5 h-3.5" />
-          <span>Sở thích & Giới hạn học tập</span>
+          <Clock className="w-3.5 h-3.5 shrink-0" />
+          <span className="hidden sm:inline">Sở thích & Giới hạn</span>
+          <span className="sm:hidden">Sở thích</span>
         </button>
 
         <button
           onClick={() => setActiveTab("SYSTEM")}
-          className={`px-4 py-2 rounded-xl transition-all flex items-center space-x-2 cursor-pointer ${
+          className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "SYSTEM"
               ? "bg-[#2d6a4f] text-white shadow-2xs"
               : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
           }`}
         >
-          <Globe className="w-3.5 h-3.5" />
-          <span>Hệ thống & Ngân sách</span>
+          <Globe className="w-3.5 h-3.5 shrink-0" />
+          <span className="hidden sm:inline">Hệ thống & Ngân sách</span>
+          <span className="sm:hidden">Hệ thống</span>
         </button>
 
         <button
           onClick={() => setActiveTab("BACKUP")}
-          className={`px-4 py-2 rounded-xl transition-all flex items-center space-x-2 cursor-pointer ${
+          className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "BACKUP"
               ? "bg-[#2d6a4f] text-white shadow-2xs"
               : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
           }`}
         >
-          <Database className="w-3.5 h-3.5" />
-          <span>Sao lưu & Xuất dữ liệu</span>
+          <Database className="w-3.5 h-3.5 shrink-0" />
+          <span className="hidden sm:inline">Sao lưu & Xuất</span>
+          <span className="sm:hidden">Sao lưu</span>
         </button>
       </div>
 
