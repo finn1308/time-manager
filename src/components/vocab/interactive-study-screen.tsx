@@ -23,6 +23,7 @@ import {
   StudyWord,
 } from "./interactive-study-modal";
 import { VocabIndexNav } from "./vocab-index-nav";
+import { useVocabWorkspace } from "./vocab-workspace-context";
 
 export interface InteractiveStudyScreenProps {
   initialMode?: StudyMode;
@@ -53,52 +54,9 @@ export function InteractiveStudyScreen({
     }
   }, [propInitialMode]);
 
-  const [loading, setLoading] = useState(true);
-  const [words, setWords] = useState<StudyWord[]>([]);
-  const [wordSetTitle, setWordSetTitle] = useState("1. Lời chào hỏi");
-  const [wordSetId, setWordSetId] = useState<string>(initialSetId || "");
-
-  // Load words from specific set (or Set 1 of A1)
-  const loadWords = useCallback(async () => {
-    try {
-      setLoading(true);
-      const targetSetId = initialSetId || wordSetId;
-      if (targetSetId) {
-        const setRes = await fetch(`/api/vocab/sets/${targetSetId}`);
-        if (setRes.ok) {
-          const setData = await setRes.json();
-          if (setData.set) {
-            setWordSetTitle(`${setData.set.orderNumber || 1}. ${setData.set.title}`);
-          }
-          setWords(setData.allWords || []);
-          return;
-        }
-      }
-
-      const res = await fetch("/api/vocab/courses/a1-0-3-0");
-      if (res.ok) {
-        const data = await res.json();
-        const set1 = data.course?.wordSets?.[0];
-        if (set1) {
-          setWordSetTitle(`${set1.orderNumber}. ${set1.title}`);
-          setWordSetId(set1.id);
-          const setRes = await fetch(`/api/vocab/sets/${set1.id}`);
-          if (setRes.ok) {
-            const setData = await setRes.json();
-            setWords(setData.allWords || []);
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  }, [initialSetId, wordSetId]);
-
-  useEffect(() => {
-    loadWords();
-  }, [loadWords]);
+  const { allWords: words, setDetails, loading, fetchSetData, setId } = useVocabWorkspace();
+  const wordSetTitle = setDetails ? `${setDetails.orderNumber}. ${setDetails.title}` : "Bộ từ vựng";
+  const wordSetId = setDetails?.id || setId || "";
 
   const modeTabs: { id: StudyMode; title: string; reward: string; icon: any; color: string }[] = [
     { id: "FLASHCARD", title: "Flashcard", reward: "+5 XP", icon: Layers, color: "from-purple-500 to-indigo-600" },
@@ -243,7 +201,7 @@ export function InteractiveStudyScreen({
             wordSetTitle={wordSetTitle}
             mode={mode}
             words={words}
-            onSessionComplete={loadWords}
+            onSessionComplete={fetchSetData}
           />
         </div>
       ) : (

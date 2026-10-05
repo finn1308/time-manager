@@ -10,6 +10,8 @@ import { InteractiveStudyScreen } from "./interactive-study-screen";
 import { SpecialModesScreen } from "./special-modes-screen";
 import { StudyMode } from "./interactive-study-modal";
 
+import { VocabWorkspaceProvider } from "./vocab-workspace-context";
+
 export interface VocabUnifiedWorkspaceProps {
   defaultStep?: 1 | 2 | 3 | 4 | 5;
   initialCourses?: any[];
@@ -18,7 +20,7 @@ export interface VocabUnifiedWorkspaceProps {
   initialMode?: StudyMode;
 }
 
-export function VocabUnifiedWorkspace({
+function VocabUnifiedWorkspaceContent({
   defaultStep = 1,
   initialCourses = [],
   initialCourseSlug = "a1-0-3-0",
@@ -28,7 +30,6 @@ export function VocabUnifiedWorkspace({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  // Determine initial step from props, query param, or pathname
   const resolveInitialStep = (): 1 | 2 | 3 | 4 | 5 => {
     const queryStep = searchParams?.get("step");
     if (queryStep && ["1", "2", "3", "4", "5"].includes(queryStep)) {
@@ -46,16 +47,13 @@ export function VocabUnifiedWorkspace({
 
   const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5>(resolveInitialStep());
   const [courseSlug, setCourseSlug] = useState<string>(initialCourseSlug);
-  const [setId, setSetId] = useState<string>(initialSetId);
   const [studyMode, setStudyMode] = useState<StudyMode>(initialMode);
 
-  // Sync state if defaultStep or params change
   useEffect(() => {
     const s = resolveInitialStep();
     setActiveStep(s);
   }, [pathname, searchParams, defaultStep]);
 
-  // Instant 1-touch step switcher with URL shallow update
   const handleStepChange = useCallback((newStep: 1 | 2 | 3 | 4 | 5) => {
     setActiveStep(newStep);
 
@@ -71,22 +69,16 @@ export function VocabUnifiedWorkspace({
           window.history.replaceState(null, "", currentUrl.toString());
         }
       } catch (e) {
-        // Fallback gracefully
       }
     }
   }, []);
 
   return (
     <div className="w-full space-y-6">
-      {/* Pinned Single Unified 1-Click Fast Switcher */}
       <div className="sticky top-2 z-30 shadow-md sm:shadow-lg rounded-2xl bg-white/95 dark:bg-[#16241b]/95 backdrop-blur-md">
-        <VocabIndexNav
-          currentStep={activeStep}
-          onStepChange={handleStepChange}
-        />
+        <VocabIndexNav currentStep={activeStep} onStepChange={handleStepChange} />
       </div>
 
-      {/* Dynamic Screen View (Rendered conditionally for instant switching) */}
       <div className="min-h-[70vh] transition-opacity duration-200">
         {activeStep === 1 && (
           <RoadmapScreen
@@ -99,22 +91,18 @@ export function VocabUnifiedWorkspace({
             hideNav={true}
           />
         )}
-
         {activeStep === 2 && (
           <TopicSetOverviewScreen
             initialSlug={courseSlug}
             onSelectSet={(selectedSetId) => {
-              setSetId(selectedSetId);
               handleStepChange(3);
             }}
             onNavigateStep={handleStepChange}
             hideNav={true}
           />
         )}
-
         {activeStep === 3 && (
           <LessonDetailScreen
-            initialSetId={setId}
             onStartStudy={(mode) => {
               setStudyMode(mode);
               handleStepChange(4);
@@ -124,24 +112,28 @@ export function VocabUnifiedWorkspace({
             hideNav={true}
           />
         )}
-
         {activeStep === 4 && (
           <InteractiveStudyScreen
             initialMode={studyMode}
-            initialSetId={setId}
             onNavigateStep={handleStepChange}
             hideNav={true}
           />
         )}
-
         {activeStep === 5 && (
           <SpecialModesScreen
-            initialSetId={setId}
             onNavigateStep={handleStepChange}
             hideNav={true}
           />
         )}
       </div>
     </div>
+  );
+}
+
+export function VocabUnifiedWorkspace(props: VocabUnifiedWorkspaceProps) {
+  return (
+    <VocabWorkspaceProvider initialSetId={props.initialSetId}>
+      <VocabUnifiedWorkspaceContent {...props} />
+    </VocabWorkspaceProvider>
   );
 }

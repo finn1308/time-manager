@@ -18,6 +18,8 @@ import {
 import { useRouter } from "next/navigation";
 import { VocabIndexNav } from "./vocab-index-nav";
 import { StudyWord } from "./interactive-study-modal";
+import { useVocabWorkspace } from "./vocab-workspace-context";
+import { useRouter } from "next/navigation";
 import { MixedPracticeGame } from "./special-games/mixed-practice-game";
 import { SentenceCraftGame } from "./special-games/sentence-craft-game";
 import { ComTamGame } from "./special-games/com-tam-game";
@@ -44,61 +46,11 @@ export function SpecialModesScreen({
   onNavigateStep,
   hideNav = false,
 }: SpecialModesScreenProps = {}) {
-  const [words, setWords] = useState<StudyWord[]>([]);
-  const [wordSetTitle, setWordSetTitle] = useState("1. Lời chào hỏi");
-  const [wordSetId, setWordSetId] = useState<string>(initialSetId || "");
+  const { allWords: words, setDetails, setId, loading } = useVocabWorkspace();
+  const wordSetTitle = setDetails ? `${setDetails.orderNumber}. ${setDetails.title}` : "Bộ từ vựng";
+  const wordSetId = setDetails?.id || setId || "";
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const targetSetId = initialSetId || wordSetId;
-      if (targetSetId) {
-        const [setRes, shopRes] = await Promise.all([
-          fetch(`/api/vocab/sets/${targetSetId}`),
-          fetch("/api/vocab/shop").catch(() => null),
-        ]);
-
-        if (setRes.ok) {
-          const setData = await setRes.json();
-          if (setData.set) {
-            setWordSetTitle(`${setData.set.orderNumber || 1}. ${setData.set.title}`);
-          }
-          setWords(setData.allWords || []);
-        }
-        return;
-      }
-
-      const [res, shopRes] = await Promise.all([
-        fetch("/api/vocab/courses/a1-0-3-0"),
-        fetch("/api/vocab/shop").catch(() => null),
-      ]);
-
-      if (res.ok) {
-        const data = await res.json();
-        const set1 = data.course?.wordSets?.[0];
-        if (set1) {
-          setWordSetTitle(`${set1.orderNumber}. ${set1.title}`);
-          setWordSetId(set1.id);
-          const setRes = await fetch(`/api/vocab/sets/${set1.id}`);
-          if (setRes.ok) {
-            const setData = await setRes.json();
-            setWords(setData.allWords || []);
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
 
   const handleSelectGame = (type: SpecialGameType) => {
     setWarningMessage(null);
