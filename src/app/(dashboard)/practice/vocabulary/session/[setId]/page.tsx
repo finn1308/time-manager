@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
-import { VocabFlashcardSession } from "../_components/vocab-flashcard-session";
+import { prisma as db } from "@/lib/prisma";
+import { VocabFlashcardSession } from "../../_components/vocab-flashcard-session";
 
 export const metadata: Metadata = {
   title: "Flashcard Session | Practice",
@@ -34,8 +34,8 @@ export default async function VocabSessionPage({ params }: { params: { setId: st
   });
 
   // Prepare words payload
-  const wordsPayload = wordSet.words.map(word => {
-    const progress = progresses.find(p => p.wordId === word.id);
+  const wordsPayload = wordSet.words.map((word: any) => {
+    const progress = progresses.find((p: any) => p.wordId === word.id);
     return {
       id: word.id,
       term: word.term,

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
+import { prisma as db } from "@/lib/prisma";
 import Link from "next/link";
 import { ChevronLeft, Play, LayoutGrid, Check, Volume2 } from "lucide-react";
 
@@ -38,12 +38,12 @@ export default async function VocabSetDetailPage({ params }: { params: { setId: 
   });
 
   const progressMap = new Map();
-  userWordsProgress.forEach(p => progressMap.set(p.wordId, p));
+  userWordsProgress.forEach((p: any) => progressMap.set(p.wordId, p));
 
   const totalWords = wordSet.words.length;
   let learnedCount = 0;
   
-  const wordsWithProgress = wordSet.words.map(word => {
+  const wordsWithProgress = wordSet.words.map((word: any) => {
     const progress = progressMap.get(word.id);
     if (progress && progress.status === "MASTERED") learnedCount++;
     return {
@@ -100,7 +100,7 @@ export default async function VocabSetDetailPage({ params }: { params: { setId: 
           </div>
           
           <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            {wordsWithProgress.map((word, index) => {
+            {wordsWithProgress.map((word: any, index: number) => {
               const isMastered = word.progress?.status === "MASTERED";
               return (
                 <div 
