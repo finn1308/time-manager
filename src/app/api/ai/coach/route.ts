@@ -49,6 +49,7 @@ export async function POST(req: Request) {
       const target = sub.targetHours || 10;
       const completed = sub.completedHours || 0;
       return {
+        id: sub.id,
         name: sub.name,
         weekHours: subWeekH,
         targetHours: target,
@@ -57,6 +58,23 @@ export async function POST(req: Request) {
         priority: sub.priority,
       };
     });
+
+    // Vocabulary progress & due review items
+    const userWords = await prisma.userWordProgress.findMany({
+      where: { userId: user.id },
+      include: {
+        word: {
+          select: { term: true, meaning: true, subjectId: true },
+        },
+      },
+    });
+
+    const totalVocab = userWords.length;
+    const masteredVocab = userWords.filter((w) => w.status === "MASTERED").length;
+    const learningVocab = userWords.filter((w) => w.status === "LEARNING").length;
+    const reviewDueVocab = userWords.filter(
+      (w) => (w.nextReviewDate && w.nextReviewDate <= now) || (!w.nextReviewDate && w.status === "LEARNING")
+    ).length;
 
     // Check goals nearing deadline
     const activeGoals = await prisma.goal.findMany({
@@ -98,9 +116,12 @@ ${activeGoals
       `+ ${g.title}: Hạn chót ${g.deadline ? format(g.deadline, "dd/MM/yyyy") : "Chưa đặt"}, Chỉ tiêu ${g.targetHours}h`
   )
   .join("\n")}
+- Tiến độ Luyện tập Từ vựng (Practice Hub • Spaced Repetition):
+  + Tổng từ vựng: ${totalVocab} từ (${masteredVocab} đã thuộc, ${learningVocab} đang học).
+  + Từ vựng đến hạn ôn tập ngay hôm nay: ${reviewDueVocab} từ.
 
 Người dùng hỏi: "${question}"
-Hãy trả lời cô đọng, tâm lý, có số liệu thực tế rõ ràng, đưa ra lời khuyên thiết thực và ngắn gọn bằng tiếng Việt.`;
+Hãy trả lời cô đọng, tâm lý, có số liệu thực tế rõ ràng, đưa ra lời khuyên thiết thực và ngắn gọn bằng tiếng Việt. Nếu có từ vựng đến hạn ôn tập (${reviewDueVocab} từ), hãy nhắc nhở người dùng ôn tập trong Practice Hub trước khi bắt đầu kỹ năng mới.`;
 
           const { callGeminiGenerate } = await import("@/lib/ai/gemini");
           const { text } = await callGeminiGenerate({
