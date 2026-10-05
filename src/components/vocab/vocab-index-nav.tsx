@@ -31,15 +31,38 @@ export function VocabIndexNav({
   // Determine active step from pathname if not provided
   let activeStep = currentStep;
   if (!activeStep) {
-    if (pathname?.includes("/index/1") || pathname === "/vocab" || pathname === "/vocab/courses") {
+    if (
+      pathname?.includes("/index/1") ||
+      pathname === "/practice/vocabulary" ||
+      pathname === "/practice/vocabulary/courses" ||
+      pathname === "/vocab" ||
+      pathname === "/vocab/courses"
+    ) {
       activeStep = 1;
-    } else if (pathname?.includes("/index/2") || pathname?.includes("/vocab/courses/")) {
+    } else if (
+      pathname?.includes("/index/2") ||
+      pathname?.includes("/practice/vocabulary/courses/") ||
+      pathname?.includes("/vocab/courses/")
+    ) {
       activeStep = 2;
-    } else if (pathname?.includes("/index/3") || (pathname?.includes("/vocab/sets/") && !pathname?.includes("/study"))) {
+    } else if (
+      pathname?.includes("/index/3") ||
+      ((pathname?.includes("/practice/vocabulary/sets/") || pathname?.includes("/vocab/sets/")) &&
+        !pathname?.includes("/study"))
+    ) {
       activeStep = 3;
-    } else if (pathname?.includes("/index/4") || pathname?.includes("/study")) {
+    } else if (
+      pathname?.includes("/index/4") ||
+      pathname?.includes("/study") ||
+      pathname?.includes("/practice/vocabulary/learn") ||
+      pathname?.includes("/practice/vocabulary/test")
+    ) {
       activeStep = 4;
-    } else if (pathname?.includes("/index/5") || pathname?.includes("/special")) {
+    } else if (
+      pathname?.includes("/index/5") ||
+      pathname?.includes("/special") ||
+      pathname?.includes("/games")
+    ) {
       activeStep = 5;
     } else {
       activeStep = 1;
@@ -74,7 +97,7 @@ export function VocabIndexNav({
   }, [onStepChange]);
 
   const isDirectIndex = pathname?.startsWith("/index");
-  const prefix = isDirectIndex ? "/index" : "/vocab/index";
+  const prefix = isDirectIndex ? "/index" : "/practice/vocabulary/index";
 
   const steps = [
     {

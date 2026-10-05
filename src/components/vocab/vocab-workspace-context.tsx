@@ -164,8 +164,8 @@ export function VocabWorkspaceProvider({
       isResolvingDefault.current = true;
       try {
         setLoading(true);
-        // Try A1 first
-        let res = await fetch("/api/vocab/courses/a1-0-3-0", { cache: 'no-store' });
+        // Try ielts-vocabulary first
+        let res = await fetch("/api/vocab/courses/ielts-vocabulary", { cache: 'no-store' });
         let firstSetId: string | null = null;
         if (res.ok) {
           const data = await res.json();
@@ -177,7 +177,7 @@ export function VocabWorkspaceProvider({
           const coursesRes = await fetch("/api/vocab/courses", { cache: 'no-store' });
           if (coursesRes.ok) {
             const cData = await coursesRes.json();
-            const validCourse = cData.courses?.find((c: any) => c.wordSets?.length > 0);
+            const validCourse = cData.courses?.find((c: any) => c.wordSets?.length > 0) || cData[0];
             firstSetId = validCourse?.wordSets?.[0]?.id || null;
           }
         }
