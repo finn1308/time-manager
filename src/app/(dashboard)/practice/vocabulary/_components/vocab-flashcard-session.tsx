@@ -35,12 +35,17 @@ export function VocabFlashcardSession({ wordSetId, wordSetTitle, courseTitle, su
   // Start PIP Timer when session starts
   useEffect(() => {
     if (!isRunning) {
-      startTimer({
-        taskId: `vocab_${wordSetId}`,
-        title: `Học từ vựng: ${wordSetTitle}`,
-        type: "VOCAB",
-        subjectId: subjectId || undefined,
-      });
+      startTimer(
+        {
+          id: subjectId || "vocab-default",
+          name: `Học từ vựng: ${wordSetTitle}`,
+          color: "#10b981",
+        },
+        {
+          taskId: `vocab_${wordSetId}`,
+          mode: "STOPWATCH",
+        }
+      );
     }
   }, []);
 
