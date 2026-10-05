@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Play, Edit2, Trash2, Plus, FolderOpen, Calendar, Award } from "lucide-react";
+import { Play, Edit2, Trash2, Plus, FolderOpen, Calendar, Award, Bot } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { SubjectDialog } from "./subject-dialog";
+import { SubjectAiTutorModal } from "../academic/subject-ai-tutor-modal";
 import { ResourceManager } from "../study/resource-manager";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog";
 import { useRouter } from "next/navigation";
@@ -48,6 +49,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<any | null>(null);
   const [selectedResourceSubject, setSelectedResourceSubject] = useState<any | null>(null);
+  const [tutorSubject, setTutorSubject] = useState<SubjectItem | null>(null);
 
   const handleDeleteSubject = async (id: string, name: string) => {
     if (!confirm(`Bạn có chắc muốn xóa môn học "${name}" và toàn bộ lịch liên quan?`)) return;
@@ -230,6 +232,14 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                       </button>
 
                       <button
+                        onClick={() => setTutorSubject(sub)}
+                        title="Hỏi gia sư AI môn học"
+                        className="p-2 rounded-full bg-[#f0fdf4] dark:bg-[#143220] hover:bg-[#dcfce7] text-[#16a34a] transition-all cursor-pointer shadow-2xs active:scale-95"
+                      >
+                        <Bot className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
                         onClick={() => setSelectedResourceSubject(sub)}
                         title="Tài liệu & Link môn học"
                         className="p-2 rounded-full hover:bg-[#d8ebe0] text-[#73927d] hover:text-[#1b4332] transition-colors cursor-pointer"
@@ -308,6 +318,14 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
             </div>
           </DialogContent>
         </Dialog>
+      )}
+      {tutorSubject && (
+        <SubjectAiTutorModal
+          open={!!tutorSubject}
+          onClose={() => setTutorSubject(null)}
+          subjectId={tutorSubject.id}
+          subjectName={tutorSubject.name}
+        />
       )}
     </div>
   );
