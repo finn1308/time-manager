@@ -60,6 +60,35 @@ export default function NotesPage() {
   const [viewMode, setViewMode] = useState<"edit" | "preview" | "split">("split");
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved">("saved");
   const [mobileViewTab, setMobileViewTab] = useState<"list" | "editor">("editor");
+  const [extracting, setExtracting] = useState(false);
+
+  const handleExtractFlashcards = async () => {
+    if (!content.trim() || extracting) return;
+    try {
+      setExtracting(true);
+      const res = await fetch("/api/flashcards/generate-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subjectId: subjectId || null,
+          newDeckTitle: `Flashcards: ${title || "Ghi chú"}`,
+          customText: content,
+          count: 8,
+        }),
+      });
+      const data = await res.json();
+      if (data.success || data.deckId) {
+        alert("Đã trích xuất thành công bộ thẻ ghi nhớ từ ghi chú này! Bạn có thể vào mục Flashcards để ôn tập ngay.");
+      } else {
+        alert(data.error || "Không thể trích xuất flashcards");
+      }
+    } catch (err) {
+      console.error("Error extracting flashcards:", err);
+      alert("Đã xảy ra lỗi khi trích xuất thẻ");
+    } finally {
+      setExtracting(false);
+    }
+  };
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -504,6 +533,16 @@ export default function NotesPage() {
                     >
                       <Pin className="w-3 h-3" />
                       <span>{isPinned ? "Đã ghim" : "Ghim"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={extracting}
+                      onClick={handleExtractFlashcards}
+                      className="px-2.5 py-1 rounded-xl border border-purple-200 text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center space-x-1 font-semibold text-[11px] disabled:opacity-60"
+                    >
+                      <Sparkles className="w-3 h-3 text-purple-600" />
+                      <span>{extracting ? "Đang trích xuất..." : "Trích xuất Flashcards AI"}</span>
                     </button>
                   </div>
 
