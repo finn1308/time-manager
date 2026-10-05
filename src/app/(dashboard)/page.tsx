@@ -570,11 +570,10 @@ export default async function DashboardPage() {
                     <div className="flex items-center space-x-3 min-w-0">
                       <EventCompleteCheckbox
                         eventId={ev.id}
-                        initialCompleted={ev.completed}
-                        isStudyEvent={isStudy}
-                        title={ev.title}
-                        plannedMinutes={plannedMins}
-                        actualMinutes={ev.actualDurationMinutes || undefined}
+                        isCompleted={ev.completed}
+                        plannedDurationMinutes={plannedMins}
+                        actualDurationMinutes={ev.actualDurationMinutes || undefined}
+                        subjectName={ev.subject?.name}
                       />
                       <div className="space-y-1 min-w-0">
                         <div className="flex items-center space-x-2">

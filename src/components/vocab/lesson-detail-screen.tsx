@@ -94,6 +94,7 @@ export function LessonDetailScreen({
     orderFilter,
     setOrderFilter,
     userCoins,
+    setUserCoins,
     isPro,
     fetchSetData,
     toggleFavorite,

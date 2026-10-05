@@ -526,7 +526,7 @@ export function DayView({
                             {ev.completed && (
                               <span className="inline-flex items-center space-x-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
                                 <CheckCircle2 className="w-2.5 h-2.5" />
-                                <span>Đã học {ev.actualMinutes || Math.round(allocation.totalMinutes)}p</span>
+                                <span>Đã học {ev.actualMinutes || Math.round((new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 60))}p</span>
                               </span>
                             )}
                           </div>
