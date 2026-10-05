@@ -143,6 +143,46 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       },
     },
     {
+      id: "practice-hub",
+      title: "Trung tâm Luyện tập (Practice Hub)",
+      category: "Luyện tập",
+      icon: Brain,
+      run: () => {
+        router.push("/practice");
+        onClose();
+      },
+    },
+    {
+      id: "practice-vocab",
+      title: "Luyện từ vựng (Vocabulary Engine)",
+      category: "Luyện tập",
+      icon: BookOpen,
+      run: () => {
+        router.push("/practice/vocabulary");
+        onClose();
+      },
+    },
+    {
+      id: "practice-vocab-review",
+      title: "Ôn tập từ vựng ngắt quãng (Spaced Repetition)",
+      category: "Luyện tập",
+      icon: Award,
+      run: () => {
+        router.push("/practice/vocabulary/review");
+        onClose();
+      },
+    },
+    {
+      id: "practice-vocab-words",
+      title: "Kho từ vựng & Tra cứu (Word Bank)",
+      category: "Luyện tập",
+      icon: Search,
+      run: () => {
+        router.push("/practice/vocabulary/words");
+        onClose();
+      },
+    },
+    {
       id: "review-today",
       title: "Ôn tập tổng hợp hôm nay (Universal Review)",
       category: "Luyện tập",
