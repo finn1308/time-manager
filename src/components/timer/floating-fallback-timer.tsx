@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { usePipTimer } from "./pip-timer-provider";
-import { Play, Pause, Square, ExternalLink, ChevronDown, ChevronUp, SkipForward, Coffee, Sparkles } from "lucide-react";
+import { Play, Pause, Square, ExternalLink, ChevronDown, ChevronUp, SkipForward, Coffee, Sparkles, Maximize2 } from "lucide-react";
+import { SmartFocusModeModal } from "./smart-focus-mode-modal";
 
 export function FloatingFallbackTimer() {
   const {
@@ -25,6 +26,7 @@ export function FloatingFallbackTimer() {
   } = usePipTimer();
 
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isFocusModeOpen, setIsFocusModeOpen] = useState(false);
 
   // If no timer is active or if user is currently using the native OS Document PiP window
   if (!activeSubject || isPipOpen) {
@@ -41,8 +43,9 @@ export function FloatingFallbackTimer() {
   const isBreak = mode === "POMODORO" && pomodoroPhase !== "WORK";
 
   return (
-    <aside
-      aria-label="Bộ đếm giờ học nổi ChronoMind"
+    <>
+      <aside
+        aria-label="Bộ đếm giờ học nổi ChronoMind"
       className="fixed bottom-20 lg:bottom-6 right-3 sm:right-6 z-40 transition-all duration-300 select-none drop-shadow-2xl max-w-[calc(100vw-24px)]"
     >
       <div
@@ -66,6 +69,13 @@ export function FloatingFallbackTimer() {
           </div>
 
           <div className="flex items-center space-x-1">
+            <button
+              onClick={() => setIsFocusModeOpen(true)}
+              title="Bật Chế độ tập trung (Focus Mode)"
+              className="p-1.5 rounded-full text-[#73927d] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] hover:text-[#2d6a4f] transition-colors cursor-pointer"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+            </button>
             <button
               onClick={requestDocumentPip}
               title="Bật cửa sổ nổi Picture-in-Picture ngoài desktop"
@@ -241,5 +251,14 @@ export function FloatingFallbackTimer() {
         )}
       </div>
     </aside>
+    {isFocusModeOpen && (
+      <SmartFocusModeModal
+        open={isFocusModeOpen}
+        onClose={() => setIsFocusModeOpen(false)}
+        taskTitle={activeSubject?.name || "Phiên học tập"}
+        subjectName={activeSubject?.name}
+      />
+    )}
+  </>
   );
 }
