@@ -191,26 +191,26 @@ export default async function PracticeHubPage() {
         </div>
       </div>
 
-      {/* SECTION 1: VOCABULARY ENGINE (LUYENTU INSIDE PRACTICE) */}
+      {/* SECTION 1: VOCABULARY ENGINE */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
             <div className="w-2.5 h-2.5 rounded-full bg-[#2d6a4f]" />
             <h2 className="text-lg font-extrabold text-[#192e22] dark:text-[#f0f7f2]">
-              Luyện Từ Vựng (Vocabulary)
+              Từ Vựng (Vocabulary)
             </h2>
           </div>
           <Link
-            href="/practice/vocabulary/words"
+            href="/practice/vocabulary"
             className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] hover:underline flex items-center space-x-1"
           >
-            <span>Xem toàn bộ từ vựng</span>
+            <span>Mở Vocabulary Dashboard</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 1. Luyentu Engine & Roadmap */}
+          {/* 1. Vocabulary Learning System */}
           <Link href="/practice/vocabulary" className="group">
             <div className="p-5 rounded-3xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] hover:border-[#2d6a4f] hover:shadow-md transition-all h-full flex flex-col justify-between">
               <div>
@@ -219,35 +219,33 @@ export default async function PracticeHubPage() {
                 </div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
-                    Lộ trình học từ vựng
+                    Học từ vựng
                   </h3>
-                  <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                    LUYENTU
-                  </span>
                 </div>
                 <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
-                  Lộ trình 5 bước: Lộ trình → Bài học → Chi tiết → Luyện tập → Mini-games tương tác.
+                  Hệ thống học từ vựng học thuật cao cấp, lộ trình đa dạng và thư viện từ vựng phong phú.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
-                <span>Mở Luyentu Hub</span>
+                <span>Truy cập</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </Link>
 
           {/* 2. Flashcards Learn */}
-          <Link href="/practice/vocabulary/learn" className="group">
+          <Link href="/practice/vocabulary" className="group">
             <div className="p-5 rounded-3xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] hover:border-purple-400 hover:shadow-md transition-all h-full flex flex-col justify-between">
               <div>
                 <div className="p-3 rounded-2xl bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 w-fit mb-3 group-hover:scale-105 transition-transform">
                   <Layers className="w-6 h-6" />
                 </div>
                 <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
-                  Thẻ Flashcards (Anki SM-2)
+                  Thẻ Flashcards (Spaced Repetition)
                 </h3>
                 <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
                   Lật thẻ 2 mặt, phát âm IPA, ví dụ câu ngữ cảnh và đánh giá độ thuộc từ vựng.
+
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
