@@ -10,7 +10,7 @@ import { AiStudyCoachModal } from "../ai/ai-study-coach-modal";
 import { QuickCaptureModal } from "./quick-capture-modal";
 import { NotificationCenter } from "../notifications/notification-center";
 import { usePipTimer } from "../timer/pip-timer-provider";
-import { GamificationBadge } from "../vocab/gamification-badge";
+
 
 interface TopBarProps {
   user: {
@@ -60,11 +60,7 @@ export function TopBar({ user }: TopBarProps) {
             <span className="inline sm:hidden font-mono text-[11px]">{formatVN(now, "dd/MM")}</span>
           </div>
 
-          <div className="hidden sm:block h-3.5 w-px bg-[#dbe7dd] dark:bg-[#263d2e] shrink-0" />
-          
-          <div className="shrink-0 scale-90 sm:scale-100 origin-left">
-            <GamificationBadge />
-          </div>
+
         </div>
 
         {/* Right: Quick Search (Cmd+K), AI Coach, Quick Add (+), User Avatar */}
