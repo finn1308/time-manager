@@ -1,40 +1,73 @@
 import React from "react";
 import Link from "next/link";
-import { BookOpen, GraduationCap, FileText, Library, Languages } from "lucide-react";
+import { BookOpen, GraduationCap, FileText, Library, Languages, Target, FileCheck, GitBranch, Brain } from "lucide-react";
 
 export default function LearnHubPage() {
   const learningModules = [
     {
-      title: "Lộ trình học từ vựng (LUYENTU)",
-      description: "Các khóa học từ vựng được thiết kế chuẩn theo các cấp độ",
-      href: "/vocab/courses/a1-0-3-0", // Example course
-      icon: Languages,
-      color: "bg-emerald-100 text-emerald-700",
-      border: "border-emerald-200"
+      title: "Chế độ Luyện thi (Exam Mode)",
+      description: "Chiến lược ôn thi 5 giai đoạn, đo độ sẵn sàng và dự báo điểm số",
+      href: "/exams",
+      icon: Target,
+      color: "bg-amber-100 text-amber-700",
+      border: "border-amber-300 ring-2 ring-amber-500/20",
+      badge: "TRỌNG TÂM"
     },
     {
-      title: "Quản lý môn học (Subjects)",
-      description: "Quản lý danh sách các môn học và tài liệu liên quan",
-      href: "/subjects",
-      icon: Library,
+      title: "Bài tập lớn & Đồ án (Assignments)",
+      description: "Quản lý tiến độ đồ án và phân rã nhiệm vụ 5 bước bằng AI",
+      href: "/academic/assignments",
+      icon: FileCheck,
       color: "bg-blue-100 text-blue-700",
       border: "border-blue-200"
     },
     {
-      title: "Ghi chú & Wiki",
-      description: "Hệ thống quản lý kiến thức cá nhân",
-      href: "/notes",
-      icon: FileText,
+      title: "Cây tri thức & Tiên quyết (Knowledge Graph)",
+      description: "Sơ đồ liên kết logic giữa các chuyên đề và cảnh báo điều kiện tiên quyết",
+      href: "/academic/knowledge-graph",
+      icon: GitBranch,
       color: "bg-purple-100 text-purple-700",
       border: "border-purple-200"
     },
     {
-      title: "Học thuật & GPA",
-      description: "Theo dõi điểm số và quản lý lộ trình học thuật",
+      title: "Hồ sơ Nhận thức AI (Learning Memory)",
+      description: "Mô hình hóa trí nhớ, phản xạ và phân tích lỗi sai của sinh viên",
+      href: "/academic/learning-profile",
+      icon: Brain,
+      color: "bg-teal-100 text-teal-700",
+      border: "border-teal-200"
+    },
+    {
+      title: "Học thuật & GPA (Academic OS)",
+      description: "Theo dõi điểm số 4 năm, tín chỉ và quản lý kỳ học",
       href: "/academic",
       icon: GraduationCap,
       color: "bg-orange-100 text-orange-700",
       border: "border-orange-200"
+    },
+    {
+      title: "Quản lý môn học (Subjects)",
+      description: "Danh sách các môn học, đề cương và tài liệu liên quan",
+      href: "/subjects",
+      icon: Library,
+      color: "bg-emerald-100 text-emerald-700",
+      border: "border-emerald-200"
+    },
+    {
+      title: "Ghi chú & Wiki bài học",
+      description: "Hệ thống quản lý kiến thức cá nhân kiểu Notion",
+      href: "/notes",
+      icon: FileText,
+      color: "bg-indigo-100 text-indigo-700",
+      border: "border-indigo-200"
+    },
+    {
+      title: "Lộ trình học từ vựng (LUYENTU)",
+      description: "Các khóa học từ vựng được thiết kế chuẩn theo các cấp độ",
+      href: "/vocab/courses/a1-0-3-0",
+      icon: Languages,
+      color: "bg-teal-100 text-teal-700",
+      border: "border-teal-200"
     }
   ];
 
