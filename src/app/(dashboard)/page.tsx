@@ -6,6 +6,7 @@ import { PlannedVsActualChart } from "@/components/dashboard/planned-vs-actual-c
 import { StudyHeatmap } from "@/components/dashboard/study-heatmap";
 import { StudyBudgetCard } from "@/components/dashboard/study-budget-card";
 import { SchedulingDna } from "@/components/dashboard/scheduling-dna";
+import { DailyAiBriefing } from "@/components/dashboard/daily-ai-briefing";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -258,6 +259,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
+      {/* Smart Daily AI Briefing Widget */}
+      <DailyAiBriefing />
+
       {/* Friendly Hero Banner in Pastel Green */}
       <div className="rounded-[30px] bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c] text-white p-6 sm:p-7 soft-card-shadow relative overflow-hidden">
         <div className="absolute inset-0 bg-pastel-grid opacity-15 pointer-events-none" />
