@@ -616,8 +616,8 @@ export function LessonDetailScreen({
                   <Volume2 className="w-4 h-4" />
                 </button>
 
-                <div className="space-y-0.5">
-                  <div className="flex items-baseline space-x-2">
+                <div className="space-y-0.5 min-w-0 flex-1">
+                  <div className="flex items-baseline space-x-2 flex-wrap gap-y-1">
                     <span className="font-extrabold text-base text-gray-900 dark:text-white">
                       {word.term}
                     </span>
@@ -633,12 +633,12 @@ export function LessonDetailScreen({
                     )}
                   </div>
 
-                  <p className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                  <p className="text-xs font-bold text-gray-800 dark:text-gray-200 break-words">
                     {word.meaning}
                   </p>
 
                   {word.exampleSentence && (
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400 italic">
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 italic break-words">
                       "{word.exampleSentence}" {word.exampleMeaning && `— ${word.exampleMeaning}`}
                     </p>
                   )}
