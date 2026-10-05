@@ -705,6 +705,29 @@ export function WeekView({
           if (onEventsChange) onEventsChange();
         }}
       />
+
+      {/* Quick Action Modal on Event Click */}
+      {selectedQuickEvent && (
+        <EventQuickModal
+          open={!!selectedQuickEvent}
+          event={selectedQuickEvent}
+          onClose={() => setSelectedQuickEvent(null)}
+          onOpenEditModal={(evToEdit) => {
+            setEditingEvent({
+              ...evToEdit,
+              originalId: evToEdit.originalId || evToEdit.id,
+            });
+            setModalInitialTab("schedule");
+            setIsEventModalOpen(true);
+          }}
+          onDeleted={() => {
+            if (onEventsChange) onEventsChange();
+          }}
+          onUpdated={() => {
+            if (onEventsChange) onEventsChange();
+          }}
+        />
+      )}
     </div>
   );
 }
