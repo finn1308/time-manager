@@ -23,13 +23,15 @@ export interface VocabUnifiedWorkspaceProps {
 function VocabUnifiedWorkspaceContent({
   defaultStep = 1,
   initialCourses = [],
-  initialCourseSlug = "a1-0-3-0",
+  initialCourseSlug,
   initialSetId = "",
   initialMode = "FLASHCARD",
 }: VocabUnifiedWorkspaceProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { setSetId } = useVocabWorkspace();
+
+  const resolvedCourseSlug = initialCourseSlug || initialCourses[0]?.slug || "ielts-vocabulary";
 
   const resolveInitialStep = (): 1 | 2 | 3 | 4 | 5 => {
     const queryStep = searchParams?.get("step");
@@ -47,7 +49,7 @@ function VocabUnifiedWorkspaceContent({
   };
 
   const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4 | 5>(resolveInitialStep());
-  const [courseSlug, setCourseSlug] = useState<string>(initialCourseSlug);
+  const [courseSlug, setCourseSlug] = useState<string>(resolvedCourseSlug);
   const [studyMode, setStudyMode] = useState<StudyMode>(initialMode);
 
   useEffect(() => {
@@ -62,9 +64,11 @@ function VocabUnifiedWorkspaceContent({
       try {
         const currentUrl = new URL(window.location.href);
         if (currentUrl.pathname.match(/\/index\/[1-5]$/)) {
-          window.history.replaceState(null, "", `/index/${newStep}`);
+          window.history.replaceState(null, "", `/practice/vocabulary/index/${newStep}`);
+        } else if (currentUrl.pathname.match(/\/practice\/vocabulary\/index\/[1-5]$/)) {
+          window.history.replaceState(null, "", `/practice/vocabulary/index/${newStep}`);
         } else if (currentUrl.pathname.match(/\/vocab\/index\/[1-5]$/)) {
-          window.history.replaceState(null, "", `/vocab/index/${newStep}`);
+          window.history.replaceState(null, "", `/practice/vocabulary/index/${newStep}`);
         } else {
           currentUrl.searchParams.set("step", String(newStep));
           window.history.replaceState(null, "", currentUrl.toString());
