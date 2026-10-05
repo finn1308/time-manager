@@ -19,6 +19,10 @@ import {
   Plus,
   Search,
   ArrowRight,
+  Award,
+  AlertCircle,
+  Database,
+  GitBranch,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 

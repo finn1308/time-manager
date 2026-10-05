@@ -191,7 +191,22 @@ export async function GET(req: Request) {
       }),
     ]);
 
+    const results = [
+      ...tasks.map((t) => ({ id: t.id, type: "TASK", title: t.title, subtitle: t.subject?.name, badge: t.priority, url: "/tasks" })),
+      ...notes.map((n) => ({ id: n.id, type: "NOTE", title: n.title, subtitle: n.subject?.name, badge: "Ghi chú", url: "/notes" })),
+      ...subjects.map((s) => ({ id: s.id, type: "SUBJECT", title: s.name, subtitle: s.code || undefined, badge: "Môn học", url: "/subjects" })),
+      ...goals.map((g) => ({ id: g.id, type: "GOAL", title: g.title, subtitle: "Mục tiêu", badge: g.status, url: "/goals" })),
+      ...events.map((e) => ({ id: e.id, type: "EVENT", title: e.title, subtitle: e.subject?.name, badge: "Lịch học", url: "/calendar" })),
+      ...flashcards.map((f) => ({ id: f.id, type: "CARD", title: f.front, subtitle: f.back, badge: f.deck?.title, url: "/flashcards" })),
+      ...mistakes.map((m) => ({ id: m.id, type: "MISTAKE", title: m.question, subtitle: `ĐA: ${m.correctAnswer}`, badge: "Lỗi sai", url: "/practice/mistakes" })),
+      ...assignments.map((a) => ({ id: a.id, type: "ASSIGNMENT", title: a.title, subtitle: a.subject?.name, badge: "Bài tập / Đồ án", url: "/academic/assignments" })),
+      ...exams.map((ex) => ({ id: ex.id, type: "EXAM", title: ex.title, subtitle: ex.subject?.name, badge: "Kỳ thi", url: "/exams" })),
+      ...knowledgeNodes.map((kn) => ({ id: kn.id, type: "CONCEPT", title: kn.title, subtitle: kn.subject?.name, badge: kn.chapter || "Chuyên đề", url: "/academic/knowledge-graph" })),
+      ...vocabWords.map((vw) => ({ id: vw.id, type: "VOCAB", title: vw.term, subtitle: vw.meaning, badge: "Từ vựng LUYENTU", url: "/vocab/spaced-repetition" })),
+    ];
+
     return NextResponse.json({
+      results,
       tasks,
       notes,
       subjects,
