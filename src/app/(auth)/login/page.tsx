@@ -40,7 +40,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#f4f8f5] dark:bg-[#101c14] bg-pastel-grid">
+    <div className="min-h-[100dvh] flex items-center justify-center p-4 py-8 bg-[#f4f8f5] dark:bg-[#101c14] bg-pastel-grid pt-safe pb-safe">
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2.5">

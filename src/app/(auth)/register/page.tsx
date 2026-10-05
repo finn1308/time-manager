@@ -41,7 +41,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#f4f8f5] dark:bg-[#101c14] bg-pastel-grid">
+    <div className="min-h-[100dvh] flex items-center justify-center p-4 py-8 bg-[#f4f8f5] dark:bg-[#101c14] bg-pastel-grid pt-safe pb-safe">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2.5">
           <div className="w-14 h-14 rounded-[22px] bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-md shadow-[#2d6a4f]/20">
