@@ -68,8 +68,6 @@ export function SpecialModesScreen({
           }
           setWords(setData.allWords || []);
         }
-
-        }
         return;
       }
 
@@ -90,8 +88,6 @@ export function SpecialModesScreen({
             setWords(setData.allWords || []);
           }
         }
-      }
-
       }
     } catch (e) {
       console.error(e);
