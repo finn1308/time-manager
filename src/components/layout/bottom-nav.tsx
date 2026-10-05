@@ -41,18 +41,18 @@ export function BottomNav() {
   const { startTimer } = usePipTimer();
 
   const navItems = [
-    { label: "Home", href: "/", icon: Home },
-    { label: "Learn", href: "/learn", icon: BookOpen },
+    { label: "Dashboard", href: "/", icon: Home },
+    { label: "Calendar", href: "/calendar", icon: Calendar },
     { label: "Practice", href: "/practice", icon: Brain },
-    { label: "Progress", href: "/progress", icon: TrendingUp },
+    { label: "Statistics", href: "/progress", icon: TrendingUp },
   ];
 
   const drawerItems = [
-    { label: "Home", href: "/", icon: Home },
-    { label: "Learn", href: "/learn", icon: BookOpen },
+    { label: "Dashboard", href: "/", icon: Home },
+    { label: "Calendar", href: "/calendar", icon: Calendar },
+    { label: "Subjects", href: "/subjects", icon: BookOpen },
     { label: "Practice", href: "/practice", icon: Brain },
-    { label: "Schedule", href: "/schedule", icon: Calendar },
-    { label: "Progress", href: "/progress", icon: TrendingUp },
+    { label: "Statistics", href: "/progress", icon: TrendingUp },
     { label: "Settings", href: "/settings", icon: Settings },
   ];
 

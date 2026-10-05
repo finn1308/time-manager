@@ -62,11 +62,11 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
   const { startTimer, activeSubject } = usePipTimer();
 
   const navItems = [
-    { label: "Home", href: "/", icon: Home, iconColor: "text-sky-500" },
-    { label: "Learn", href: "/learn", icon: BookOpen, iconColor: "text-emerald-500" },
+    { label: "Dashboard", href: "/", icon: Home, iconColor: "text-sky-500" },
+    { label: "Calendar", href: "/calendar", icon: Calendar, iconColor: "text-amber-500" },
+    { label: "Subjects", href: "/subjects", icon: BookOpen, iconColor: "text-emerald-500" },
     { label: "Practice", href: "/practice", icon: Brain, iconColor: "text-purple-500" },
-    { label: "Schedule", href: "/schedule", icon: Calendar, iconColor: "text-amber-500" },
-    { label: "Progress", href: "/progress", icon: TrendingUp, iconColor: "text-teal-500" },
+    { label: "Statistics", href: "/progress", icon: TrendingUp, iconColor: "text-teal-500" },
     { label: "Settings", href: "/settings", icon: Settings, iconColor: "text-slate-500" },
   ];
 
