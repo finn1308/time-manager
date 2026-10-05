@@ -42,11 +42,20 @@ export async function POST(req: Request) {
     let coinsEarned = typeof coinsDelta === "number" ? coinsDelta : (accuracy === 100 ? baseCoins + 5 : baseCoins);
     const xpEarned = Math.max(5, Math.round(15 + correctItems * 5));
 
+    // Lookup WordSet and Course to resolve subjectId if not provided
+    const wordSet = await prisma.wordSet.findUnique({
+      where: { id: wordSetId },
+      include: { course: true },
+    });
+
+    const effectiveSubjectId = subjectId || wordSet?.subjectId || wordSet?.course?.subjectId || null;
+
     // Save study session
     const session = await prisma.vocabStudySession.create({
       data: {
         userId: user.id,
         wordSetId,
+        subjectId: effectiveSubjectId,
         mode: specialGameMode ? `SPECIAL_${specialGameMode}` : mode,
         totalItems,
         correctItems,
@@ -58,17 +67,33 @@ export async function POST(req: Request) {
     });
 
     // Create StudySession for Dashboard/Statistics if the user was NOT using the PIP timer
-    if (!isTimerRunning && subjectId && durationSeconds > 0) {
+    if (!isTimerRunning && effectiveSubjectId && durationSeconds > 0) {
       await prisma.studySession.create({
         data: {
           userId: user.id,
-          subjectId,
+          subjectId: effectiveSubjectId,
           actualStart: new Date(Date.now() - durationSeconds * 1000),
           actualEnd: new Date(),
           actualDurationSeconds: durationSeconds,
           status: "COMPLETED",
+          notes: `Luyện từ vựng: ${wordSet?.title || "Từ vựng"} (${mode})`,
           source: "PRACTICE_VOCAB",
-        }
+        },
+      });
+
+      // Synchronize Subject.completedHours
+      const totalAgg = await prisma.studySession.aggregate({
+        where: {
+          subjectId: effectiveSubjectId,
+          userId: user.id,
+          status: "COMPLETED",
+        },
+        _sum: { actualDurationSeconds: true },
+      });
+      const totalHours = Math.round(((totalAgg._sum.actualDurationSeconds || 0) / 3600) * 10) / 10;
+      await prisma.subject.update({
+        where: { id: effectiveSubjectId },
+        data: { completedHours: totalHours },
       });
     }
 
