@@ -849,46 +849,46 @@ export function InteractiveStudyModal({
                   </form>
 
                   {/* 5 Action Buttons matching Image 1 */}
-                  <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center justify-between gap-1 sm:gap-2 pt-1">
                     {/* < Trước */}
                     <button
                       type="button"
                       onClick={() => currentIndex > 0 && setCurrentIndex((p) => p - 1)}
                       disabled={currentIndex === 0}
-                      className="flex flex-col items-center text-xs font-bold text-sky-500 disabled:opacity-30 cursor-pointer"
+                      className="flex flex-col items-center text-[11px] sm:text-xs font-bold text-sky-500 disabled:opacity-30 cursor-pointer min-w-[44px]"
                     >
                       <span>&lt; Trước</span>
-                      <span className="text-[9px] text-gray-400 font-normal">Ctrl+← khi nhập</span>
+                      <span className="hidden sm:inline text-[9px] text-gray-400 font-normal">Ctrl+← khi nhập</span>
                     </button>
 
                     {/* Circular Sound Button */}
                     <button
                       type="button"
                       onClick={() => playAudio()}
-                      className="w-10 h-10 rounded-full bg-[#10b981] hover:bg-[#059669] text-white flex items-center justify-center shadow-md cursor-pointer transition-transform active:scale-95"
+                      className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#10b981] hover:bg-[#059669] text-white flex items-center justify-center shadow-md cursor-pointer transition-transform active:scale-95 shrink-0"
                       title="Nghe phát âm (Ctrl+S)"
                     >
-                      <Volume2 className="w-5 h-5" />
+                      <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
 
                     {/* ✕ Quên */}
                     <button
                       type="button"
                       onClick={handleMarkForgot}
-                      className="flex flex-col items-center px-4 py-1.5 rounded-full bg-[#10b981] hover:bg-[#059669] text-white font-extrabold text-xs shadow-xs cursor-pointer active:scale-95"
+                      className="flex flex-col items-center px-2.5 sm:px-4 py-1.5 rounded-full bg-[#10b981] hover:bg-[#059669] text-white font-extrabold text-[11px] sm:text-xs shadow-xs cursor-pointer active:scale-95 min-h-[36px] justify-center"
                     >
                       <span>✕ Quên</span>
-                      <span className="text-[9px] text-white/80 font-normal">Ctrl+1/X khi nhập</span>
+                      <span className="hidden sm:inline text-[9px] text-white/80 font-normal">Ctrl+1/X</span>
                     </button>
 
                     {/* ✓ Thuộc */}
                     <button
                       type="button"
                       onClick={handleMarkMemorized}
-                      className="flex flex-col items-center px-4 py-1.5 rounded-full bg-[#10b981] hover:bg-[#059669] text-white font-extrabold text-xs shadow-xs cursor-pointer active:scale-95"
+                      className="flex flex-col items-center px-2.5 sm:px-4 py-1.5 rounded-full bg-[#10b981] hover:bg-[#059669] text-white font-extrabold text-[11px] sm:text-xs shadow-xs cursor-pointer active:scale-95 min-h-[36px] justify-center"
                     >
                       <span>✓ Thuộc</span>
-                      <span className="text-[9px] text-white/80 font-normal">Ctrl+2/C khi nhập</span>
+                      <span className="hidden sm:inline text-[9px] text-white/80 font-normal">Ctrl+2/C</span>
                     </button>
 
                     {/* Tiếp > */}
@@ -896,10 +896,10 @@ export function InteractiveStudyModal({
                       type="button"
                       onClick={() => currentIndex + 1 < words.length && setCurrentIndex((p) => p + 1)}
                       disabled={currentIndex + 1 >= words.length}
-                      className="flex flex-col items-center text-xs font-bold text-sky-500 disabled:opacity-30 cursor-pointer"
+                      className="flex flex-col items-center text-[11px] sm:text-xs font-bold text-sky-500 disabled:opacity-30 cursor-pointer min-w-[44px]"
                     >
                       <span>Tiếp &gt;</span>
-                      <span className="text-[9px] text-gray-400 font-normal">Ctrl+→ khi nhập</span>
+                      <span className="hidden sm:inline text-[9px] text-gray-400 font-normal">Ctrl+→ khi nhập</span>
                     </button>
                   </div>
                 </div>

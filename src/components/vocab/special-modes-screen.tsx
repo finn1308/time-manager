@@ -206,7 +206,7 @@ export function SpecialModesScreen({
           </p>
         </div>
 
-        <div className="flex items-center space-x-2.5">
+        <div className="flex items-center space-x-2 flex-wrap gap-y-2">
           <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs font-extrabold text-amber-800 dark:text-amber-300 shadow-2xs">
             <Coins className="w-4 h-4 text-amber-500 fill-amber-400" />
             <span>Ví Xu: {userCoins} Xu</span>
@@ -219,10 +219,10 @@ export function SpecialModesScreen({
                 onNavigateStep(4);
               }
             }}
-            className="px-3.5 py-1.5 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 flex items-center gap-1 shadow-2xs cursor-pointer"
+            className="px-3.5 py-1.5 rounded-2xl bg-white dark:bg-[#18281d] border border-gray-200 dark:border-[#263d2e] text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 flex items-center gap-1 shadow-2xs cursor-pointer min-h-[36px]"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Về Web 4 Luyện tập</span>
+            <span>Về Web 4</span>
           </Link>
         </div>
       </div>
