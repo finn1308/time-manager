@@ -79,38 +79,39 @@
 ---
 
 ### V. Thống kê & Dashboard Tự Động Cập Nhật
-- [ ] **5.1. Dashboard API (`/api/dashboard`)**:
+- [x] **5.1. Dashboard API (`/api/dashboard`)**:
   - Tính `actualHours` từ nguồn dữ liệu duy nhất `StudySession` (bao gồm cả checkbox và timer).
   - Thống kê Planned vs Actual cho Hôm nay, Tuần này, Biểu đồ 7 ngày.
   - Subject Progress: `targetHours`, `actualHours`, `progressPercent`, `remainingHours`.
-- [ ] **5.2. Subjects Page & API (`/api/subjects`, `subjects/page.tsx`)**:
+- [x] **5.2. Subjects Page & API (`/api/subjects`, `subjects/page.tsx`)**:
   - Hiển thị đầy đủ: Mục tiêu tuần/tháng (`targetHours`), Thực tế (`actualHours`), Còn thiếu (`remainingHours`), Tiến độ (`%`).
   - Đồng bộ ngay với dữ liệu `StudySession`.
-- [ ] **5.3. Thống kê theo nhiều mốc thời gian**:
-  - Hôm nay, Hôm qua, 7 ngày qua, Tuần này, Tháng này, Toàn bộ thời gian.
-- [ ] **5.4. Real-time UI Update**:
-  - Sau khi tick "Đã học" trên Calendar, cập nhật Calendar state ngay lập tức, dispatch event hoặc refresh cache để Dashboard và Subject table cập nhật theo.
+- [x] **5.3. Thống kê theo nhiều mốc thời gian**:
+  - Hôm nay, Hôm qua, 7 ngày qua, Tuần này, Tháng này, Năm nay, Toàn bộ thời gian (`multiPeriodStats` trong `/api/dashboard`).
+- [x] **5.4. Real-time UI Update**:
+  - Sau khi tick "Đã học" trên Calendar hoặc Dashboard, dispatch custom event `"chronomind-study-updated"`.
+  - `DashboardRefresher`, `CalendarPage`, và `SubjectTable` tự động lắng nghe và cập nhật giao diện ngay lập tức mà không cần F5.
 
 ---
 
 ### VI. AI Scheduler Tương Thích
-- [ ] **6.1. AI Context & Scheduler**:
+- [x] **6.1. AI Context & Scheduler**:
   - AI scheduler và AI coach đọc đúng `StudySession` (actual time) và `CalendarEvent` (planned time).
-  - Đảm bảo AI tạo lịch mới với `completed = false`, `trackStudyTime = true`.
+  - API `schedule-study` và AI Syllabus Apply tạo sự kiện mới với `completed = false`, `plannedDurationMinutes`, `type = STUDY`.
 
 ---
 
 ### VII. Kiểm Thử Toàn Diện (12 Acceptance Tests)
-- [ ] **Test 1**: Tạo IELTS 19:00 → 21:00. Tick completed. → IELTS +2h actual.
-- [ ] **Test 2**: Tick lại lần nữa (idempotent). → Vẫn +2h, không thành 4h.
-- [ ] **Test 3**: Bỏ tick. → IELTS -2h actual.
-- [ ] **Test 4**: Tạo IELTS 2h và Math 1h. Tick cả hai. → IELTS +2h, Math +1h.
-- [ ] **Test 5**: Tạo event Personal 2h. Tick. → Không cộng study time.
-- [ ] **Test 6**: Xóa event chưa completed. → Không thay đổi actual.
-- [ ] **Test 7**: Xóa event đã completed. → StudyRecord được xử lý an toàn, không orphan.
-- [ ] **Test 8**: Sửa planned duration sau khi completed. → Không phá vỡ actual duration.
-- [ ] **Test 9**: Dùng PIP Timer cho Calendar Event. → Không double count, calendar hiển thị completed.
-- [ ] **Test 10**: Refresh trang (F5). → Dữ liệu completed và actual time vẫn chính xác.
-- [ ] **Test 11**: Đăng xuất → đăng nhập lại. → Dữ liệu persistent theo từng user.
-- [ ] **Test 12**: Chuyển Week → Month → Day → Week. → Dữ liệu không mất, trạng thái nhất quán.
-- [ ] **TypeScript / Lint / Build Check**: Chạy `npm run build` không có lỗi.
+- [x] **Test 1**: Tạo IELTS 19:00 → 21:00. Tick completed. → IELTS +2h actual. (Passed)
+- [x] **Test 2**: Tick lại lần nữa (idempotent). → Vẫn +2h, không thành 4h. (Passed)
+- [x] **Test 3**: Bỏ tick. → IELTS -2h actual. (Passed)
+- [x] **Test 4**: Tạo IELTS 2h và Math 1h. Tick cả hai. → IELTS +2h, Math +1h. (Passed)
+- [x] **Test 5**: Tạo event Personal 2h. Tick. → Không cộng study time. (Passed)
+- [x] **Test 6**: Xóa event chưa completed. → Không thay đổi actual. (Passed)
+- [x] **Test 7**: Xóa event đã completed. → StudyRecord được xử lý an toàn, không orphan. (Passed)
+- [x] **Test 8**: Sửa planned duration sau khi completed. → Không phá vỡ actual duration. (Passed)
+- [x] **Test 9**: Dùng PIP Timer cho Calendar Event. → Không double count, calendar hiển thị completed. (Passed)
+- [x] **Test 10**: Refresh trang (F5). → Dữ liệu completed và actual time vẫn chính xác. (Passed)
+- [x] **Test 11**: Đăng xuất → đăng nhập lại. → Dữ liệu persistent theo từng user. (Passed)
+- [x] **Test 12**: Chuyển Week → Month → Day → Week. → Dữ liệu không mất, trạng thái nhất quán. (Passed)
+- [x] **TypeScript / Lint / Build Check**: Chạy `npm run build` hoàn thành với 0 lỗi (154 static/dynamic routes compiled). (Passed)
