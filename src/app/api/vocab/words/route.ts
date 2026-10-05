@@ -25,11 +25,18 @@ export async function GET(req: Request) {
       ];
     }
 
+    const subjectId = searchParams.get("subjectId");
+    if (subjectId) {
+      where.subjectId = subjectId;
+    }
+
     if (wordSetId) {
       where.wordSetId = wordSetId;
     } else if (courseId) {
       where.wordSet = { courseId };
     }
+
+    const now = new Date();
 
     // If filtering by user progress status
     if (user && status !== "ALL") {
@@ -38,6 +45,16 @@ export async function GET(req: Request) {
           some: {
             userId: user.id,
             isFavorite: true,
+          },
+        };
+      } else if (status === "REVIEW_DUE") {
+        where.userProgress = {
+          some: {
+            userId: user.id,
+            OR: [
+              { nextReviewDate: { lte: now } },
+              { nextReviewDate: null, status: "LEARNING" },
+            ],
           },
         };
       } else {
@@ -50,7 +67,11 @@ export async function GET(req: Request) {
       }
     }
 
-    const [totalWords, words] = await Promise.all([
+    // Base query without status filter to calculate counts
+    const baseWhere = { ...where };
+    delete baseWhere.userProgress;
+
+    const [totalWords, words, allWordsForCounts] = await Promise.all([
       prisma.vocabWord.count({ where }),
       prisma.vocabWord.findMany({
         where,
@@ -78,7 +99,44 @@ export async function GET(req: Request) {
         skip,
         take: limit,
       }),
+      user
+        ? prisma.vocabWord.findMany({
+            where: baseWhere,
+            select: {
+              id: true,
+              userProgress: {
+                where: { userId: user.id },
+                select: {
+                  status: true,
+                  nextReviewDate: true,
+                },
+              },
+            },
+          })
+        : [],
     ]);
+
+    const statusCounts = {
+      all: allWordsForCounts.length,
+      new: 0,
+      learning: 0,
+      mastered: 0,
+      reviewDue: 0,
+    };
+
+    if (user) {
+      for (const item of allWordsForCounts) {
+        const p = item.userProgress?.[0];
+        const itemStatus = p?.status || "NEW";
+        if (itemStatus === "MASTERED") statusCounts.mastered++;
+        else if (itemStatus === "LEARNING") statusCounts.learning++;
+        else statusCounts.new++;
+
+        if (p && ((p.nextReviewDate && p.nextReviewDate <= now) || (!p.nextReviewDate && p.status === "LEARNING"))) {
+          statusCounts.reviewDue++;
+        }
+      }
+    }
 
     const formattedWords = words.map((w) => {
       const p = w.userProgress?.[0];
@@ -93,6 +151,8 @@ export async function GET(req: Request) {
         exampleMeaning: w.exampleMeaning,
         audioUrl: w.audioUrl,
         imageUrl: w.imageUrl,
+        difficulty: w.difficulty,
+        topic: w.topic,
         wordSetTitle: w.wordSet.title,
         courseTitle: w.wordSet.course.title,
         courseSlug: w.wordSet.course.slug,
@@ -100,12 +160,14 @@ export async function GET(req: Request) {
         isFavorite: Boolean(p?.isFavorite),
         repetition: p?.repetition || 0,
         intervalDays: p?.intervalDays || 1,
+        nextReviewDate: p?.nextReviewDate,
       };
     });
 
     return NextResponse.json({
       success: true,
       words: formattedWords,
+      statusCounts,
       pagination: {
         page,
         limit,
