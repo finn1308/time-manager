@@ -208,7 +208,12 @@ export async function GET() {
     .slice(0, 5);
 
   // 7. Overdue Goals (Fetched in parallel)
-  // 8. Subject Progress (Fetched in parallel)
+  const subjectProgress = subjects.map((sub) => {
+    const totalActualSeconds = sub.studySessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
+    const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
+    const targetHours = sub.targetHours;
+    const remainingHours = targetHours ? Math.max(0, Math.round((targetHours - actualHours) * 10) / 10) : null;
+    const progressPercent = targetHours ? Math.min(100, Math.round((actualHours / targetHours) * 100)) : null;
 
     const totalVocabWords = (sub as any).vocabWords?.length || 0;
     let vocabMastered = 0;
