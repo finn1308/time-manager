@@ -21,12 +21,14 @@ interface SmartFocusModeModalProps {
   open: boolean;
   onClose: () => void;
   subjectName?: string;
+  taskTitle?: string;
 }
 
 export function SmartFocusModeModal({
   open,
   onClose,
   subjectName = "Học tập trung",
+  taskTitle,
 }: SmartFocusModeModalProps) {
   const stages = [
     {

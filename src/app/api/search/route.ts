@@ -22,7 +22,20 @@ export async function GET(req: Request) {
   }
 
   try {
-    const [tasks, notes, subjects, goals, events, flashcards, tags] = await Promise.all([
+    const [
+      tasks,
+      notes,
+      subjects,
+      goals,
+      events,
+      flashcards,
+      tags,
+      mistakes,
+      assignments,
+      exams,
+      knowledgeNodes,
+      vocabWords,
+    ] = await Promise.all([
       // 1. Search Tasks
       prisma.task.findMany({
         where: {
