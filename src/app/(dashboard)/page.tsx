@@ -40,6 +40,8 @@ import {
   VIETNAM_TIMEZONE,
 } from "@/lib/date-utils";
 import { getEventTypeConfig, canStartStudyTimer } from "@/lib/calendar/event-types";
+import { EventCompleteCheckbox } from "@/components/calendar/event-complete-checkbox";
+import { DashboardRefresher } from "@/components/dashboard/dashboard-refresher";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -77,7 +79,7 @@ export default async function DashboardPage() {
     }),
     prisma.subject.findMany({
       where: { userId: user.id },
-      include: { goals: true, studySessions: { where: { actualStart: { gte: thirtyDaysAgoUTC } } } },
+      include: { goals: true, studySessions: true },
       orderBy: { priority: "desc" },
     }),
     prisma.studySession.findMany({
