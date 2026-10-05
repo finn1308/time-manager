@@ -10,12 +10,14 @@ export const metadata = {
 export default async function PracticeVocabularyPage() {
   const user = await getCurrentUser();
   const initialCourses = await getCourses(user);
+  const initialSetId = initialCourses?.[0]?.wordSets?.[0]?.id || undefined;
 
   return (
     <VocabUnifiedWorkspace
       defaultStep={1}
       initialCourses={initialCourses}
       initialCourseSlug="ielts-vocabulary"
+      initialSetId={initialSetId}
     />
   );
 }
