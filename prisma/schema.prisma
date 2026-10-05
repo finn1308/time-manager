@@ -383,6 +383,12 @@ model CalendarEvent {
 
   goalId        String?
 
+  // Completion & Actual Time Tracking
+  completed              Boolean         @default(false)
+  completedAt            DateTime?
+  actualDurationMinutes  Int?
+  plannedDurationMinutes Int?
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -397,6 +403,8 @@ model CalendarEvent {
   studyNotes    StudyNote[]
 
   @@index([userId, startTime, endTime])
+  @@index([userId, subjectId])
+  @@index([userId, completed])
   @@index([parentId])
   @@index([taskId])
   @@index([goalId])
@@ -440,7 +448,7 @@ model StudySession {
   notes                  String?   @db.Text
   productivityScore      Int?
   interruptionsCount     Int       @default(0)
-  source                 String    @default("PIP_TIMER")
+  source                 String    @default("PIP_TIMER") // CALENDAR_CHECKBOX, PIP_TIMER, MANUAL
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -451,6 +459,8 @@ model StudySession {
   goal          Goal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
 
   @@index([userId, actualStart])
+  @@index([userId, subjectId])
+  @@index([calendarEventId])
   @@index([taskId])
   @@index([goalId])
 }
