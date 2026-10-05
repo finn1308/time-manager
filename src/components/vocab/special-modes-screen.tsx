@@ -115,15 +115,6 @@ export function SpecialModesScreen({
   const handleSelectGame = (type: SpecialGameType) => {
     setWarningMessage(null);
 
-    if (type === "COM_TAM") {
-      if (userCoins < 150) {
-        setWarningMessage(
-          `Bạn cần tối thiểu 150 Xu để mở Quán cơm tấm (hiện có ${userCoins} Xu). Hãy làm bài tập để tích lũy thêm Xu nhé!`
-        );
-        return;
-      }
-    }
-
     if (type === "CHIM_CHAM_CHI") {
       if (words.length < 4) {
         setWarningMessage("Cần tối thiểu 4 từ vựng để chơi Chim chăm chỉ!");
@@ -139,16 +130,16 @@ export function SpecialModesScreen({
       type: "MIXED" as SpecialGameType,
       title: "Luyện tập hỗn hợp",
       desc: "Xáo trộn ngẫu nhiên tất cả câu hỏi Trắc nghiệm, Nghe chép chính tả và Gõ từ phản xạ.",
-      badge: "+20 Xu Chrono",
+      badge: "TỰ ĐỘNG",
       badgeColor: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
       icon: Shuffle,
       bg: "from-purple-500 to-indigo-600",
     },
     {
       type: "SENTENCE" as SpecialGameType,
-      title: "Luyện đặt câu PRO",
+      title: "Luyện đặt câu nâng cao",
       desc: "Thử thách ghép từ thành câu hoàn chỉnh và đặt câu theo ngữ cảnh thực tế chuẩn CEFR.",
-      badge: "PRO ONLY",
+      badge: "NÂNG CAO",
       badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
       icon: Target,
       bg: "from-emerald-500 to-teal-600",
@@ -156,8 +147,8 @@ export function SpecialModesScreen({
     {
       type: "COM_TAM" as SpecialGameType,
       title: "Quán cơm tấm (Mini-game)",
-      desc: "Phục vụ thực khách bằng cách ghép đúng nghĩa từ vựng, kiếm doanh thu Xu phát triển quán.",
-      badge: "Cần ≥150 Xu",
+      desc: "Phục vụ thực khách bằng cách ghép đúng nghĩa từ vựng, kiếm doanh thu phát triển quán.",
+      badge: "THỰC HÀNH",
       badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
       icon: Utensils,
       bg: "from-amber-500 to-orange-600",
@@ -207,10 +198,6 @@ export function SpecialModesScreen({
         </div>
 
         <div className="flex items-center space-x-2 flex-wrap gap-y-2">
-          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs font-extrabold text-amber-800 dark:text-amber-300 shadow-2xs">
-            <Coins className="w-4 h-4 text-amber-500 fill-amber-400" />
-            <span>Ví Xu: {userCoins} Xu</span>
-          </div>
           <Link
             href="/vocab/index/4"
             onClick={(e) => {
@@ -283,8 +270,8 @@ export function SpecialModesScreen({
             <ComTamGame
               words={words}
               wordSetId={wordSetId}
-              initialCoins={userCoins}
-              onUpdateCoins={(newCoins: number) => setUserCoins(newCoins)}
+              initialCoins={150}
+              onUpdateCoins={() => {}}
               onClose={() => {
                 setActiveGame(null);
                 loadData();
