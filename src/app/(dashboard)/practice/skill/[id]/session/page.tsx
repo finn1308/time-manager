@@ -2,19 +2,18 @@
 
 import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Clock, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Clock, CheckCircle2, Inbox } from "lucide-react";
 import Link from "next/link";
-
-const MOCK_QUESTIONS = [
-  { id: 1, text: "What is the primary purpose of academic research?", options: ["To find absolute truth", "To contribute to existing knowledge", "To prove personal opinions", "To write long papers"], answer: 1 },
-  { id: 2, text: "Which of the following is a key characteristic of formal writing?", options: ["Use of slang", "Contractions", "Objective tone", "Emotional language"], answer: 2 },
-  { id: 3, text: "What does 'synthesis' mean in an academic context?", options: ["Summarizing a single text", "Combining multiple sources to form a new idea", "Copying directly from a source", "Ignoring contradictory evidence"], answer: 1 },
-];
 
 export default function PracticeSessionPage(props: { params: Promise<{ id: string }>, searchParams: Promise<{ subjectId?: string }> }) {
   const params = use(props.params);
   const searchParams = use(props.searchParams);
   const router = useRouter();
+
+  // No mock data allowed per requirements. 
+  // We assume questions would be fetched from API here.
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -22,6 +21,15 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    // Simulate API fetch delay
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
+  useEffect(() => {
+    if (questions.length === 0) return;
+
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -33,17 +41,17 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [answers]);
+  }, [answers, questions]);
 
-  const currentQ = MOCK_QUESTIONS[currentQIndex];
-  const progress = ((currentQIndex + 1) / MOCK_QUESTIONS.length) * 100;
+  const currentQ = questions[currentQIndex];
+  const progress = questions.length > 0 ? ((currentQIndex + 1) / questions.length) * 100 : 0;
 
   const handleSelect = (optionIndex: number) => {
     setAnswers(prev => ({ ...prev, [currentQIndex]: optionIndex }));
   };
 
   const handleNext = () => {
-    if (currentQIndex < MOCK_QUESTIONS.length - 1) {
+    if (currentQIndex < questions.length - 1) {
       setCurrentQIndex(prev => prev + 1);
     }
   };
@@ -59,22 +67,21 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
     
     // Calculate score
     let correct = 0;
-    MOCK_QUESTIONS.forEach((q, i) => {
+    questions.forEach((q, i) => {
       if (answers[i] === q.answer) correct++;
     });
 
     const duration = 1500 - timeLeft;
 
-    // We can call an API here to save to StudySession
     try {
-      const res = await fetch("/api/practice/submit", {
+      await fetch("/api/practice/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subjectId: searchParams.subjectId,
           skillId: params.id,
           score: correct,
-          total: MOCK_QUESTIONS.length,
+          total: questions.length,
           durationSeconds: duration
         })
       });
@@ -82,8 +89,7 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
       console.error(error);
     }
 
-    // Redirect to result page
-    router.push(`/practice/skill/${params.id}/result?score=${correct}&total=${MOCK_QUESTIONS.length}&time=${duration}`);
+    router.push(`/practice/skill/${params.id}/result?score=${correct}&total=${questions.length}&time=${duration}`);
   };
 
   const formatTime = (sec: number) => {
@@ -91,6 +97,35 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
     const s = sec % 60;
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-white dark:bg-[#101c14] flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-[#2d6a4f] border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // EMPTY STATE (NO MOCK DATA)
+  if (questions.length === 0) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-white dark:bg-[#101c14] flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
+        <div className="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-6">
+          <Inbox className="w-10 h-10 text-gray-400" />
+        </div>
+        <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2">No Questions Available</h2>
+        <p className="text-gray-500 dark:text-gray-400 max-w-md text-center mb-8">
+          The practice bank for this module is currently empty. Please check back later or add content through the administration panel.
+        </p>
+        <Link 
+          href={`/practice/skill/${params.id}`} 
+          className="px-6 py-3 bg-[#2d6a4f] text-white rounded-xl font-medium hover:bg-[#1b4332] transition-colors flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" /> Go Back
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[100] bg-white dark:bg-[#101c14] flex flex-col animate-in fade-in duration-300">
@@ -111,7 +146,7 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
           
           <div className="mb-12">
             <div className="flex justify-between text-sm font-medium text-gray-500 mb-4">
-              <span>Question {currentQIndex + 1} of {MOCK_QUESTIONS.length}</span>
+              <span>Question {currentQIndex + 1} of {questions.length}</span>
               <span>{Math.round(progress)}%</span>
             </div>
             <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
@@ -125,7 +160,7 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
             </h2>
 
             <div className="space-y-3">
-              {currentQ.options.map((opt, i) => {
+              {currentQ.options.map((opt: string, i: number) => {
                 const isSelected = answers[currentQIndex] === i;
                 return (
                   <button
@@ -164,7 +199,7 @@ export default function PracticeSessionPage(props: { params: Promise<{ id: strin
           )}
         </div>
         
-        {currentQIndex < MOCK_QUESTIONS.length - 1 ? (
+        {currentQIndex < questions.length - 1 ? (
           <button 
             onClick={handleNext}
             disabled={answers[currentQIndex] === undefined}

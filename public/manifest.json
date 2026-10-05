@@ -1,6 +1,6 @@
 {
-  "name": "LUYENTU & ChronoMind - 4-Year University Learning OS",
-  "short_name": "LUYENTU",
+  "name": "ChronoMind - 4-Year University Learning OS",
+  "short_name": "ChronoMind",
   "description": "Hệ điều hành học tập cá nhân 4 năm đại học: Quản lý học phần, từ vựng, tài liệu, AI xếp lịch, ngân hàng lỗi sai, ôn thi và đồ án.",
   "start_url": "/",
   "display": "standalone",
