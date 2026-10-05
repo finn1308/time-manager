@@ -53,28 +53,28 @@
 ---
 
 ### IV. Giao diện Calendar (Tuần, Tháng, Ngày, Agenda, Quick Action, Mobile)
-- [ ] **4.1. Visual Status Indicators trên Calendar**:
+- [x] **4.1. Visual Status Indicators trên Calendar**:
   - 🟢 **Completed** (Đã học): Checkbox xanh, hiển thị Actual duration (vd: `2h`).
   - 🟡 **Planned** (Dự kiến trong tương lai hoặc chưa đến giờ).
   - 🔵 **In Progress** (Đang học / Timer đang chạy).
   - 🔴 **Missed / Overdue** (Đã qua giờ nhưng chưa đánh dấu đã học).
-- [ ] **4.2. Thao tác 1 chạm (Quick Action)**:
+- [x] **4.2. Thao tác 1 chạm (Quick Action)**:
   - Checkbox trực tiếp trên thẻ lịch hoặc Quick Action 1 chạm: tick là xong.
-  - Click vào thẻ mở popup thông tin nhanh:
+  - Click vào thẻ mở popup thông tin nhanh (`EventQuickModal`):
     - Planned duration, Actual duration.
     - Checkbox [✓ Đã học] / [☐ Chưa học].
     - Nút tùy chọn [Chỉnh thời gian thực tế].
     - Nút [▶ Bắt đầu PIP Timer].
     - Nút [✏ Chỉnh sửa sự kiện].
-- [ ] **4.3. Đồng bộ trên tất cả các View của Calendar**:
+- [x] **4.3. Đồng bộ trên tất cả các View của Calendar**:
   - Week View (`week-view.tsx`).
   - Month View (`month-view.tsx`).
   - Day View (`day-view.tsx`).
   - Agenda View (`agenda-view.tsx`).
   - Event Modal (`event-modal.tsx`).
-- [ ] **4.4. Tối ưu Mobile UX**:
-  - Nút bấm và Checkbox to rõ, dễ chạm ngón tay trên điện thoại.
-  - Phản hồi tức thì, không giật lag.
+- [x] **4.4. Tối ưu Mobile UX**:
+  - Nút bấm và Checkbox to rõ, dễ chạm ngón tay trên điện thoại (touch-manipulation, min-h 28-44px).
+  - Phản hồi tức thì với Optimistic UI, không giật lag.
 
 ---
 

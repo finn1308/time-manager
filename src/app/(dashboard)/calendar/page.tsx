@@ -77,6 +77,14 @@ export default function CalendarPage() {
 
   useEffect(() => {
     loadData();
+
+    const handleStudyUpdated = () => {
+      loadData();
+    };
+    window.addEventListener("chronomind-study-updated", handleStudyUpdated);
+    return () => {
+      window.removeEventListener("chronomind-study-updated", handleStudyUpdated);
+    };
   }, []);
 
   const handleParseNlp = async (e: React.FormEvent) => {
