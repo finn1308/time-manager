@@ -441,7 +441,8 @@ export default function PracticeVocabularyWordBankPage() {
             setShowAddModal(false);
             fetchWords();
           }}
-          wordSetId={words[0]?.id || "new"}
+          defaultWordSetId={words[0]?.id || undefined}
+          onWordsAdded={() => fetchWords()}
         />
       )}
     </div>
