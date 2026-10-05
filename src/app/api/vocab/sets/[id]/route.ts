@@ -15,36 +15,36 @@ export async function GET(
   const sortParam = searchParams.get("sort") || "DEFAULT"; // RANDOM, DEFAULT, ALPHABETICAL
 
   try {
-    const wordSet = await prisma.wordSet.findUnique({
-      where: { id },
-      include: {
-        course: {
-          select: {
-            id: true,
-            slug: true,
-            title: true,
-            icon: true,
+    const [wordSet, userWordProgresses] = await Promise.all([
+      prisma.wordSet.findUnique({
+        where: { id },
+        include: {
+          course: {
+            select: {
+              id: true,
+              slug: true,
+              title: true,
+              icon: true,
+            },
+          },
+          words: {
+            orderBy: { order: "asc" },
           },
         },
-        words: {
-          orderBy: { order: "asc" },
-        },
-      },
-    });
+      }),
+      user
+        ? prisma.userWordProgress.findMany({
+            where: {
+              userId: user.id,
+              wordSetId: id,
+            },
+          })
+        : Promise.resolve([]),
+    ]);
 
     if (!wordSet) {
       return NextResponse.json({ error: "Không tìm thấy bộ từ vựng" }, { status: 404 });
     }
-
-    // Fetch user progress for all words in this set
-    const userWordProgresses = user
-      ? await prisma.userWordProgress.findMany({
-          where: {
-            userId: user.id,
-            wordSetId: wordSet.id,
-          },
-        })
-      : [];
 
     const progressMap = new Map(
       userWordProgresses.map((p) => [p.wordId, p])
