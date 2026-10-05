@@ -1,9 +1,27 @@
 import React from "react";
 import Link from "next/link";
-import { Brain, Sparkles, PlaySquare, Gamepad2, Layers } from "lucide-react";
+import { Brain, Sparkles, PlaySquare, Gamepad2, Layers, AlertCircle, Award } from "lucide-react";
 
 export default function PracticeHubPage() {
   const practiceModules = [
+    {
+      title: "Ôn tập tổng hợp hôm nay (Today's Review)",
+      description: "Tổng hợp từ vựng đến hạn, flashcards và lỗi sai trong 1 phiên tập trung",
+      href: "/practice/review",
+      icon: Award,
+      color: "bg-emerald-100 text-emerald-700",
+      border: "border-emerald-300 ring-2 ring-emerald-500/20",
+      badge: "KHUYÊN DÙNG"
+    },
+    {
+      title: "Ngân hàng lỗi sai (Mistake Bank)",
+      description: "Quản lý và ôn tập các câu hỏi từng làm sai từ quiz, flashcard và đề thi",
+      href: "/practice/mistakes",
+      icon: AlertCircle,
+      color: "bg-rose-100 text-rose-700",
+      border: "border-rose-200",
+      badge: "TRỌNG TÂM"
+    },
     {
       title: "Học từ vựng ngắt quãng (SM-2)",
       description: "Ôn tập từ vựng LUYENTU bằng thuật toán Spaced Repetition",
