@@ -48,66 +48,72 @@ export function TopBar({ user }: TopBarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-8 py-3 bg-[#f4f8f5]/85 dark:bg-[#101c14]/85 backdrop-blur-md border-b border-[#dbe7dd]/80 dark:border-[#263d2e]">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 bg-[#f4f8f5]/90 dark:bg-[#101c14]/90 backdrop-blur-md border-b border-[#dbe7dd]/80 dark:border-[#263d2e] pt-safe transition-all">
         {/* Left: Date Display & Gamification Streak/Coins */}
-        <div className="flex items-center space-x-3">
-          <div className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9]">
-            <span>{formatVN(now, "EEEE, dd 'thg' MM, yyyy")}</span>
+        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+          <div className="text-[11px] sm:text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] truncate">
+            {/* Desktop / Tablet full date */}
+            <span className="hidden md:inline">{formatVN(now, "EEEE, dd 'thg' MM, yyyy")}</span>
+            {/* Mobile medium */}
+            <span className="hidden sm:inline md:hidden">{formatVN(now, "dd 'thg' MM, yyyy")}</span>
+            {/* iPhone 15 / Small mobile */}
+            <span className="inline sm:hidden font-mono text-[11px]">{formatVN(now, "dd/MM")}</span>
           </div>
-          <div className="hidden sm:block h-3.5 w-px bg-[#dbe7dd] dark:bg-[#263d2e]" />
-          <GamificationBadge />
+
+          <div className="hidden sm:block h-3.5 w-px bg-[#dbe7dd] dark:bg-[#263d2e] shrink-0" />
+          
+          <div className="shrink-0 scale-90 sm:scale-100 origin-left">
+            <GamificationBadge />
+          </div>
         </div>
 
         {/* Right: Quick Search (Cmd+K), AI Coach, Quick Add (+), User Avatar */}
-        <div className="flex items-center space-x-2 sm:space-x-2.5">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
           {/* Cmd+K Search Button */}
           <button
             onClick={() => setIsCommandOpen(true)}
-            className="flex items-center space-x-2 h-8 px-3 rounded-full bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-[#73927d] hover:text-[#192e22] dark:hover:text-[#f0f7f2] text-xs transition-colors shadow-2xs cursor-pointer"
+            className="flex items-center justify-center sm:space-x-2 h-8 w-8 sm:w-auto sm:px-3 rounded-full bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-[#73927d] hover:text-[#192e22] dark:hover:text-[#f0f7f2] text-xs transition-colors shadow-2xs cursor-pointer active:scale-95"
             title="Mở Command Palette (Ctrl+K / ⌘K)"
           >
             <Search className="w-3.5 h-3.5" />
-            <span className="hidden md:inline text-[11px] font-medium">Tìm kiếm nhanh</span>
-            <kbd className="hidden sm:inline text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#eef5f0] dark:bg-[#1d3024] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]">
+            <span className="hidden md:inline text-[11px] font-medium">Tìm kiếm</span>
+            <kbd className="hidden lg:inline text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#eef5f0] dark:bg-[#1d3024] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]">
               ⌘K
             </kbd>
           </button>
 
-          {/* AI Study Coach Button */}
+          {/* AI Study Coach Button (Tablet / Desktop) */}
           <Button
             size="sm"
             onClick={() => setIsCoachOpen(true)}
-            className="bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#9cd1b1] hover:bg-[#b7d8c3] rounded-2xl text-xs space-x-1.5 shadow-2xs font-semibold border border-[#b7d8c3]/60 dark:border-[#263d2e]"
+            className="hidden sm:inline-flex bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#9cd1b1] hover:bg-[#b7d8c3] rounded-2xl text-xs space-x-1.5 shadow-2xs font-semibold border border-[#b7d8c3]/60 dark:border-[#263d2e] active:scale-95"
           >
             <Bot className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">AI Coach</span>
+            <span className="hidden md:inline">AI Coach</span>
           </Button>
 
-          {/* AI Scheduler Link */}
-          <Link href="/calendar">
+          {/* AI Scheduler Link (Desktop only to conserve space) */}
+          <Link href="/calendar" className="hidden lg:inline-flex">
             <Button
               size="sm"
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl text-xs space-x-1.5 shadow-2xs font-semibold"
+              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl text-xs space-x-1.5 shadow-2xs font-semibold active:scale-95"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Lập lịch AI</span>
+              <span>Lập lịch AI</span>
             </Button>
           </Link>
 
           {/* Quick Capture Pill Button (Zap) */}
           <button
             onClick={() => setIsQuickCaptureOpen(true)}
-            className="flex items-center space-x-1.5 h-8 px-2.5 sm:px-3 rounded-full bg-[#f4f8f5] dark:bg-[#1d3024] hover:bg-[#d8ebe0] dark:hover:bg-[#254231] text-[#2d6a4f] dark:text-[#52b788] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-semibold transition-colors shadow-2xs cursor-pointer"
+            className="flex items-center justify-center sm:space-x-1.5 h-8 w-8 sm:w-auto sm:px-2.5 rounded-full bg-[#f4f8f5] dark:bg-[#1d3024] hover:bg-[#d8ebe0] dark:hover:bg-[#254231] text-[#2d6a4f] dark:text-[#52b788] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-semibold transition-colors shadow-2xs cursor-pointer active:scale-95"
             title="Ghi nhận nhanh (Nhấn C)"
           >
             <Zap className="w-3.5 h-3.5 fill-current" />
             <span className="hidden sm:inline">Ghi nhanh</span>
-            <kbd className="hidden md:inline text-[9px] font-mono px-1 py-0.2 rounded bg-white dark:bg-[#17261c] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]">
-              C
-            </kbd>
           </button>
 
-          {/* Quick Add Menu (+) (Section 42) */}
+          {/* Quick Add Menu (+) */}
           <div className="relative">
             <button
               onClick={() => setIsQuickAddMenuOpen((prev) => !prev)}
@@ -123,7 +129,7 @@ export function TopBar({ user }: TopBarProps) {
                   className="fixed inset-0 z-40"
                   onClick={() => setIsQuickAddMenuOpen(false)}
                 />
-                <div className="absolute right-0 mt-2 w-48 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-1.5 shadow-xl z-50 text-xs font-semibold space-y-0.5">
+                <div className="absolute right-0 mt-2 w-52 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-1.5 shadow-xl z-50 text-xs font-semibold space-y-0.5 animate-in fade-in zoom-in-95 duration-150">
                   <button
                     onClick={() => {
                       setIsQuickAddMenuOpen(false);
@@ -133,6 +139,17 @@ export function TopBar({ user }: TopBarProps) {
                   >
                     <Zap className="w-3.5 h-3.5 text-[#2d6a4f]" />
                     <span>Ghi nhận nhanh (C)</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsQuickAddMenuOpen(false);
+                      setIsCoachOpen(true);
+                    }}
+                    className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] text-[#192e22] dark:text-[#f0f7f2] cursor-pointer sm:hidden"
+                  >
+                    <Bot className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Hỏi AI Coach</span>
                   </button>
 
                   <Link
@@ -186,7 +203,7 @@ export function TopBar({ user }: TopBarProps) {
           <NotificationCenter />
 
           {/* User Avatar */}
-          <div className="w-8 h-8 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#9cd1b1] flex items-center justify-center font-bold text-xs shadow-2xs border border-[#b7d8c3]/60 dark:border-[#263d2e]">
+          <div className="w-8 h-8 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#9cd1b1] flex items-center justify-center font-bold text-xs shadow-2xs border border-[#b7d8c3]/60 dark:border-[#263d2e] shrink-0">
             {user.name ? user.name.charAt(0).toUpperCase() : "U"}
           </div>
         </div>

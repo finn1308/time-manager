@@ -121,7 +121,7 @@ export function BottomNav() {
           />
 
           {/* Drawer Content */}
-          <div className="relative w-4/5 max-w-xs bg-white dark:bg-[#132217] h-full shadow-2xl flex flex-col justify-between z-50 p-5 overflow-y-auto">
+          <div className="relative w-4/5 max-w-xs bg-white dark:bg-[#132217] h-full shadow-2xl flex flex-col justify-between z-50 p-5 pt-safe pb-safe overflow-y-auto">
             <div className="space-y-4">
               {/* Header */}
               <div className="flex items-center justify-between pb-3 border-b border-[#dbe7dd] dark:border-[#263d2e]">
