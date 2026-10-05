@@ -109,7 +109,7 @@ export function DailyAiBriefing() {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <Link href="/vocab/review">
+          <Link href="/practice/review">
             <Button size="sm" className="bg-[#408257] hover:bg-[#346a47] text-white rounded-xl text-xs font-semibold shadow-sm">
               <Award className="w-3.5 h-3.5 mr-1.5" />
               Ôn tập ngay ({data.dueReviewsCount})
