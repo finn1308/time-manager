@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Brain, Sparkles, PlaySquare, Gamepad2, Layers, AlertCircle, Award } from "lucide-react";
+import { Brain, Sparkles, PlaySquare, Gamepad2, Layers, AlertCircle, Award, Languages } from "lucide-react";
 
 export default function PracticeHubPage() {
   const practiceModules = [
@@ -23,26 +23,10 @@ export default function PracticeHubPage() {
       badge: "TRỌNG TÂM"
     },
     {
-      title: "Học từ vựng ngắt quãng (SM-2)",
-      description: "Ôn tập từ vựng LUYENTU bằng thuật toán Spaced Repetition",
-      href: "/vocab/spaced-repetition",
-      icon: PlaySquare,
-      color: "bg-purple-100 text-purple-700",
-      border: "border-purple-200"
-    },
-    {
-      title: "Học thích ứng AI",
-      description: "Luyện tập từ vựng do AI tạo ra dành riêng cho bạn",
-      href: "/vocab/adaptive",
-      icon: Brain,
-      color: "bg-teal-100 text-teal-700",
-      border: "border-teal-200"
-    },
-    {
-      title: "Flashcards",
-      description: "Hệ thống Flashcards Anki-style tự tạo",
-      href: "/flashcards",
-      icon: Layers,
+      title: "LUYENTU - TUVUNGPRO",
+      description: "Nền tảng học từ vựng toàn diện & Hệ thống Flashcards Anki-style",
+      href: "/vocab",
+      icon: Languages,
       color: "bg-indigo-100 text-indigo-700",
       border: "border-indigo-200"
     },
