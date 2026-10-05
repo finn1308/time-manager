@@ -17,6 +17,8 @@ export async function POST(req: Request) {
       coinsDelta,
       specialGameMode,
       gameScore = 0,
+      isTimerRunning = false,
+      subjectId,
     } = body;
 
     if (!wordSetId) {
@@ -54,6 +56,21 @@ export async function POST(req: Request) {
         xpEarned,
       },
     });
+
+    // Create StudySession for Dashboard/Statistics if the user was NOT using the PIP timer
+    if (!isTimerRunning && subjectId && durationSeconds > 0) {
+      await prisma.studySession.create({
+        data: {
+          userId: user.id,
+          subjectId,
+          actualStart: new Date(Date.now() - durationSeconds * 1000),
+          actualEnd: new Date(),
+          actualDurationSeconds: durationSeconds,
+          status: "COMPLETED",
+          source: "PRACTICE_VOCAB",
+        }
+      });
+    }
 
     // Compute new coins safely (never below 0)
     const currentCoins = user.coins ?? 100;

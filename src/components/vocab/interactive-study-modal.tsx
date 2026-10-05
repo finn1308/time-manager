@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { usePipTimer } from "@/components/timer/pip-timer-provider";
 import {
   X,
   Volume2,
@@ -78,6 +79,8 @@ export function InteractiveStudyModal({
   const [earnedCoins, setEarnedCoins] = useState(0);
   const [earnedXp, setEarnedXp] = useState(0);
   const [gameScore, setGameScore] = useState(0);
+
+  const { isRunning: isTimerRunning, activeSubject } = usePipTimer();
 
   // Direction Toggle: EN->VN or VN->EN
   const [directionEnToVn, setDirectionEnToVn] = useState(true);
@@ -272,6 +275,8 @@ export function InteractiveStudyModal({
           totalItems: words.length,
           correctItems: finalCorrect,
           durationSeconds,
+          isTimerRunning,
+          subjectId: activeSubject?.id,
         }),
       });
 
