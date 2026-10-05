@@ -618,8 +618,8 @@ export function InteractiveStudyModal({
 
       {/* Main Container */}
       <div
-        className={`bg-white dark:bg-[#15251a] rounded-[36px] max-w-2xl w-full border border-gray-200/90 dark:border-[#263d2e] shadow-2xl flex flex-col overflow-hidden my-auto ${
-          isEmbedded ? "max-h-none" : "max-h-[95vh]"
+        className={`bg-white dark:bg-[#15251a] rounded-[28px] sm:rounded-[36px] max-w-2xl w-full border border-gray-200/90 dark:border-[#263d2e] shadow-2xl flex flex-col overflow-hidden my-auto ${
+          isEmbedded ? "max-h-none" : "max-h-[92dvh] sm:max-h-[95vh]"
         }`}
       >
         {/* Top Control Bar matching Screenshots 1, 3, 4, 5 */}
