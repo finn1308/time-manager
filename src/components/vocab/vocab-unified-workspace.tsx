@@ -137,9 +137,10 @@ function VocabUnifiedWorkspaceContent({
 }
 
 export function VocabUnifiedWorkspace(props: VocabUnifiedWorkspaceProps) {
+  const defaultSetId = props.initialSetId || props.initialCourses?.[0]?.wordSets?.[0]?.id || null;
   return (
-    <VocabWorkspaceProvider initialSetId={props.initialSetId}>
-      <VocabUnifiedWorkspaceContent {...props} />
+    <VocabWorkspaceProvider initialSetId={defaultSetId}>
+      <VocabUnifiedWorkspaceContent {...props} initialSetId={defaultSetId || undefined} />
     </VocabWorkspaceProvider>
   );
 }

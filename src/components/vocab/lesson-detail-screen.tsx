@@ -135,7 +135,7 @@ export function LessonDetailScreen({
     );
   });
 
-  if (loading || (!setDetails && !error)) {
+  if (loading && !setDetails) {
     return (
       <div className="space-y-6 max-w-6xl mx-auto pb-16">
         {!hideNav && <VocabIndexNav currentStep={3} onStepChange={onNavigateStep} />}

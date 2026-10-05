@@ -122,21 +122,25 @@ export async function GET(
     const progressPercent =
       totalWords > 0 ? Math.round((learnedCount / totalWords) * 100) : 0;
 
+    const setPayload = {
+      id: wordSet.id,
+      orderNumber: wordSet.orderNumber,
+      title: wordSet.title,
+      description: wordSet.description,
+      isPro: wordSet.isPro,
+      course: wordSet.course,
+      totalWords,
+      learnedWordsCount: learnedCount,
+      masteredWordsCount: masteredCount,
+      progressPercent,
+    };
+
     return NextResponse.json({
       success: true,
-      set: {
-        id: wordSet.id,
-        orderNumber: wordSet.orderNumber,
-        title: wordSet.title,
-        description: wordSet.description,
-        isPro: wordSet.isPro,
-        course: wordSet.course,
-        totalWords,
-        learnedWordsCount: learnedCount,
-        masteredWordsCount: masteredCount,
-        progressPercent,
-      },
+      set: setPayload,
+      wordSet: setPayload,
       words: wordsWithProgress,
+      allWords: wordsWithProgress,
       filteredWords: filtered,
     });
   } catch (error: any) {

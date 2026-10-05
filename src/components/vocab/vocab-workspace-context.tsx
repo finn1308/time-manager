@@ -125,23 +125,35 @@ export function VocabWorkspaceProvider({
         sort: orderFilter,
       });
 
-      const [res, shopRes] = await Promise.all([
-        fetch(`/api/vocab/sets/${setId}?${queryParams.toString()}`, { cache: 'no-store' }),
-        fetch("/api/vocab/shop", { cache: 'no-store' }).catch(() => null),
-      ]);
+      // Fetch shop details asynchronously without blocking lesson render
+      fetch("/api/vocab/shop", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((shopData) => {
+          if (shopData) {
+            if (shopData.userCoins !== undefined) setUserCoins(shopData.userCoins);
+            if (shopData.isPro !== undefined) setIsPro(Boolean(shopData.isPro));
+          }
+        })
+        .catch(() => {});
 
+      const res = await fetch(`/api/vocab/sets/${setId}?${queryParams.toString()}`, { cache: "no-store" });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Không thể tải bộ từ");
 
-      setSetDetails(data.wordSet);
-      setAllWords(data.allWords || []);
-      setFilteredWords(data.filteredWords || []);
-
-      if (shopRes && shopRes.ok) {
-        const shopData = await shopRes.json();
-        setUserCoins(shopData.userCoins || 100);
-        setIsPro(Boolean(shopData.isPro));
+      if (!res.ok) {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("vocab_current_set_id");
+        }
+        // Auto-clear invalid stale setId so fallback resolution triggers
+        setSetIdState(null);
+        throw new Error(data.error || "Không thể tải bộ từ");
       }
+
+      const setObj = data.wordSet || data.set || null;
+      const wordsList = data.allWords || data.words || [];
+
+      setSetDetails(setObj);
+      setAllWords(wordsList);
+      setFilteredWords(data.filteredWords || wordsList);
     } catch (err: any) {
       console.error("fetchSetData error:", err);
       setError(err.message || "Đã xảy ra lỗi khi tải bài học");
