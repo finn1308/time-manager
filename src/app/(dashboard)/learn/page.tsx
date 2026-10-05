@@ -62,9 +62,9 @@ export default function LearnHubPage() {
       border: "border-indigo-200"
     },
     {
-      title: "Lộ trình học từ vựng (LUYENTU)",
-      description: "Các khóa học từ vựng được thiết kế chuẩn theo các cấp độ",
-      href: "/vocab/courses/a1-0-3-0",
+      title: "Luyện từ vựng (Practice Vocabulary)",
+      description: "Hệ thống từ vựng học thuật tích hợp trong Practice Hub",
+      href: "/practice/vocabulary",
       icon: Languages,
       color: "bg-teal-100 text-teal-700",
       border: "border-teal-200"

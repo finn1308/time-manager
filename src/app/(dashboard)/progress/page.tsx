@@ -54,8 +54,8 @@ export default function ProgressHubPage() {
     },
     {
       title: "Bảng xếp hạng (Leaderboard)",
-      description: "Thi đua xếp hạng thành tích học từ vựng LUYENTU",
-      href: "/vocab/leaderboard",
+      description: "Thi đua xếp hạng thành tích học từ vựng Practice Hub",
+      href: "/practice/vocabulary/leaderboard",
       icon: Award,
       color: "bg-amber-100 text-amber-700",
       border: "border-amber-200"
