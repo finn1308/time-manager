@@ -43,10 +43,10 @@ export function FloatingFallbackTimer() {
   return (
     <aside
       aria-label="Bộ đếm giờ học nổi ChronoMind"
-      className="fixed bottom-6 right-6 z-40 transition-all duration-300 select-none drop-shadow-2xl"
+      className="fixed bottom-20 lg:bottom-6 right-3 sm:right-6 z-40 transition-all duration-300 select-none drop-shadow-2xl max-w-[calc(100vw-24px)]"
     >
       <div
-        className={`w-84 rounded-[28px] border transition-all ${
+        className={`w-[calc(100vw-24px)] max-w-[336px] sm:w-84 rounded-[28px] border transition-all ${
           isBreak
             ? "border-[#d8e2dc] dark:border-[#2d3a33] bg-[#fbfdfc]/95 dark:bg-[#15231c]/95"
             : "border-[#dbe7dd] dark:border-[#263d2e] bg-white/95 dark:bg-[#17261c]/95"
