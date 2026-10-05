@@ -113,6 +113,17 @@ export function LessonDetailScreen({
 
   // Toggle favorite is now handled by Context
 
+  // Audio speech synthesis helper
+  const playWordAudio = (text: string) => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   const displayedWordsInTable = allWords.filter((w) => {
     if (!tableSearch.trim()) return true;
     const q = tableSearch.toLowerCase();
