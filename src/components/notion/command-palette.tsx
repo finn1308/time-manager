@@ -143,6 +143,76 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       },
     },
     {
+      id: "review-today",
+      title: "Ôn tập tổng hợp hôm nay (Universal Review)",
+      category: "Luyện tập",
+      icon: Award,
+      run: () => {
+        router.push("/practice/review");
+        onClose();
+      },
+    },
+    {
+      id: "mistakes",
+      title: "Ngân hàng lỗi sai (Mistake Bank)",
+      category: "Luyện tập",
+      icon: AlertCircle,
+      run: () => {
+        router.push("/practice/mistakes");
+        onClose();
+      },
+    },
+    {
+      id: "exams",
+      title: "Chế độ Luyện thi 5 giai đoạn (Exam Mode)",
+      category: "Học vụ",
+      icon: Target,
+      run: () => {
+        router.push("/exams");
+        onClose();
+      },
+    },
+    {
+      id: "assignments",
+      title: "Bài tập lớn & Đồ án (Assignments)",
+      category: "Học vụ",
+      icon: CheckSquare,
+      run: () => {
+        router.push("/academic/assignments");
+        onClose();
+      },
+    },
+    {
+      id: "knowledge-graph",
+      title: "Cây tri thức & Động cơ Tiên quyết (Knowledge Graph)",
+      category: "Học vụ",
+      icon: GitBranch,
+      run: () => {
+        router.push("/academic/knowledge-graph");
+        onClose();
+      },
+    },
+    {
+      id: "learning-profile",
+      title: "Hồ sơ Nhận thức & Trí tuệ AI (Learning Memory)",
+      category: "Học vụ",
+      icon: Brain,
+      run: () => {
+        router.push("/academic/learning-profile");
+        onClose();
+      },
+    },
+    {
+      id: "backup",
+      title: "Trung tâm Sao lưu dữ liệu (Backup Center)",
+      category: "Cài đặt",
+      icon: Database,
+      run: () => {
+        router.push("/settings/backup");
+        onClose();
+      },
+    },
+    {
       id: "timer",
       title: "Bật Study Timer học ngay (PiP Player)",
       category: "Thao tác",
@@ -216,6 +286,16 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
         return Calendar;
       case "CARD":
         return Brain;
+      case "MISTAKE":
+        return AlertCircle;
+      case "ASSIGNMENT":
+        return CheckSquare;
+      case "EXAM":
+        return Target;
+      case "CONCEPT":
+        return GitBranch;
+      case "VOCAB":
+        return BookOpen;
       default:
         return Sparkles;
     }
