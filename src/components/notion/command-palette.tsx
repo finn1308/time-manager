@@ -153,56 +153,6 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       },
     },
     {
-      id: "practice-vocab",
-      title: "Luyện từ vựng (Vocabulary Engine)",
-      category: "Luyện tập",
-      icon: BookOpen,
-      run: () => {
-        router.push("/practice/vocabulary");
-        onClose();
-      },
-    },
-    {
-      id: "practice-vocab-review",
-      title: "Ôn tập từ vựng ngắt quãng (Spaced Repetition)",
-      category: "Luyện tập",
-      icon: Award,
-      run: () => {
-        router.push("/practice/vocabulary/review");
-        onClose();
-      },
-    },
-    {
-      id: "practice-vocab-words",
-      title: "Kho từ vựng & Tra cứu (Word Bank)",
-      category: "Luyện tập",
-      icon: Search,
-      run: () => {
-        router.push("/practice/vocabulary/words");
-        onClose();
-      },
-    },
-    {
-      id: "review-today",
-      title: "Ôn tập tổng hợp hôm nay (Universal Review)",
-      category: "Luyện tập",
-      icon: Award,
-      run: () => {
-        router.push("/practice/review");
-        onClose();
-      },
-    },
-    {
-      id: "mistakes",
-      title: "Ngân hàng lỗi sai (Mistake Bank)",
-      category: "Luyện tập",
-      icon: AlertCircle,
-      run: () => {
-        router.push("/practice/mistakes");
-        onClose();
-      },
-    },
-    {
       id: "exams",
       title: "Chế độ Luyện thi 5 giai đoạn (Exam Mode)",
       category: "Học vụ",
