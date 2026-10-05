@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Zap, BookOpen, Clock, Target, CalendarDays, Plus, Award, Users, PlaySquare } from "lucide-react";
 import Link from "next/link";
 
@@ -94,10 +93,8 @@ export function VocabDashboard({
 
 function StatCard({ icon, title, value, subtitle, highlight = false }: any) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between ${highlight ? 'border-orange-200 bg-orange-50/30' : 'border-gray-200/60'}`}
+    <div 
+      className={`p-5 rounded-2xl border bg-white shadow-sm flex flex-col justify-between transition-all ${highlight ? 'border-orange-200 bg-orange-50/30' : 'border-gray-200/60'}`}
     >
       <div className="flex items-center gap-2 mb-4">
         {icon}
@@ -107,7 +104,7 @@ function StatCard({ icon, title, value, subtitle, highlight = false }: any) {
         <div className="text-3xl font-semibold text-gray-900 tracking-tight">{value}</div>
         <div className="text-xs text-gray-500 mt-1 font-medium">{subtitle}</div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
