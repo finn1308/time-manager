@@ -19,7 +19,6 @@ import { useRouter } from "next/navigation";
 import { VocabIndexNav } from "./vocab-index-nav";
 import { StudyWord } from "./interactive-study-modal";
 import { useVocabWorkspace } from "./vocab-workspace-context";
-import { useRouter } from "next/navigation";
 import { MixedPracticeGame } from "./special-games/mixed-practice-game";
 import { SentenceCraftGame } from "./special-games/sentence-craft-game";
 import { ComTamGame } from "./special-games/com-tam-game";
@@ -56,11 +55,11 @@ export function SpecialModesScreen({
     setWarningMessage(null);
 
     if (type === "REVIEW") {
-      router.push("/vocab/review");
+      router.push("/practice/review");
       return;
     }
     if (type === "MISTAKES") {
-      router.push("/vocab/mistakes");
+      router.push("/practice/mistakes");
       return;
     }
 
