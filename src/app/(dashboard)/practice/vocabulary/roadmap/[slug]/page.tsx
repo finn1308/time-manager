@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
+import { prisma as db } from "@/lib/prisma";
 import Link from "next/link";
 import { ChevronLeft, Play, Lock, CheckCircle2 } from "lucide-react";
 
@@ -38,7 +38,7 @@ export default async function RoadmapDetailPage({ params }: { params: { slug: st
   let totalWordsInCourse = 0;
   let totalLearnedInCourse = 0;
 
-  course.wordSets.forEach(set => {
+  course.wordSets.forEach((set: any) => {
     totalWordsInCourse += set.words.length;
     if (set.userProgresses?.[0]) {
       totalLearnedInCourse += set.userProgresses[0].completedWords;
@@ -105,7 +105,7 @@ export default async function RoadmapDetailPage({ params }: { params: { slug: st
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Các bộ từ</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {course.wordSets.map((set, index) => {
+            {course.wordSets.map((set: any, index: number) => {
               const progress = set.userProgresses?.[0];
               const learned = progress ? progress.completedWords : 0;
               const total = set.words.length;

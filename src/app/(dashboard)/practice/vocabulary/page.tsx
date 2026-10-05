@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
+import { prisma as db } from "@/lib/prisma";
 import { VocabDashboard } from "./_components/vocab-dashboard";
 import { VocabRoadmaps } from "./_components/vocab-roadmaps";
 import { VocabLibrary } from "./_components/vocab-library";
@@ -52,7 +52,7 @@ export default async function VocabularyPage() {
   });
   
   const totalStudyMinutes = Math.floor(
-    studySessions.reduce((acc, curr) => acc + curr.actualDurationSeconds, 0) / 60
+    studySessions.reduce((acc: number, curr: any) => acc + curr.actualDurationSeconds, 0) / 60
   );
 
   // Lộ trình đã ghim
@@ -105,7 +105,7 @@ export default async function VocabularyPage() {
     select: { courseId: true },
   });
   
-  const enrolledCourseIds = enrolledCourses.map(e => e.courseId);
+  const enrolledCourseIds = enrolledCourses.map((e: any) => e.courseId);
   const totalWordsInEnrolled = await db.vocabWord.count({
     where: {
       wordSet: {
@@ -136,7 +136,7 @@ export default async function VocabularyPage() {
           learnedCount={learnedWordsCount}
           totalWords={totalWordsInEnrolled}
           dueToday={dueWordsCount}
-          streakDays={user.streakDays}
+          streakDays={(user as any).streakDays || 0}
           studyMinutes={totalStudyMinutes}
         />
 
