@@ -1,6 +1,6 @@
-import { NextResponse } from "next";
+import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { prisma as db } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
       where: { userId: user.id, wordSetId }
     });
 
-    const masteredCount = allProgresses.filter(p => p.status === "MASTERED").length;
+    const masteredCount = allProgresses.filter((p: any) => p.status === "MASTERED").length;
 
     await db.userWordSetProgress.upsert({
       where: {
