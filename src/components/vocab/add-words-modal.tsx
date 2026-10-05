@@ -411,19 +411,19 @@ export function AddWordsModal({
         />
 
         {/* Top Header matching Image 1 */}
-        <div className="px-6 py-5 border-b border-gray-100 dark:border-[#263d2e] flex flex-wrap items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-[#263d2e] flex flex-wrap items-center justify-between gap-3">
           {/* Left: Thêm vào bộ từ dropdown + Tạo mới */}
-          <div className="flex items-center space-x-3">
-            <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white shrink-0">
-              Thêm vào bộ từ:
+          <div className="flex items-center space-x-2 sm:space-x-3 flex-wrap gap-y-2">
+            <span className="text-sm sm:text-base font-bold text-gray-900 dark:text-white shrink-0">
+              Thêm vào bộ:
             </span>
 
-            <div className="relative min-w-[200px]">
+            <div className="relative min-w-[170px] sm:min-w-[200px]">
               <select
                 value={selectedSetId}
                 onChange={(e) => setSelectedSetId(e.target.value)}
                 disabled={loadingSets}
-                className="w-full px-4 py-2 pr-9 rounded-full border border-gray-200 dark:border-[#263d2e] bg-white dark:bg-[#132217] text-xs font-semibold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#10b981] appearance-none"
+                className="w-full px-3.5 sm:px-4 py-2 pr-9 rounded-full border border-gray-200 dark:border-[#263d2e] bg-white dark:bg-[#132217] text-xs font-semibold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#10b981] appearance-none"
               >
                 {sets.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -438,7 +438,7 @@ export function AddWordsModal({
             <button
               type="button"
               onClick={() => setIsCreatingSet(true)}
-              className="px-3.5 py-1.5 rounded-full border border-gray-200 dark:border-[#263d2e] bg-gray-50/80 dark:bg-[#132217] hover:bg-gray-100 text-xs font-bold text-gray-700 dark:text-gray-300 transition-colors flex items-center space-x-1"
+              className="px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#263d2e] bg-gray-50/80 dark:bg-[#132217] hover:bg-gray-100 text-xs font-bold text-gray-700 dark:text-gray-300 transition-colors flex items-center space-x-1"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Tạo mới</span>
@@ -446,7 +446,7 @@ export function AddWordsModal({
           </div>
 
           {/* Right Action buttons matching Image 1 */}
-          <div className="flex items-center space-x-2.5">
+          <div className="flex items-center space-x-2 flex-wrap gap-y-2">
             {/* Nhập file button with dropdown */}
             <div className="relative">
               <button
