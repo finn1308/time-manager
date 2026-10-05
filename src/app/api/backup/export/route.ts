@@ -53,7 +53,7 @@ export async function GET(req: Request) {
 
     const exportPayload = {
       exportVersion: "2.0.0",
-      platform: "LUYENTU & ChronoMind 4-Year Learning OS",
+      platform: "ChronoMind 4-Year Learning OS",
       exportedAt: new Date().toISOString(),
       user: {
         id: user.id,
@@ -101,7 +101,7 @@ export async function GET(req: Request) {
       return new Response(csvHeader + csvRows, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="luyentu-tasks-${new Date().toISOString().slice(0, 10)}.csv"`,
+          "Content-Disposition": `attachment; filename="chronomind-tasks-${new Date().toISOString().slice(0, 10)}.csv"`,
         },
       });
     }
@@ -109,7 +109,7 @@ export async function GET(req: Request) {
     return new Response(JSON.stringify(exportPayload, null, 2), {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Disposition": `attachment; filename="luyentu-backup-${new Date().toISOString().slice(0, 10)}.json"`,
+        "Content-Disposition": `attachment; filename="chronomind-backup-${new Date().toISOString().slice(0, 10)}.json"`,
       },
     });
   } catch (err: any) {
