@@ -22,6 +22,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
+import { SyllabusImporterModal } from "@/components/academic/syllabus-importer-modal";
+import { Badge } from "@/components/ui/badge";
 
 interface DegreeProgramData {
   id: string;
