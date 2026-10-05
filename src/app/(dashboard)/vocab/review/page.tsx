@@ -134,7 +134,7 @@ export default function UniversalReviewPage() {
           </div>
         </div>
         <div className="flex items-center justify-center gap-3 pt-4">
-          <Link href="/practice">
+          <Link href="/vocab/index/5">
             <Button variant="outline" className="rounded-xl">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Về Trung tâm Luyện tập
@@ -163,7 +163,7 @@ export default function UniversalReviewPage() {
     <div className="max-w-3xl mx-auto space-y-6 pb-20">
       {/* Top Header & Progress */}
       <div className="flex items-center justify-between">
-        <Link href="/practice">
+        <Link href="/vocab/index/5">
           <Button variant="ghost" size="sm" className="rounded-xl text-[#526b5c] hover:text-[#192e22]">
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             Quay lại

@@ -142,7 +142,7 @@ export default function MistakeBankPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
-          <Link href="/practice">
+          <Link href="/vocab/index/5">
             <Button variant="ghost" size="icon" className="rounded-xl text-[#526b5c]">
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -161,7 +161,7 @@ export default function MistakeBankPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/practice/review">
+          <Link href="/vocab/review">
             <Button className="bg-[#408257] hover:bg-[#346a47] text-white rounded-2xl shadow-sm">
               <Play className="w-4 h-4 mr-2" />
               Luyện tập lỗi sai ngay

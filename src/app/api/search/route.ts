@@ -211,7 +211,7 @@ export async function GET(req: Request) {
       ...goals.map((g) => ({ id: g.id, type: "GOAL", title: g.title, subtitle: "Mục tiêu", badge: g.status, url: "/goals" })),
       ...events.map((e) => ({ id: e.id, type: "EVENT", title: e.title, subtitle: e.subject?.name, badge: "Lịch học", url: "/calendar" })),
       ...flashcards.map((f) => ({ id: f.id, type: "CARD", title: f.front, subtitle: f.back, badge: f.deck?.title, url: "/flashcards" })),
-      ...mistakes.map((m) => ({ id: m.id, type: "MISTAKE", title: m.question, subtitle: `ĐA: ${m.correctAnswer}`, badge: "Lỗi sai", url: "/practice/mistakes" })),
+      ...mistakes.map((m) => ({ id: m.id, type: "MISTAKE", title: m.question, subtitle: `ĐA: ${m.correctAnswer}`, badge: "Lỗi sai", url: "/vocab/mistakes" })),
       ...assignments.map((a) => ({ id: a.id, type: "ASSIGNMENT", title: a.title, subtitle: a.subject?.name, badge: "Bài tập / Đồ án", url: "/academic/assignments" })),
       ...exams.map((ex) => ({ id: ex.id, type: "EXAM", title: ex.title, subtitle: ex.subject?.name, badge: "Kỳ thi", url: "/exams" })),
       ...knowledgeNodes.map((kn) => ({ id: kn.id, type: "CONCEPT", title: kn.title, subtitle: kn.subject?.name, badge: kn.chapter || "Chuyên đề", url: "/academic/knowledge-graph" })),

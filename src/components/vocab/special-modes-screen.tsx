@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   RefreshCw,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { VocabIndexNav } from "./vocab-index-nav";
 import { StudyWord } from "./interactive-study-modal";
 import { MixedPracticeGame } from "./special-games/mixed-practice-game";
@@ -66,11 +67,6 @@ export function SpecialModesScreen({
           setWords(setData.allWords || []);
         }
 
-        if (shopRes && shopRes.ok) {
-          const shopData = await shopRes.json();
-          if (typeof shopData.userCoins === "number") {
-            setUserCoins(shopData.userCoins);
-          }
         }
         return;
       }
@@ -94,11 +90,6 @@ export function SpecialModesScreen({
         }
       }
 
-      if (shopRes && shopRes.ok) {
-        const shopData = await shopRes.json();
-        if (typeof shopData.userCoins === "number") {
-          setUserCoins(shopData.userCoins);
-        }
       }
     } catch (e) {
       console.error(e);

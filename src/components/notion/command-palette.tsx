@@ -148,7 +148,7 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       category: "Luyện tập",
       icon: Award,
       run: () => {
-        router.push("/practice/review");
+        router.push("/vocab/review");
         onClose();
       },
     },
@@ -158,7 +158,7 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       category: "Luyện tập",
       icon: AlertCircle,
       run: () => {
-        router.push("/practice/mistakes");
+        router.push("/vocab/mistakes");
         onClose();
       },
     },
