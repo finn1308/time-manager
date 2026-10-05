@@ -197,6 +197,8 @@ export async function POST(req: Request) {
         subjectId: subjectId || null,
         taskId: taskId || null,
         goalId: goalId || null,
+        plannedDurationMinutes: Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)),
+        completed: false,
         startTime: start,
         endTime: end,
         type: normalizedType,
@@ -312,6 +314,7 @@ export async function PUT(req: Request) {
             goalId: goalId !== undefined ? goalId || null : undefined,
             startTime: start,
             endTime: end,
+            plannedDurationMinutes: start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : undefined,
             type: type !== undefined ? type : undefined,
             isLocked: isLocked !== undefined ? !!isLocked : undefined,
             isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
@@ -334,6 +337,8 @@ export async function PUT(req: Request) {
           goalId: goalId || null,
           startTime: start!,
           endTime: end!,
+          plannedDurationMinutes: start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : 60,
+          completed: false,
           type: type || "OTHER",
           isLocked: isLocked !== undefined ? !!isLocked : false,
           isFlexible: isFlexible !== undefined ? !!isFlexible : (type === "PERSONAL"),
@@ -362,6 +367,7 @@ export async function PUT(req: Request) {
         goalId: goalId !== undefined ? goalId || null : undefined,
         startTime: start,
         endTime: end,
+        plannedDurationMinutes: start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : undefined,
         type: type !== undefined ? type : undefined,
         isLocked: isLocked !== undefined ? !!isLocked : undefined,
         isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
@@ -501,7 +507,44 @@ export async function DELETE(req: Request) {
     }
 
     // Case 4: Delete master event and all its occurrences (deleteMode === "ALL" or non-recurring single event)
-    // Note: Due to onDelete: SetNull on StudySession, any completed study sessions remain completely intact.
+    // Handle study sessions cleanly: remove CALENDAR_CHECKBOX sessions and update Subject completedHours
+    const linkedSessions = await prisma.studySession.findMany({
+      where: {
+        calendarEventId: targetEvent.id,
+        userId: user.id,
+      },
+    });
+
+    const affectedSubjectIds = new Set<string>();
+
+    for (const s of linkedSessions) {
+      if (s.subjectId) affectedSubjectIds.add(s.subjectId);
+      if (s.source === "CALENDAR_CHECKBOX") {
+        await prisma.studySession.delete({ where: { id: s.id } });
+      } else {
+        // Retain PIP_TIMER records with historical trace note
+        await prisma.studySession.update({
+          where: { id: s.id },
+          data: {
+            calendarEventId: null,
+            notes: (s.notes ? s.notes + " | " : "") + `[Lịch đã xóa: ${targetEvent.title}]`,
+          },
+        });
+      }
+    }
+
+    for (const subId of Array.from(affectedSubjectIds)) {
+      const agg = await prisma.studySession.aggregate({
+        where: { subjectId: subId, userId: user.id, status: "COMPLETED" },
+        _sum: { actualDurationSeconds: true },
+      });
+      const totalHours = Math.round(((agg._sum.actualDurationSeconds || 0) / 3600) * 10) / 10;
+      await prisma.subject.update({
+        where: { id: subId },
+        data: { completedHours: totalHours },
+      });
+    }
+
     await prisma.calendarEvent.delete({
       where: { id: targetEvent.id, userId: user.id },
     });

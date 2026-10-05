@@ -20,7 +20,7 @@
 ---
 
 ### II. Core Backend Logic & Transaction API
-- [ ] **2.1. API Complete/Uncomplete Event (`/api/calendar/events/complete` hoặc handler trong `/api/calendar/events`)**:
+- [x] **2.1. API Complete/Uncomplete Event (`/api/calendar/events/complete`)**:
   - Hỗ trợ toggle checkbox: `☐ -> ☑` (Complete) và `☑ -> ☐` (Uncomplete).
   - Tự động tính duration theo datetime chính xác `(endTime - startTime)`, xử lý qua đêm/qua ngày.
   - Cho phép người dùng tùy chọn truyền `customActualMinutes` nếu muốn ghi nhận khác `plannedDuration`.
@@ -29,13 +29,13 @@
     - Khi Complete: Cập nhật `CalendarEvent.completed = true`, tạo `StudySession` (`source = "CALENDAR_CHECKBOX"`, `calendarEventId = event.id`), cập nhật `Subject.completedHours`.
     - Khi Uncomplete: Cập nhật `CalendarEvent.completed = false`, xóa/hủy `StudySession` liên quan, giảm `Subject.completedHours` tương ứng.
     - Idempotent: Nếu đã completed mà gọi complete lại thì không tạo thêm session nào (chống cộng trùng tuyệt đối).
-- [ ] **2.2. Xử lý Delete Event với Data Consistency**:
+- [x] **2.2. Xử lý Delete Event với Data Consistency**:
   - Khi xóa event chưa hoàn thành: Không ảnh hưởng StudySession / actual time.
   - Khi xóa event đã hoàn thành: Xử lý an toàn các StudySession liên quan (dọn dẹp hoặc tách biệt có log truy vết, đảm bảo không bị orphan hay duplicate).
-- [ ] **2.3. Xử lý Edit Event với Data Separation**:
+- [x] **2.3. Xử lý Edit Event với Data Separation**:
   - Tách bạch giữa `plannedDuration` và `actualDuration`.
   - Khi sửa giờ bắt đầu/kết thúc của lịch đã completed: Không âm thầm sửa actual duration trừ khi người dùng chủ động yêu cầu.
-- [ ] **2.4. Quy tắc phân loại loại sự kiện**:
+- [x] **2.4. Quy tắc phân loại loại sự kiện**:
   - Chỉ tính thời gian học cho sự kiện có `subjectId` hoặc loại học tập (`SELF_STUDY`, `STUDY`).
   - Sự kiện `PERSONAL`, `SCHOOL` cố định, `MEETING` không tính vào actual study time trừ khi người dùng gán subject cụ thể.
 
