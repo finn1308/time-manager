@@ -142,7 +142,6 @@ export function SentenceCraftGame({
             <span className="px-2.5 py-1 rounded-full bg-blue-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center space-x-1">
               <Feather className="w-3 h-3" />
               <span>Luyện Đặt Câu</span>
-              <span className="ml-1 px-1.5 py-0.2 rounded bg-amber-400 text-amber-950 font-extrabold text-[9px]">PRO</span>
             </span>
             <span className="text-xs text-gray-400 font-medium">
               {currentIndex + 1} / {words.length}
