@@ -58,6 +58,7 @@ export default function NotesPage() {
   const [filterSubjectId, setFilterSubjectId] = useState("ALL");
   const [viewMode, setViewMode] = useState<"edit" | "preview" | "split">("split");
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved">("saved");
+  const [mobileViewTab, setMobileViewTab] = useState<"list" | "editor">("editor");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -73,6 +74,7 @@ export default function NotesPage() {
     setIsPinned(Boolean(note.isPinned));
     setTags((note.tags || []).map((t: any) => t.tag?.name).filter(Boolean));
     setSaveStatus("saved");
+    setMobileViewTab("editor");
   };
 
   const loadData = async () => {
