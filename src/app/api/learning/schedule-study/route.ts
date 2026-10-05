@@ -43,6 +43,8 @@ export async function POST(req: Request) {
         type: "STUDY",
         isAiGenerated: true,
         timezone: "Asia/Ho_Chi_Minh",
+        plannedDurationMinutes: durationMinutes,
+        completed: false,
       },
       include: {
         subject: {
