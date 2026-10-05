@@ -116,7 +116,10 @@ export function InteractiveStudyModal({
   const [matchingLeftList, setMatchingLeftList] = useState<StudyWord[]>([]);
   const [matchingRightList, setMatchingRightList] = useState<StudyWord[]>([]);
 
-  const startTimeRef = useRef<number>(Date.now());
+  const startTimeRef = useRef<number>(0);
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
   const currentWord = words[currentIndex] || null;
 
   // Web Speech API Voice synthesis
