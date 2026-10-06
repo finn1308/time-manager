@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { VIETNAM_TIMEZONE, getDateKeyVN } from "@/lib/date-utils";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
 import { addMilliseconds } from "date-fns";
+import { invalidateCalendarServerCache } from "../route";
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -276,7 +277,7 @@ export async function POST(req: Request) {
       } catch (e) {
         console.warn("XP award error:", e);
       }
-    }
+    invalidateCalendarServerCache(user.id);
 
     return NextResponse.json({
       success: true,
