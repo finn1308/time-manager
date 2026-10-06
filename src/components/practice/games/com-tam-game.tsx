@@ -162,21 +162,19 @@ export function ComTamGame({
     setIsShiftEnded(true);
     try {
       setIsSubmitting(true);
-      const res = await fetch("/api/vocab/sessions", {
+      const res = await fetch("/api/practice/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wordSetId,
-          mode: "SPECIAL",
-          specialGameMode: "COM_TAM",
-          totalItems: ordersServed + 1,
-          correctItems: correctOrders,
-          coinsDelta: netProfit,
+          skillId: "com-tam",
+          score: correctOrders,
+          total: ordersServed + 1,
+          durationSeconds: 120,
         }),
       });
       const data = await res.json();
-      if (data.user?.coins !== undefined && onUpdateCoins) {
-        onUpdateCoins(data.user.coins);
+      if (data.earnedCoins && onUpdateCoins) {
+        onUpdateCoins((initialCoins || 100) + data.earnedCoins);
       }
     } catch (e) {
       console.error(e);
