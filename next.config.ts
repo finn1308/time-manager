@@ -8,22 +8,32 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/vocab",
-        destination: "/practice/vocabulary",
+        destination: "/practice",
         permanent: false,
       },
       {
         source: "/vocab/:path*",
-        destination: "/practice/vocabulary/:path*",
+        destination: "/practice",
         permanent: false,
       },
       {
         source: "/luyentu",
-        destination: "/practice/vocabulary",
+        destination: "/practice",
         permanent: false,
       },
       {
         source: "/luyentu/:path*",
-        destination: "/practice/vocabulary/:path*",
+        destination: "/practice",
+        permanent: false,
+      },
+      {
+        source: "/practice/vocabulary",
+        destination: "/practice",
+        permanent: false,
+      },
+      {
+        source: "/practice/vocabulary/:path*",
+        destination: "/practice",
         permanent: false,
       },
     ];
