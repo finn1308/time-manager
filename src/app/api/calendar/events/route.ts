@@ -7,6 +7,22 @@ import { parseISO, subMonths, addMonths } from "date-fns";
 import { ALL_EVENT_TYPES, isSelfStudyEvent } from "@/lib/calendar/event-types";
 import { getDateKeyVN } from "@/lib/date-utils";
 
+// In-memory cache for calendar events (20s TTL per user query)
+const calendarServerCache = new Map<string, { data: any; expiresAt: number }>();
+const CALENDAR_CACHE_TTL_MS = 20_000;
+
+export function invalidateCalendarServerCache(userId?: string) {
+  if (userId) {
+    for (const key of calendarServerCache.keys()) {
+      if (key.startsWith(userId)) {
+        calendarServerCache.delete(key);
+      }
+    }
+  } else {
+    calendarServerCache.clear();
+  }
+}
+
 export async function GET(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,8 +35,23 @@ export async function GET(req: Request) {
   const rangeStart = startStr ? parseISO(startStr) : subMonths(now, 2);
   const rangeEnd = endStr ? parseISO(endStr) : addMonths(now, 6);
 
+  const cacheKey = `${user.id}:${rangeStart.getTime()}:${rangeEnd.getTime()}`;
+  const cached = calendarServerCache.get(cacheKey);
+  if (cached && Date.now() < cached.expiresAt) {
+    return NextResponse.json({ events: cached.data });
+  }
+
   const events = await prisma.calendarEvent.findMany({
-    where: { userId: user.id },
+    where: {
+      userId: user.id,
+      OR: [
+        { recurrence: { not: "NONE" } },
+        {
+          startTime: { lte: rangeEnd },
+          endTime: { gte: rangeStart },
+        },
+      ],
+    },
     include: {
       subject: true,
       goal: {
@@ -46,15 +77,30 @@ export async function GET(req: Request) {
           status: true,
         },
       },
-      resources: true,
+      resources: {
+        select: {
+          id: true,
+          title: true,
+          type: true,
+          url: true,
+        },
+      },
       studyNotes: {
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+        },
         orderBy: { createdAt: "desc" },
+        take: 5,
       },
     },
     orderBy: { startTime: "asc" },
   });
 
   const expanded = expandRecurringEvents(events, rangeStart, rangeEnd);
+  calendarServerCache.set(cacheKey, { data: expanded, expiresAt: Date.now() + CALENDAR_CACHE_TTL_MS });
 
   return NextResponse.json({ events: expanded });
 }
@@ -219,6 +265,7 @@ export async function POST(req: Request) {
       },
     });
 
+    invalidateCalendarServerCache(user.id);
     return NextResponse.json({ success: true, event });
   } catch (err: any) {
     console.error("Create calendar event error:", err);
