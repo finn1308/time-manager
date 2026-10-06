@@ -126,8 +126,14 @@ export async function GET() {
     (e) => e.startTime >= todayStart && e.startTime <= todayEnd && !e.isCancelled
   );
 
-  const todaySelfStudyPlannedHours = todayEvents
-    .filter((ev) => isSelfStudyEvent(ev.type) && (ev as any).trackStudyTime !== false)
+  const isStudyScheduled = (ev: any) => {
+    if ((ev as any).trackStudyTime === false) return false;
+    if ((ev as any).trackStudyTime === true) return true;
+    return isSelfStudyEvent(ev.type) || isSchoolEvent(ev.type) || Boolean(ev.subjectId);
+  };
+
+  const todayStudyPlannedHours = todayEvents
+    .filter((ev) => isStudyScheduled(ev))
     .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
 
   const todaySchoolHours = todayEvents
@@ -151,8 +157,8 @@ export async function GET() {
     (e) => e.startTime >= weekStart && e.startTime <= weekEnd && !e.isCancelled
   );
 
-  const weekSelfStudyPlannedHours = weekEvents
-    .filter((ev) => isSelfStudyEvent(ev.type) && (ev as any).trackStudyTime !== false)
+  const weekStudyPlannedHours = weekEvents
+    .filter((ev) => isStudyScheduled(ev))
     .reduce((acc, ev) => acc + (ev.endTime.getTime() - ev.startTime.getTime()) / (1000 * 3600), 0);
 
   const weekSchoolHours = weekEvents
@@ -171,8 +177,8 @@ export async function GET() {
   const weekActualSeconds = weekSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const weekActualHours = weekActualSeconds / 3600;
 
-  const completionPercentage = weekSelfStudyPlannedHours > 0
-    ? Math.min(100, Math.round((weekActualHours / weekSelfStudyPlannedHours) * 100))
+  const completionPercentage = weekStudyPlannedHours > 0
+    ? Math.min(100, Math.round((weekActualHours / weekStudyPlannedHours) * 100))
     : (weekActualHours > 0 ? 100 : 0);
 
   // 5. Calculate Real Consecutive Study Streak
@@ -306,7 +312,7 @@ export async function GET() {
     const dayLabel = format(day, "EEE (dd/MM)");
 
     const dayPlanned = expandedEvents
-      .filter((e) => e.startTime >= dayS && e.startTime <= dayE && isSelfStudyEvent(e.type) && (e as any).trackStudyTime !== false && !e.isCancelled)
+      .filter((e) => e.startTime >= dayS && e.startTime <= dayE && isStudyScheduled(e) && !e.isCancelled)
       .reduce((acc, e) => acc + (e.endTime.getTime() - e.startTime.getTime()) / (1000 * 3600), 0);
 
     const dayActual = last7DaysSessions
@@ -322,12 +328,12 @@ export async function GET() {
 
   return NextResponse.json({
     metrics: {
-      todayPlannedHours: Math.round(todaySelfStudyPlannedHours * 10) / 10,
+      todayPlannedHours: Math.round(todayStudyPlannedHours * 10) / 10,
       todayActualHours: Math.round(todayActualHours * 10) / 10,
       todaySchoolHours: Math.round(todaySchoolHours * 10) / 10,
       todayPersonalHours: Math.round(todayPersonalHours * 10) / 10,
       todayScheduledHours: Math.round(todayScheduledHours * 10) / 10,
-      weekPlannedHours: Math.round(weekSelfStudyPlannedHours * 10) / 10,
+      weekPlannedHours: Math.round(weekStudyPlannedHours * 10) / 10,
       weekActualHours: Math.round(weekActualHours * 10) / 10,
       weekSchoolHours: Math.round(weekSchoolHours * 10) / 10,
       weekPersonalHours: Math.round(weekPersonalHours * 10) / 10,
