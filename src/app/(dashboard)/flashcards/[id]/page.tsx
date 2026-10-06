@@ -1,26 +1,39 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { previewNextIntervals } from "@/lib/anki/sm2";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { StudyModeSession } from "@/components/flashcards/study-mode-session";
 import {
-  Brain,
-  RotateCcw,
-  Sparkles,
+  extractCardData,
+  generateStudySessionQuestions,
+  CardData,
+  StudyQuestion,
+} from "@/lib/flashcard-study/engine";
+import { speakWord } from "@/lib/tts";
+import {
   ArrowLeft,
-  Eye,
-  CheckCircle2,
-  HelpCircle,
+  Sparkles,
+  Volume2,
+  Settings,
+  BookOpen,
+  CheckSquare,
+  Headphones,
+  Keyboard,
+  LayoutGrid,
+  Shuffle,
   Plus,
   Trash2,
-  Clock,
-  Layers,
+  Search,
+  CheckCircle2,
+  RotateCcw,
   Flame,
   Award,
+  Layers,
+  HelpCircle,
 } from "lucide-react";
 
 export default function FlashcardDeckDetailPage() {
@@ -29,25 +42,32 @@ export default function FlashcardDeckDetailPage() {
   const deckId = params?.id as string;
 
   const [deck, setDeck] = useState<any | null>(null);
-  const [dueCards, setDueCards] = useState<any[]>([]);
   const [allCards, setAllCards] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Active Review State
-  const [activeTab, setActiveTab] = useState<"REVIEW" | "MANAGE">("REVIEW");
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const [reviewedSessionCount, setReviewedSessionCount] = useState(0);
-  const [isReviewFinished, setIsReviewFinished] = useState(false);
-  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+  // Filter & Customization settings (Matching Image 1)
+  const [statusFilter, setStatusFilter] = useState<"ALL" | "NEW" | "LEARNING" | "MASTERED">("ALL");
+  const [countLimit, setCountLimit] = useState<number>(0); // 0 = all
+  const [sortOrder, setSortOrder] = useState<"RANDOM" | "DEFAULT">("DEFAULT");
 
-  // Add Card State
-  const [newFront, setNewFront] = useState("");
-  const [newBack, setNewBack] = useState("");
+  // Search & filter in card list
+  const [searchQuery, setSearchQuery] = useState("");
+  const [tableFilter, setTableFilter] = useState<string>("ALL");
+
+  // Active Study Session state
+  const [activeSessionMode, setActiveSessionMode] = useState<string | null>(null);
+  const [sessionQuestions, setSessionQuestions] = useState<StudyQuestion[]>([]);
+
+  // Add Card Modal
+  const [isAddCardOpen, setIsAddCardOpen] = useState(false);
+  const [newWord, setNewWord] = useState("");
+  const [newPhonetic, setNewPhonetic] = useState("");
+  const [newPartOfSpeech, setNewPartOfSpeech] = useState("noun");
+  const [newMeaning, setNewMeaning] = useState("");
+  const [newExample, setNewExample] = useState("");
+  const [newExampleMeaning, setNewExampleMeaning] = useState("");
   const [newHint, setNewHint] = useState("");
-  const [newTopic, setNewTopic] = useState("");
-  const [isAddingCard, setIsAddingCard] = useState(false);
+  const [isSubmittingCard, setIsSubmittingCard] = useState(false);
 
   const loadDeck = async () => {
     try {
@@ -58,15 +78,6 @@ export default function FlashcardDeckDetailPage() {
 
       setDeck(data.deck);
       setAllCards(data.deck.flashcards || []);
-      setDueCards(data.dueCards || []);
-      if (!data.dueCards || data.dueCards.length === 0) {
-        setIsReviewFinished(true);
-      } else {
-        setIsReviewFinished(false);
-        setCurrentIdx(0);
-        setIsFlipped(false);
-        setShowHint(false);
-      }
     } catch (e: any) {
       console.error(e);
       alert(e.message || "Lỗi tải bộ thẻ");
@@ -79,104 +90,120 @@ export default function FlashcardDeckDetailPage() {
     if (deckId) loadDeck();
   }, [deckId]);
 
-  const currentCard = dueCards[currentIdx];
+  // Convert raw cards to structured CardData
+  const parsedCards: CardData[] = useMemo(() => {
+    return allCards.map(extractCardData);
+  }, [allCards]);
 
-  const handleRateCard = useCallback(
-    async (rating: 1 | 2 | 3 | 4) => {
-      if (!currentCard || isSubmittingRating) return;
+  // Filtered cards based on statusFilter
+  const customizedCards = useMemo(() => {
+    let result = [...parsedCards];
+    if (statusFilter !== "ALL") {
+      result = result.filter((c) => c.status === statusFilter);
+    }
+    return result;
+  }, [parsedCards, statusFilter]);
 
-      setIsSubmittingRating(true);
-      try {
-        const res = await fetch(`/api/flashcards/cards/${currentCard.id}/review`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ rating }),
-        });
+  // Launch Study Session in chosen mode
+  const handleStartStudy = (mode: "ALL" | "FLASHCARD" | "QUIZ" | "LISTENING" | "TYPING" | "MATCHING") => {
+    if (parsedCards.length === 0) {
+      alert("Bộ thẻ chưa có từ vựng nào. Hãy thêm từ vựng để bắt đầu học!");
+      return;
+    }
 
-        if (!res.ok) throw new Error("Lỗi lưu kết quả");
+    const questions = generateStudySessionQuestions(customizedCards, {
+      mode,
+      count: countLimit > 0 ? countLimit : undefined,
+      order: sortOrder,
+    });
 
-        setReviewedSessionCount((prev) => prev + 1);
+    if (questions.length === 0) {
+      alert("Không tìm thấy câu hỏi phù hợp với bộ lọc hiện tại.");
+      return;
+    }
 
-        // Next card or finish
-        if (currentIdx + 1 < dueCards.length) {
-          setCurrentIdx((prev) => prev + 1);
-          setIsFlipped(false);
-          setShowHint(false);
-        } else {
-          setIsReviewFinished(true);
-        }
-      } catch (err: any) {
-        alert(err.message || "Lỗi khi ghi nhận đánh giá");
-      } finally {
-        setIsSubmittingRating(false);
-      }
-    },
-    [currentCard, currentIdx, dueCards.length, isSubmittingRating]
-  );
+    setSessionQuestions(questions);
+    setActiveSessionMode(mode);
+  };
 
-  // Keyboard navigation: Space = Flip; 1, 2, 3, 4 = Rating
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (activeTab !== "REVIEW" || isReviewFinished || !currentCard) return;
-
-      if (e.code === "Space") {
-        e.preventDefault();
-        setIsFlipped((prev) => !prev);
-      } else if (isFlipped) {
-        if (e.key === "1") handleRateCard(1);
-        else if (e.key === "2") handleRateCard(2);
-        else if (e.key === "3") handleRateCard(3);
-        else if (e.key === "4") handleRateCard(4);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeTab, isReviewFinished, currentCard, isFlipped, handleRateCard]);
-
+  // Handle Add New Card
   const handleCreateCard = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newFront.trim() || !newBack.trim() || isAddingCard) return;
+    if (!newWord.trim() || !newMeaning.trim() || isSubmittingCard) return;
 
-    setIsAddingCard(true);
+    setIsSubmittingCard(true);
     try {
       const res = await fetch(`/api/flashcards/decks/${deckId}/cards`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          front: newFront.trim(),
-          back: newBack.trim(),
+          front: newWord.trim(),
+          back: newMeaning.trim(),
+          phonetic: newPhonetic.trim() || null,
+          partOfSpeech: newPartOfSpeech.trim() || null,
+          exampleSentence: newExample.trim() || null,
+          exampleMeaning: newExampleMeaning.trim() || null,
           hint: newHint.trim() || null,
-          topic: newTopic.trim() || null,
+          topic: deck?.title || "Vocabulary",
         }),
       });
 
       if (!res.ok) throw new Error("Không thể thêm thẻ");
-      setNewFront("");
-      setNewBack("");
+      setNewWord("");
+      setNewPhonetic("");
+      setNewMeaning("");
+      setNewExample("");
+      setNewExampleMeaning("");
       setNewHint("");
-      setNewTopic("");
+      setIsAddCardOpen(false);
       await loadDeck();
-      alert("Đã thêm thẻ mới vào bộ thành công!");
     } catch (e: any) {
       alert(e.message || "Lỗi khi thêm thẻ");
     } finally {
-      setIsAddingCard(false);
+      setIsSubmittingCard(false);
     }
   };
 
-  const intervals = currentCard
-    ? previewNextIntervals(
-        currentCard.intervalDays || 1,
-        currentCard.repetitionCount || 0,
-        currentCard.easeFactor || 2.5
-      )
-    : { again: "1 ngày", hard: "2 ngày", good: "5 ngày", easy: "10 ngày" };
+  // Handle Delete Card
+  const handleDeleteCard = async (cardId: string) => {
+    if (!confirm("Bạn có chắc chắn muốn xóa thẻ này?")) return;
+    try {
+      const res = await fetch(`/api/flashcards/cards/${cardId}`, { method: "DELETE" });
+      if (res.ok) {
+        await loadDeck();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Filtered cards for the table list
+  const displayTableCards = useMemo(() => {
+    return parsedCards.filter((card) => {
+      const matchSearch =
+        searchQuery === "" ||
+        card.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        card.meaning.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchFilter =
+        tableFilter === "ALL" ||
+        (tableFilter === "MASTERED" && card.masteryLevel >= 4) ||
+        (tableFilter === "LEARNING" && card.masteryLevel > 0 && card.masteryLevel < 4) ||
+        (tableFilter === "NEW" && card.masteryLevel === 0);
+
+      return matchSearch && matchFilter;
+    });
+  }, [parsedCards, searchQuery, tableFilter]);
+
+  // Overall statistics
+  const totalCount = parsedCards.length;
+  const learnedCount = parsedCards.filter((c) => c.masteryLevel > 0).length;
+  const learnedPercentage = totalCount > 0 ? Math.round((learnedCount / totalCount) * 100) : 0;
 
   if (loading) {
     return (
       <div className="py-24 text-center text-xs text-[#526b5c] animate-pulse">
-        Đang tải bộ thẻ...
+        Đang tải thông tin bộ thẻ...
       </div>
     );
   }
@@ -189,377 +216,551 @@ export default function FlashcardDeckDetailPage() {
     );
   }
 
-  return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-16">
-      {/* Top Header & Breadcrumbs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#dbe7dd] dark:border-[#263d2e]">
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/flashcards")}
-            className="rounded-xl text-[#526b5c] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] p-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
+  // If study session is currently running, render StudyModeSession player
+  if (activeSessionMode) {
+    return (
+      <StudyModeSession
+        deckTitle={deck.title}
+        deckId={deck.id}
+        questions={sessionQuestions}
+        allCards={parsedCards}
+        onExit={() => {
+          setActiveSessionMode(null);
+          loadDeck();
+        }}
+        onFinish={() => {
+          setActiveSessionMode(null);
+          loadDeck();
+        }}
+      />
+    );
+  }
 
-          <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+  return (
+    <div className="space-y-6 max-w-4xl mx-auto pb-16 px-3 sm:px-0">
+      {/* ========================================================================= */}
+      {/* 1. TOP HEADER & PROGRESS BAR (Matching Reference Image 1) */}
+      {/* ========================================================================= */}
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/flashcards")}
+              className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] hover:bg-[#eef5f0] w-10 h-10 p-0 shrink-0 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+
+            <div>
+              <h1 className="text-xl sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2] tracking-tight">
                 {deck.title}
               </h1>
-              {deck.subject && (
-                <span
-                  className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white shadow-2xs"
-                  style={{ backgroundColor: deck.subject.color || "#2d6a4f" }}
-                >
-                  {deck.subject.name}
-                </span>
+              {deck.description && (
+                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5 line-clamp-1">
+                  {deck.description}
+                </p>
               )}
             </div>
-            {deck.description && (
-              <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
-                {deck.description}
-              </p>
-            )}
+          </div>
+
+          {/* Badges: Total vocab & Learned progress */}
+          <div className="flex items-center space-x-2 shrink-0">
+            <span className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-bold">
+              {totalCount} từ vựng
+            </span>
+            <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-black">
+              {learnedCount}/{totalCount} đã học ({learnedPercentage}%)
+            </span>
           </div>
         </div>
 
-        {/* Tab switch */}
-        <div className="flex items-center space-x-1 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs font-bold shadow-2xs">
+        {/* Green progress bar */}
+        <div className="w-full bg-[#eef5f0] dark:bg-[#1d3024] rounded-full h-2 overflow-hidden shadow-inner">
+          <div
+            className="bg-[#2d6a4f] dark:bg-[#52b788] h-2 rounded-full transition-all duration-500"
+            style={{ width: `${learnedPercentage}%` }}
+          />
+        </div>
+      </Card>
+
+      {/* ========================================================================= */}
+      {/* 2. SECTION TÙY CHỈNH (SETTINGS / FILTERS - Matching Reference Image 1) */}
+      {/* ========================================================================= */}
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <Settings className="w-4 h-4 text-[#526b5c]" />
+            <span>Tùy chỉnh</span>
+          </div>
+
+          <span className="px-3 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-black">
+            {customizedCards.length}/{totalCount} từ
+          </span>
+        </div>
+
+        {/* 3 Filters Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* TRẠNG THÁI */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+              TRẠNG THÁI
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden focus:border-[#2d6a4f] cursor-pointer"
+            >
+              <option value="ALL">Toàn bộ</option>
+              <option value="NEW">Chưa học (Mới)</option>
+              <option value="LEARNING">Đang học</option>
+              <option value="MASTERED">Đã thuộc</option>
+            </select>
+          </div>
+
+          {/* SỐ LƯỢNG */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+              SỐ LƯỢNG
+            </label>
+            <select
+              value={countLimit}
+              onChange={(e) => setCountLimit(Number(e.target.value))}
+              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden focus:border-[#2d6a4f] cursor-pointer"
+            >
+              <option value={0}>Tất cả ({customizedCards.length} từ)</option>
+              <option value={10}>10 từ</option>
+              <option value={20}>20 từ</option>
+              <option value={30}>30 từ</option>
+            </select>
+          </div>
+
+          {/* THỨ TỰ */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+              THỨ TỰ
+            </label>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as any)}
+              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden focus:border-[#2d6a4f] cursor-pointer"
+            >
+              <option value="DEFAULT">Mặc định (Theo thứ tự)</option>
+              <option value="RANDOM">Ngẫu nhiên (Xáo trộn)</option>
+            </select>
+          </div>
+        </div>
+      </Card>
+
+      {/* ========================================================================= */}
+      {/* 3. SECTION CHỌN CHẾ ĐỘ HỌC (6 STUDY MODES - Matching Reference Image 1) */}
+      {/* ========================================================================= */}
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+            Chọn chế độ học
+          </h2>
+          <span className="text-xs text-[#73927d]">6 phương pháp luyện tập</span>
+        </div>
+
+        {/* 6 Colorful Gradient Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {/* 1. Flashcard (Tím) */}
           <button
-            onClick={() => setActiveTab("REVIEW")}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              activeTab === "REVIEW"
-                ? "bg-[#2d6a4f] text-white shadow-xs"
-                : "text-[#526b5c] hover:text-[#192e22]"
-            }`}
+            onClick={() => handleStartStudy("FLASHCARD")}
+            className="p-4 rounded-3xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5] text-white flex flex-col justify-between items-start text-left space-y-3 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md group min-h-[140px]"
           >
-            <span>Ôn tập ({dueCards.length})</span>
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-extrabold text-sm sm:text-base leading-tight">Flashcard</div>
+              <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">Lật thẻ để nhớ...</p>
+              <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-white/25 text-[10px] font-black">
+                +5 🪙
+              </span>
+            </div>
           </button>
+
+          {/* 2. Quiz (Cam) */}
           <button
-            onClick={() => setActiveTab("MANAGE")}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              activeTab === "MANAGE"
-                ? "bg-[#2d6a4f] text-white shadow-xs"
-                : "text-[#526b5c] hover:text-[#192e22]"
-            }`}
+            onClick={() => handleStartStudy("QUIZ")}
+            className="p-4 rounded-3xl bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white flex flex-col justify-between items-start text-left space-y-3 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md group min-h-[140px]"
           >
-            <span>Quản lý thẻ ({allCards.length})</span>
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white">
+              <CheckSquare className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-extrabold text-sm sm:text-base leading-tight">Quiz</div>
+              <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">Trắc nghiệm 4 đáp án...</p>
+              <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-white/25 text-[10px] font-black">
+                +10 🪙
+              </span>
+            </div>
+          </button>
+
+          {/* 3. Listening (Xanh ngọc) */}
+          <button
+            onClick={() => handleStartStudy("LISTENING")}
+            className="p-4 rounded-3xl bg-gradient-to-br from-[#06b6d4] to-[#0891b2] text-white flex flex-col justify-between items-start text-left space-y-3 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md group min-h-[140px]"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white">
+              <Headphones className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-extrabold text-sm sm:text-base leading-tight">Listening</div>
+              <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">Nghe từ và gõ lại...</p>
+              <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-white/25 text-[10px] font-black">
+                +15 🪙
+              </span>
+            </div>
+          </button>
+
+          {/* 4. Typing (Xanh lá) */}
+          <button
+            onClick={() => handleStartStudy("TYPING")}
+            className="p-4 rounded-3xl bg-gradient-to-br from-[#10b981] to-[#059669] text-white flex flex-col justify-between items-start text-left space-y-3 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md group min-h-[140px]"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white">
+              <Keyboard className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-extrabold text-sm sm:text-base leading-tight">Typing</div>
+              <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">Xem nghĩa, gõ từ...</p>
+              <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-white/25 text-[10px] font-black">
+                +10 🪙
+              </span>
+            </div>
+          </button>
+
+          {/* 5. Ghép cặp (Xanh dương) */}
+          <button
+            onClick={() => handleStartStudy("MATCHING")}
+            className="p-4 rounded-3xl bg-gradient-to-br from-[#0284c7] to-[#0369a1] text-white flex flex-col justify-between items-start text-left space-y-3 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md group min-h-[140px]"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white">
+              <LayoutGrid className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-extrabold text-sm sm:text-base leading-tight">Ghép cặp</div>
+              <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">Nối từ với nghĩa...</p>
+              <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-white/25 text-[10px] font-black">
+                +10 🪙
+              </span>
+            </div>
+          </button>
+
+          {/* 6. Đặc biệt / Tổng hợp (Hồng tím HOT 🔥) */}
+          <button
+            onClick={() => handleStartStudy("ALL")}
+            className="p-4 rounded-3xl bg-gradient-to-br from-[#ec4899] to-[#d946ef] text-white flex flex-col justify-between items-start text-left space-y-3 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md group min-h-[140px] relative overflow-hidden"
+          >
+            <div className="flex items-center justify-between w-full">
+              <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-white">
+                <Shuffle className="w-5 h-5" />
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 text-[9px] font-black shadow-xs">
+                HOT 🔥
+              </span>
+            </div>
+
+            <div>
+              <div className="font-extrabold text-sm sm:text-base leading-tight">Đặc biệt</div>
+              <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">Hỗn hợp tất cả...</p>
+              <span className="inline-block mt-2 px-2 py-0.5 rounded-full bg-white/25 text-[10px] font-black">
+                +20 🪙
+              </span>
+            </div>
           </button>
         </div>
-      </div>
+      </Card>
 
-      {activeTab === "REVIEW" ? (
-        isReviewFinished ? (
-          /* Completion Screen */
-          <Card className="rounded-[32px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-10 text-center space-y-4 shadow-sm">
-            <div className="w-16 h-16 rounded-3xl bg-[#d8ebe0] dark:bg-[#1e3827] text-[#2d6a4f] dark:text-[#52b788] mx-auto flex items-center justify-center text-3xl shadow-xs">
-              🎉
-            </div>
-            <h2 className="text-xl font-black text-[#192e22] dark:text-[#f0f7f2]">
-              Xuất sắc! Đã hoàn thành ôn tập
+      {/* ========================================================================= */}
+      {/* 4. SECTION DANH SÁCH TỪ VỰNG (VOCABULARY TABLE - Matching Reference Image 1) */}
+      {/* ========================================================================= */}
+      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-2">
+            <h2 className="text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+              Danh sách từ vựng
             </h2>
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] max-w-md mx-auto leading-relaxed">
-              Bạn đã ôn tập xong tất cả các thẻ đến hạn trong bộ này theo thuật toán Spaced Repetition (SM-2). Hãy quay lại vào ngày mai khi có thẻ mới đến hạn!
-            </p>
+            <span className="text-xs text-[#73927d]">({parsedCards.length} từ)</span>
+          </div>
 
-            <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-2xl bg-[#eef5f0] dark:bg-[#132217] text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
-              <Award className="w-4 h-4" />
-              <span>+{reviewedSessionCount * 10} XP tích lũy vào tài khoản</span>
-            </div>
-
-            <div className="flex items-center justify-center space-x-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setDueCards(allCards);
-                  setIsReviewFinished(false);
-                  setCurrentIdx(0);
-                  setIsFlipped(false);
-                }}
-                className="rounded-2xl border-[#dbe7dd] text-xs font-semibold"
-              >
-                <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
-                <span>Ôn lại toàn bộ ({allCards.length} thẻ)</span>
-              </Button>
-              <Button
-                onClick={() => router.push("/flashcards")}
-                className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold"
-              >
-                <span>Về trang Flashcard</span>
-              </Button>
-            </div>
-          </Card>
-        ) : (
-          /* Active Card Review Player */
-          <div className="space-y-4">
-            {/* Progress Bar & Header */}
-            <div className="flex items-center justify-between text-xs text-[#526b5c] dark:text-[#a3bda9] px-1 font-semibold">
-              <div className="flex items-center space-x-2">
-                <span>
-                  Thẻ <strong>{currentIdx + 1}</strong> / {dueCards.length}
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] text-[10px] font-bold">
-                  {currentCard.status}
-                </span>
-              </div>
-              <div className="text-[11px] text-[#73927d]">
-                Phím tắt: [Space] lật thẻ • [1, 2, 3, 4] đánh giá
-              </div>
-            </div>
-
-            <div className="w-full bg-[#eef5f0] dark:bg-[#1d3024] rounded-full h-1.5 overflow-hidden">
-              <div
-                className="bg-[#2d6a4f] dark:bg-[#52b788] h-1.5 rounded-full transition-all duration-300"
-                style={{ width: `${((currentIdx + 1) / dueCards.length) * 100}%` }}
+          <div className="flex items-center space-x-2">
+            {/* Search input */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-[#73927d]" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm kiếm từ vựng..."
+                className="pl-8 h-9 text-xs rounded-xl border-[#dbe7dd] w-48 sm:w-56"
               />
             </div>
 
-            {/* 3D Interactive Flip Card */}
-            <div
-              onClick={() => setIsFlipped(!isFlipped)}
-              className="min-h-[280px] sm:min-h-[320px] rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-8 shadow-sm flex flex-col justify-between cursor-pointer select-none transition-all hover:border-[#2d6a4f]/50 relative"
+            {/* Filter select */}
+            <select
+              value={tableFilter}
+              onChange={(e) => setTableFilter(e.target.value)}
+              className="h-9 px-3 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] text-xs font-bold text-[#192e22] cursor-pointer"
             >
-              {/* Card Header */}
-              <div className="flex items-center justify-between text-xs pb-3 border-b border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                <span className="font-bold text-[#2d6a4f] dark:text-[#52b788] uppercase tracking-wider text-[11px]">
-                  {isFlipped ? "Mặt sau (Câu trả lời)" : "Mặt trước (Câu hỏi / Khái niệm)"}
-                </span>
-                {currentCard.topic && (
-                  <span className="text-[11px] text-[#73927d] bg-[#f4f8f5] dark:bg-[#142318] px-2.5 py-0.5 rounded-full">
-                    {currentCard.topic}
-                  </span>
-                )}
-              </div>
+              <option value="ALL">Tất cả</option>
+              <option value="NEW">Mới</option>
+              <option value="LEARNING">Đang học</option>
+              <option value="MASTERED">Đã thuộc</option>
+            </select>
 
-              {/* Card Center Content */}
-              <div className="py-6 flex flex-col items-center justify-center text-center">
-                {!isFlipped ? (
-                  <div className="space-y-3">
-                    <p className="text-lg sm:text-xl font-black text-[#192e22] dark:text-[#f0f7f2] leading-relaxed max-w-lg">
-                      {currentCard.front}
-                    </p>
+            {/* Add new card button */}
+            <Button
+              onClick={() => setIsAddCardOpen(true)}
+              size="sm"
+              className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold h-9 px-3 space-x-1"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Thêm từ</span>
+            </Button>
+          </div>
+        </div>
 
-                    {currentCard.hint && (
-                      <div className="pt-2">
-                        {showHint ? (
-                          <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 text-xs italic max-w-sm mx-auto">
-                            💡 Gợi ý: {currentCard.hint}
+        {/* Table representation */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-[#eef5f0] dark:border-[#263d2e] text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+                <th className="py-3 px-3">TỪ VỰNG</th>
+                <th className="py-3 px-3">NGHĨA</th>
+                <th className="py-3 px-3">LOẠI TỪ</th>
+                <th className="py-3 px-3">VÍ DỤ</th>
+                <th className="py-3 px-3">THUỘC</th>
+                <th className="py-3 px-2 text-right">XÓA</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#f0f7f2] dark:divide-[#203326]">
+              {displayTableCards.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-xs text-[#73927d]">
+                    Không có từ vựng nào phù hợp với bộ lọc tìm kiếm.
+                  </td>
+                </tr>
+              ) : (
+                displayTableCards.map((card) => {
+                  const masteryPercent = Math.min(100, Math.round((card.masteryLevel / 5) * 100));
+
+                  return (
+                    <tr
+                      key={card.id}
+                      className="hover:bg-[#fbfdfb] dark:hover:bg-[#1b3022] transition-colors"
+                    >
+                      {/* Cột 1: Word + Loa audio */}
+                      <td className="py-3 px-3 font-extrabold text-[#192e22] dark:text-[#f0f7f2] whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => speakWord(card.word, 1.0)}
+                            className="p-1 rounded-lg text-[#2d6a4f] hover:bg-[#eef5f0] transition-colors cursor-pointer"
+                            title="Phát âm"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                          </button>
+                          <span>{card.word}</span>
+                        </div>
+                      </td>
+
+                      {/* Cột 2: Meaning */}
+                      <td className="py-3 px-3 font-semibold text-[#2d6a4f] dark:text-[#52b788]">
+                        {card.meaning}
+                      </td>
+
+                      {/* Cột 3: Loại từ & Phiên âm */}
+                      <td className="py-3 px-3 text-[#526b5c] dark:text-[#a3bda9] whitespace-nowrap">
+                        <div className="flex flex-col">
+                          <span>{card.partOfSpeech || "noun"}</span>
+                          {card.phonetic && (
+                            <span className="text-[10px] text-[#73927d]">{card.phonetic}</span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Cột 4: Ví dụ */}
+                      <td className="py-3 px-3 text-[#526b5c] dark:text-[#a3bda9] max-w-xs">
+                        {card.exampleSentence ? (
+                          <div className="line-clamp-2">
+                            <span className="font-medium text-[#192e22] dark:text-[#f0f7f2]">
+                              "{card.exampleSentence}"
+                            </span>
+                            {card.exampleMeaning && (
+                              <span className="text-[11px] text-[#73927d] block">
+                                {card.exampleMeaning}
+                              </span>
+                            )}
                           </div>
                         ) : (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowHint(true);
-                            }}
-                            className="inline-flex items-center space-x-1 text-xs text-[#73927d] hover:text-[#2d6a4f] transition-colors"
-                          >
-                            <HelpCircle className="w-3.5 h-3.5" />
-                            <span>Hiện gợi ý</span>
-                          </button>
+                          <span className="text-gray-400 italic">—</span>
                         )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-3 text-left w-full max-w-xl mx-auto">
-                    <div className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#263d2e]">
-                      <p className="text-base sm:text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] leading-relaxed whitespace-pre-wrap">
-                        {currentCard.back}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+                      </td>
 
-              {/* Card Footer prompt */}
-              <div className="text-center text-[11px] text-[#73927d] pt-3 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                {!isFlipped
-                  ? "Nhấn vào thẻ hoặc phím Space để xem câu trả lời"
-                  : "Chọn mức độ ghi nhớ bên dưới để lên lịch chu kỳ tiếp theo"}
+                      {/* Cột 5: Trạng thái thuộc (%) */}
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        {masteryPercent >= 80 ? (
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-black">
+                            ✓ {masteryPercent}%
+                          </span>
+                        ) : masteryPercent > 0 ? (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-[10px] font-bold">
+                            {masteryPercent}%
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-[10px] font-medium">
+                            Mới
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Cột 6: Xóa */}
+                      <td className="py-3 px-2 text-right">
+                        <button
+                          onClick={() => handleDeleteCard(card.id)}
+                          className="p-1 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                          title="Xóa thẻ"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* ========================================================================= */}
+      {/* DIALOG: THÊM TỪ MỚI */}
+      {/* ========================================================================= */}
+      <Dialog open={isAddCardOpen} onOpenChange={setIsAddCardOpen}>
+        <DialogContent className="rounded-[28px] max-w-lg p-6 bg-white dark:bg-[#17261c] border border-[#dbe7dd]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+              Thêm từ vựng mới vào bộ thẻ
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateCard} className="space-y-3 pt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  Từ tiếng Anh *
+                </label>
+                <Input
+                  required
+                  value={newWord}
+                  onChange={(e) => setNewWord(e.target.value)}
+                  placeholder="Ví dụ: table"
+                  className="rounded-xl mt-1 text-xs"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  Phiên âm IPA
+                </label>
+                <Input
+                  value={newPhonetic}
+                  onChange={(e) => setNewPhonetic(e.target.value)}
+                  placeholder="Ví dụ: /ˈteɪ.bəl/"
+                  className="rounded-xl mt-1 text-xs"
+                />
               </div>
             </div>
 
-            {/* SM-2 Rating 4-Button Bar */}
-            {isFlipped && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 animate-in fade-in duration-200">
-                <Button
-                  onClick={() => handleRateCard(1)}
-                  disabled={isSubmittingRating}
-                  className="rounded-2xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-900/60 h-14 flex flex-col justify-center items-center cursor-pointer shadow-2xs"
-                >
-                  <div className="font-extrabold text-xs flex items-center space-x-1">
-                    <span>1. Lặp lại (Again)</span>
-                  </div>
-                  <span className="text-[10px] text-rose-600 dark:text-rose-400 mt-0.5">
-                    +{intervals.again}
-                  </span>
-                </Button>
-
-                <Button
-                  onClick={() => handleRateCard(2)}
-                  disabled={isSubmittingRating}
-                  className="rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-900/60 h-14 flex flex-col justify-center items-center cursor-pointer shadow-2xs"
-                >
-                  <div className="font-extrabold text-xs flex items-center space-x-1">
-                    <span>2. Khó (Hard)</span>
-                  </div>
-                  <span className="text-[10px] text-amber-600 dark:text-amber-400 mt-0.5">
-                    +{intervals.hard}
-                  </span>
-                </Button>
-
-                <Button
-                  onClick={() => handleRateCard(3)}
-                  disabled={isSubmittingRating}
-                  className="rounded-2xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-900/60 h-14 flex flex-col justify-center items-center cursor-pointer shadow-2xs"
-                >
-                  <div className="font-extrabold text-xs flex items-center space-x-1">
-                    <span>3. Tốt (Good)</span>
-                  </div>
-                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
-                    +{intervals.good}
-                  </span>
-                </Button>
-
-                <Button
-                  onClick={() => handleRateCard(4)}
-                  disabled={isSubmittingRating}
-                  className="rounded-2xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-900/60 h-14 flex flex-col justify-center items-center cursor-pointer shadow-2xs"
-                >
-                  <div className="font-extrabold text-xs flex items-center space-x-1">
-                    <span>4. Dễ (Easy)</span>
-                  </div>
-                  <span className="text-[10px] text-blue-600 dark:text-blue-400 mt-0.5">
-                    +{intervals.easy}
-                  </span>
-                </Button>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  Nghĩa tiếng Việt *
+                </label>
+                <Input
+                  required
+                  value={newMeaning}
+                  onChange={(e) => setNewMeaning(e.target.value)}
+                  placeholder="Ví dụ: cái bàn, bàn"
+                  className="rounded-xl mt-1 text-xs"
+                />
               </div>
-            )}
-          </div>
-        )
-      ) : (
-        /* Manage Cards Tab */
-        <div className="space-y-6">
-          {/* Add New Card Form */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-5 shadow-2xs">
-            <form onSubmit={handleCreateCard} className="space-y-3">
-              <h3 className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] flex items-center space-x-1.5">
-                <Plus className="w-4 h-4" />
-                <span>THÊM THẺ MỚI VÀO BỘ NÀY</span>
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
-                    Mặt trước (Câu hỏi / Thuật ngữ) *
-                  </label>
-                  <textarea
-                    rows={2}
-                    required
-                    placeholder="VD: Định lý Pytago phát biểu thế nào?"
-                    value={newFront}
-                    onChange={(e) => setNewFront(e.target.value)}
-                    className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
-                    Mặt sau (Câu trả lời / Lời giải) *
-                  </label>
-                  <textarea
-                    rows={2}
-                    required
-                    placeholder="VD: a^2 + b^2 = c^2 trong tam giác vuông..."
-                    value={newBack}
-                    onChange={(e) => setNewBack(e.target.value)}
-                    className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
-                    Gợi ý (Tùy chọn)
-                  </label>
-                  <Input
-                    placeholder="Gợi ý nếu quên..."
-                    value={newHint}
-                    onChange={(e) => setNewHint(e.target.value)}
-                    className="rounded-xl border-[#dbe7dd] text-xs h-8"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
-                    Chủ đề con (Topic)
-                  </label>
-                  <Input
-                    placeholder="VD: Hình học phẳng..."
-                    value={newTopic}
-                    onChange={(e) => setNewTopic(e.target.value)}
-                    className="rounded-xl border-[#dbe7dd] text-xs h-8"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-1">
-                <Button
-                  type="submit"
-                  disabled={isAddingCard}
-                  className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold h-8 px-4"
+              <div>
+                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  Từ loại
+                </label>
+                <select
+                  value={newPartOfSpeech}
+                  onChange={(e) => setNewPartOfSpeech(e.target.value)}
+                  className="w-full h-9 mt-1 px-3 rounded-xl border border-[#dbe7dd] text-xs font-bold bg-white dark:bg-[#17261c]"
                 >
-                  {isAddingCard ? "Đang lưu..." : "Thêm thẻ"}
-                </Button>
+                  <option value="noun">noun (danh từ)</option>
+                  <option value="verb">verb (động từ)</option>
+                  <option value="adj">adjective (tính từ)</option>
+                  <option value="adv">adverb (trạng từ)</option>
+                  <option value="phrase">phrase (cụm từ)</option>
+                </select>
               </div>
-            </form>
-          </Card>
+            </div>
 
-          {/* Table of cards */}
-          <div className="space-y-2">
-            <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
-              Tất cả thẻ trong bộ ({allCards.length})
-            </h3>
+            <div>
+              <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                Câu ví dụ tiếng Anh
+              </label>
+              <Input
+                value={newExample}
+                onChange={(e) => setNewExample(e.target.value)}
+                placeholder="Ví dụ: I put my laptop on the table."
+                className="rounded-xl mt-1 text-xs"
+              />
+            </div>
 
-            {allCards.length === 0 ? (
-              <div className="p-8 text-center text-xs text-[#526b5c]">
-                Bộ thẻ này chưa có thẻ nào.
-              </div>
-            ) : (
-              allCards.map((card, idx) => (
-                <div
-                  key={card.id}
-                  className="p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] flex items-start justify-between gap-3 shadow-2xs"
-                >
-                  <div className="space-y-1 text-xs flex-1 min-w-0">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-bold text-[#73927d]">#{idx + 1}</span>
-                      <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
-                        {card.front}
-                      </span>
-                      <span className="px-2 py-0.2 rounded-full text-[9px] font-bold bg-[#eef5f0] text-[#1b4332]">
-                        {card.status}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] line-clamp-2">
-                      {card.back}
-                    </p>
-                  </div>
+            <div>
+              <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                Dịch nghĩa câu ví dụ
+              </label>
+              <Input
+                value={newExampleMeaning}
+                onChange={(e) => setNewExampleMeaning(e.target.value)}
+                placeholder="Ví dụ: Tôi đặt máy tính xách tay của mình trên bàn."
+                className="rounded-xl mt-1 text-xs"
+              />
+            </div>
 
-                  <div className="text-right text-[10px] text-[#73927d] shrink-0">
-                    <div>Lặp: {card.intervalDays} ngày</div>
-                    <div>Độ nhớ: cấp {card.masteryLevel}/5</div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+            <div>
+              <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                Gợi ý ghi nhớ (Hint)
+              </label>
+              <Input
+                value={newHint}
+                onChange={(e) => setNewHint(e.target.value)}
+                placeholder="Gợi ý ngữ cảnh hoặc hình ảnh..."
+                className="rounded-xl mt-1 text-xs"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAddCardOpen(false)}
+                className="rounded-xl text-xs font-bold"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmittingCard}
+                className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold px-5"
+              >
+                {isSubmittingCard ? "Đang lưu..." : "Thêm vào bộ thẻ"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
