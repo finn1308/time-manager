@@ -277,6 +277,8 @@ export async function POST(req: Request) {
       } catch (e) {
         console.warn("XP award error:", e);
       }
+    }
+
     invalidateCalendarServerCache(user.id);
 
     return NextResponse.json({
