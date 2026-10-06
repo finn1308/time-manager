@@ -12,9 +12,9 @@ export default async function AdminHubPage() {
 
   const adminModules = [
     {
-      title: "Quản trị nội dung Từ vựng (Practice Vocabulary)",
-      description: "Thêm, sửa, xóa lộ trình, bộ từ vựng và dữ liệu trong Practice Hub",
-      href: "/practice/vocabulary/admin",
+      title: "Quản lý môn học & Luyện tập",
+      description: "Quản lý môn học, mục tiêu và dữ liệu luyện tập",
+      href: "/subjects",
       icon: Database,
       color: "bg-indigo-100 text-indigo-700",
       border: "border-indigo-200"

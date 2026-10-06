@@ -53,9 +53,9 @@ export default function ProgressHubPage() {
       border: "border-orange-200"
     },
     {
-      title: "Bảng xếp hạng (Leaderboard)",
-      description: "Thi đua xếp hạng thành tích học từ vựng Practice Hub",
-      href: "/practice/vocabulary/leaderboard",
+      title: "Trung tâm Luyện tập (Practice Hub)",
+      description: "Hệ thống ôn tập ngắt quãng và ngân hàng lỗi sai",
+      href: "/practice",
       icon: Award,
       color: "bg-amber-100 text-amber-700",
       border: "border-amber-200"
