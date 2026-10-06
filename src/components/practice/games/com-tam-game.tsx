@@ -210,7 +210,7 @@ export function ComTamGame({
               <div className="flex items-center space-x-2">
                 <span className="text-xl">🍛</span>
                 <h2 className="text-xl sm:text-2xl font-black drop-shadow-md">
-                  Quán Cơm Tấm LUYENTU
+                  Quán Cơm Tấm Practice
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-orange-500 text-white text-[10px] font-black uppercase">
                   MỚI
