@@ -146,7 +146,7 @@ export function SchoolTimetableGeneratorModal({
           type: "SCHOOL",
           isLocked: true,
           isFlexible: false,
-          trackStudyTime: false,
+          trackStudyTime: true,
           timezone: "Asia/Ho_Chi_Minh",
           recurrence: "WEEKLY",
           recurrenceRule,

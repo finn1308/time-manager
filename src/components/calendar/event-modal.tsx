@@ -71,6 +71,11 @@ interface EventModalProps {
   } | null;
 }
 
+function isStudyEventCategory(type?: string | null, subId?: string | null): boolean {
+  const upper = type?.toUpperCase();
+  return upper === "SCHOOL" || upper === "SELF_STUDY" || upper === "STUDY" || Boolean(subId);
+}
+
 export function EventModal({
   open,
   onClose,
@@ -101,7 +106,7 @@ export function EventModal({
   const [endTimeStr, setEndTimeStr] = useState<string>(defaultEndTime);
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [isFlexible, setIsFlexible] = useState<boolean>(defaultType === "PERSONAL");
-  const [trackStudyTime, setTrackStudyTime] = useState<boolean>(defaultType === "SELF_STUDY" || defaultType === "STUDY");
+  const [trackStudyTime, setTrackStudyTime] = useState<boolean>(isStudyEventCategory(defaultType, null));
 
   // Recurrence state
   const [recurrence, setRecurrence] = useState<string>("NONE");
@@ -150,7 +155,8 @@ export function EventModal({
       setEndTimeStr(formatVN(editingEvent.endTime, "HH:mm"));
       setIsLocked(!!editingEvent.isLocked);
       setIsFlexible(editingEvent.isFlexible ?? (normalizedType === "PERSONAL"));
-      setTrackStudyTime(editingEvent.trackStudyTime ?? (normalizedType === "SELF_STUDY" || normalizedType === "STUDY"));
+      const isStudy = isStudyEventCategory(normalizedType, editingEvent.subjectId);
+      setTrackStudyTime(isStudy ? true : (editingEvent.trackStudyTime ?? false));
       setRecurrence(editingEvent.recurrence && editingEvent.recurrence !== "NONE" ? editingEvent.recurrence : "NONE");
 
       // Parse weekly days from recurrenceRule if present
@@ -185,7 +191,7 @@ export function EventModal({
       setEndTimeStr(defaultEndTime);
       setIsLocked(defaultType === "SCHOOL" || defaultType === "EXAM");
       setIsFlexible(defaultType === "PERSONAL");
-      setTrackStudyTime(defaultType === "SELF_STUDY" || defaultType === "STUDY");
+      setTrackStudyTime(isStudyEventCategory(defaultType, null));
       setRecurrence("NONE");
       setWeeklyDays([]);
       setRecurrenceEndDate("");
@@ -275,7 +281,7 @@ export function EventModal({
         type: eventType,
         isLocked,
         isFlexible,
-        trackStudyTime,
+        trackStudyTime: isStudyEventCategory(eventType, subjectId),
         timezone: "Asia/Ho_Chi_Minh",
         recurrence,
         recurrenceRule: rrule,
@@ -392,22 +398,19 @@ export function EventModal({
 
   const handleSelectEventType = (t: CalendarEventType) => {
     setEventType(t);
+    setTrackStudyTime(isStudyEventCategory(t, subjectId));
     if (t === "SCHOOL") {
       setIsLocked(true);
       setIsFlexible(false);
-      setTrackStudyTime(false);
     } else if (t === "PERSONAL") {
       setIsLocked(false);
       setIsFlexible(true);
-      setTrackStudyTime(false);
     } else if (t === "SELF_STUDY" || t === "STUDY") {
       setIsLocked(false);
       setIsFlexible(false);
-      setTrackStudyTime(true);
     } else if (t === "EXAM" || t === "DEADLINE") {
       setIsLocked(true);
       setIsFlexible(false);
-      setTrackStudyTime(false);
     }
   };
 
@@ -762,7 +765,11 @@ export function EventModal({
                         </label>
                         <select
                           value={subjectId}
-                          onChange={(e) => setSubjectId(e.target.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setSubjectId(val);
+                            setTrackStudyTime(isStudyEventCategory(eventType, val));
+                          }}
                           className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
                         >
                           <option value="">-- Chọn môn học --</option>
@@ -942,31 +949,12 @@ export function EventModal({
                   )}
                 </div>
 
-                {/* 7. Advanced Controls: isLocked, isFlexible, trackStudyTime */}
+                {/* 7. Advanced Controls: isLocked, isFlexible */}
                 <div className="space-y-2.5 p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
                   <div className="text-[11px] font-bold text-[#192e22] dark:text-[#f0f7f2] uppercase tracking-wider flex items-center space-x-1.5 mb-1">
                     <Sliders className="w-3.5 h-3.5 text-[#2d6a4f]" />
                     <span>Cấu hình linh hoạt & Ràng buộc AI</span>
                   </div>
-
-                  {/* Track Study Time Toggle (Phase 11) */}
-                  <label className="flex items-start space-x-2.5 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={trackStudyTime}
-                      onChange={(e) => setTrackStudyTime(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
-                    />
-                    <div>
-                      <span className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1">
-                        <span>Tính vào giờ học tập (Track Study Time)</span>
-                        {trackStudyTime && <span className="text-[10px] text-[#2d6a4f] font-bold">(Được tính)</span>}
-                      </span>
-                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
-                        Khi bật, lịch này được tính vào chỉ số kế hoạch học tập (Planned Study Hours) và phân tích trên Dashboard.
-                      </p>
-                    </div>
-                  </label>
 
                   {/* isLocked Checkbox (Phase 18) */}
                   <label className="flex items-start space-x-2.5 cursor-pointer select-none pt-1">
