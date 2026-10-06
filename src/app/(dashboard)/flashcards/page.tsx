@@ -268,95 +268,101 @@ export default function FlashcardsIndexPage() {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {decks.map((deck) => {
-            const masteredPct =
-              deck.cardCount > 0 ? Math.round((deck.masteredCount / deck.cardCount) * 100) : 0;
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+              Các bộ từ vựng & Thẻ học ({decks.length})
+            </h2>
+            <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+              Tự động cá nhân hóa
+            </span>
+          </div>
 
-            return (
-              <Card
-                key={deck.id}
-                onClick={() => router.push(`/flashcards/${deck.id}`)}
-                className="rounded-[26px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-5 soft-card-hover flex flex-col justify-between cursor-pointer group shadow-2xs"
-              >
-                <div>
-                  {/* Top: Subject & Delete */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    {deck.subject ? (
-                      <span
-                        className="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white shadow-2xs truncate max-w-[160px]"
-                        style={{ backgroundColor: deck.subject.color || "#2d6a4f" }}
-                      >
-                        {deck.subject.code ? `[${deck.subject.code}] ` : ""}
-                        {deck.subject.name}
-                      </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {decks.map((deck, idx) => {
+              const masteredPct =
+                deck.cardCount > 0 ? Math.round((deck.masteredCount / deck.cardCount) * 100) : 0;
+              const isFinished = masteredPct >= 80;
+
+              return (
+                <div
+                  key={deck.id}
+                  onClick={() => router.push(`/flashcards/${deck.id}`)}
+                  className={`p-5 rounded-[28px] border-2 transition-all duration-200 cursor-pointer group flex items-center justify-between gap-4 shadow-2xs hover:shadow-md ${
+                    isFinished
+                      ? "bg-[#f8fdf9] dark:bg-[#14281b] border-[#c2e2cc] hover:border-[#2d6a4f]"
+                      : "bg-white dark:bg-[#17261c] border-dashed border-[#d5e5da] dark:border-[#263d2e] hover:border-[#2d6a4f]"
+                  }`}
+                >
+                  {/* Left: Trophy or Number Icon */}
+                  <div className="shrink-0">
+                    {isFinished ? (
+                      <div className="w-13 h-13 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200/60 flex flex-col items-center justify-center text-xl shadow-xs">
+                        <span>🏆</span>
+                        <span className="text-[9px] font-black mt-0.5 text-amber-700">#{idx + 1}</span>
+                      </div>
                     ) : (
-                      <span className="px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium">
-                        Tổng hợp
-                      </span>
+                      <div className="w-13 h-13 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black flex items-center justify-center text-sm">
+                        {idx + 1}
+                      </div>
                     )}
+                  </div>
 
+                  {/* Middle: Title, Stats & Progress */}
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-extrabold text-sm sm:text-base text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] dark:group-hover:text-[#52b788] transition-colors truncate">
+                        {deck.title}
+                      </h3>
+                      {isFinished && (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      )}
+                    </div>
+
+                    <div className="flex items-center space-x-3 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9]">
+                      <span>{deck.cardCount} từ vựng</span>
+                      <span>•</span>
+                      <span className={isFinished ? "text-emerald-600 font-bold" : ""}>
+                        {masteredPct}% hoàn thành
+                      </span>
+                      {deck.dueCount > 0 && (
+                        <>
+                          <span>•</span>
+                          <span className="text-rose-600 font-bold">{deck.dueCount} cần ôn</span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Green progress bar */}
+                    <div className="w-full bg-[#eef5f0] dark:bg-[#1d3024] rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-[#2d6a4f] dark:bg-[#52b788] h-1.5 rounded-full transition-all duration-300"
+                        style={{ width: `${masteredPct}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Right: Round Play Button */}
+                  <div className="shrink-0 flex items-center space-x-2">
                     <button
-                      onClick={(e) => handleDeleteDeck(deck.id, e)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteDeck(deck.id, e);
+                      }}
+                      className="p-2 rounded-xl text-gray-300 hover:text-rose-600 hover:bg-rose-50 transition-colors opacity-0 group-hover:opacity-100"
                       title="Xóa bộ thẻ"
-                      className="p-1 rounded-lg text-[#73927d] hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
-                  </div>
 
-                  {/* Title & Description */}
-                  <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] dark:group-hover:text-[#52b788] transition-colors leading-snug">
-                    {deck.title}
-                  </h3>
-                  {deck.description && (
-                    <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1 line-clamp-2">
-                      {deck.description}
-                    </p>
-                  )}
-                </div>
-
-                {/* Bottom: Progress & Action */}
-                <div className="mt-6 pt-4 border-t border-[#dbe7dd]/70 dark:border-[#263d2e]">
-                  {/* Status Pills */}
-                  <div className="flex items-center space-x-2 text-[11px] font-bold mb-3">
-                    {deck.dueCount > 0 ? (
-                      <span className="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 font-extrabold flex items-center space-x-1">
-                        <Flame className="w-3 h-3 text-rose-600" />
-                        <span>{deck.dueCount} cần ôn</span>
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 font-semibold">
-                        ✓ Đã ôn xong
-                      </span>
-                    )}
-
-                    <span className="text-[#73927d]">
-                      {deck.cardCount} thẻ tổng cộng
-                    </span>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="w-full bg-[#eef5f0] dark:bg-[#1d3024] rounded-full h-1.5 overflow-hidden mb-3">
-                    <div
-                      className="bg-[#2d6a4f] dark:bg-[#52b788] h-1.5 rounded-full transition-all"
-                      style={{ width: `${masteredPct}%` }}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-[11px] text-[#73927d]">
-                      Thuần thục: <strong>{masteredPct}%</strong>
-                    </span>
-                    <span className="font-bold text-[#2d6a4f] dark:text-[#52b788] flex items-center space-x-1 group-hover:translate-x-1 transition-transform">
-                      <span>{deck.dueCount > 0 ? "Ôn tập ngay" : "Xem thẻ"}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
+                    <div className="w-10 h-10 rounded-full bg-[#f0f7f2] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] group-hover:bg-[#2d6a4f] group-hover:text-white flex items-center justify-center transition-all shadow-2xs">
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
                   </div>
                 </div>
-              </Card>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
 
