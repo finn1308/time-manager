@@ -22,7 +22,7 @@ export default async function PracticePage() {
   const [dbSubjects, dbMistakes, dbFlashcards, dbSessions] = await Promise.all([
     prisma.subject.findMany({
       where: { userId: user.id },
-      orderBy: { priority: "desc" },
+      orderBy: { name: "asc" },
     }),
     prisma.mistakeRecord.findMany({
       where: { userId: user.id },
@@ -167,8 +167,6 @@ export default async function PracticePage() {
     name: s.name,
     code: s.code,
     color: s.color,
-    icon: s.icon,
-    priority: s.priority,
   }));
 
   return (
@@ -178,7 +176,6 @@ export default async function PracticePage() {
         name: user.name,
         email: user.email,
         coins: user.coins ?? 100,
-        xp: user.xp ?? 0,
       }}
       stats={stats}
       activeSubject={
@@ -188,8 +185,6 @@ export default async function PracticePage() {
               name: activeSubject.name,
               code: activeSubject.code,
               color: activeSubject.color,
-              icon: activeSubject.icon,
-              priority: activeSubject.priority,
             }
           : null
       }
