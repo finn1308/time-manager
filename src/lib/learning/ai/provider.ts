@@ -103,8 +103,8 @@ export async function executeAiLearningAnalysis(
   userId: string,
   userStats: any
 ): Promise<AIProviderResult> {
-  const systemPrompt = `You are a Senior Cognitive Psychologist and Adaptive Learning AI specialist for the LUYENTU vocabulary platform.
-Analyze the user's historical vocabulary learning behavior, error patterns, response speeds, forgetting curves, and cross-skill performance.
+  const systemPrompt = `You are a Senior Cognitive Psychologist and Adaptive Learning AI specialist for the ChronoMind learning platform.
+Analyze the user's historical learning behavior, error patterns, response speeds, forgetting curves, and cross-skill performance.
 Return a STRICT JSON object conforming to this schema:
 {
   "strongestArea": "string",

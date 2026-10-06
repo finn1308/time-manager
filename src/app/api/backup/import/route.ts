@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     if (!payload || !payload.data) {
       return NextResponse.json(
-        { error: "Tệp sao lưu không đúng định dạng chuẩn của LUYENTU / ChronoMind" },
+        { error: "Tệp sao lưu không đúng định dạng chuẩn của ChronoMind" },
         { status: 400 }
       );
     }
