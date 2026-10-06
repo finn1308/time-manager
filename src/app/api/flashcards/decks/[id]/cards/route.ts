@@ -20,7 +20,19 @@ export async function POST(
       return NextResponse.json({ error: "Không tìm thấy bộ thẻ" }, { status: 404 });
     }
 
-    const { front, back, hint, topic, sourceReference } = await req.json();
+    const {
+      front,
+      back,
+      hint,
+      topic,
+      sourceReference,
+      phonetic,
+      partOfSpeech,
+      exampleSentence,
+      exampleMeaning,
+      imageUrl,
+      audioUrl,
+    } = await req.json();
 
     if (!front || !back || !front.trim() || !back.trim()) {
       return NextResponse.json({ error: "Mặt trước và mặt sau không được để trống" }, { status: 400 });
@@ -34,6 +46,12 @@ export async function POST(
         hint: hint?.trim() || null,
         topic: topic?.trim() || null,
         sourceReference: sourceReference?.trim() || null,
+        phonetic: phonetic?.trim() || null,
+        partOfSpeech: partOfSpeech?.trim() || null,
+        exampleSentence: exampleSentence?.trim() || null,
+        exampleMeaning: exampleMeaning?.trim() || null,
+        imageUrl: imageUrl?.trim() || null,
+        audioUrl: audioUrl?.trim() || null,
         status: "NEW",
         intervalDays: 1,
         easeFactor: 2.5,
