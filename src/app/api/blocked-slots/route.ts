@@ -2,16 +2,35 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 
+const slotsCache = new Map<string, { data: any; expiresAt: number }>();
+const SLOTS_CACHE_TTL_MS = 30_000;
+
+export function invalidateSlotsCache(userId?: string) {
+  if (userId) {
+    slotsCache.delete(userId);
+  } else {
+    slotsCache.clear();
+  }
+}
+
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const cached = slotsCache.get(user.id);
+  if (cached && Date.now() < cached.expiresAt) {
+    return NextResponse.json(cached.data);
+  }
 
   const rules = await prisma.availabilityRule.findMany({
     where: { userId: user.id },
     orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
   });
 
-  return NextResponse.json({ rules, slots: rules });
+  const payload = { rules, slots: rules };
+  slotsCache.set(user.id, { data: payload, expiresAt: Date.now() + SLOTS_CACHE_TTL_MS });
+
+  return NextResponse.json(payload);
 }
 
 export async function POST(req: Request) {
