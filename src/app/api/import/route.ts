@@ -246,7 +246,9 @@ export async function POST(req: NextRequest) {
           type: ev.type || "SELF_STUDY",
           subjectId: mappedSubjectId,
           isLocked: Boolean(ev.isLocked),
-          trackStudyTime: Boolean(ev.trackStudyTime),
+          trackStudyTime: ev.trackStudyTime !== undefined
+            ? Boolean(ev.trackStudyTime)
+            : (ev.type === "SCHOOL" || ev.type === "SELF_STUDY" || ev.type === "STUDY" || Boolean(mappedSubjectId)),
         },
       });
       importedEventsCount++;

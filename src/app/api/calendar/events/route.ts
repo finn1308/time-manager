@@ -180,10 +180,10 @@ export async function POST(req: Request) {
       }
     }
 
-    // 7. Create Event
+    const isStudySchedule = normalizedType === "SCHOOL" || normalizedType === "SELF_STUDY" || normalizedType === "STUDY" || Boolean(subjectId);
     const finalTrackStudyTime = trackStudyTime !== undefined
       ? Boolean(trackStudyTime)
-      : (normalizedType === "SELF_STUDY" || normalizedType === "STUDY");
+      : isStudySchedule;
     const finalIsFlexible = isFlexible !== undefined
       ? Boolean(isFlexible)
       : (normalizedType === "PERSONAL");
@@ -342,7 +342,9 @@ export async function PUT(req: Request) {
           type: type || "OTHER",
           isLocked: isLocked !== undefined ? !!isLocked : false,
           isFlexible: isFlexible !== undefined ? !!isFlexible : (type === "PERSONAL"),
-          trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : (type === "SELF_STUDY" || type === "STUDY"),
+          trackStudyTime: trackStudyTime !== undefined
+            ? !!trackStudyTime
+            : (type === "SCHOOL" || type === "SELF_STUDY" || type === "STUDY" || Boolean(subjectId)),
           timezone: "Asia/Ho_Chi_Minh",
           parentId: cleanOriginalId,
           exceptionDate: targetDateKey,
