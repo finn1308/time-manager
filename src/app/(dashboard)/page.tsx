@@ -81,28 +81,42 @@ export default async function DashboardPage() {
       where: { userId: user.id },
       include: {
         goals: true,
-        studySessions: true,
-        vocabWords: {
-          include: {
-            userProgress: {
-              where: { userId: user.id },
-            },
+        studySessions: {
+          select: {
+            actualDurationSeconds: true,
           },
-        },
-        vocabStudySessions: {
-          where: { userId: user.id },
         },
       },
       orderBy: { priority: "desc" },
     }),
     prisma.studySession.findMany({
       where: { userId: user.id, actualStart: { gte: thirtyDaysAgoUTC } },
-      include: { subject: true },
+      select: {
+        id: true,
+        subjectId: true,
+        actualStart: true,
+        actualDurationSeconds: true,
+        subject: {
+          select: { id: true, name: true, color: true },
+        },
+      },
       orderBy: { actualStart: "desc" },
     }),
     prisma.calendarEvent.findMany({
       where: { userId: user.id, startTime: { gte: thirtyDaysAgoUTC } },
-      include: { subject: true },
+      select: {
+        id: true,
+        title: true,
+        startTime: true,
+        endTime: true,
+        type: true,
+        completed: true,
+        trackStudyTime: true,
+        subjectId: true,
+        subject: {
+          select: { id: true, name: true, color: true },
+        },
+      },
       orderBy: { startTime: "asc" },
     }),
     prisma.studySession.findMany({
