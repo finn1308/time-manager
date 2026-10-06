@@ -35,7 +35,7 @@ export async function GET(req: Request) {
   const rangeStart = startStr ? parseISO(startStr) : subMonths(now, 2);
   const rangeEnd = endStr ? parseISO(endStr) : addMonths(now, 6);
 
-  const cacheKey = `${user.id}:${rangeStart.getTime()}:${rangeEnd.getTime()}`;
+  const cacheKey = `${user.id}:${startStr || "default"}:${endStr || "default"}`;
   const cached = calendarServerCache.get(cacheKey);
   if (cached && Date.now() < cached.expiresAt) {
     return NextResponse.json({ events: cached.data });
@@ -88,7 +88,6 @@ export async function GET(req: Request) {
       studyNotes: {
         select: {
           id: true,
-          title: true,
           content: true,
           createdAt: true,
         },
