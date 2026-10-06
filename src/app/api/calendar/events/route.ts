@@ -400,6 +400,7 @@ export async function PUT(req: Request) {
         },
         include: { subject: true, task: true, goal: true },
       });
+      invalidateCalendarServerCache(user.id);
       return NextResponse.json({ success: true, event: exceptionEvent });
     }
 
@@ -433,6 +434,7 @@ export async function PUT(req: Request) {
       },
     });
 
+    invalidateCalendarServerCache(user.id);
     return NextResponse.json({ success: true, event });
   } catch (err: any) {
     console.error("Update calendar event error:", err);
@@ -598,6 +600,7 @@ export async function DELETE(req: Request) {
       where: { id: targetEvent.id, userId: user.id },
     });
 
+    invalidateCalendarServerCache(user.id);
     return NextResponse.json({ success: true, message: "Đã xóa toàn bộ chuỗi sự kiện thành công" });
   } catch (error: any) {
     console.error("Delete calendar event error:", error);
