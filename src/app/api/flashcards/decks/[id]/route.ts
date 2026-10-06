@@ -66,6 +66,7 @@ export async function PATCH(
       include: { subject: true },
     });
 
+    invalidateDecksCache(user.id);
     return NextResponse.json({ success: true, deck: updated });
   } catch (err: any) {
     console.error("PATCH /api/flashcards/decks/[id] error:", err);
@@ -87,6 +88,7 @@ export async function DELETE(
       where: { id, userId: user.id },
     });
 
+    invalidateDecksCache(user.id);
     return NextResponse.json({ success: true, message: "Đã xóa bộ thẻ" });
   } catch (err: any) {
     console.error("DELETE /api/flashcards/decks/[id] error:", err);
