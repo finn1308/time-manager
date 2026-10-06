@@ -96,6 +96,8 @@ export default async function DashboardPage() {
         subjectId: true,
         actualStart: true,
         actualDurationSeconds: true,
+        productivityScore: true,
+        notes: true,
         subject: {
           select: { id: true, name: true, color: true },
         },
@@ -113,6 +115,10 @@ export default async function DashboardPage() {
         completed: true,
         trackStudyTime: true,
         subjectId: true,
+        plannedDurationMinutes: true,
+        actualDurationMinutes: true,
+        isLocked: true,
+        location: true,
         subject: {
           select: { id: true, name: true, color: true },
         },
