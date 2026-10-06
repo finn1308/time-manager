@@ -74,6 +74,12 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
   const chartData = [];
   const dayNames = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 
+  const isStudyScheduledEvent = (ev: any) => {
+    if ((ev as any).trackStudyTime === false) return false;
+    if ((ev as any).trackStudyTime === true) return true;
+    return ev.type === "SELF_STUDY" || ev.type === "STUDY" || ev.type === "SCHOOL" || Boolean(ev.subjectId);
+  };
+
   if (rangeDays === 7) {
     for (let i = 6; i >= 0; i--) {
       const targetDay = subDays(nowVN, i);
@@ -81,8 +87,7 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
 
       const eventsOnDay = allEvents.filter((ev) =>
         isSameDay(toZonedTime(new Date(ev.startTime), VIETNAM_TIMEZONE), targetDay) &&
-        (ev.type === "SELF_STUDY" || ev.type === "STUDY") &&
-        (ev as any).trackStudyTime !== false
+        isStudyScheduledEvent(ev)
       );
       const plannedMinutes = eventsOnDay.reduce((acc, ev) => {
         const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 60);
@@ -112,8 +117,7 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
         return (
           d >= bucketStart &&
           d <= bucketEnd &&
-          (ev.type === "SELF_STUDY" || ev.type === "STUDY") &&
-          (ev as any).trackStudyTime !== false
+          isStudyScheduledEvent(ev)
         );
       });
       const plannedMinutes = eventsInBucket.reduce((acc, ev) => {
@@ -146,8 +150,7 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
         return (
           d >= bucketStart &&
           d <= bucketEnd &&
-          (ev.type === "SELF_STUDY" || ev.type === "STUDY") &&
-          (ev as any).trackStudyTime !== false
+          isStudyScheduledEvent(ev)
         );
       });
       const plannedMinutes = eventsInBucket.reduce((acc, ev) => {
@@ -190,13 +193,11 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
   const totalActualSeconds = allSessions.reduce((acc, s) => acc + s.actualDurationSeconds, 0);
   const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
 
-  const selfStudyEvents = allEvents.filter(
-    (ev) => (ev.type === "SELF_STUDY" || ev.type === "STUDY") && (ev as any).trackStudyTime !== false
-  );
+  const studyEvents = allEvents.filter(isStudyScheduledEvent);
   const schoolEvents = allEvents.filter((ev) => ev.type === "SCHOOL");
   const personalEvents = allEvents.filter((ev) => ev.type === "PERSONAL");
 
-  const totalPlannedHours = selfStudyEvents.reduce((acc, ev) => {
+  const totalPlannedHours = studyEvents.reduce((acc, ev) => {
     const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
     return acc + Math.max(0, diff);
   }, 0);
