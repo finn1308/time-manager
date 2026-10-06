@@ -120,16 +120,14 @@ export function MonkeyRescueGame({
     else setIsLost(true);
 
     try {
-      await fetch("/api/vocab/sessions", {
+      await fetch("/api/practice/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wordSetId,
-          mode: "SPECIAL",
-          specialGameMode: "GIAI_CUU_KHI",
-          totalItems: 4,
-          correctItems: won ? 4 : 2,
-          coinsDelta: won ? 25 : 5,
+          skillId: "monkey-rescue",
+          score: won ? 4 : 2,
+          total: 4,
+          durationSeconds: 150,
         }),
       });
     } catch (e) {

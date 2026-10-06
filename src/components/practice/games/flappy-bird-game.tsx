@@ -357,16 +357,14 @@ export function FlappyBirdGame({
 
   const handleEndGame = async () => {
     try {
-      await fetch("/api/vocab/sessions", {
+      await fetch("/api/practice/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wordSetId,
-          mode: "SPECIAL",
-          specialGameMode: "CHIM_CHAM_CHI",
-          totalItems: Math.max(1, Math.round(score / 10)),
-          correctItems: Math.round(score / 10),
-          coinsDelta: 20,
+          skillId: "flappy-bird",
+          score: Math.round(score / 10),
+          total: Math.max(1, Math.round(score / 10)),
+          durationSeconds: 120,
         }),
       });
     } catch (e) {
