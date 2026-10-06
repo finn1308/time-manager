@@ -62,6 +62,7 @@ export async function POST(req: Request) {
           })
         )
       );
+      invalidateSlotsCache(user.id);
       return NextResponse.json({ success: true });
     }
 
@@ -77,6 +78,7 @@ export async function POST(req: Request) {
       },
     });
 
+    invalidateSlotsCache(user.id);
     return NextResponse.json({ success: true, rule, slot: rule });
   } catch (err: any) {
     console.error("Create availability rule error:", err);
@@ -96,5 +98,6 @@ export async function DELETE(req: Request) {
     where: { id, userId: user.id },
   });
 
+  invalidateSlotsCache(user.id);
   return NextResponse.json({ success: true });
 }

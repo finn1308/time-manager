@@ -2,9 +2,25 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 
+const decksCache = new Map<string, { data: any; expiresAt: number }>();
+const DECKS_CACHE_TTL_MS = 20_000;
+
+export function invalidateDecksCache(userId?: string) {
+  if (userId) {
+    decksCache.delete(userId);
+  } else {
+    decksCache.clear();
+  }
+}
+
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const cached = decksCache.get(user.id);
+  if (cached && Date.now() < cached.expiresAt) {
+    return NextResponse.json({ decks: cached.data });
+  }
 
   try {
     const decks = await prisma.flashcardDeck.findMany({
