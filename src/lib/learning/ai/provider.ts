@@ -180,7 +180,7 @@ Provide deep cognitive diagnostic analysis and actionable guidance.`;
   const localAnalysis = generateLocalHeuristicAnalysis(userStats);
   return {
     data: localAnalysis,
-    providerUsed: "LUYENTU Cognitive Heuristic Engine (Local Fallback)",
+    providerUsed: "ChronoMind Cognitive Heuristic Engine (Local Fallback)",
   };
 }
 
