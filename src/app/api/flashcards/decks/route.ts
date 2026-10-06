@@ -69,6 +69,7 @@ export async function GET() {
       };
     });
 
+    decksCache.set(user.id, { data: formattedDecks, expiresAt: Date.now() + DECKS_CACHE_TTL_MS });
     return NextResponse.json({ decks: formattedDecks });
   } catch (err: any) {
     console.error("GET /api/flashcards/decks error:", err);
@@ -99,6 +100,7 @@ export async function POST(req: Request) {
       },
     });
 
+    invalidateDecksCache(user.id);
     return NextResponse.json({ success: true, deck }, { status: 201 });
   } catch (err: any) {
     console.error("POST /api/flashcards/decks error:", err);
