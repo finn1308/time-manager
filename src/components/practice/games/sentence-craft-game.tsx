@@ -114,16 +114,14 @@ export function SentenceCraftGame({
   const handleCompleteSession = async () => {
     setIsFinished(true);
     try {
-      await fetch("/api/vocab/sessions", {
+      await fetch("/api/practice/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wordSetId,
-          mode: "SPECIAL",
-          specialGameMode: "SENTENCE",
-          totalItems: words.length,
-          correctItems: completedCount + 1,
-          coinsDelta: 25,
+          skillId: "sentence-craft",
+          score: completedCount + 1,
+          total: words.length,
+          durationSeconds: 180,
         }),
       });
     } catch (e) {
