@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Brain,
   RotateCcw,
@@ -17,13 +18,16 @@ import {
   BookOpen,
   Check,
   X,
-  ChevronRight,
+  Coins,
+  Play,
+  Layers,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export default function UniversalReviewPage() {
+export default function PracticeReviewPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,6 +36,7 @@ export default function UniversalReviewPage() {
   const [completedItems, setCompletedItems] = useState<number>(0);
   const [earnedXp, setEarnedXp] = useState<number>(0);
   const [isFinished, setIsFinished] = useState(false);
+  const startTimeRef = useRef<number>(Date.now());
 
   const fetchReviewItems = async () => {
     try {
@@ -50,6 +55,7 @@ export default function UniversalReviewPage() {
 
   useEffect(() => {
     fetchReviewItems();
+    startTimeRef.current = Date.now();
   }, []);
 
   // Combine items into a prioritized review queue
@@ -63,47 +69,107 @@ export default function UniversalReviewPage() {
 
   const currentItem = reviewQueue[currentIndex];
 
-  const handleRate = async (rating: number, isCorrect: boolean) => {
-    if (!currentItem || submitting) return;
+  const playAudio = (text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
 
-    try {
-      setSubmitting(true);
-      const res = await fetch("/api/review/today", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          itemType: currentItem.reviewType,
-          itemId: currentItem.id,
-          rating,
-          isCorrect,
-        }),
-      });
+  const handleRate = useCallback(
+    async (rating: number, isCorrect: boolean) => {
+      if (!currentItem || submitting) return;
 
-      const json = await res.json();
-      if (json.success) {
-        setEarnedXp((prev) => prev + (json.xpEarned || 10));
-        setCompletedItems((prev) => prev + 1);
+      try {
+        setSubmitting(true);
+        const res = await fetch("/api/review/today", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            itemType: currentItem.reviewType,
+            itemId: currentItem.id,
+            rating,
+            isCorrect,
+          }),
+        });
 
-        if (currentIndex + 1 < reviewQueue.length) {
-          setCurrentIndex((prev) => prev + 1);
-          setShowAnswer(false);
-        } else {
-          setIsFinished(true);
+        const json = await res.json();
+        if (json.success) {
+          setEarnedXp((prev) => prev + (json.xpEarned || 10));
+          setCompletedItems((prev) => prev + 1);
+
+          if (currentIndex + 1 < reviewQueue.length) {
+            setCurrentIndex((prev) => prev + 1);
+            setShowAnswer(false);
+          } else {
+            setIsFinished(true);
+            // Record practice study session
+            const elapsedSeconds = Math.max(
+              30,
+              Math.round((Date.now() - startTimeRef.current) / 1000)
+            );
+            fetch("/api/study-sessions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                actualDurationSeconds: elapsedSeconds,
+                source: "PRACTICE_SESSION",
+                notes: `Phiên ôn tập hôm nay: hoàn thành ${reviewQueue.length} mục`,
+                productivityScore: 90,
+              }),
+            }).catch(() => {});
+          }
+        }
+      } catch (err) {
+        console.error("Error submitting rating:", err);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [currentItem, submitting, currentIndex, reviewQueue.length]
+  );
+
+  // Keyboard shortcut listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (loading || isFinished || !currentItem) return;
+
+      // Space flips answer
+      if (e.code === "Space" && !showAnswer) {
+        e.preventDefault();
+        setShowAnswer(true);
+        return;
+      }
+
+      if (showAnswer) {
+        if (e.key === "1") {
+          e.preventDefault();
+          handleRate(1, false);
+        } else if (e.key === "2") {
+          e.preventDefault();
+          handleRate(2, true);
+        } else if (e.key === "3") {
+          e.preventDefault();
+          handleRate(3, true);
+        } else if (e.key === "4") {
+          e.preventDefault();
+          handleRate(4, true);
         }
       }
-    } catch (err) {
-      console.error("Error submitting rating:", err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [loading, isFinished, currentItem, showAnswer, handleRate]);
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
-          Đang chuẩn bị danh sách ôn tập cá nhân hóa hôm nay...
+        <p className="text-sm font-medium text-[#526b5c] dark:text-[#a3bda9]">
+          Đang chuẩn bị danh sách ôn tập hôm nay...
         </p>
       </div>
     );
@@ -111,31 +177,35 @@ export default function UniversalReviewPage() {
 
   if (isFinished || reviewQueue.length === 0) {
     return (
-      <div className="max-w-2xl mx-auto py-12 px-4 text-center space-y-6">
-        <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/40 rounded-full flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400">
+      <div className="max-w-2xl mx-auto py-12 px-4 text-center space-y-6 animate-in fade-in duration-500">
+        <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950/60 rounded-3xl flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400 shadow-md">
           <Award className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
-          Hoàn thành xuất sắc bài ôn tập hôm nay!
+        <h1 className="text-3xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          Hoàn thành xuất sắc phiên ôn tập!
         </h1>
-        <p className="text-[#526b5c] dark:text-[#a3bda9] max-w-md mx-auto text-sm sm:text-base">
-          Bạn đã hoàn thành {completedItems} mục ôn tập tổng hợp. Não bộ của bạn vừa được kích hoạt Active Recall và Spaced Repetition!
+        <p className="text-[#526b5c] dark:text-[#a3bda9] max-w-md mx-auto text-sm sm:text-base leading-relaxed">
+          {completedItems > 0
+            ? `Bạn đã ôn tập ${completedItems} mục kiến thức. Kết quả đã được cập nhật vào Spaced Repetition và Thống kê giờ học (StudyRecord).`
+            : "Hôm nay không còn mục nào đến hạn ôn tập. Bạn có thể thêm lỗi sai mới hoặc ôn luyện các môn học!"}
         </p>
-        <div className="flex items-center justify-center gap-6 py-4">
-          <div className="p-4 bg-white dark:bg-[#17261c] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-sm">
-            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block">Kinh nghiệm</span>
-            <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">+{earnedXp || 50} XP</span>
+
+        <div className="flex items-center justify-center gap-4 py-4">
+          <div className="p-4 bg-white dark:bg-[#17261c] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-xs min-w-[120px]">
+            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block font-bold">Kinh nghiệm</span>
+            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">+{earnedXp || 50} XP</span>
           </div>
-          <div className="p-4 bg-white dark:bg-[#17261c] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-sm">
-            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block">Đã ôn tập</span>
-            <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+          <div className="p-4 bg-white dark:bg-[#17261c] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-xs min-w-[120px]">
+            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block font-bold">Đã ôn tập</span>
+            <span className="text-2xl font-black text-purple-600 dark:text-purple-400">
               {completedItems || reviewQueue.length} mục
             </span>
           </div>
         </div>
+
         <div className="flex items-center justify-center gap-3 pt-4">
           <Link href="/practice">
-            <Button variant="outline" className="rounded-xl">
+            <Button variant="outline" className="rounded-2xl font-bold border-[#dbe7dd] dark:border-[#263d2e]">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Về Trung tâm Luyện tập
             </Button>
@@ -147,7 +217,7 @@ export default function UniversalReviewPage() {
               setIsFinished(false);
               fetchReviewItems();
             }}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl"
+            className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-bold shadow-xs"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Luyện tập tiếp
@@ -157,103 +227,145 @@ export default function UniversalReviewPage() {
     );
   }
 
-  const progressPercent = Math.round((currentIndex / reviewQueue.length) * 100);
+  const progressPercent = Math.round(((currentIndex + 1) / reviewQueue.length) * 100);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-20">
-      {/* Top Header & Progress */}
-      <div className="flex items-center justify-between">
-        <Link href="/practice">
-          <Button variant="ghost" size="sm" className="rounded-xl text-[#526b5c] hover:text-[#192e22]">
-            <ArrowLeft className="w-4 h-4 mr-1.5" />
-            Quay lại
-          </Button>
-        </Link>
-        <div className="flex items-center space-x-2 text-sm text-[#526b5c] dark:text-[#a3bda9]">
-          <Clock className="w-4 h-4 text-emerald-600" />
-          <span>
+    <div className="max-w-3xl mx-auto space-y-6 pb-20 animate-in fade-in duration-300">
+      {/* Top Rounded Pill Bar matching LuyenTu reference screenshot 4 & 5 */}
+      <div className="rounded-full border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-[#17261c] px-5 py-3 flex items-center justify-between shadow-2xs">
+        {/* Left: XP Coin badge + Counter */}
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/50 text-xs font-black">
+            <Coins className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+            <span>+10 XP</span>
+          </div>
+          <span className="text-xs font-extrabold text-[#192e22] dark:text-[#f0f7f2]">
             {currentIndex + 1} / {reviewQueue.length}
           </span>
         </div>
+
+        {/* Center: Thin Progress Bar */}
+        <div className="flex-1 max-w-xs mx-4 hidden sm:block">
+          <div className="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Right: Actions (Chơi lại, Thoát) */}
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => {
+              setCurrentIndex(0);
+              setShowAnswer(false);
+            }}
+            className="text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center space-x-1 cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Chơi lại</span>
+          </button>
+          <span className="text-gray-300 dark:text-gray-600">•</span>
+          <button
+            onClick={() => router.push("/practice")}
+            className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
+          >
+            Thoát
+          </button>
+        </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="w-full bg-emerald-100 dark:bg-[#1e3324] h-2.5 rounded-full overflow-hidden">
-        <div
-          className="bg-emerald-500 h-full transition-all duration-300 rounded-full"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
-
-      {/* Interactive Active Recall Card */}
-      <Card className="p-6 sm:p-10 rounded-3xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] shadow-lg min-h-[380px] flex flex-col justify-between">
+      {/* Main Active Recall Card matching LuyenTu reference screenshot 4 */}
+      <div
+        onClick={() => {
+          if (!showAnswer) setShowAnswer(true);
+        }}
+        className={`p-8 sm:p-12 rounded-[32px] transition-all min-h-[380px] flex flex-col justify-between cursor-pointer select-none relative shadow-xl ${
+          currentItem.reviewType === "MISTAKE"
+            ? "bg-gradient-to-b from-[#881337] via-[#9f1239] to-[#4c0519] text-white"
+            : "bg-gradient-to-b from-[#4338ca] via-[#3730a3] to-[#312e81] text-white"
+        }`}
+      >
+        {/* Top tag & Subject */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <Badge
-              className={`rounded-full px-3 py-1 font-semibold text-xs ${
-                currentItem.reviewType === "MISTAKE"
-                  ? "bg-rose-100 text-rose-700 border-rose-200"
-                  : currentItem.reviewType === "FLASHCARD"
-                  ? "bg-purple-100 text-purple-700 border-purple-200"
-                  : "bg-emerald-100 text-emerald-700 border-emerald-200"
-              }`}
-            >
+            <span className="text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-white border border-white/20">
               {currentItem.reviewType === "MISTAKE"
-                ? "⚠️ Ngân hàng lỗi sai"
+                ? "⚠️ NGÂN HÀNG LỖI SAI"
                 : currentItem.reviewType === "FLASHCARD"
-                ? `🃏 Flashcard: ${currentItem.deckTitle || "Chung"}`
-                : "📚 Từ vựng LUYENTU"}
-            </Badge>
+                ? `🃏 FLASHCARD: ${currentItem.deckTitle || "CHUNG"}`
+                : "📚 TỪ VỰNG ÔN TẬP"}
+            </span>
 
             {currentItem.subjectName && (
-              <span className="text-xs font-medium text-[#526b5c] dark:text-[#a3bda9]">
+              <span className="text-xs font-bold text-white/80">
                 Môn: {currentItem.subjectName}
               </span>
             )}
           </div>
 
-          {/* Front / Question */}
-          <div className="space-y-4 my-6">
-            <span className="text-xs uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9] font-medium block">
-              Câu hỏi / Khái niệm
-            </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2] leading-relaxed">
+          {/* Central Question / Prompt */}
+          <div className="space-y-4 my-8 text-center">
+            <h2 className="text-2xl sm:text-4xl font-black text-white leading-tight break-words tracking-tight">
               {currentItem.front}
             </h2>
 
-            {currentItem.subtitle && (
-              <p className="text-sm text-[#526b5c] dark:text-[#a3bda9] italic font-mono">
-                {currentItem.subtitle}
-              </p>
+            {/* Phonetic / Part of speech */}
+            {(currentItem.subtitle || currentItem.partOfSpeech) && (
+              <div className="flex items-center justify-center gap-2">
+                {currentItem.partOfSpeech && (
+                  <span className="text-xs uppercase font-extrabold px-2.5 py-0.5 rounded-full bg-white/20 text-white">
+                    {currentItem.partOfSpeech}
+                  </span>
+                )}
+                {currentItem.subtitle && (
+                  <span className="text-sm text-white/80 font-mono italic">
+                    {currentItem.subtitle}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playAudio(currentItem.front);
+                  }}
+                  className="p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-all ml-1 cursor-pointer"
+                  title="Nghe phát âm"
+                >
+                  <Volume2 className="w-4 h-4" />
+                </button>
+              </div>
             )}
 
+            {/* Wrong Answer indicator for mistakes */}
             {currentItem.reviewType === "MISTAKE" && currentItem.userAnswer && (
-              <div className="p-3 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-xl text-xs text-rose-700 dark:text-rose-300">
-                <span className="font-semibold">Lần trước bạn chọn: </span>
-                {currentItem.userAnswer}
+              <div className="inline-block p-3 bg-black/30 rounded-2xl border border-white/10 text-xs text-rose-200 text-left max-w-md mx-auto">
+                <span className="font-bold">Lần trước bạn làm sai: </span>
+                <span>{currentItem.userAnswer}</span>
               </div>
             )}
           </div>
 
-          {/* Back / Answer Reveal */}
+          {/* Answer Reveal Section */}
           {showAnswer && (
-            <div className="pt-6 border-t border-dashed border-emerald-200 dark:border-[#263d2e] space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-              <span className="text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold block">
+            <div className="pt-6 border-t border-dashed border-white/20 space-y-3 animate-in fade-in slide-in-from-top-3 duration-200">
+              <span className="text-xs uppercase font-black tracking-wider text-emerald-300 block text-center">
                 Đáp án chính xác
               </span>
-              <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
+              <p className="text-xl sm:text-2xl font-black text-white text-center">
                 {currentItem.back}
               </p>
 
               {currentItem.explanation && (
-                <div className="p-3 bg-emerald-50 dark:bg-[#1a2f22] rounded-xl text-xs text-[#2d6a4f] dark:text-[#a3bda9]">
-                  <span className="font-semibold">Giải thích chi tiết: </span>
+                <div className="p-4 bg-black/25 rounded-2xl text-xs text-white/90 max-w-lg mx-auto leading-relaxed border border-white/10">
+                  <span className="font-bold text-emerald-300">Giải thích: </span>
                   {currentItem.explanation}
                 </div>
               )}
 
               {currentItem.example && (
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] italic">
+                <p className="text-xs text-white/80 italic text-center max-w-md mx-auto">
                   Ví dụ: {currentItem.example}
                 </p>
               )}
@@ -261,55 +373,78 @@ export default function UniversalReviewPage() {
           )}
         </div>
 
-        {/* Action Controls */}
-        <div className="pt-6 border-t border-emerald-50 dark:border-[#263d2e] mt-6">
-          {!showAnswer ? (
-            <Button
-              onClick={() => setShowAnswer(true)}
-              className="w-full py-6 text-base font-bold bg-[#408257] hover:bg-[#346a47] text-white rounded-2xl shadow-md"
-            >
-              Hiện đáp án (Space)
-            </Button>
-          ) : (
-            <div className="space-y-3">
-              <span className="text-xs text-center text-[#526b5c] dark:text-[#a3bda9] block">
-                Bạn nhớ khái niệm này ở mức độ nào?
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <Button
-                  onClick={() => handleRate(1, false)}
-                  variant="outline"
-                  className="py-5 rounded-2xl border-rose-200 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
-                >
-                  <X className="w-4 h-4 mr-1.5" />
-                  Chưa thuộc (1)
-                </Button>
-                <Button
-                  onClick={() => handleRate(2, true)}
-                  variant="outline"
-                  className="py-5 rounded-2xl border-amber-200 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/20"
-                >
-                  Khá khó (2)
-                </Button>
-                <Button
-                  onClick={() => handleRate(3, true)}
-                  variant="outline"
-                  className="py-5 rounded-2xl border-blue-200 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20"
-                >
-                  Đã nhớ (3)
-                </Button>
-                <Button
-                  onClick={() => handleRate(4, true)}
-                  className="py-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
-                >
-                  <Check className="w-4 h-4 mr-1.5" />
-                  Rất dễ (4)
-                </Button>
-              </div>
+        {/* Card Footer Hint */}
+        {!showAnswer && (
+          <div className="pt-6 text-center text-xs text-white/70 font-semibold">
+            ⚡ Nhấn <strong className="text-white underline">Space</strong> hoặc click vào thẻ để xem đáp án
+          </div>
+        )}
+      </div>
+
+      {/* Action Controls matching LuyenTu reference screenshot 4 */}
+      <div className="pt-2">
+        {!showAnswer ? (
+          <Button
+            onClick={() => setShowAnswer(true)}
+            className="w-full py-6 text-base font-extrabold bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl shadow-md cursor-pointer transition-all active:scale-[0.99]"
+          >
+            Hiện đáp án (Nhấn Space)
+          </Button>
+        ) : (
+          <div className="space-y-3">
+            <span className="text-xs text-center font-bold text-[#526b5c] dark:text-[#a3bda9] block">
+              Bạn nhớ khái niệm này ở mức độ nào? (Nhấn phím 1 - 4)
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {/* Rating 1: Quên */}
+              <button
+                onClick={() => handleRate(1, false)}
+                disabled={submitting}
+                className="p-3.5 rounded-2xl border-2 border-rose-400 bg-white dark:bg-[#17261c] text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
+              >
+                <div className="flex items-center space-x-1">
+                  <X className="w-4 h-4 stroke-[3]" />
+                  <span>Quên (1)</span>
+                </div>
+                <span className="text-[10px] text-gray-400 font-normal">Chưa thuộc</span>
+              </button>
+
+              {/* Rating 2: Khó */}
+              <button
+                onClick={() => handleRate(2, true)}
+                disabled={submitting}
+                className="p-3.5 rounded-2xl border-2 border-amber-400 bg-white dark:bg-[#17261c] text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
+              >
+                <span>Khá khó (2)</span>
+                <span className="text-[10px] text-gray-400 font-normal">Cần ôn thêm</span>
+              </button>
+
+              {/* Rating 3: Nhớ */}
+              <button
+                onClick={() => handleRate(3, true)}
+                disabled={submitting}
+                className="p-3.5 rounded-2xl border-2 border-sky-400 bg-white dark:bg-[#17261c] text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
+              >
+                <span>Đã nhớ (3)</span>
+                <span className="text-[10px] text-gray-400 font-normal">Khá ổn</span>
+              </button>
+
+              {/* Rating 4: Thuộc */}
+              <button
+                onClick={() => handleRate(4, true)}
+                disabled={submitting}
+                className="p-3.5 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 cursor-pointer"
+              >
+                <div className="flex items-center space-x-1">
+                  <Check className="w-4 h-4 stroke-[3]" />
+                  <span>Rất dễ (4)</span>
+                </div>
+                <span className="text-[10px] text-emerald-100 font-normal">Đã thuộc lòng</span>
+              </button>
             </div>
-          )}
-        </div>
-      </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

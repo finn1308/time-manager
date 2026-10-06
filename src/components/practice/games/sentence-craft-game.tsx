@@ -14,10 +14,10 @@ import {
   Crown,
   Lock,
 } from "lucide-react";
-import { StudyWord } from "@/components/vocab/interactive-study-modal";
+import { PracticeItem } from "@/components/practice/types";
 
 interface SentenceCraftGameProps {
-  words: StudyWord[];
+  words: PracticeItem[];
   wordSetId: string;
   isUserPro?: boolean;
   onClose: () => void;

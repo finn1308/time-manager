@@ -16,10 +16,10 @@ import {
   AlertTriangle,
   RotateCcw,
 } from "lucide-react";
-import { StudyWord } from "@/components/vocab/interactive-study-modal";
+import { PracticeItem } from "@/components/practice/types";
 
 interface ComTamGameProps {
-  words: StudyWord[];
+  words: PracticeItem[];
   wordSetId: string;
   initialCoins?: number;
   onClose: () => void;

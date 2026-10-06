@@ -16,10 +16,10 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
-import { StudyWord } from "@/components/vocab/interactive-study-modal";
+import { PracticeItem } from "@/components/practice/types";
 
 interface MonkeyRescueGameProps {
-  words: StudyWord[];
+  words: PracticeItem[];
   wordSetId: string;
   onClose: () => void;
   onFinish?: (won: boolean) => void;

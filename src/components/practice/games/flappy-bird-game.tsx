@@ -13,10 +13,10 @@ import {
   Coins,
   Sparkles,
 } from "lucide-react";
-import { StudyWord } from "@/components/vocab/interactive-study-modal";
+import { PracticeItem } from "@/components/practice/types";
 
 interface FlappyBirdGameProps {
-  words: StudyWord[];
+  words: PracticeItem[];
   wordSetId: string;
   onClose: () => void;
   onFinish?: (score: number) => void;
@@ -46,7 +46,7 @@ export function FlappyBirdGame({
       x: number;
       topHeight: number;
       gap: number;
-      word: StudyWord;
+      word: PracticeItem;
       correctInTop: boolean;
       topText: string;
       bottomText: string;
