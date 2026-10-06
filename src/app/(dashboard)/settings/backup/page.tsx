@@ -88,7 +88,7 @@ export default function BackupCenterPage() {
           Xuất dữ liệu học tập (Data Export)
         </div>
         <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
-          Dữ liệu bao gồm: Môn học, Đề cương, Ghi chú, Flashcards, Từ vựng LUYENTU, Lịch học, Nhiệm vụ, Ngân hàng lỗi sai, Kế hoạch ôn thi và Hồ sơ nhận thức AI.
+          Dữ liệu bao gồm: Môn học, Đề cương, Ghi chú, Flashcards, Dữ liệu luyện tập, Lịch học, Nhiệm vụ, Ngân hàng lỗi sai, Kế hoạch ôn thi và Hồ sơ nhận thức AI.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -128,7 +128,7 @@ export default function BackupCenterPage() {
               {restoring ? "Đang giải nén và khôi phục dữ liệu..." : "Bấm vào đây để chọn tệp .json sao lưu"}
             </span>
             <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
-              Hỗ trợ định dạng JSON sao lưu chuẩn LUYENTU / ChronoMind
+              Hỗ trợ định dạng JSON sao lưu chuẩn ChronoMind
             </span>
             <input
               type="file"

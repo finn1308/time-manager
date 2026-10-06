@@ -477,7 +477,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* LUYENTU AI Recommendations & Continue Learning */}
+      {/* AI Recommendations & Continue Learning */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4 pb-2">
         <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
           <CardHeader className="pb-3">
