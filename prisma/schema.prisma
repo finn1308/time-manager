@@ -43,6 +43,7 @@ model User {
   quizAttempts          QuizAttempt[]
   flashcardDecks        FlashcardDeck[]
   flashcardReviews      FlashcardReview[]
+  flashcardStudySessions FlashcardStudySession[]
   resources             Resource[]
   studyNotes            StudyNote[]
   tasks                 Task[]
@@ -642,10 +643,11 @@ model FlashcardDeck {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject    Subject?      @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  stage      RoadmapStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
-  flashcards Flashcard[]
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject?                @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  stage         RoadmapStage?           @relation(fields: [stageId], references: [id], onDelete: SetNull)
+  flashcards    Flashcard[]
+  studySessions FlashcardStudySession[]
 
   @@index([userId])
 }
@@ -665,11 +667,23 @@ model Flashcard {
   status          String    @default("NEW") // NEW, LEARNING, REVIEW, MASTERED
   lastReviewed    DateTime?
   nextReview      DateTime?
+
+  // Rich metadata for language learning & study modes
+  phonetic        String?
+  partOfSpeech    String?
+  exampleSentence String?   @db.Text
+  exampleMeaning  String?   @db.Text
+  imageUrl        String?
+  audioUrl        String?
+  correctCount    Int       @default(0)
+  incorrectCount  Int       @default(0)
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  deck    FlashcardDeck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  reviews FlashcardReview[]
+  deck            FlashcardDeck            @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  reviews         FlashcardReview[]
+  studyQuestions  FlashcardStudyQuestion[]
 
   @@index([deckId])
   @@index([status, nextReview])
@@ -688,6 +702,48 @@ model FlashcardReview {
   flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
 
   @@index([userId, flashcardId])
+}
+
+model FlashcardStudySession {
+  id              String                   @id @default(cuid())
+  userId          String
+  deckId          String
+  mode            String                   @default("ALL") // ALL, FLASHCARD, QUIZ, LISTENING, TYPING, MATCHING
+  startedAt       DateTime                 @default(now())
+  completedAt     DateTime?
+  totalQuestions  Int                      @default(0)
+  correctAnswers  Int                      @default(0)
+  wrongAnswers    Int                      @default(0)
+  accuracy        Float                    @default(0)
+  durationSeconds Int                      @default(0)
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck            FlashcardDeck            @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  questions       FlashcardStudyQuestion[]
+
+  @@index([userId, deckId])
+  @@index([userId, startedAt])
+}
+
+model FlashcardStudyQuestion {
+  id             String                @id @default(cuid())
+  sessionId      String
+  cardId         String
+  questionType   String                // FLASHCARD, EN_TO_VI, VI_TO_EN, CONTEXT_IMAGE, LISTENING_TYPING, EN_TYPING_VI, VI_TYPING_EN, MATCHING
+  question       String                @db.Text
+  userAnswer     String?               @db.Text
+  correctAnswer  String                @db.Text
+  isCorrect      Boolean
+  responseTimeMs Int                   @default(0)
+  createdAt      DateTime              @default(now())
+
+  session        FlashcardStudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  card           Flashcard             @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([cardId])
 }
 
 // ==============================================================================
