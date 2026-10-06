@@ -113,7 +113,7 @@ export default async function DashboardPage() {
     }),
     prisma.calendarEvent.findMany({
       where: { userId: user.id },
-      select: { type: true, startTime: true, endTime: true, subjectId: true },
+      select: { type: true, startTime: true, endTime: true, subjectId: true, trackStudyTime: true },
     }),
     prisma.studySession.aggregate({
       where: { userId: user.id },
@@ -130,12 +130,17 @@ export default async function DashboardPage() {
   const totalActualSeconds = sessionAggregates?._sum?.actualDurationSeconds || 0;
   const actualHours = Math.round((totalActualSeconds / 3600) * 10) / 10;
 
-  // Planned study hours ONLY counts SELF_STUDY / STUDY events
-  const selfStudyEvents = allEventsMinimal.filter((ev) => ev.type === "SELF_STUDY" || ev.type === "STUDY");
+  // Planned study hours counts all study schedules (SELF_STUDY, STUDY, SCHOOL, or trackStudyTime === true)
+  const isStudyScheduledEvent = (ev: any) => {
+    if ((ev as any).trackStudyTime === false) return false;
+    if ((ev as any).trackStudyTime === true) return true;
+    return ev.type === "SELF_STUDY" || ev.type === "STUDY" || ev.type === "SCHOOL" || Boolean(ev.subjectId);
+  };
+  const studyEvents = allEventsMinimal.filter(isStudyScheduledEvent);
   const schoolEvents = allEventsMinimal.filter((ev) => ev.type === "SCHOOL");
   const personalEvents = allEventsMinimal.filter((ev) => ev.type === "PERSONAL");
 
-  const totalPlannedHours = selfStudyEvents.reduce((acc, ev) => {
+  const totalPlannedHours = studyEvents.reduce((acc, ev) => {
     const diff = (new Date(ev.endTime).getTime() - new Date(ev.startTime).getTime()) / (1000 * 3600);
     return acc + Math.max(0, diff);
   }, 0);
