@@ -3,6 +3,22 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { convertGrade10To4 } from "@/lib/academic/gpa-calculator";
 
+// In-memory cache for subjects queries (30s TTL per user query)
+const subjectsServerCache = new Map<string, { data: any; expiresAt: number }>();
+const SUBJECTS_CACHE_TTL_MS = 30_000;
+
+export function invalidateSubjectsServerCache(userId?: string) {
+  if (userId) {
+    for (const key of subjectsServerCache.keys()) {
+      if (key.startsWith(userId)) {
+        subjectsServerCache.delete(key);
+      }
+    }
+  } else {
+    subjectsServerCache.clear();
+  }
+}
+
 export async function GET(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -10,51 +26,78 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const semesterId = searchParams.get("semesterId");
   const academicStatus = searchParams.get("status");
+  const isMinimal = searchParams.get("minimal") === "true";
+
+  const cacheKey = `${user.id}:${semesterId || "all"}:${academicStatus || "all"}:${isMinimal}`;
+  const cached = subjectsServerCache.get(cacheKey);
+  if (cached && Date.now() < cached.expiresAt) {
+    return NextResponse.json({ subjects: cached.data });
+  }
 
   const whereClause: any = { userId: user.id };
   if (semesterId) whereClause.semesterId = semesterId;
   if (academicStatus) whereClause.status = academicStatus;
 
-  const subjects = await prisma.subject.findMany({
-    where: whereClause,
-    include: {
-      semester: {
-        select: {
-          id: true,
-          name: true,
-          type: true,
-          academicYear: {
-            select: {
-              id: true,
-              name: true,
-              yearNumber: true,
+  let subjects;
+  if (isMinimal) {
+    subjects = await prisma.subject.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        color: true,
+        priority: true,
+        targetHours: true,
+        status: true,
+        isArchived: true,
+      },
+      orderBy: [{ isArchived: "asc" }, { priority: "desc" }, { createdAt: "desc" }],
+    });
+  } else {
+    subjects = await prisma.subject.findMany({
+      where: whereClause,
+      include: {
+        semester: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            academicYear: {
+              select: {
+                id: true,
+                name: true,
+                yearNumber: true,
+              },
             },
           },
         },
-      },
-      goals: {
-        include: {
-          milestoneRecords: true,
+        goals: {
+          include: {
+            milestoneRecords: true,
+          },
+        },
+        tasks: {
+          where: { isCompleted: false },
+          take: 10,
+        },
+        studySessions: {
+          orderBy: { actualStart: "desc" },
+          take: 5,
+        },
+        projects: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+          },
         },
       },
-      tasks: {
-        where: { isCompleted: false },
-        take: 10,
-      },
-      studySessions: {
-        orderBy: { actualStart: "desc" },
-        take: 5,
-      },
-      projects: {
-        select: {
-          id: true,
-          title: true,
-          status: true,
-        },
-      },
-    },
-    orderBy: [{ isArchived: "asc" }, { priority: "desc" }, { createdAt: "desc" }],
-  });
+      orderBy: [{ isArchived: "asc" }, { priority: "desc" }, { createdAt: "desc" }],
+    });
+  }
+
+  subjectsServerCache.set(cacheKey, { data: subjects, expiresAt: Date.now() + SUBJECTS_CACHE_TTL_MS });
 
   return NextResponse.json({ subjects });
 }
@@ -150,6 +193,7 @@ export async function POST(req: Request) {
       },
     });
 
+    invalidateSubjectsServerCache(user.id);
     return NextResponse.json({ success: true, subject });
   } catch (err: any) {
     console.error("Error creating subject:", err);
@@ -258,6 +302,7 @@ export async function PUT(req: Request) {
       },
     });
 
+    invalidateSubjectsServerCache(user.id);
     return NextResponse.json({ success: true, subject });
   } catch (err: any) {
     console.error("Error updating subject:", err);
@@ -296,5 +341,6 @@ export async function DELETE(req: Request) {
     where: { id, userId: user.id },
   });
 
+  invalidateSubjectsServerCache(user.id);
   return NextResponse.json({ success: true });
 }

@@ -61,8 +61,29 @@ export async function getSession(): Promise<SessionPayload | null> {
   }
 }
 
+// In-memory cache for user sessions across API routes and RSC (30s TTL)
+const authMemoryCache = new Map<string, { user: any; expiresAt: number }>();
+const AUTH_CACHE_TTL_MS = 30_000;
+
+export function invalidateUserCache(userId?: string) {
+  if (userId) {
+    authMemoryCache.delete(userId);
+  } else {
+    authMemoryCache.clear();
+  }
+}
+
 export const getCurrentUser = cache(async () => {
   const session = await getSession();
+  const cacheKey = session?.userId || (process.env.NODE_ENV !== "production" ? "__dev_user__" : null);
+
+  if (cacheKey) {
+    const cached = authMemoryCache.get(cacheKey);
+    if (cached && Date.now() < cached.expiresAt) {
+      return cached.user;
+    }
+  }
+
   if (session?.userId) {
     try {
       const user = await prisma.user.findUnique({
@@ -79,7 +100,10 @@ export const getCurrentUser = cache(async () => {
           createdAt: true,
         },
       });
-      if (user) return user;
+      if (user) {
+        authMemoryCache.set(session.userId, { user, expiresAt: Date.now() + AUTH_CACHE_TTL_MS });
+        return user;
+      }
     } catch {
       // ignore
     }
@@ -102,7 +126,10 @@ export const getCurrentUser = cache(async () => {
           createdAt: true,
         },
       });
-      return devUser;
+      if (devUser) {
+        authMemoryCache.set("__dev_user__", { user: devUser, expiresAt: Date.now() + AUTH_CACHE_TTL_MS });
+        return devUser;
+      }
     } catch {
       return null;
     }
@@ -120,6 +147,12 @@ export async function requireAuth() {
 }
 
 export async function destroySession(): Promise<void> {
+  const session = await getSession();
+  if (session?.userId) {
+    invalidateUserCache(session.userId);
+  } else {
+    invalidateUserCache();
+  }
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
