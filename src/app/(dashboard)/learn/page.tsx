@@ -62,9 +62,9 @@ export default function LearnHubPage() {
       border: "border-indigo-200"
     },
     {
-      title: "Luyện từ vựng (Practice Vocabulary)",
-      description: "Hệ thống từ vựng học thuật tích hợp trong Practice Hub",
-      href: "/practice/vocabulary",
+      title: "Trung tâm Luyện tập (Practice)",
+      description: "Ôn tập ngắt quãng, Ngân hàng lỗi sai và Flashcards",
+      href: "/practice",
       icon: Languages,
       color: "bg-teal-100 text-teal-700",
       border: "border-teal-200"
