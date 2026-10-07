@@ -98,7 +98,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
       {/* Modern Rounded Table Container */}
       <div className="overflow-x-auto rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
-        <table className="w-full text-left border-collapse text-xs">
+        <table className="w-full min-w-[800px] text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-[#dbe7dd]/80 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9] font-bold uppercase tracking-wider">
               <th className="py-3.5 px-5">Môn học</th>
