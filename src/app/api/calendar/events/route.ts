@@ -128,6 +128,7 @@ export async function POST(req: Request) {
       recurrence,
       recurrenceRule,
       recurrenceEnd,
+      schedules,
     } = body;
 
     // 1. Validate Title
@@ -135,16 +136,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Tiêu đề sự kiện không được để trống" }, { status: 400 });
     }
 
-    // 2. Validate Dates
-    const start = new Date(startTime);
-    const end = new Date(endTime);
+    // 2. Validate Dates (Only if not using schedules array)
+    let start: Date;
+    let end: Date;
+    if (!schedules || schedules.length === 0) {
+      start = new Date(startTime);
+      end = new Date(endTime);
 
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return NextResponse.json({ error: "Định dạng thời gian không hợp lệ" }, { status: 400 });
-    }
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return NextResponse.json({ error: "Định dạng thời gian không hợp lệ" }, { status: 400 });
+      }
 
-    if (end <= start) {
-      return NextResponse.json({ error: "Thời gian kết thúc phải sau thời gian bắt đầu" }, { status: 400 });
+      if (end <= start) {
+        return NextResponse.json({ error: "Thời gian kết thúc phải sau thời gian bắt đầu" }, { status: 400 });
+      }
     }
 
     // 3. Validate Event Type
@@ -202,9 +207,12 @@ export async function POST(req: Request) {
         },
       });
 
-      const expandedEvents = expandRecurringEvents(existingEvents as any, start, end);
+      const expandedEvents = expandRecurringEvents(existingEvents as any, 
+        schedules && schedules.length > 0 ? new Date(schedules[0].startTime) : start!, 
+        schedules && schedules.length > 0 ? new Date(schedules[schedules.length - 1].endTime) : end!
+      );
 
-      const timeSlots = expandedEvents.map((e: any) => ({
+      const existingTimeSlots = expandedEvents.map((e: any) => ({
         start: e.startTime,
         end: e.endTime,
         title: e.title,
@@ -216,12 +224,26 @@ export async function POST(req: Request) {
         select: { dayOfWeek: true, startTime: true, endTime: true, isAvailable: true },
       });
 
-      const conflictResult = detectSlotConflict(start, end, timeSlots, rules);
-      if (conflictResult.hasConflict) {
-        return NextResponse.json(
-          { error: conflictResult.reason || "Trùng lịch với sự kiện hoặc khung giờ bận khác" },
-          { status: 400 }
-        );
+      if (schedules && schedules.length > 0) {
+        for (const sch of schedules) {
+          const schStart = new Date(sch.startTime);
+          const schEnd = new Date(sch.endTime);
+          const conflictResult = detectSlotConflict(schStart, schEnd, existingTimeSlots, rules);
+          if (conflictResult.hasConflict) {
+            return NextResponse.json(
+              { error: conflictResult.reason || `Trùng lịch: ${title} (${schStart.getHours()}h-${schEnd.getHours()}h)` },
+              { status: 400 }
+            );
+          }
+        }
+      } else {
+        const conflictResult = detectSlotConflict(start!, end!, existingTimeSlots, rules);
+        if (conflictResult.hasConflict) {
+          return NextResponse.json(
+            { error: conflictResult.reason || "Trùng lịch với sự kiện hoặc khung giờ bận khác" },
+            { status: 400 }
+          );
+        }
       }
     }
 
@@ -233,35 +255,58 @@ export async function POST(req: Request) {
       ? Boolean(isFlexible)
       : (normalizedType === "PERSONAL");
 
+    const baseData = {
+      userId: user.id,
+      title: title.trim(),
+      description: description?.trim() || null,
+      location: location?.trim() || null,
+      subjectId: subjectId || null,
+      taskId: taskId || null,
+      goalId: goalId || null,
+      completed: false,
+      type: normalizedType,
+      isLocked: !!isLocked,
+      isFlexible: finalIsFlexible,
+      trackStudyTime: finalTrackStudyTime,
+      timezone: timezone || "Asia/Ho_Chi_Minh",
+      isAiGenerated: false,
+      recurrenceEnd: recurrenceEnd ? new Date(recurrenceEnd) : null,
+    };
+
+    if (schedules && schedules.length > 0) {
+      const generatedSeriesId = seriesId || crypto.randomUUID();
+      const events = await Promise.all(schedules.map((sch: any) => {
+        const schStart = new Date(sch.startTime);
+        const schEnd = new Date(sch.endTime);
+        return prisma.calendarEvent.create({
+          data: {
+            ...baseData,
+            startTime: schStart,
+            endTime: schEnd,
+            plannedDurationMinutes: Math.max(1, Math.round((schEnd.getTime() - schStart.getTime()) / 60000)),
+            seriesId: generatedSeriesId,
+            recurrence: recurrence || "NONE",
+            recurrenceRule: sch.recurrenceRule || null,
+          },
+          include: { subject: true, task: true, goal: true },
+        });
+      }));
+
+      invalidateCalendarServerCache(user.id);
+      return NextResponse.json({ success: true, event: events[0], events });
+    }
+
     const event = await prisma.calendarEvent.create({
       data: {
-        userId: user.id,
-        title: title.trim(),
-        description: description?.trim() || null,
-        location: location?.trim() || null,
-        subjectId: subjectId || null,
-        taskId: taskId || null,
-        goalId: goalId || null,
-        plannedDurationMinutes: Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)),
-        completed: false,
-        startTime: start,
-        endTime: end,
-        type: normalizedType,
-        isLocked: !!isLocked,
-        isFlexible: finalIsFlexible,
-        trackStudyTime: finalTrackStudyTime,
+        ...baseData,
+        startTime: start!,
+        endTime: end!,
+        plannedDurationMinutes: Math.max(1, Math.round((end!.getTime() - start!.getTime()) / 60000)),
         seriesId: seriesId || null,
-        timezone: timezone || "Asia/Ho_Chi_Minh",
-        isAiGenerated: false,
         recurrence: recurrence || "NONE",
         recurrenceRule: recurrenceRule || null,
-        recurrenceEnd: recurrenceEnd ? new Date(recurrenceEnd) : null,
       },
-      include: {
-        subject: true,
-        task: true,
-        goal: true,
-      },
+      include: { subject: true, task: true, goal: true },
     });
 
     invalidateCalendarServerCache(user.id);

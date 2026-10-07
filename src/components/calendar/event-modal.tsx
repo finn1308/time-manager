@@ -113,6 +113,11 @@ export function EventModal({
   const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>("");
 
+  // Multi-slot state
+  const [isMultiSlot, setIsMultiSlot] = useState(false);
+  const [multiSlots, setMultiSlots] = useState<Record<number, Array<{id: string, start: string, end: string}>>>({});
+  const [activeMultiSlotDay, setActiveMultiSlotDay] = useState<number | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -195,6 +200,9 @@ export function EventModal({
       setRecurrence("NONE");
       setWeeklyDays([]);
       setRecurrenceEndDate("");
+      setIsMultiSlot(false);
+      setMultiSlots({});
+      setActiveMultiSlotDay(null);
       setActiveModalTab("schedule");
     }
     setErrorMsg(null);
@@ -236,7 +244,7 @@ export function EventModal({
   const buildRRule = () => {
     if (recurrence === "NONE") return null;
     let rule = `FREQ=${recurrence}`;
-    if (recurrence === "WEEKLY" && weeklyDays.length > 0) {
+    if (recurrence === "WEEKLY" && weeklyDays.length > 0 && !isMultiSlot) {
       const days = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
       const byDay = weeklyDays.map((d) => days[d]).join(",");
       rule += `;BYDAY=${byDay}`;
@@ -249,6 +257,14 @@ export function EventModal({
     return rule;
   };
 
+  const getNextDateForDayOfWeek = (baseDate: Date, dayOfWeek: number) => {
+    const d = new Date(baseDate);
+    const currentDay = d.getDay();
+    const distance = (dayOfWeek + 7 - currentDay) % 7;
+    d.setDate(d.getDate() + distance);
+    return d;
+  };
+
   const handleSaveAction = async (mode: "SINGLE" | "ALL" = "SINGLE") => {
     setErrorMsg(null);
     setIsSubmitting(true);
@@ -258,10 +274,42 @@ export function EventModal({
       if (!dateStr) throw new Error("Vui lòng chọn ngày");
       if (!startTimeStr || !endTimeStr) throw new Error("Vui lòng nhập giờ bắt đầu và kết thúc");
 
-      const startUTC = makeVNDate(dateStr, startTimeStr);
-      const endUTC = makeVNDate(dateStr, endTimeStr);
+      let startUTC = new Date();
+      let endUTC = new Date();
+      let schedulesPayload: any[] = [];
 
-      if (endUTC <= startUTC) throw new Error("Giờ kết thúc phải sau giờ bắt đầu");
+      if (isMultiSlot && recurrence === "WEEKLY") {
+        if (weeklyDays.length === 0) throw new Error("Vui lòng chọn ít nhất một ngày trong tuần");
+        const baseDate = new Date(dateStr);
+        const daysCode = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+        
+        for (const day of weeklyDays) {
+          const slots = multiSlots[day] || [{ start: startTimeStr, end: endTimeStr }];
+          const targetDate = getNextDateForDayOfWeek(baseDate, day);
+          const targetDateStr = formatVN(targetDate, "yyyy-MM-dd");
+          
+          for (const slot of slots) {
+            const slotStart = makeVNDate(targetDateStr, slot.start);
+            const slotEnd = makeVNDate(targetDateStr, slot.end);
+            if (slotEnd <= slotStart) throw new Error(`Giờ kết thúc phải sau giờ bắt đầu (Thứ ${day === 0 ? "CN" : day + 1})`);
+            
+            schedulesPayload.push({
+              startTime: slotStart.toISOString(),
+              endTime: slotEnd.toISOString(),
+              recurrenceRule: `FREQ=WEEKLY;BYDAY=${daysCode[day]}${recurrenceEndDate ? `;UNTIL=${new Date(recurrenceEndDate).toISOString().replace(/[-:]/g, "").split(".")[0]}Z` : ''}`,
+            });
+          }
+        }
+        // Use the first schedule as the master for the single-event fallback validation
+        if (schedulesPayload.length > 0) {
+          startUTC = new Date(schedulesPayload[0].startTime);
+          endUTC = new Date(schedulesPayload[0].endTime);
+        }
+      } else {
+        startUTC = makeVNDate(dateStr, startTimeStr);
+        endUTC = makeVNDate(dateStr, endTimeStr);
+        if (endUTC <= startUTC) throw new Error("Giờ kết thúc phải sau giờ bắt đầu");
+      }
 
       const rrule = buildRRule();
 
@@ -284,8 +332,9 @@ export function EventModal({
         trackStudyTime: isStudyEventCategory(eventType, subjectId),
         timezone: "Asia/Ho_Chi_Minh",
         recurrence,
-        recurrenceRule: rrule,
+        recurrenceRule: isMultiSlot ? undefined : rrule,
         recurrenceEnd: recurrenceEndDate ? new Date(recurrenceEndDate).toISOString() : null,
+        schedules: isMultiSlot ? schedulesPayload : undefined,
       };
 
       const res = await fetch("/api/calendar/events", {
@@ -391,9 +440,55 @@ export function EventModal({
   const toggleDay = (dayIndex: number) => {
     if (weeklyDays.includes(dayIndex)) {
       setWeeklyDays(weeklyDays.filter((d) => d !== dayIndex));
+      if (activeMultiSlotDay === dayIndex) setActiveMultiSlotDay(null);
     } else {
       setWeeklyDays([...weeklyDays, dayIndex].sort());
+      setActiveMultiSlotDay(dayIndex);
+      // Initialize with default slot if empty
+      if (!multiSlots[dayIndex]) {
+        setMultiSlots(prev => ({
+          ...prev,
+          [dayIndex]: [{ id: crypto.randomUUID(), start: startTimeStr, end: endTimeStr }]
+        }));
+      }
     }
+  };
+
+  const addSlotToDay = (dayIndex: number) => {
+    setMultiSlots(prev => ({
+      ...prev,
+      [dayIndex]: [...(prev[dayIndex] || []), { id: crypto.randomUUID(), start: "12:00", end: "13:00" }]
+    }));
+  };
+
+  const removeSlotFromDay = (dayIndex: number, slotId: string) => {
+    setMultiSlots(prev => ({
+      ...prev,
+      [dayIndex]: prev[dayIndex].filter(s => s.id !== slotId)
+    }));
+  };
+
+  const updateSlotTime = (dayIndex: number, slotId: string, field: "start"|"end", value: string) => {
+    setMultiSlots(prev => ({
+      ...prev,
+      [dayIndex]: prev[dayIndex].map(s => s.id === slotId ? { ...s, [field]: value } : s)
+    }));
+  };
+
+  const applySlotToAllSelectedDays = (dayIndex: number) => {
+    const sourceSlots = multiSlots[dayIndex];
+    if (!sourceSlots) return;
+    
+    setMultiSlots(prev => {
+      const next = { ...prev };
+      weeklyDays.forEach(d => {
+        if (d !== dayIndex) {
+          next[d] = sourceSlots.map(s => ({ ...s, id: crypto.randomUUID() }));
+        }
+      });
+      return next;
+    });
+    alert("Đã sao chép khung giờ sang các ngày khác thành công!");
   };
 
   const handleSelectEventType = (t: CalendarEventType) => {
