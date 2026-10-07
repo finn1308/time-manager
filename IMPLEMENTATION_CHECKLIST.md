@@ -14,4 +14,4 @@
 - [x] PARTIAL-002: Offline Mode / PWA Support for Study Session Timer.
 
 ## Low
-- [ ] BUG-005: Fix Responsive issues on small screens (320px) for tables and `EventModal`.
+- [x] BUG-005: Fix Responsive issues on small screens (320px) for tables and `EventModal`.
