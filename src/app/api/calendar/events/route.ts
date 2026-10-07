@@ -450,6 +450,34 @@ export async function PUT(req: Request) {
 
     const targetId = updateMode === "ALL" && cleanOriginalId ? cleanOriginalId : cleanId;
 
+    if (updateMode === "SERIES") {
+      const targetEvent = await prisma.calendarEvent.findFirst({ where: { id: targetId, userId: user.id } });
+      if (targetEvent?.seriesId) {
+        // Update all master events in the series with shared attributes
+        await prisma.calendarEvent.updateMany({
+          where: { seriesId: targetEvent.seriesId, userId: user.id },
+          data: {
+            title: title !== undefined ? title.trim() : undefined,
+            description: description !== undefined ? description?.trim() || null : undefined,
+            location: location !== undefined ? location?.trim() || null : undefined,
+            subjectId: subjectId !== undefined ? subjectId || null : undefined,
+            taskId: taskId !== undefined ? taskId || null : undefined,
+            goalId: goalId !== undefined ? goalId || null : undefined,
+            type: type !== undefined ? type : undefined,
+            isLocked: isLocked !== undefined ? !!isLocked : undefined,
+            isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
+            trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : undefined,
+            recurrenceEnd: recurrenceEnd !== undefined ? (recurrenceEnd ? new Date(recurrenceEnd) : null) : undefined,
+          }
+        });
+        
+        // Need to return one event to satisfy the API response
+        const updatedEvent = await prisma.calendarEvent.findFirst({ where: { id: targetId }, include: { subject: true, task: true, goal: true } });
+        invalidateCalendarServerCache(user.id);
+        return NextResponse.json({ success: true, event: updatedEvent });
+      }
+    }
+
     const event = await prisma.calendarEvent.update({
       where: { id: targetId, userId: user.id },
       data: {
@@ -602,29 +630,38 @@ export async function DELETE(req: Request) {
     }
 
     // Case 4: Delete master event and all its occurrences (deleteMode === "ALL" or non-recurring single event)
-    // Handle study sessions cleanly: remove CALENDAR_CHECKBOX sessions and update Subject completedHours
-    const linkedSessions = await prisma.studySession.findMany({
-      where: {
-        calendarEventId: targetEvent.id,
-        userId: user.id,
-      },
-    });
+    // Case 5: Delete entire grouped series (deleteMode === "SERIES")
+    let targetEvents = [targetEvent];
+    if (deleteMode === "SERIES" && targetEvent.seriesId) {
+      targetEvents = await prisma.calendarEvent.findMany({
+        where: { seriesId: targetEvent.seriesId, userId: user.id },
+      });
+    }
 
     const affectedSubjectIds = new Set<string>();
 
-    for (const s of linkedSessions) {
-      if (s.subjectId) affectedSubjectIds.add(s.subjectId);
-      if (s.source === "CALENDAR_CHECKBOX") {
-        await prisma.studySession.delete({ where: { id: s.id } });
-      } else {
-        // Retain PIP_TIMER records with historical trace note
-        await prisma.studySession.update({
-          where: { id: s.id },
-          data: {
-            calendarEventId: null,
-            notes: (s.notes ? s.notes + " | " : "") + `[Lịch đã xóa: ${targetEvent.title}]`,
-          },
-        });
+    for (const evt of targetEvents) {
+      const linkedSessions = await prisma.studySession.findMany({
+        where: {
+          calendarEventId: evt.id,
+          userId: user.id,
+        },
+      });
+
+      for (const s of linkedSessions) {
+        if (s.subjectId) affectedSubjectIds.add(s.subjectId);
+        if (s.source === "CALENDAR_CHECKBOX") {
+          await prisma.studySession.delete({ where: { id: s.id } });
+        } else {
+          // Retain PIP_TIMER records with historical trace note
+          await prisma.studySession.update({
+            where: { id: s.id },
+            data: {
+              calendarEventId: null,
+              notes: (s.notes ? s.notes + " | " : "") + `[Lịch đã xóa: ${evt.title}]`,
+            },
+          });
+        }
       }
     }
 
@@ -640,12 +677,13 @@ export async function DELETE(req: Request) {
       });
     }
 
-    await prisma.calendarEvent.delete({
-      where: { id: targetEvent.id, userId: user.id },
+    const eventIdsToDelete = targetEvents.map(e => e.id);
+    await prisma.calendarEvent.deleteMany({
+      where: { id: { in: eventIdsToDelete }, userId: user.id },
     });
 
     invalidateCalendarServerCache(user.id);
-    return NextResponse.json({ success: true, message: "Đã xóa toàn bộ chuỗi sự kiện thành công" });
+    return NextResponse.json({ success: true, message: deleteMode === "SERIES" ? "Đã xóa toàn bộ nhóm lịch thành công" : "Đã xóa toàn bộ chuỗi sự kiện thành công" });
   } catch (error: any) {
     console.error("Delete calendar event error:", error);
     return NextResponse.json({ error: "Lỗi xóa sự kiện: " + (error?.message || "Vui lòng thử lại") }, { status: 500 });

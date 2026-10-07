@@ -123,7 +123,7 @@ export function EventModal({
 
   // Recurring delete modal states
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
-  const [deleteModeChoice, setDeleteModeChoice] = useState<"SINGLE" | "ALL" | "FUTURE">("SINGLE");
+  const [deleteModeChoice, setDeleteModeChoice] = useState<"SINGLE" | "ALL" | "FUTURE" | "SERIES">("SINGLE");
 
   // Fetch tasks and goals for dropdowns
   useEffect(() => {
@@ -361,7 +361,7 @@ export function EventModal({
     handleSaveAction("SINGLE");
   };
 
-  const executeDelete = async (mode: "SINGLE" | "ALL" | "FUTURE") => {
+  const executeDelete = async (mode: "SINGLE" | "ALL" | "FUTURE" | "SERIES") => {
     if (!editingEvent) return;
     try {
       setIsSubmitting(true);
@@ -620,6 +620,33 @@ export function EventModal({
                   </div>
                 </div>
               </label>
+
+              {editingEvent.seriesId && (
+                <label
+                  onClick={() => setDeleteModeChoice("SERIES")}
+                  className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
+                    deleteModeChoice === "SERIES"
+                      ? "border-purple-600 bg-purple-50 dark:bg-purple-950/40 ring-1 ring-purple-600"
+                      : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="deleteMode"
+                    checked={deleteModeChoice === "SERIES"}
+                    onChange={() => setDeleteModeChoice("SERIES")}
+                    className="mt-0.5 text-purple-600 focus:ring-purple-500"
+                  />
+                  <div>
+                    <div className="font-bold text-xs text-purple-700 dark:text-purple-300">
+                      Xóa toàn bộ nhóm lịch môn này
+                    </div>
+                    <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                      Xóa tất cả các khung giờ thuộc các ngày khác nhau (T2, T3...) được tạo cùng đợt.
+                    </div>
+                  </div>
+                </label>
+              )}
             </div>
 
             <DialogFooter className="flex justify-between items-center pt-3 border-t border-[#dbe7dd] dark:border-[#263d2e] mt-4">
