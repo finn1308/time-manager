@@ -9,7 +9,7 @@
 - [x] MISSING-002: Implement Toast Notifications (replace `alert` with `sonner` or `react-hot-toast`).
 
 ## Medium
-- [ ] BUG-003: Add Skeleton UI for loading states (replace text like "Đang tải dữ liệu thời khóa biểu...").
+- [x] BUG-003: Add Skeleton UI for loading states (replace text like "Đang tải dữ liệu thời khóa biểu...").
 - [ ] PARTIAL-001: Improve AI Schedule Integration (if necessary).
 - [ ] PARTIAL-002: Offline Mode / PWA Support for Study Session Timer.
 
