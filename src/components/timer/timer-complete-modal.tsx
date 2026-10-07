@@ -35,17 +35,30 @@ export function TimerCompleteModal({
   const handleSave = async () => {
     try {
       setIsSubmitting(true);
+      
+      const payload = {
+        subjectId: subject.id,
+        calendarEventId: scheduleEventId,
+        taskId: taskId || null,
+        actualDurationSeconds: seconds,
+        productivityScore,
+        notes: notes.trim() || null,
+      };
+
+      if (!navigator.onLine) {
+        // Save to offline storage
+        const offlineData = JSON.parse(localStorage.getItem("offline_study_sessions") || "[]");
+        offlineData.push({ ...payload, timestamp: Date.now() });
+        localStorage.setItem("offline_study_sessions", JSON.stringify(offlineData));
+        toast.success("Mất kết nối mạng. Đã lưu phiên học ngoại tuyến (Offline).");
+        onClose();
+        return;
+      }
+
       const res = await fetch("/api/timer/stop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subjectId: subject.id,
-          calendarEventId: scheduleEventId,
-          taskId: taskId || null,
-          actualDurationSeconds: seconds,
-          productivityScore,
-          notes: notes.trim() || null,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -56,7 +69,20 @@ export function TimerCompleteModal({
       onClose();
     } catch (e) {
       console.error(e);
-      toast.error("Không thể lưu phiên học. Vui lòng thử lại!");
+      // Fallback if fetch fails
+      const payload = {
+        subjectId: subject.id,
+        calendarEventId: scheduleEventId,
+        taskId: taskId || null,
+        actualDurationSeconds: seconds,
+        productivityScore,
+        notes: notes.trim() || null,
+      };
+      const offlineData = JSON.parse(localStorage.getItem("offline_study_sessions") || "[]");
+      offlineData.push({ ...payload, timestamp: Date.now() });
+      localStorage.setItem("offline_study_sessions", JSON.stringify(offlineData));
+      toast.success("Đã xảy ra lỗi mạng. Đã lưu phiên học ngoại tuyến (Offline).");
+      onClose();
     } finally {
       setIsSubmitting(false);
     }
