@@ -548,8 +548,10 @@ export default function StudySessionsPage() {
 
       {/* Sessions List */}
       {loading ? (
-        <div className="p-12 text-center text-xs text-[#526b5c] animate-pulse">
-          Đang tải dữ liệu nhật ký học tập...
+        <div className="space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-20 bg-[#e8f0eb] dark:bg-[#203326] rounded-2xl animate-pulse" />
+          ))}
         </div>
       ) : filteredSessions.length === 0 ? (
         <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-12 text-center shadow-2xs">
