@@ -38,6 +38,8 @@ export const viewport: Viewport = {
   ],
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,6 +52,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#f4f8f5] dark:bg-[#101c14] text-[#192e22] dark:text-[#f0f7f2] overflow-x-hidden selection:bg-[#52b788]/30">
         {children}
+        <Toaster position="bottom-right" richColors closeButton />
       </body>
     </html>
   );
