@@ -944,65 +944,103 @@ export function EventModal({
                   </div>
                 )}
 
-                {/* 5. Date & Time */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                      {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày diễn ra"}
-                    </label>
-                    <Input
-                      type="date"
-                      required
-                      value={dateStr}
-                      onChange={(e) => setDateStr(e.target.value)}
-                      className="rounded-2xl h-10 text-xs"
-                    />
-                  </div>
+                {/* 5. Date & Time (Hide if isMultiSlot is ON) */}
+                {!isMultiSlot && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày bắt đầu"}
+                      </label>
+                      <Input
+                        type="date"
+                        required
+                        value={dateStr}
+                        onChange={(e) => setDateStr(e.target.value)}
+                        className="rounded-2xl h-10 text-xs"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                      {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
-                    </label>
-                    <Input
-                      type="time"
-                      required
-                      value={startTimeStr}
-                      onChange={(e) => setStartTimeStr(e.target.value)}
-                      className="rounded-2xl h-10 text-xs"
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
+                      </label>
+                      <Input
+                        type="time"
+                        required
+                        value={startTimeStr}
+                        onChange={(e) => setStartTimeStr(e.target.value)}
+                        className="rounded-2xl h-10 text-xs"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                      Kết thúc
-                    </label>
-                    <Input
-                      type="time"
-                      required
-                      value={endTimeStr}
-                      onChange={(e) => setEndTimeStr(e.target.value)}
-                      className="rounded-2xl h-10 text-xs"
-                    />
+                    <div>
+                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        Kết thúc
+                      </label>
+                      <Input
+                        type="time"
+                        required
+                        value={endTimeStr}
+                        onChange={(e) => setEndTimeStr(e.target.value)}
+                        className="rounded-2xl h-10 text-xs"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
+                
+                {isMultiSlot && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1.5">
+                        Tuần bắt đầu học
+                      </label>
+                      <Input
+                        type="date"
+                        required
+                        value={dateStr}
+                        onChange={(e) => setDateStr(e.target.value)}
+                        className="rounded-xl h-9 text-xs"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {/* 6. Recurrence Rule Picker (Sections 9, 16) */}
                 <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
                       <Repeat className="w-3.5 h-3.5 text-[#52b788]" />
-                      <span>Lặp lại (Chu kỳ)</span>
+                      <span>{isMultiSlot ? "Lịch học định kỳ" : "Lặp lại (Chu kỳ)"}</span>
                     </label>
-                    <select
-                      value={recurrence}
-                      onChange={(e) => setRecurrence(e.target.value)}
-                      className="h-8 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
-                    >
-                      <option value="NONE">Không lặp (Một lần)</option>
-                      <option value="DAILY">Hàng ngày</option>
-                      <option value="WEEKLY">Hàng tuần</option>
-                      <option value="MONTHLY">Hàng tháng</option>
-                    </select>
+                    <div className="flex items-center space-x-2">
+                      {!editingEvent && (
+                        <label className="flex items-center space-x-1.5 cursor-pointer text-[10px] font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                          <input 
+                            type="checkbox" 
+                            checked={isMultiSlot}
+                            onChange={(e) => {
+                              setIsMultiSlot(e.target.checked);
+                              if (e.target.checked) setRecurrence("WEEKLY");
+                              else setRecurrence("NONE");
+                            }}
+                            className="rounded text-[#2d6a4f] focus:ring-[#52b788]"
+                          />
+                          <span>Nhiều ngày/Nhiều slot</span>
+                        </label>
+                      )}
+                      {!isMultiSlot && (
+                        <select
+                          value={recurrence}
+                          onChange={(e) => setRecurrence(e.target.value)}
+                          className="h-8 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                        >
+                          <option value="NONE">Không lặp (Một lần)</option>
+                          <option value="DAILY">Hàng ngày</option>
+                          <option value="WEEKLY">Hàng tuần</option>
+                          <option value="MONTHLY">Hàng tháng</option>
+                        </select>
+                      )}
+                    </div>
                   </div>
 
                   {recurrence === "WEEKLY" && (
@@ -1018,7 +1056,9 @@ export function EventModal({
                             onClick={() => toggleDay(i)}
                             className={`flex-1 h-8 text-[10px] font-bold rounded-xl transition-all cursor-pointer ${
                               weeklyDays.includes(i)
-                                ? "bg-[#2d6a4f] text-white shadow-2xs"
+                                ? activeMultiSlotDay === i 
+                                  ? "bg-[#1b4332] ring-2 ring-[#52b788] text-white shadow-md"
+                                  : "bg-[#2d6a4f] text-white shadow-2xs"
                                 : "bg-white dark:bg-[#1e3023] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]"
                             }`}
                           >
@@ -1026,6 +1066,69 @@ export function EventModal({
                           </button>
                         ))}
                       </div>
+                      
+                      {isMultiSlot && activeMultiSlotDay !== null && weeklyDays.includes(activeMultiSlotDay) && (
+                        <div className="mt-3 p-3 rounded-xl bg-white dark:bg-[#1a2e22] border border-[#dbe7dd] dark:border-[#263d2e]">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                              Khung giờ {["Chủ Nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"][activeMultiSlotDay]}
+                            </span>
+                            <div className="flex space-x-2">
+                              {weeklyDays.length > 1 && (
+                                <Button 
+                                  type="button" 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => applySlotToAllSelectedDays(activeMultiSlotDay)}
+                                  className="h-6 text-[10px] px-2 text-[#2d6a4f] hover:bg-[#eef5f0]"
+                                >
+                                  Copy cho ngày khác
+                                </Button>
+                              )}
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => addSlotToDay(activeMultiSlotDay)}
+                                className="h-6 text-[10px] px-2 border-[#2d6a4f] text-[#2d6a4f]"
+                              >
+                                + Thêm ca
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            {(multiSlots[activeMultiSlotDay] || []).map((slot, idx) => (
+                              <div key={slot.id} className="flex items-center space-x-2">
+                                <div className="flex-1 grid grid-cols-2 gap-2">
+                                  <Input
+                                    type="time"
+                                    required
+                                    value={slot.start}
+                                    onChange={(e) => updateSlotTime(activeMultiSlotDay, slot.id, "start", e.target.value)}
+                                    className="h-8 text-xs"
+                                  />
+                                  <Input
+                                    type="time"
+                                    required
+                                    value={slot.end}
+                                    onChange={(e) => updateSlotTime(activeMultiSlotDay, slot.id, "end", e.target.value)}
+                                    className="h-8 text-xs"
+                                  />
+                                </div>
+                                {multiSlots[activeMultiSlotDay].length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeSlotFromDay(activeMultiSlotDay, slot.id)}
+                                    className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
