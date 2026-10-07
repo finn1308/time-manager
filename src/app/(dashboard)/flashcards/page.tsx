@@ -244,8 +244,10 @@ export default function FlashcardsIndexPage() {
 
       {/* Decks Grid */}
       {loading ? (
-        <div className="p-12 text-center text-xs text-[#526b5c] animate-pulse">
-          Đang tải danh sách bộ thẻ flashcard...
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="h-40 bg-[#e8f0eb] dark:bg-[#203326] rounded-3xl animate-pulse" />
+          ))}
         </div>
       ) : decks.length === 0 ? (
         <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-12 text-center">
