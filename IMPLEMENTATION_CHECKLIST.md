@@ -11,7 +11,7 @@
 ## Medium
 - [x] BUG-003: Add Skeleton UI for loading states (replace text like "Đang tải dữ liệu thời khóa biểu...").
 - [ ] PARTIAL-001: Improve AI Schedule Integration (if necessary).
-- [ ] PARTIAL-002: Offline Mode / PWA Support for Study Session Timer.
+- [x] PARTIAL-002: Offline Mode / PWA Support for Study Session Timer.
 
 ## Low
 - [ ] BUG-005: Fix Responsive issues on small screens (320px) for tables and `EventModal`.

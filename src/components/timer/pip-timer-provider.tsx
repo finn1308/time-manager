@@ -121,7 +121,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }, []);
 
-  // Restore state from localStorage on initial mount
+  // Restore state from localStorage on initial mount and check offline sync
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -145,6 +145,51 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       console.warn("Failed to load saved timer state:", e);
     }
+  }, []);
+
+  // Offline Sync Effect
+  useEffect(() => {
+    const syncOfflineSessions = async () => {
+      if (typeof window === "undefined" || !navigator.onLine) return;
+      
+      const offlineData = localStorage.getItem("offline_study_sessions");
+      if (!offlineData) return;
+      
+      try {
+        const sessions = JSON.parse(offlineData);
+        if (sessions && sessions.length > 0) {
+          let hasError = false;
+          // Try to sync one by one
+          for (let i = 0; i < sessions.length; i++) {
+            try {
+              const res = await fetch("/api/timer/stop", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(sessions[i]),
+              });
+              if (!res.ok) hasError = true;
+            } catch {
+              hasError = true;
+            }
+          }
+          if (!hasError) {
+            localStorage.removeItem("offline_study_sessions");
+            // Optional: emit event to refresh logs
+            window.dispatchEvent(new Event("chronomind-study-updated"));
+          }
+        }
+      } catch (e) {
+        console.warn("Error parsing offline sessions", e);
+      }
+    };
+
+    window.addEventListener("online", syncOfflineSessions);
+    // Try syncing on initial load just in case
+    syncOfflineSessions();
+
+    return () => {
+      window.removeEventListener("online", syncOfflineSessions);
+    };
   }, []);
 
   // Switch phase logic
