@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { formatVN, getDateKeyVN } from "@/lib/date-utils";
 import { addDays, parseISO } from "date-fns";
 
+import { toast } from "sonner";
 interface ProposedEvent {
   subjectId: string;
   taskId?: string | null;
@@ -98,7 +99,7 @@ export function AiSchedulePreviewModal({
 
     const eventsToSave = results.proposedEvents.filter((_, idx) => selectedIndices.has(idx));
     if (eventsToSave.length === 0) {
-      alert("Vui lòng chọn ít nhất một buổi học để lưu");
+      toast("Vui lòng chọn ít nhất một buổi học để lưu");
       return;
     }
 
@@ -118,7 +119,7 @@ export function AiSchedulePreviewModal({
       router.refresh();
       onClose();
     } catch (err: any) {
-      alert(err.message || "Lỗi khi lưu lịch");
+      toast.error(err.message || "Lỗi khi lưu lịch");
     } finally {
       setIsCommitting(false);
     }

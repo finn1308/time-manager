@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getDateKeyVN } from "@/lib/date-utils";
 
+import { toast } from "sonner";
 interface WeeklyReviewData {
   id: string;
   weekStartDate: string;
@@ -130,7 +131,7 @@ export default function WeeklyReviewPage() {
         const data = await res.json();
         setReview(data.review);
       } else {
-        alert("Lỗi tạo đánh giá tuần bằng AI");
+        toast.error("Lỗi tạo đánh giá tuần bằng AI");
       }
     } catch (err) {
       console.error("Generate error:", err);

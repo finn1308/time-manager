@@ -7,6 +7,7 @@ import { ActiveSubject } from "./pip-timer-provider";
 import { Star, CheckCircle, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { toast } from "sonner";
 interface TimerCompleteModalProps {
   subject: ActiveSubject;
   scheduleEventId: string | null;
@@ -55,7 +56,7 @@ export function TimerCompleteModal({
       onClose();
     } catch (e) {
       console.error(e);
-      alert("Không thể lưu phiên học. Vui lòng thử lại!");
+      toast.error("Không thể lưu phiên học. Vui lòng thử lại!");
     } finally {
       setIsSubmitting(false);
     }

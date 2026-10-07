@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
+import { toast } from "sonner";
 export default function AssignmentsPage() {
   const [loading, setLoading] = useState(true);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -115,7 +116,7 @@ export default function AssignmentsPage() {
       });
       const json = await res.json();
       if (json.success) {
-        alert(`Thành công! ${json.message}. Bạn có thể vào mục Nhiệm vụ (Tasks) để theo dõi các bước.`);
+        toast.success(`Thành công! ${json.message}. Bạn có thể vào mục Nhiệm vụ (Tasks) để theo dõi các bước.`);
         fetchAssignments();
       }
     } catch (err) {

@@ -7,6 +7,7 @@ import { Lock, Plus, Trash2, Edit2 } from "lucide-react";
 import { BlockedSlotDialog } from "./blocked-slot-dialog";
 import { useRouter } from "next/navigation";
 
+import { toast } from "sonner";
 interface BlockedSlotItem {
   id: string;
   title: string;
@@ -43,7 +44,7 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
       await fetch(`/api/blocked-slots?id=${id}`, { method: "DELETE" });
       router.refresh();
     } catch {
-      alert("Không thể xóa khung giờ");
+      toast.error("Không thể xóa khung giờ");
     }
   };
 

@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatVN } from "@/lib/date-utils";
 
+import { toast } from "sonner";
 function YoutubeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -279,10 +280,10 @@ export function ResourceManager({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Không thể tạo liên kết xác thực Google Drive.");
+        toast.error("Không thể tạo liên kết xác thực Google Drive.");
       }
     } catch (err) {
-      alert("Lỗi khi kết nối Google Drive.");
+      toast.error("Lỗi khi kết nối Google Drive.");
     } finally {
       setDriveConnecting(false);
     }
@@ -426,7 +427,7 @@ export function ResourceManager({
         if (onRefreshCalendar) onRefreshCalendar();
       }
     } catch (err) {
-      alert("Không thể xóa tài nguyên.");
+      toast.error("Không thể xóa tài nguyên.");
     }
   };
 
@@ -450,7 +451,7 @@ export function ResourceManager({
         setNewNoteText("");
       }
     } catch (err) {
-      alert("Không thể tạo ghi chú.");
+      toast.error("Không thể tạo ghi chú.");
     } finally {
       setIsSavingNote(false);
     }
@@ -471,7 +472,7 @@ export function ResourceManager({
         setEditingNoteId(null);
       }
     } catch (err) {
-      alert("Không thể cập nhật ghi chú.");
+      toast.error("Không thể cập nhật ghi chú.");
     }
   };
 
@@ -482,7 +483,7 @@ export function ResourceManager({
         setNotes((prev) => prev.filter((n) => n.id !== id));
       }
     } catch (err) {
-      alert("Không thể xóa ghi chú.");
+      toast.error("Không thể xóa ghi chú.");
     }
   };
 

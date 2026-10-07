@@ -40,6 +40,7 @@ import { getEventTypeConfig, canStartStudyTimer, isSelfStudyEvent, isSchoolEvent
 import { EventCompleteCheckbox } from "./event-complete-checkbox";
 import { EventQuickModal } from "./event-quick-modal";
 
+import { toast } from "sonner";
 interface DayViewProps {
   initialEvents: Array<{
     id: string;
@@ -246,13 +247,13 @@ export function DayView({
 
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Không thể chuyển buổi học");
+        toast.error(err.error || "Không thể chuyển buổi học");
         return;
       }
 
       if (onEventsChange) onEventsChange();
     } catch (err: any) {
-      alert("Lỗi chuyển buổi: " + err.message);
+      toast.error("Lỗi chuyển buổi: " + err.message);
     }
   };
 

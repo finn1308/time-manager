@@ -7,6 +7,7 @@ import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { CheckSquare, Clock, Calendar, AlertCircle, Link as LinkIcon, Check } from "lucide-react";
 
+import { toast } from "sonner";
 interface TaskModalProps {
   open: boolean;
   onClose: () => void;
@@ -100,7 +101,7 @@ export function TaskModal({
       onSuccess();
       onClose();
     } catch (err: any) {
-      alert(err.message || "Lỗi lưu task");
+      toast.error(err.message || "Lỗi lưu task");
     } finally {
       setIsSubmitting(false);
     }

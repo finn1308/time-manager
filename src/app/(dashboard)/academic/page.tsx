@@ -25,6 +25,7 @@ import Link from "next/link";
 import { SyllabusImporterModal } from "@/components/academic/syllabus-importer-modal";
 import { Badge } from "@/components/ui/badge";
 
+import { toast } from "sonner";
 interface DegreeProgramData {
   id: string;
   major: string;
@@ -198,7 +199,7 @@ export default function AcademicHubPage() {
       setNewYearName("");
       await fetchAcademicData();
     } catch (err: any) {
-      alert("Lỗi tạo năm học: " + err.message);
+      toast.error("Lỗi tạo năm học: " + err.message);
     }
   };
 
@@ -224,7 +225,7 @@ export default function AcademicHubPage() {
       setNewSemesterName("");
       await fetchAcademicData();
     } catch (err: any) {
-      alert("Lỗi tạo học kỳ: " + err.message);
+      toast.error("Lỗi tạo học kỳ: " + err.message);
     }
   };
 
@@ -272,7 +273,7 @@ export default function AcademicHubPage() {
       resetCourseForm();
       await fetchAcademicData();
     } catch (err: any) {
-      alert("Lỗi lưu môn học: " + err.message);
+      toast.error("Lỗi lưu môn học: " + err.message);
     }
   };
 
@@ -309,7 +310,7 @@ export default function AcademicHubPage() {
       setNextSemesterTitle("");
       await fetchAcademicData();
     } catch (err: any) {
-      alert("Lỗi kết chuyển học kỳ: " + err.message);
+      toast.error("Lỗi kết chuyển học kỳ: " + err.message);
     }
   };
 
@@ -334,7 +335,7 @@ export default function AcademicHubPage() {
       setShowEditDegreeModal(false);
       await fetchAcademicData();
     } catch (err: any) {
-      alert("Lỗi cập nhật: " + err.message);
+      toast.error("Lỗi cập nhật: " + err.message);
     }
   };
 

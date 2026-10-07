@@ -34,6 +34,7 @@ import {
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { EventCompleteCheckbox } from "./event-complete-checkbox";
 
+import { toast } from "sonner";
 interface EventModalProps {
   open: boolean;
   onClose: () => void;
@@ -389,7 +390,7 @@ export function EventModal({
       setShowDeleteConfirmModal(false);
       onClose();
     } catch (e: any) {
-      alert(e.message || "Không thể xóa sự kiện");
+      toast.error(e.message || "Không thể xóa sự kiện");
     } finally {
       setIsSubmitting(false);
     }
@@ -411,7 +412,7 @@ export function EventModal({
   const handleStartTimer = () => {
     if (!editingEvent) return;
     if (!canStartStudyTimer(eventType)) {
-      alert("Chỉ lịch Tự học (SELF_STUDY) mới có thể bấm giờ học!");
+      toast("Chỉ lịch Tự học (SELF_STUDY) mới có thể bấm giờ học!");
       return;
     }
     const cleanId = editingEvent.id.includes("_") ? editingEvent.id.split("_")[0] : editingEvent.id;
@@ -488,7 +489,7 @@ export function EventModal({
       });
       return next;
     });
-    alert("Đã sao chép khung giờ sang các ngày khác thành công!");
+    toast.success("Đã sao chép khung giờ sang các ngày khác thành công!");
   };
 
   const handleSelectEventType = (t: CalendarEventType) => {

@@ -15,6 +15,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+import { toast } from "sonner";
 interface SyllabusImporterModalProps {
   open: boolean;
   onClose: () => void;
@@ -58,11 +59,11 @@ export function SyllabusImporterModal({
         setImportId(json.importId);
         setStep("PREVIEW");
       } else {
-        alert(json.error || "Không thể phân tích đề cương");
+        toast.error(json.error || "Không thể phân tích đề cương");
       }
     } catch (err) {
       console.error("Error parsing syllabus:", err);
-      alert("Đã xảy ra lỗi khi phân tích đề cương");
+      toast.error("Đã xảy ra lỗi khi phân tích đề cương");
     } finally {
       setParsing(false);
     }
@@ -88,15 +89,15 @@ export function SyllabusImporterModal({
 
       const json = await res.json();
       if (json.success) {
-        alert(json.message);
+        toast(json.message);
         onClose();
         if (onSuccess) onSuccess();
       } else {
-        alert(json.error || "Lỗi lưu dữ liệu");
+        toast.error(json.error || "Lỗi lưu dữ liệu");
       }
     } catch (err) {
       console.error("Error applying syllabus:", err);
-      alert("Đã xảy ra lỗi khi áp dụng đề cương");
+      toast.error("Đã xảy ra lỗi khi áp dụng đề cương");
     } finally {
       setApplying(false);
     }

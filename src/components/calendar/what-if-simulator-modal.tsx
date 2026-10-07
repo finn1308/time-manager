@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { addDays, parseISO } from "date-fns";
 import { getDateKeyVN, getDayOfWeekVN, makeVNDate } from "@/lib/date-utils";
 
+import { toast } from "sonner";
 interface WhatIfSimulatorModalProps {
   open: boolean;
   onClose: () => void;
@@ -127,7 +128,7 @@ export function WhatIfSimulatorModal({
       router.refresh();
       onClose();
     } catch (err: any) {
-      alert(err.message || "Lỗi áp dụng kịch bản");
+      toast.error(err.message || "Lỗi áp dụng kịch bản");
     } finally {
       setIsApplying(false);
     }

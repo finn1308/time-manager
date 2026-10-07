@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useRouter } from "next/navigation";
 import { formatVN } from "@/lib/date-utils";
 
+import { toast } from "sonner";
 interface SubjectItem {
   id: string;
   name: string;
@@ -68,7 +69,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
       await fetch(`/api/subjects?id=${id}`, { method: "DELETE" });
       router.refresh();
     } catch {
-      alert("Không thể xóa môn học");
+      toast.error("Không thể xóa môn học");
     }
   };
 

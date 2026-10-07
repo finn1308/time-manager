@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { ALL_EVENT_TYPES, getEventTypeConfig } from "@/lib/calendar/event-types";
 import { SchoolTimetableGeneratorModal } from "@/components/calendar/school-timetable-generator-modal";
 
+import { toast } from "sonner";
 interface CalendarClientProps {
   initialEvents: any[];
   initialBlockedSlots: any[];
@@ -112,7 +113,7 @@ export function CalendarClient({
 
       setNlpProposal(data.parsed);
     } catch (err: any) {
-      alert(err.message || "Lỗi xử lý ngôn ngữ tự nhiên");
+      toast.error(err.message || "Lỗi xử lý ngôn ngữ tự nhiên");
     } finally {
       setIsParsingNlp(false);
     }
@@ -144,7 +145,7 @@ export function CalendarClient({
       setNlpInput("");
       await loadData();
     } catch (err: any) {
-      alert(err.message || "Lỗi lưu sự kiện");
+      toast.error(err.message || "Lỗi lưu sự kiện");
     } finally {
       setIsConfirmingNlp(false);
     }

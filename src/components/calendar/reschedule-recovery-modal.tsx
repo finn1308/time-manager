@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { RecoveryProposal, MissedSessionItem } from "@/lib/scheduling/reschedule-engine";
 
+import { toast } from "sonner";
 interface RescheduleRecoveryModalProps {
   open: boolean;
   onClose: () => void;
@@ -88,10 +89,10 @@ export function RescheduleRecoveryModal({
           onClose();
         }, 1500);
       } else {
-        alert(data.error || "Không thể dời lịch hôm nay");
+        toast.error(data.error || "Không thể dời lịch hôm nay");
       }
     } catch (err: any) {
-      alert("Lỗi khi dời lịch hôm nay");
+      toast.error("Lỗi khi dời lịch hôm nay");
     } finally {
       setIsReschedulingToday(false);
     }
@@ -119,10 +120,10 @@ export function RescheduleRecoveryModal({
           onClose();
         }, 1500);
       } else {
-        alert(data.error || "Không thể áp dụng phương án");
+        toast.error(data.error || "Không thể áp dụng phương án");
       }
     } catch (err) {
-      alert("Lỗi khi áp dụng phương án");
+      toast.error("Lỗi khi áp dụng phương án");
     } finally {
       setIsApplyingOption(false);
     }

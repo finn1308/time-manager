@@ -9,6 +9,7 @@ import { TaskCard } from "@/components/tasks/task-card";
 import { TaskModal } from "@/components/tasks/task-modal";
 import { TaskDependencyAlertModal } from "@/components/tasks/task-dependency-alert-modal";
 import {
+import { toast } from "sonner";
   CheckSquare,
   Sparkles,
   Plus,
@@ -93,7 +94,7 @@ export default function TasksPage() {
       setQuickInput("");
       await loadData();
     } catch (err: any) {
-      alert(err.message || "Lỗi tạo task nhanh");
+      toast.error(err.message || "Lỗi tạo task nhanh");
     } finally {
       setIsParsingQuick(false);
     }
@@ -124,7 +125,7 @@ export default function TasksPage() {
 
       await loadData();
     } catch (err: any) {
-      alert(err.message || "Lỗi cập nhật task");
+      toast.error(err.message || "Lỗi cập nhật task");
     }
   };
 
@@ -141,7 +142,7 @@ export default function TasksPage() {
       }
       await loadData();
     } catch (e: any) {
-      alert(e.message || "Lỗi cập nhật trạng thái");
+      toast.error(e.message || "Lỗi cập nhật trạng thái");
     }
   };
 
@@ -152,7 +153,7 @@ export default function TasksPage() {
       if (!res.ok) throw new Error("Lỗi khi xóa");
       await loadData();
     } catch (e: any) {
-      alert(e.message || "Không thể xóa task");
+      toast.error(e.message || "Không thể xóa task");
     }
   };
 

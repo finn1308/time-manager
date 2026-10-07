@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
+import { toast } from "sonner";
   Key,
   ShieldCheck,
   Check,
@@ -228,7 +229,7 @@ export default function SettingsPage() {
       setKeyStatusMap((prev) => ({ ...prev, [prov]: "NOT_CONFIGURED" }));
       setMessage({ type: "success", text: `Đã xóa cấu hình ${prov}.` });
     } catch (e) {
-      alert("Không thể xóa key");
+      toast.error("Không thể xóa key");
     }
   };
 

@@ -23,6 +23,7 @@ import { canStartStudyTimer, getEventTypeConfig } from "@/lib/calendar/event-typ
 import { usePipTimer } from "../timer/pip-timer-provider";
 import { useRouter } from "next/navigation";
 
+import { toast } from "sonner";
 export interface EventQuickModalData {
   id: string;
   originalId?: string;
@@ -155,7 +156,7 @@ export function EventQuickModal({
       onClose();
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Lỗi khi cập nhật");
+      toast.error(err.message || "Lỗi khi cập nhật");
     } finally {
       setLoading(false);
     }
@@ -163,7 +164,7 @@ export function EventQuickModal({
 
   const handleStartTimer = () => {
     if (!canStartStudyTimer(event.type) || !event.subject) {
-      alert("Chỉ lịch học có môn học mới có thể bấm giờ học!");
+      toast("Chỉ lịch học có môn học mới có thể bấm giờ học!");
       return;
     }
 
@@ -200,7 +201,7 @@ export function EventQuickModal({
       onClose();
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Lỗi xóa lịch");
+      toast.error(err.message || "Lỗi xóa lịch");
     } finally {
       setLoading(false);
     }

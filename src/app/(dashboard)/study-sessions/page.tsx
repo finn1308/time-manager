@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePipTimer, TimerMode, PomodoroPhase } from "@/components/timer/pip-timer-provider";
 import {
+import { toast } from "sonner";
   Clock,
   History,
   CheckCircle2,
@@ -86,7 +87,7 @@ export default function StudySessionsPage() {
   const handleStartLauncher = () => {
     const sub = subjects.find((s) => s.id === selectedSubjectId);
     if (!sub) {
-      alert("Vui lòng chọn một môn học!");
+      toast("Vui lòng chọn một môn học!");
       return;
     }
 
@@ -125,7 +126,7 @@ export default function StudySessionsPage() {
       if (!res.ok) throw new Error("Không thể xóa");
       await loadData();
     } catch (e) {
-      alert("Lỗi khi xóa phiên học");
+      toast.error("Lỗi khi xóa phiên học");
     }
   };
 

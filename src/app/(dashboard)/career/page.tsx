@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
+import { toast } from "sonner";
   Briefcase,
   Code2,
   Award,
@@ -209,7 +210,7 @@ export default function CareerHubPage() {
       setProjSkillIds([]);
       await fetchCareerData();
     } catch (err: any) {
-      alert("Lỗi tạo dự án: " + err.message);
+      toast.error("Lỗi tạo dự án: " + err.message);
     }
   };
 
@@ -238,7 +239,7 @@ export default function CareerHubPage() {
       setSkillDesc("");
       await fetchCareerData();
     } catch (err: any) {
-      alert("Lỗi tạo kỹ năng: " + err.message);
+      toast.error("Lỗi tạo kỹ năng: " + err.message);
     }
   };
 
@@ -273,7 +274,7 @@ export default function CareerHubPage() {
       setCertScore("");
       await fetchCareerData();
     } catch (err: any) {
-      alert("Lỗi tạo chứng chỉ: " + err.message);
+      toast.error("Lỗi tạo chứng chỉ: " + err.message);
     }
   };
 
@@ -308,7 +309,7 @@ export default function CareerHubPage() {
       setAppNotes("");
       await fetchCareerData();
     } catch (err: any) {
-      alert("Lỗi tạo đơn ứng tuyển: " + err.message);
+      toast.error("Lỗi tạo đơn ứng tuyển: " + err.message);
     }
   };
 

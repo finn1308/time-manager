@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { StudyBunnyMascot } from "./study-bunny-mascot";
 import { usePipTimer } from "@/components/timer/pip-timer-provider";
 
+import { toast } from "sonner";
 export interface QuizQuestionData {
   id: string;
   question: string;
@@ -195,7 +196,7 @@ export function QuizPlayer({ quiz, onFinish, onScheduleStudy }: QuizPlayerProps)
 
       setResults(data);
     } catch (err: any) {
-      alert(err.message || "Lỗi nộp bài");
+      toast.error(err.message || "Lỗi nộp bài");
     } finally {
       setSubmitting(false);
     }

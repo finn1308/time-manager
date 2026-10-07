@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { AlertCircle, Calendar, CheckCircle2, BookOpen, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { toast } from "sonner";
 interface TopicStat {
   topic: string;
   totalAttempts: number;
@@ -53,7 +54,7 @@ export function WeakTopicsTab() {
 
       setScheduledMessage(data.message || `Đã thêm buổi ôn tập "${topic}" vào Lịch học!`);
     } catch (e: any) {
-      alert(e.message || "Lỗi lên lịch");
+      toast.error(e.message || "Lỗi lên lịch");
     } finally {
       setSchedulingTopic(null);
     }

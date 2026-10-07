@@ -21,6 +21,7 @@ import { EventCompleteCheckbox } from "./event-complete-checkbox";
 import { EventQuickModal } from "./event-quick-modal";
 import { formatMinutesVN } from "@/lib/date-utils";
 
+import { toast } from "sonner";
 interface MonthViewProps {
   initialEvents: Array<{
     id: string;
@@ -131,7 +132,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
       if (onEventsChange) onEventsChange();
       router.refresh();
     } catch (err: any) {
-      alert(err.message || "Lỗi xóa lịch");
+      toast.error(err.message || "Lỗi xóa lịch");
     }
   };
 

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import {
+import { toast } from "sonner";
   Sparkles,
   BookOpen,
   Plus,
@@ -95,7 +96,7 @@ export default function FlashcardsIndexPage() {
       setDeckDescription("");
       await loadData();
     } catch (e: any) {
-      alert(e.message || "Lỗi tạo bộ thẻ");
+      toast.error(e.message || "Lỗi tạo bộ thẻ");
     } finally {
       setIsSubmittingDeck(false);
     }
@@ -132,7 +133,7 @@ export default function FlashcardsIndexPage() {
       await loadData();
       router.push(`/flashcards/${data.deckId}`);
     } catch (e: any) {
-      alert(e.message || "Lỗi tạo flashcard AI");
+      toast.error(e.message || "Lỗi tạo flashcard AI");
     } finally {
       setIsGeneratingAi(false);
     }
@@ -147,7 +148,7 @@ export default function FlashcardsIndexPage() {
       if (!res.ok) throw new Error("Lỗi xóa bộ thẻ");
       await loadData();
     } catch (e: any) {
-      alert(e.message || "Lỗi khi xóa bộ thẻ");
+      toast.error(e.message || "Lỗi khi xóa bộ thẻ");
     }
   };
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
+import { toast } from "sonner";
   FileText,
   Plus,
   Search,
@@ -78,13 +79,13 @@ export default function NotesPage() {
       });
       const data = await res.json();
       if (data.success || data.deckId) {
-        alert("Đã trích xuất thành công bộ thẻ ghi nhớ từ ghi chú này! Bạn có thể vào mục Flashcards để ôn tập ngay.");
+        toast.success("Đã trích xuất thành công bộ thẻ ghi nhớ từ ghi chú này! Bạn có thể vào mục Flashcards để ôn tập ngay.");
       } else {
-        alert(data.error || "Không thể trích xuất flashcards");
+        toast.error(data.error || "Không thể trích xuất flashcards");
       }
     } catch (err) {
       console.error("Error extracting flashcards:", err);
-      alert("Đã xảy ra lỗi khi trích xuất thẻ");
+      toast.error("Đã xảy ra lỗi khi trích xuất thẻ");
     } finally {
       setExtracting(false);
     }
@@ -156,7 +157,7 @@ export default function NotesPage() {
       await loadData();
       selectNote(data.note);
     } catch (e: any) {
-      alert(e.message || "Không thể tạo ghi chú");
+      toast.error(e.message || "Không thể tạo ghi chú");
     }
   };
 
@@ -215,7 +216,7 @@ export default function NotesPage() {
         else setSelectedNoteId(null);
       }
     } catch (e: any) {
-      alert(e.message || "Không thể xóa ghi chú");
+      toast.error(e.message || "Không thể xóa ghi chú");
     }
   };
 

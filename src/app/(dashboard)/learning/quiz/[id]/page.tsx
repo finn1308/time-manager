@@ -6,6 +6,7 @@ import { QuizPlayer, QuizData } from "@/components/learning/quiz-player";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { toast } from "sonner";
 export default function QuizPlayPage() {
   const params = useParams();
   const router = useRouter();
@@ -40,10 +41,10 @@ export default function QuizPlayPage() {
       });
       const data = await res.json();
       if (data.success) {
-        alert(data.message || `Đã thêm buổi học "${topic}" vào Calendar!`);
+        toast(data.message || `Đã thêm buổi học "${topic}" vào Calendar!`);
       }
     } catch {
-      alert("Không thể lên lịch học");
+      toast.error("Không thể lên lịch học");
     }
   };
 

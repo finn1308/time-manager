@@ -6,7 +6,7 @@
 ## High
 - [x] BUG-002: Add Google Login (NextAuth Provider).
 - [x] MISSING-001: Implement Global Error Boundary (`error.tsx`, `global-error.tsx`).
-- [ ] MISSING-002: Implement Toast Notifications (replace `alert` with `sonner` or `react-hot-toast`).
+- [x] MISSING-002: Implement Toast Notifications (replace `alert` with `sonner` or `react-hot-toast`).
 
 ## Medium
 - [ ] BUG-003: Add Skeleton UI for loading states (replace text like "Đang tải dữ liệu thời khóa biểu...").

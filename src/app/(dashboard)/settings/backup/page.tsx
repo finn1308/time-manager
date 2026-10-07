@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+import { toast } from "sonner";
 export default function BackupCenterPage() {
   const [restoring, setRestoring] = useState(false);
   const [restoreResult, setRestoreResult] = useState<any>(null);
@@ -49,11 +50,11 @@ export default function BackupCenterPage() {
       if (resData.success) {
         setRestoreResult(resData.restoredSummary);
       } else {
-        alert(resData.error || "Không thể khôi phục dữ liệu");
+        toast.error(resData.error || "Không thể khôi phục dữ liệu");
       }
     } catch (err) {
       console.error("Error restoring file:", err);
-      alert("Tệp sao lưu không hợp lệ");
+      toast("Tệp sao lưu không hợp lệ");
     } finally {
       setRestoring(false);
     }

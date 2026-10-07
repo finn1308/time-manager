@@ -21,6 +21,7 @@ import { EventCompleteCheckbox } from "./event-complete-checkbox";
 import { EventQuickModal } from "./event-quick-modal";
 import { formatMinutesVN } from "@/lib/date-utils";
 
+import { toast } from "sonner";
 interface WeekViewProps {
   initialEvents: Array<{
     id: string;
@@ -157,7 +158,7 @@ export function WeekView({
       if (onEventsChange) onEventsChange();
       router.refresh();
     } catch (err: any) {
-      alert(err.message || "Lỗi xóa lịch học");
+      toast.error(err.message || "Lỗi xóa lịch học");
     }
   };
 
@@ -263,7 +264,7 @@ export function WeekView({
 
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Không thể di chuyển lịch");
+        toast.error(err.error || "Không thể di chuyển lịch");
         return;
       }
 

@@ -15,6 +15,7 @@ import {
 } from "@/lib/flashcard-study/engine";
 import { speakWord } from "@/lib/tts";
 import {
+import { toast } from "sonner";
   ArrowLeft,
   Sparkles,
   Volume2,
@@ -80,7 +81,7 @@ export default function FlashcardDeckDetailPage() {
       setAllCards(data.deck.flashcards || []);
     } catch (e: any) {
       console.error(e);
-      alert(e.message || "Lỗi tải bộ thẻ");
+      toast.error(e.message || "Lỗi tải bộ thẻ");
     } finally {
       setLoading(false);
     }
@@ -107,7 +108,7 @@ export default function FlashcardDeckDetailPage() {
   // Launch Study Session in chosen mode
   const handleStartStudy = (mode: "ALL" | "FLASHCARD" | "QUIZ" | "LISTENING" | "TYPING" | "MATCHING") => {
     if (parsedCards.length === 0) {
-      alert("Bộ thẻ chưa có từ vựng nào. Hãy thêm từ vựng để bắt đầu học!");
+      toast("Bộ thẻ chưa có từ vựng nào. Hãy thêm từ vựng để bắt đầu học!");
       return;
     }
 
@@ -118,7 +119,7 @@ export default function FlashcardDeckDetailPage() {
     });
 
     if (questions.length === 0) {
-      alert("Không tìm thấy câu hỏi phù hợp với bộ lọc hiện tại.");
+      toast("Không tìm thấy câu hỏi phù hợp với bộ lọc hiện tại.");
       return;
     }
 
@@ -158,7 +159,7 @@ export default function FlashcardDeckDetailPage() {
       setIsAddCardOpen(false);
       await loadDeck();
     } catch (e: any) {
-      alert(e.message || "Lỗi khi thêm thẻ");
+      toast.error(e.message || "Lỗi khi thêm thẻ");
     } finally {
       setIsSubmittingCard(false);
     }

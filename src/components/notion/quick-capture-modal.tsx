@@ -17,6 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
+import { toast } from "sonner";
 interface QuickCaptureModalProps {
   open: boolean;
   onClose: () => void;
@@ -121,7 +122,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
       onClose();
       router.refresh();
     } catch (err: any) {
-      alert(err.message || "Lỗi tạo nhanh");
+      toast.error(err.message || "Lỗi tạo nhanh");
     } finally {
       setIsSubmitting(false);
     }

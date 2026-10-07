@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getVNTodayKey, getVNDayOffsets } from "@/lib/date-utils";
 
+import { toast } from "sonner";
 interface Subject {
   id: string;
   name: string;
@@ -284,7 +285,7 @@ export default function HabitsPage() {
       setIsModalOpen(false);
       loadData();
     } catch (err: any) {
-      alert(err.message || "Lỗi lưu thói quen");
+      toast.error(err.message || "Lỗi lưu thói quen");
     } finally {
       setSaving(false);
     }

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { toast } from "sonner";
 interface EventCompleteCheckboxProps {
   eventId: string;
   isCompleted: boolean;
@@ -83,7 +84,7 @@ export function EventCompleteCheckbox({
       console.error("Error toggling completion:", err);
       // Revert optimistic update
       setCompleted(completed);
-      alert(err.message || "Lỗi khi cập nhật trạng thái học");
+      toast.error(err.message || "Lỗi khi cập nhật trạng thái học");
     } finally {
       setLoading(false);
     }
