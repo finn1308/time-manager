@@ -382,7 +382,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                     )}
 
                     <div className="font-mono text-[10px] text-[#73927d] mt-1">
-                      {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
+                      {(ev as any).isAllDay ? `Tự do trong ngày (${(ev as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(ev.startTime), "HH:mm")} - ${formatVN(new Date(ev.endTime), "HH:mm")}`}
                     </div>
                   </div>
                 );
