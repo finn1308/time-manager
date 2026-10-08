@@ -383,8 +383,15 @@ export async function PUT(req: Request) {
       targetDateKey = id.split("_")[1];
     }
 
+    // Check if the original event is actually recurring
+    let isOriginalEventRecurring = false;
+    if (cleanOriginalId) {
+      const originalEvent = await prisma.calendarEvent.findUnique({ where: { id: cleanOriginalId } });
+      isOriginalEventRecurring = Boolean(originalEvent && originalEvent.recurrence && originalEvent.recurrence !== "NONE");
+    }
+
     // Single occurrence edit of a recurring event
-    if (updateMode === "SINGLE" && cleanOriginalId && (id !== cleanOriginalId || targetDateKey)) {
+    if (updateMode === "SINGLE" && isOriginalEventRecurring && cleanOriginalId && (id !== cleanOriginalId || targetDateKey)) {
       const existingEx = await prisma.calendarEvent.findFirst({
         where: {
           parentId: cleanOriginalId,
