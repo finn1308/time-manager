@@ -280,11 +280,11 @@ export function AgendaView({
                         {/* Time Column */}
                         <div className="shrink-0 text-left w-24">
                           <div className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
-                            {startTimeFormatted} – {endTimeFormatted}
+                            {(ev as any).isAllDay ? `Tự do` : `${startTimeFormatted} – ${endTimeFormatted}`}
                           </div>
                           <div className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5 flex items-center space-x-1">
                             <Clock className="w-3 h-3 text-[#2d6a4f] dark:text-[#52b788]" />
-                            <span>{durationMins} phút</span>
+                            <span>{(ev as any).isAllDay ? (ev as any).plannedDurationMinutes || 60 : durationMins} phút</span>
                           </div>
                         </div>
 
