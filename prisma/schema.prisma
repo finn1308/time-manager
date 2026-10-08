@@ -373,6 +373,7 @@ model CalendarEvent {
   location      String?  @db.Text
   isLocked      Boolean  @default(false)
   isFlexible    Boolean  @default(false)
+  isAllDay      Boolean  @default(false)
   trackStudyTime Boolean @default(true)
   isAiGenerated Boolean  @default(false)
 
