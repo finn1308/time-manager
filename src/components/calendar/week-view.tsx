@@ -627,7 +627,7 @@ export function WeekView({
                       {/* Time and Quick Start Study Timer */}
                       <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
                         <span className="font-mono text-[10px] font-medium text-[#73927d]">
-                          {formatVN(new Date(ev.startTime), "HH:mm")} - {formatVN(new Date(ev.endTime), "HH:mm")}
+                          {(ev as any).isAllDay ? `Tự do trong ngày (${(ev as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(ev.startTime), "HH:mm")} - ${formatVN(new Date(ev.endTime), "HH:mm")}`}
                         </span>
 
                         <div className="flex items-center space-x-1">

@@ -628,7 +628,7 @@ export function DayView({
                       {/* Time Details & Progress */}
                       <div className="flex flex-wrap items-center justify-between text-[10px] text-[#73927d] dark:text-[#8ba393] mt-2.5 pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
                         <span className="font-mono font-medium">
-                          {formatVN(new Date(ev.startTime), "HH:mm")} – {formatVN(new Date(ev.endTime), "HH:mm")}
+                          {(ev as any).isAllDay ? `Tự do trong ngày (${(ev as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(ev.startTime), "HH:mm")} – ${formatVN(new Date(ev.endTime), "HH:mm")}`}
                         </span>
 
                         <div className="flex items-center space-x-2">
@@ -729,7 +729,7 @@ export function DayView({
                 <div className="flex items-center justify-between">
                   <span className="text-[#526b5c] dark:text-[#a3bda9]">Khung giờ:</span>
                   <span className="font-mono font-bold text-[#2d6a4f] dark:text-[#52b788]">
-                    {formatVN(new Date(selectedSessionEvent.startTime), "HH:mm")} – {formatVN(new Date(selectedSessionEvent.endTime), "HH:mm")}
+                    {(selectedSessionEvent as any).isAllDay ? `Tự do trong ngày (${(selectedSessionEvent as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(selectedSessionEvent.startTime), "HH:mm")} – ${formatVN(new Date(selectedSessionEvent.endTime), "HH:mm")}`}
                   </span>
                 </div>
 
