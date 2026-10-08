@@ -129,6 +129,8 @@ export async function POST(req: Request) {
       recurrenceRule,
       recurrenceEnd,
       schedules,
+      isAllDay,
+      plannedDurationMinutes,
     } = body;
 
     // 1. Validate Title
@@ -270,8 +272,16 @@ export async function POST(req: Request) {
       trackStudyTime: finalTrackStudyTime,
       timezone: timezone || "Asia/Ho_Chi_Minh",
       isAiGenerated: false,
+      isAllDay: !!isAllDay,
       recurrenceEnd: recurrenceEnd ? new Date(recurrenceEnd) : null,
     };
+
+    let calculatedDuration = 60;
+    if (isAllDay && plannedDurationMinutes) {
+      calculatedDuration = plannedDurationMinutes;
+    } else if (start && end) {
+      calculatedDuration = Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000));
+    }
 
     if (schedules && schedules.length > 0) {
       const generatedSeriesId = seriesId || crypto.randomUUID();
@@ -301,7 +311,7 @@ export async function POST(req: Request) {
         ...baseData,
         startTime: start!,
         endTime: end!,
-        plannedDurationMinutes: Math.max(1, Math.round((end!.getTime() - start!.getTime()) / 60000)),
+        plannedDurationMinutes: calculatedDuration,
         seriesId: seriesId || null,
         recurrence: recurrence || "NONE",
         recurrenceRule: recurrenceRule || null,
@@ -344,6 +354,8 @@ export async function PUT(req: Request) {
       originalId,
       exceptionDate,
       updateMode,
+      isAllDay,
+      plannedDurationMinutes,
     } = body;
 
     if (!id) return NextResponse.json({ error: "Thiếu ID sự kiện" }, { status: 400 });
@@ -412,10 +424,11 @@ export async function PUT(req: Request) {
             goalId: goalId !== undefined ? goalId || null : undefined,
             startTime: start,
             endTime: end,
-            plannedDurationMinutes: start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : undefined,
+            plannedDurationMinutes: isAllDay ? plannedDurationMinutes : (start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : undefined),
             type: type !== undefined ? type : undefined,
             isLocked: isLocked !== undefined ? !!isLocked : undefined,
             isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
+            isAllDay: isAllDay !== undefined ? !!isAllDay : undefined,
             trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : undefined,
             isCancelled: false,
           },
@@ -435,11 +448,12 @@ export async function PUT(req: Request) {
           goalId: goalId || null,
           startTime: start!,
           endTime: end!,
-          plannedDurationMinutes: start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : 60,
+          plannedDurationMinutes: isAllDay ? plannedDurationMinutes : (start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : 60),
           completed: false,
           type: type || "OTHER",
           isLocked: isLocked !== undefined ? !!isLocked : false,
           isFlexible: isFlexible !== undefined ? !!isFlexible : (type === "PERSONAL"),
+          isAllDay: !!isAllDay,
           trackStudyTime: trackStudyTime !== undefined
             ? !!trackStudyTime
             : (type === "SCHOOL" || type === "SELF_STUDY" || type === "STUDY" || Boolean(subjectId)),
@@ -473,6 +487,7 @@ export async function PUT(req: Request) {
             type: type !== undefined ? type : undefined,
             isLocked: isLocked !== undefined ? !!isLocked : undefined,
             isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
+            isAllDay: isAllDay !== undefined ? !!isAllDay : undefined,
             trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : undefined,
             recurrenceEnd: recurrenceEnd !== undefined ? (recurrenceEnd ? new Date(recurrenceEnd) : null) : undefined,
           }
@@ -496,10 +511,11 @@ export async function PUT(req: Request) {
         goalId: goalId !== undefined ? goalId || null : undefined,
         startTime: start,
         endTime: end,
-        plannedDurationMinutes: start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : undefined,
+        plannedDurationMinutes: isAllDay ? plannedDurationMinutes : (start && end ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 60000)) : undefined),
         type: type !== undefined ? type : undefined,
         isLocked: isLocked !== undefined ? !!isLocked : undefined,
         isFlexible: isFlexible !== undefined ? !!isFlexible : undefined,
+        isAllDay: isAllDay !== undefined ? !!isAllDay : undefined,
         trackStudyTime: trackStudyTime !== undefined ? !!trackStudyTime : undefined,
         seriesId: seriesId !== undefined ? seriesId : undefined,
         recurrence: recurrence !== undefined ? recurrence : undefined,
