@@ -109,6 +109,10 @@ export function EventModal({
   const [isFlexible, setIsFlexible] = useState<boolean>(defaultType === "PERSONAL");
   const [trackStudyTime, setTrackStudyTime] = useState<boolean>(isStudyEventCategory(defaultType, null));
 
+  // All Day / Free Study state
+  const [isAllDay, setIsAllDay] = useState<boolean>(false);
+  const [plannedDurationMinutes, setPlannedDurationMinutes] = useState<number>(60);
+
   // Recurrence state
   const [recurrence, setRecurrence] = useState<string>("NONE");
   const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
@@ -273,13 +277,16 @@ export function EventModal({
     try {
       if (!title.trim()) throw new Error("Vui lòng nhập tiêu đề sự kiện");
       if (!dateStr) throw new Error("Vui lòng chọn ngày");
-      if (!startTimeStr || !endTimeStr) throw new Error("Vui lòng nhập giờ bắt đầu và kết thúc");
+      if (!isAllDay && (!startTimeStr || !endTimeStr)) throw new Error("Vui lòng nhập giờ bắt đầu và kết thúc");
 
       let startUTC = new Date();
       let endUTC = new Date();
       let schedulesPayload: any[] = [];
 
-      if (isMultiSlot) {
+      if (isAllDay) {
+        startUTC = makeVNDate(dateStr, "00:00");
+        endUTC = makeVNDate(dateStr, "23:59");
+      } else if (isMultiSlot) {
         if (weeklyDays.length === 0) throw new Error("Vui lòng chọn ít nhất một ngày trong tuần");
         const baseDate = new Date(dateStr);
         const daysCode = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
