@@ -165,6 +165,8 @@ export function EventModal({
       setEndTimeStr(formatVN(editingEvent.endTime, "HH:mm"));
       setIsLocked(!!editingEvent.isLocked);
       setIsFlexible(editingEvent.isFlexible ?? (normalizedType === "PERSONAL"));
+      setIsAllDay((editingEvent as any).isAllDay || false);
+      if (editingEvent.plannedDurationMinutes) setPlannedDurationMinutes(editingEvent.plannedDurationMinutes);
       const isStudy = isStudyEventCategory(normalizedType, editingEvent.subjectId);
       setTrackStudyTime(isStudy ? true : (editingEvent.trackStudyTime ?? false));
       setRecurrence(editingEvent.recurrence && editingEvent.recurrence !== "NONE" ? editingEvent.recurrence : "NONE");
@@ -344,6 +346,8 @@ export function EventModal({
         type: eventType,
         isLocked,
         isFlexible,
+        isAllDay,
+        plannedDurationMinutes: isAllDay ? plannedDurationMinutes : undefined,
         trackStudyTime: isStudyEventCategory(eventType, subjectId),
         timezone: "Asia/Ho_Chi_Minh",
         recurrence,
@@ -988,45 +992,95 @@ export function EventModal({
 
                 {/* 5. Date & Time (Hide if isMultiSlot is ON) */}
                 {!isMultiSlot && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                        {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày bắt đầu"}
+                  <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <label className="flex items-center space-x-1.5 cursor-pointer text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                        <input 
+                          type="checkbox" 
+                          checked={isAllDay}
+                          onChange={(e) => setIsAllDay(e.target.checked)}
+                          className="rounded text-[#2d6a4f] focus:ring-[#52b788]"
+                        />
+                        <span>Học tự do trong ngày (Không cần xếp giờ)</span>
                       </label>
-                      <Input
-                        type="date"
-                        required
-                        value={dateStr}
-                        onChange={(e) => setDateStr(e.target.value)}
-                        className="rounded-2xl h-10 text-xs"
-                      />
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                        {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
-                      </label>
-                      <Input
-                        type="time"
-                        required
-                        value={startTimeStr}
-                        onChange={(e) => setStartTimeStr(e.target.value)}
-                        className="rounded-2xl h-10 text-xs"
-                      />
-                    </div>
+                    {!isAllDay ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                            {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày bắt đầu"}
+                          </label>
+                          <Input
+                            type="date"
+                            required
+                            value={dateStr}
+                            onChange={(e) => setDateStr(e.target.value)}
+                            className="rounded-2xl h-10 text-xs"
+                          />
+                        </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                        Kết thúc
-                      </label>
-                      <Input
-                        type="time"
-                        required
-                        value={endTimeStr}
-                        onChange={(e) => setEndTimeStr(e.target.value)}
-                        className="rounded-2xl h-10 text-xs"
-                      />
-                    </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                            {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
+                          </label>
+                          <Input
+                            type="time"
+                            required
+                            value={startTimeStr}
+                            onChange={(e) => setStartTimeStr(e.target.value)}
+                            className="rounded-2xl h-10 text-xs"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                            Kết thúc
+                          </label>
+                          <Input
+                            type="time"
+                            required
+                            value={endTimeStr}
+                            onChange={(e) => setEndTimeStr(e.target.value)}
+                            className="rounded-2xl h-10 text-xs"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                            Ngày
+                          </label>
+                          <Input
+                            type="date"
+                            required
+                            value={dateStr}
+                            onChange={(e) => setDateStr(e.target.value)}
+                            className="rounded-2xl h-10 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                            Thời lượng (phút)
+                          </label>
+                          <select
+                            value={plannedDurationMinutes}
+                            onChange={(e) => setPlannedDurationMinutes(Number(e.target.value))}
+                            className="w-full rounded-2xl h-10 text-xs px-3 border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-[#192e22] dark:text-[#f0f7f2]"
+                          >
+                            <option value={15}>15 phút</option>
+                            <option value={30}>30 phút</option>
+                            <option value={45}>45 phút</option>
+                            <option value={60}>60 phút (1 giờ)</option>
+                            <option value={90}>90 phút (1.5 giờ)</option>
+                            <option value={120}>120 phút (2 giờ)</option>
+                            <option value={180}>180 phút (3 giờ)</option>
+                            <option value={240}>240 phút (4 giờ)</option>
+                          </select>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
                 
