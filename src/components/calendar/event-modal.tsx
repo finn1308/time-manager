@@ -261,7 +261,7 @@ export function EventModal({
   const getNextDateForDayOfWeek = (baseDate: Date, dayOfWeek: number) => {
     const d = new Date(baseDate);
     const currentDay = d.getDay();
-    const distance = (dayOfWeek + 7 - currentDay) % 7;
+    const distance = dayOfWeek - currentDay; // Lấy đúng ngày trong tuần của baseDate
     d.setDate(d.getDate() + distance);
     return d;
   };
@@ -279,7 +279,7 @@ export function EventModal({
       let endUTC = new Date();
       let schedulesPayload: any[] = [];
 
-      if (isMultiSlot && recurrence === "WEEKLY") {
+      if (isMultiSlot) {
         if (weeklyDays.length === 0) throw new Error("Vui lòng chọn ít nhất một ngày trong tuần");
         const baseDate = new Date(dateStr);
         const daysCode = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
@@ -294,15 +294,22 @@ export function EventModal({
             const slotEnd = makeVNDate(targetDateStr, slot.end);
             if (slotEnd <= slotStart) throw new Error(`Giờ kết thúc phải sau giờ bắt đầu (Thứ ${day === 0 ? "CN" : day + 1})`);
             
+            let rruleStr = undefined;
+            if (recurrence === "WEEKLY") {
+              rruleStr = `FREQ=WEEKLY;BYDAY=${daysCode[day]}${recurrenceEndDate ? `;UNTIL=${new Date(recurrenceEndDate).toISOString().replace(/[-:]/g, "").split(".")[0]}Z` : ''}`;
+            }
+
             schedulesPayload.push({
               startTime: slotStart.toISOString(),
               endTime: slotEnd.toISOString(),
-              recurrenceRule: `FREQ=WEEKLY;BYDAY=${daysCode[day]}${recurrenceEndDate ? `;UNTIL=${new Date(recurrenceEndDate).toISOString().replace(/[-:]/g, "").split(".")[0]}Z` : ''}`,
+              recurrenceRule: rruleStr,
             });
           }
         }
         // Use the first schedule as the master for the single-event fallback validation
         if (schedulesPayload.length > 0) {
+          // Sort schedules to find the earliest one for the master event
+          schedulesPayload.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
           startUTC = new Date(schedulesPayload[0].startTime);
           endUTC = new Date(schedulesPayload[0].endTime);
         }
