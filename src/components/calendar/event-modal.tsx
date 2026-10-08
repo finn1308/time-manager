@@ -1063,7 +1063,16 @@ export function EventModal({
                           <span>Nhiều ngày/Nhiều slot</span>
                         </label>
                       )}
-                      {!isMultiSlot && (
+                      {isMultiSlot ? (
+                        <select
+                          value={recurrence}
+                          onChange={(e) => setRecurrence(e.target.value)}
+                          className="h-8 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                        >
+                          <option value="NONE">Chỉ chọn trong tuần này (Không lặp)</option>
+                          <option value="WEEKLY">Lặp lại hàng tuần</option>
+                        </select>
+                      ) : (
                         <select
                           value={recurrence}
                           onChange={(e) => setRecurrence(e.target.value)}
@@ -1078,10 +1087,10 @@ export function EventModal({
                     </div>
                   </div>
 
-                  {recurrence === "WEEKLY" && (
+                  {(recurrence === "WEEKLY" || isMultiSlot) && (
                     <div>
                       <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] mb-1.5 font-medium">
-                        Chọn các ngày học hàng tuần (Ví dụ: T2 + T4 + T6):
+                        {isMultiSlot ? "Chọn các ngày trong tuần:" : "Chọn các ngày học hàng tuần:"}
                       </p>
                       <div className="flex items-center justify-between gap-1">
                         {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((label, i) => (
