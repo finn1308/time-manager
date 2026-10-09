@@ -62,6 +62,8 @@ export async function generateAutoSchedule(params: {
       startTime: e.startTime,
       endTime: e.endTime,
     })),
+    flexibleGoals: context.flexibleGoals,
+    skills: context.skills,
     customInstructions,
   });
 
@@ -101,6 +103,8 @@ export async function generateAutoSchedule(params: {
 
   return {
     proposedEvents: safeEvents,
+    recommendedSlotsForFlexibleGoals: rawResult.recommendedSlotsForFlexibleGoals || [],
+    workloadAnalysis: rawResult.workloadAnalysis || [],
     summary: `${rawResult.summary} (Xác thực bởi Server: ${safeEvents.length} phiên hợp lệ, ${validation.rejectedSessions.length} phiên bị loại do trùng lịch/nghỉ ngơi).`,
     providerUsed: rawResult.providerUsed,
     totalValidHours: validation.totalValidHours,
