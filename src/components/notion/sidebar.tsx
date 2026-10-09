@@ -64,6 +64,7 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
   const navItems = [
     { label: "Dashboard", href: "/", icon: Home, iconColor: "text-sky-500" },
     { label: "Calendar", href: "/calendar", icon: Calendar, iconColor: "text-amber-500" },
+    { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare, iconColor: "text-[#2d6a4f]" },
     { label: "Subjects", href: "/subjects", icon: BookOpen, iconColor: "text-emerald-500" },
     { label: "Skills", href: "/skills", icon: Target, iconColor: "text-rose-500", highlight: true },
     { label: "Practice", href: "/practice", icon: Brain, iconColor: "text-purple-500" },

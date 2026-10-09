@@ -43,13 +43,14 @@ export function BottomNav() {
   const navItems = [
     { label: "Dashboard", href: "/", icon: Home },
     { label: "Calendar", href: "/calendar", icon: Calendar },
+    { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare },
     { label: "Practice", href: "/practice", icon: Brain },
-    { label: "Statistics", href: "/progress", icon: TrendingUp },
   ];
 
   const drawerItems = [
     { label: "Dashboard", href: "/", icon: Home },
     { label: "Calendar", href: "/calendar", icon: Calendar },
+    { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare },
     { label: "Subjects", href: "/subjects", icon: BookOpen },
     { label: "Practice", href: "/practice", icon: Brain },
     { label: "Statistics", href: "/progress", icon: TrendingUp },
