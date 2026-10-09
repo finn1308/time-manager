@@ -53,6 +53,8 @@ model User {
   habits                Habit[]
   notifications         Notification[]
   weeklyReviews         WeeklyReview[]
+  flexibleStudyGoals    FlexibleStudyGoal[]
+  dailyGoalProgresses   DailyGoalProgress[]
 
   // LUYENTU Vocabulary Platform
   coins                 Int       @default(100)
@@ -251,6 +253,7 @@ model Subject {
   wordSets         WordSet[]
   vocabWords       VocabWord[]
   vocabStudySessions VocabStudySession[]
+  flexibleGoals    FlexibleStudyGoal[]
 
   @@index([userId])
   @@index([semesterId])
@@ -414,6 +417,11 @@ model CalendarEvent {
   trackStudyTime Boolean @default(true)
   isAiGenerated Boolean  @default(false)
 
+  // Scheduling mode & Flexible Goal link
+  schedulingMode String   @default("FIXED") // FIXED, FLEXIBLE
+  preferredPeriod String? // MORNING, AFTERNOON, EVENING, ANY
+  flexibleGoalId String?
+
   // Recurring support
   seriesId       String?
   recurrence     String          @default("NONE") // NONE, DAILY, WEEKLY, MONTHLY, YEARLY
@@ -442,6 +450,7 @@ model CalendarEvent {
   skill         Skill?          @relation(fields: [skillId], references: [id], onDelete: SetNull)
   skillTask     SkillTask?      @relation(fields: [skillTaskId], references: [id], onDelete: SetNull)
   studySessions StudySession[]
+  flexibleGoal  FlexibleStudyGoal? @relation(fields: [flexibleGoalId], references: [id], onDelete: SetNull)
   parent        CalendarEvent?  @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
   exceptions    CalendarEvent[] @relation("EventExceptions")
   resources     Resource[]
@@ -453,6 +462,7 @@ model CalendarEvent {
   @@index([parentId])
   @@index([taskId])
   @@index([goalId])
+  @@index([flexibleGoalId])
 }
 
 model AvailabilityRule {
@@ -485,6 +495,7 @@ model StudySession {
   calendarEventId        String?
   taskId                 String?
   goalId                 String?
+  flexibleGoalId         String?
   plannedStart           DateTime?
   plannedEnd             DateTime?
   actualStart            DateTime
@@ -506,6 +517,7 @@ model StudySession {
   calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: SetNull)
   task          Task?          @relation(fields: [taskId], references: [id], onDelete: SetNull)
   goal          Goal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  flexibleGoal  FlexibleStudyGoal? @relation(fields: [flexibleGoalId], references: [id], onDelete: SetNull)
 
   @@index([userId, actualStart])
   @@index([userId, subjectId])
@@ -513,6 +525,7 @@ model StudySession {
   @@index([calendarEventId])
   @@index([taskId])
   @@index([goalId])
+  @@index([flexibleGoalId])
 }
 
 // ==============================================================================
@@ -1095,6 +1108,7 @@ model Skill {
   calendarEvents CalendarEvent[]
   studySessions  StudySession[]
   resources      Resource[]
+  flexibleGoals  FlexibleStudyGoal[]
 
   @@unique([userId, name])
   @@index([userId])
