@@ -28,6 +28,8 @@ import {
 import { useRouter } from "next/navigation";
 import { ALL_EVENT_TYPES, getEventTypeConfig } from "@/lib/calendar/event-types";
 import { SchoolTimetableGeneratorModal } from "@/components/calendar/school-timetable-generator-modal";
+import { DailyFlexibleGoals } from "@/components/calendar/daily-flexible-goals";
+import { EventModal } from "@/components/calendar/event-modal";
 
 import { toast } from "sonner";
 interface CalendarClientProps {
@@ -67,6 +69,9 @@ export function CalendarClient({
 
   // School Timetable Generator Modal (Phase 8)
   const [isTimetableOpen, setIsTimetableOpen] = useState(false);
+
+  // New Event Modal State (supporting both Fixed and Flexible Goals)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const loadData = async () => {
     try {
@@ -432,6 +437,21 @@ export function CalendarClient({
         onClose={() => setIsWhatIfOpen(false)}
         subjects={subjects}
       />
+
+      {/* Flexible Daily Goals Section (Section 5) */}
+      <DailyFlexibleGoals
+        onOpenCreateModal={() => setIsCreateModalOpen(true)}
+      />
+
+      {/* Main Event Creation / Flexible Goal Modal */}
+      {isCreateModalOpen && (
+        <EventModal
+          open={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          subjects={subjects}
+          onSuccess={loadData}
+        />
+      )}
 
       {viewMode === "day" && (
         <DayView
