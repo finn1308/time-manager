@@ -66,7 +66,7 @@ export async function executeAIScheduling(
     blockedSlots: Array<{ title: string; startTime: string; endTime: string; dayOfWeek?: number | null; specificDate?: string | null; isLocked: boolean }>;
     existingEvents: Array<{ title: string; startTime: string; endTime: string }>;
     flexibleGoals?: Array<{ id: string; title: string; targetMinutes: number; startDate: string; endDate?: string | null; activeDays: number[]; preferredPeriod: string }>;
-    skills?: Array<{ id: string; name: string; category: string; targetHours: number }>;
+    skills?: Array<{ id: string; name: string; category: string; totalPlannedHours?: number | null }>;
     customInstructions?: string;
   }
 ): Promise<AISchedulerResponse> {
@@ -216,7 +216,7 @@ export function runLocalHeuristicScheduler(params: {
   blockedSlots: Array<{ title: string; startTime: string; endTime: string; dayOfWeek?: number | null; specificDate?: string | null; isLocked: boolean }>;
   existingEvents: Array<{ title: string; startTime: string; endTime: string }>;
   flexibleGoals?: Array<{ id: string; title: string; targetMinutes: number; startDate: string; endDate?: string | null; activeDays: number[]; preferredPeriod: string }>;
-  skills?: Array<{ id: string; name: string; category: string; targetHours: number }>;
+  skills?: Array<{ id: string; name: string; category: string; totalPlannedHours?: number | null }>;
   customInstructions?: string;
 }): AISchedulerResponse {
   const proposedEvents: ProposedEvent[] = [];
