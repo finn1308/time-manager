@@ -23,7 +23,7 @@
 - [x] API route to generate knowledge map
 
 ## 5. Knowledge Map
-- [ ] UI to display structured knowledge map
+- [x] UI to display structured knowledge map
 
 ## 6. Roadmap Generation
 - [x] AI prompt to generate Ultra Learning roadmap
@@ -64,7 +64,7 @@
 ## 15. Responsive UI
 - [x] Implement Dashboard
 - [x] Implement Form
-- [ ] Implement Details, Roadmap views
+- [x] Implement Details, Roadmap views
 - [ ] Ensure mobile responsiveness
 
 ## 16. Testing

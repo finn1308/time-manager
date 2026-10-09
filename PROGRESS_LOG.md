@@ -8,7 +8,7 @@
 5. [x] **API - Skills CRUD**
 6. [x] **AI Integration - Skill Analysis & Knowledge Map**
 7. [x] **AI Integration - Roadmap Generation (Ultra Learning)**
-8. [ ] **UI - Skill Details & Roadmap View**
+8. [x] **UI - Skill Details & Roadmap View**
 9. [ ] **Feature - Calendar Scheduling Integration**
 10. [ ] **Feature - Study Timer Integration**
 11. [ ] **Feature - Progress Analytics**
@@ -47,7 +47,7 @@
 - **Outputs/Deliverables:** Created `/api/skills/route.ts` and `/api/skills/[id]/route.ts`.
 - **Hand-off Notes:** Secured API routes for GET, POST, PATCH, and DELETE operations. DB logic uses `prisma.skill`.
 
-### Skill Completed: AI Integration - Skill Analysis & Roadmap Generation
+### Skill Completed: UI - Skill Details & Roadmap View
 - **Status:** `[x] COMPLETED`
-- **Outputs/Deliverables:** Created `src/lib/ai/skill-analyzer.ts` and `src/app/api/skills/[id]/analyze/route.ts`.
-- **Hand-off Notes:** Integrated Gemini AI to generate Knowledge Map, Strategy, Phases, Units, and Tasks following Ultra Learning principles. Persists the hierarchy into the database.
+- **Outputs/Deliverables:** Created `skills/[id]/page.tsx`, `skill-details.tsx`, `skills/[id]/roadmap/page.tsx`, and `roadmap-view.tsx`.
+- **Hand-off Notes:** The Details view shows goals, Knowledge Map, and Learning Strategy. Includes an AI Generation button. The Roadmap view visualizes Phases, Units, and Tasks with interactive UI.
