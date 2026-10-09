@@ -24,12 +24,21 @@ export async function POST(
 
     const roadmapData = await generateSkillRoadmap(skill.id, user.id);
 
-    // Save Knowledge Map and Strategy
+    // Clean up previous phases/units/tasks for this skill if re-generating
+    await prisma.skillPhase.deleteMany({
+      where: { skillId: skill.id },
+    });
+
+    const totalPlannedHours = roadmapData.phases.reduce((acc, p) => acc + (p.plannedHours || 0), 0);
+
+    // Save Knowledge Map, Strategy, Total Hours & update status
     await prisma.skill.update({
       where: { id: skill.id },
       data: {
         knowledgeMap: roadmapData.knowledgeMap,
         learningStrategy: roadmapData.learningStrategy,
+        totalPlannedHours: totalPlannedHours > 0 ? totalPlannedHours : skill.totalPlannedHours,
+        status: skill.status === "NOT_STARTED" ? "LEARNING" : skill.status,
       },
     });
 
