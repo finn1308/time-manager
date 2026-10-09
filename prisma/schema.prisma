@@ -322,6 +322,12 @@ model Task {
   order              Int       @default(0)
   isCompleted        Boolean   @default(false)
   completedAt        DateTime?
+  scheduledDate      String?   // "YYYY-MM-DD" in user timezone
+  originalDate       String?   // "YYYY-MM-DD" initial assigned date
+  isImportant        Boolean   @default(false)
+  isRollover         Boolean   @default(false)
+  rolloverCount      Int       @default(0)
+  lastRolloverAt     DateTime?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
@@ -339,9 +345,35 @@ model Task {
   notes            Note[]
 
   @@index([userId, status])
+  @@index([userId, scheduledDate])
+  @@index([userId, isImportant])
+  @@index([userId, isCompleted])
   @@index([subjectId])
   @@index([goalId])
   @@index([milestoneId])
+}
+
+model DailyTaskSummary {
+  id               String    @id @default(cuid())
+  userId           String
+  dateKey          String    // "YYYY-MM-DD" in user timezone
+  totalTasks       Int       @default(0)
+  completedTasks   Int       @default(0)
+  uncompletedTasks Int       @default(0)
+  completionRate   Float     @default(0.0) // 0.0 - 100.0%
+  rolledOverTasks  Int       @default(0)
+  isClosed         Boolean   @default(false)
+  closedAt         DateTime?
+  snapshotData     String?   @db.Text // JSON snapshot of tasks at closure time { tasks: [...] }
+  notes            String?   @db.Text
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dateKey])
+  @@index([userId, dateKey])
+  @@index([userId, isClosed])
 }
 
 model TaskDependency {
