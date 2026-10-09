@@ -24,8 +24,31 @@ export interface ProposedEvent {
   reasoning: string;
 }
 
+export interface RecommendedFlexibleSlot {
+  goalId: string;
+  goalTitle: string;
+  date: string;
+  recommendedStart: string;
+  recommendedEnd: string;
+  durationMinutes: number;
+  reason: string;
+}
+
+export interface DayWorkloadAnalysis {
+  date: string;
+  dayOfWeek: number;
+  flexibleGoalMinutes: number;
+  fixedStudyMinutes: number;
+  totalStudyMinutes: number;
+  maxDailyMinutes: number;
+  isOverloaded: boolean;
+  notes?: string;
+}
+
 export interface AISchedulerResponse {
   proposedEvents: ProposedEvent[];
+  recommendedSlotsForFlexibleGoals?: RecommendedFlexibleSlot[];
+  workloadAnalysis?: DayWorkloadAnalysis[];
   summary: string;
   providerUsed: string;
 }
@@ -42,6 +65,8 @@ export async function executeAIScheduling(
     historySummary?: any;
     blockedSlots: Array<{ title: string; startTime: string; endTime: string; dayOfWeek?: number | null; specificDate?: string | null; isLocked: boolean }>;
     existingEvents: Array<{ title: string; startTime: string; endTime: string }>;
+    flexibleGoals?: Array<{ id: string; title: string; targetMinutes: number; startDate: string; endDate?: string | null; activeDays: number[]; preferredPeriod: string }>;
+    skills?: Array<{ id: string; name: string; category: string; targetHours: number }>;
     customInstructions?: string;
   }
 ): Promise<AISchedulerResponse> {
