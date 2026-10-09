@@ -1,10 +1,10 @@
 # PROGRESS LOG - SKILLS ULTRA LEARNING MODULE
 
-3. ## Planned Skills / Subtasks
-4. [x] **Existing System Audit**
-5. [x] **Database Schema & Migrations**
-6. [ ] **UI - Skills Dashboard**
-4. [ ] **UI - Create/Edit Skill Form**
+## Planned Skills / Subtasks
+1. [x] **Existing System Audit**
+2. [x] **Database Schema & Migrations**
+3. [x] **UI - Skills Dashboard**
+4. [x] **UI - Create/Edit Skill Form**
 5. [ ] **API - Skills CRUD**
 6. [ ] **AI Integration - Skill Analysis & Knowledge Map**
 7. [ ] **AI Integration - Roadmap Generation (Ultra Learning)**
@@ -31,3 +31,13 @@
 - **Status:** `[x] COMPLETED`
 - **Outputs/Deliverables:** Updated `prisma/schema.prisma` and ran `npx prisma db push`.
 - **Hand-off Notes:** Database is now in sync. Moving to UI implementation for Skills Dashboard.
+
+### Skill Completed: UI - Skills Dashboard
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Added Skills item to `sidebar.tsx`. Created `skills/page.tsx` and `skills-dashboard.tsx`.
+- **Hand-off Notes:** The dashboard lists skills with their progress, weekly hours, and status. It redirects to `/skills/create` to add new skills.
+
+### Skill Completed: UI - Create/Edit Skill Form
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Created `skills/create/page.tsx` and `create-skill-form.tsx`.
+- **Hand-off Notes:** The form captures all required Ultra Learning parameters including target level, weekly hours commitment, and optional deadline. It POSTs to `/api/skills`.

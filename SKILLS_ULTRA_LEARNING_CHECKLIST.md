@@ -62,7 +62,9 @@
 - [ ] Optimize database queries
 
 ## 15. Responsive UI
-- [ ] Implement Dashboard, Form, Details, Roadmap views
+- [x] Implement Dashboard
+- [x] Implement Form
+- [ ] Implement Details, Roadmap views
 - [ ] Ensure mobile responsiveness
 
 ## 16. Testing
