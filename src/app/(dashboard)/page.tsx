@@ -27,6 +27,8 @@ import {
   Briefcase,
   Brain,
   Languages,
+  CheckSquare,
+  CheckCircle2,
 } from "lucide-react";
 import { subDays, parseISO } from "date-fns";
 import {
@@ -139,6 +141,15 @@ export default async function DashboardPage() {
       where: { userId: user.id },
       _sum: { actualDurationSeconds: true },
       _count: { id: true },
+    }),
+    prisma.task.findMany({
+      where: { userId: user.id, scheduledDate: todayKey },
+      include: { subject: { select: { id: true, name: true, color: true } } },
+      orderBy: [{ isCompleted: "asc" }, { isImportant: "desc" }, { createdAt: "desc" }],
+      take: 4,
+    }),
+    prisma.dailyTaskSummary.findUnique({
+      where: { userId_dateKey: { userId: user.id, dateKey: todayKey } },
     }),
   ]);
 
