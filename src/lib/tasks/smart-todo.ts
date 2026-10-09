@@ -172,156 +172,154 @@ export async function executeDayClosure(params: {
   const { userId, dateKey, rolloverToNextDay, notes } = params;
   const targetDateKey = params.targetDateKey || getNextDayKey(dateKey);
 
-  return await prisma.$transaction(async (tx) => {
-    // 1. Fetch all tasks assigned to dateKey
-    const tasks = await tx.task.findMany({
-      where: {
-        userId,
-        scheduledDate: dateKey,
+  // 1. Fetch all tasks assigned to dateKey
+  const tasks = await prisma.task.findMany({
+    where: {
+      userId,
+      scheduledDate: dateKey,
+    },
+    include: {
+      subject: {
+        select: { id: true, name: true, color: true },
       },
-      include: {
-        subject: {
-          select: { id: true, name: true, color: true },
-        },
-      },
-      orderBy: [{ isCompleted: "asc" }, { order: "asc" }, { createdAt: "asc" }],
-    });
+    },
+    orderBy: [{ isCompleted: "asc" }, { order: "asc" }, { createdAt: "asc" }],
+  });
 
-    const stats = calculateCompletionStats(tasks);
-    const uncompletedTasks = tasks.filter((t) => !t.isCompleted);
+  const stats = calculateCompletionStats(tasks);
+  const uncompletedTasks = tasks.filter((t) => !t.isCompleted);
 
-    // 2. Prepare freeze snapshot of all tasks for this day
-    const snapshotData = JSON.stringify(
-      tasks.map((t) => ({
-        id: t.id,
-        title: t.title,
-        priority: t.priority,
-        isCompleted: t.isCompleted,
-        completedAt: t.completedAt,
-        status: t.status,
-        subjectId: t.subjectId,
-        subjectName: t.subject?.name || null,
-        subjectColor: t.subject?.color || null,
-        isRollover: t.isRollover,
-        rolloverCount: t.rolloverCount,
-        originalDate: t.originalDate || dateKey,
-      }))
-    );
+  // 2. Prepare freeze snapshot of all tasks for this day
+  const snapshotData = JSON.stringify(
+    tasks.map((t) => ({
+      id: t.id,
+      title: t.title,
+      priority: t.priority,
+      isCompleted: t.isCompleted,
+      completedAt: t.completedAt,
+      status: t.status,
+      subjectId: t.subjectId,
+      subjectName: t.subject?.name || null,
+      subjectColor: t.subject?.color || null,
+      isRollover: t.isRollover,
+      rolloverCount: t.rolloverCount,
+      originalDate: t.originalDate || dateKey,
+    }))
+  );
 
-    let rolledOverCount = 0;
+  let rolledOverCount = 0;
 
-    // 3. If user chose YES: Roll over uncompleted tasks to targetDateKey
-    if (rolloverToNextDay && uncompletedTasks.length > 0) {
-      rolledOverCount = uncompletedTasks.length;
-      const uncompletedIds = uncompletedTasks.map((t) => t.id);
+  // 3. If user chose YES: Roll over uncompleted tasks to targetDateKey
+  if (rolloverToNextDay && uncompletedTasks.length > 0) {
+    rolledOverCount = uncompletedTasks.length;
+    const uncompletedIds = uncompletedTasks.map((t) => t.id);
 
-      for (const task of uncompletedTasks) {
-        await tx.task.update({
-          where: { id: task.id },
-          data: {
-            scheduledDate: targetDateKey,
-            originalDate: task.originalDate || dateKey,
-            isRollover: true,
-            rolloverCount: { increment: 1 },
-            lastRolloverAt: new Date(),
-          },
-        });
-      }
-
-      // Record audit log
-      await tx.auditLog.create({
+    for (const task of uncompletedTasks) {
+      await prisma.task.update({
+        where: { id: task.id },
         data: {
-          userId,
-          entityType: "TASK",
-          entityId: dateKey,
-          action: "ROLLOVER",
-          detailsJson: JSON.stringify({
-            fromDay: dateKey,
-            toDay: targetDateKey,
-            count: rolledOverCount,
-            taskIds: uncompletedIds,
-          }),
+          scheduledDate: targetDateKey,
+          originalDate: task.originalDate || dateKey,
+          isRollover: true,
+          rolloverCount: { increment: 1 },
+          lastRolloverAt: new Date(),
         },
       });
     }
 
-    // 4. Save/Update DailyTaskSummary as CLOSED with snapshot frozen
-    const summary = await tx.dailyTaskSummary.upsert({
+    // Record audit log
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        entityType: "TASK",
+        entityId: dateKey,
+        action: "ROLLOVER",
+        detailsJson: JSON.stringify({
+          fromDay: dateKey,
+          toDay: targetDateKey,
+          count: rolledOverCount,
+          taskIds: uncompletedIds,
+        }),
+      },
+    });
+  }
+
+  // 4. Save/Update DailyTaskSummary as CLOSED with snapshot frozen
+  const summary = await prisma.dailyTaskSummary.upsert({
+    where: {
+      userId_dateKey: {
+        userId,
+        dateKey,
+      },
+    },
+    create: {
+      userId,
+      dateKey,
+      totalTasks: stats.totalTasks,
+      completedTasks: stats.completedTasks,
+      uncompletedTasks: stats.uncompletedTasks,
+      completionRate: stats.completionRate,
+      rolledOverTasks: rolledOverCount,
+      isClosed: true,
+      closedAt: new Date(),
+      snapshotData,
+      notes: notes || null,
+    },
+    update: {
+      totalTasks: stats.totalTasks,
+      completedTasks: stats.completedTasks,
+      uncompletedTasks: stats.uncompletedTasks,
+      completionRate: stats.completionRate,
+      rolledOverTasks: rolledOverCount,
+      isClosed: true,
+      closedAt: new Date(),
+      snapshotData,
+      notes: notes || undefined,
+    },
+  });
+
+  // 5. If rolled over, also update target day's live summary
+  if (rolloverToNextDay && rolledOverCount > 0) {
+    const targetTasks = await prisma.task.findMany({
+      where: {
+        userId,
+        scheduledDate: targetDateKey,
+      },
+    });
+    const targetStats = calculateCompletionStats(targetTasks);
+
+    await prisma.dailyTaskSummary.upsert({
       where: {
         userId_dateKey: {
           userId,
-          dateKey,
+          dateKey: targetDateKey,
         },
       },
       create: {
         userId,
-        dateKey,
-        totalTasks: stats.totalTasks,
-        completedTasks: stats.completedTasks,
-        uncompletedTasks: stats.uncompletedTasks,
-        completionRate: stats.completionRate,
-        rolledOverTasks: rolledOverCount,
-        isClosed: true,
-        closedAt: new Date(),
-        snapshotData,
-        notes: notes || null,
+        dateKey: targetDateKey,
+        totalTasks: targetStats.totalTasks,
+        completedTasks: targetStats.completedTasks,
+        uncompletedTasks: targetStats.uncompletedTasks,
+        completionRate: targetStats.completionRate,
+        isClosed: false,
       },
       update: {
-        totalTasks: stats.totalTasks,
-        completedTasks: stats.completedTasks,
-        uncompletedTasks: stats.uncompletedTasks,
-        completionRate: stats.completionRate,
-        rolledOverTasks: rolledOverCount,
-        isClosed: true,
-        closedAt: new Date(),
-        snapshotData,
-        notes: notes || undefined,
+        totalTasks: targetStats.totalTasks,
+        completedTasks: targetStats.completedTasks,
+        uncompletedTasks: targetStats.uncompletedTasks,
+        completionRate: targetStats.completionRate,
       },
     });
+  }
 
-    // 5. If rolled over, also update target day's live summary
-    if (rolloverToNextDay && rolledOverCount > 0) {
-      const targetTasks = await tx.task.findMany({
-        where: {
-          userId,
-          scheduledDate: targetDateKey,
-        },
-      });
-      const targetStats = calculateCompletionStats(targetTasks);
-
-      await tx.dailyTaskSummary.upsert({
-        where: {
-          userId_dateKey: {
-            userId,
-            dateKey: targetDateKey,
-          },
-        },
-        create: {
-          userId,
-          dateKey: targetDateKey,
-          totalTasks: targetStats.totalTasks,
-          completedTasks: targetStats.completedTasks,
-          uncompletedTasks: targetStats.uncompletedTasks,
-          completionRate: targetStats.completionRate,
-          isClosed: false,
-        },
-        update: {
-          totalTasks: targetStats.totalTasks,
-          completedTasks: targetStats.completedTasks,
-          uncompletedTasks: targetStats.uncompletedTasks,
-          completionRate: targetStats.completionRate,
-        },
-      });
-    }
-
-    return {
-      summary,
-      stats,
-      rolledOverCount,
-      targetDateKey: rolloverToNextDay ? targetDateKey : null,
-      closedTasksCount: tasks.length,
-    };
-  });
+  return {
+    summary,
+    stats,
+    rolledOverCount,
+    targetDateKey: rolloverToNextDay ? targetDateKey : null,
+    closedTasksCount: tasks.length,
+  };
 }
 
 /**

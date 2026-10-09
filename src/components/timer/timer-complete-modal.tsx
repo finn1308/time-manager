@@ -11,6 +11,7 @@ import { toast } from "sonner";
 interface TimerCompleteModalProps {
   subject: ActiveSubject;
   scheduleEventId: string | null;
+  flexibleGoalId?: string | null;
   taskId?: string | null;
   seconds: number;
   open: boolean;
@@ -20,6 +21,7 @@ interface TimerCompleteModalProps {
 export function TimerCompleteModal({
   subject,
   scheduleEventId,
+  flexibleGoalId,
   taskId,
   seconds,
   open,
@@ -39,6 +41,7 @@ export function TimerCompleteModal({
       const payload = {
         subjectId: isSkill ? undefined : subject.id,
         skillId: isSkill ? subject.id : undefined,
+        flexibleGoalId: flexibleGoalId || undefined,
         calendarEventId: scheduleEventId,
         taskId: taskId || null,
         actualDurationSeconds: seconds,
@@ -52,6 +55,7 @@ export function TimerCompleteModal({
         offlineData.push({ ...payload, timestamp: Date.now() });
         localStorage.setItem("offline_study_sessions", JSON.stringify(offlineData));
         toast.success("Mất kết nối mạng. Đã lưu phiên học ngoại tuyến (Offline).");
+        window.dispatchEvent(new Event("chronomind-study-updated"));
         onClose();
         return;
       }
@@ -66,6 +70,8 @@ export function TimerCompleteModal({
         throw new Error("Failed to save study log");
       }
 
+      toast.success("Đã ghi nhận thời gian học thành công!");
+      window.dispatchEvent(new Event("chronomind-study-updated"));
       router.refresh();
       onClose();
     } catch (e) {
@@ -74,6 +80,7 @@ export function TimerCompleteModal({
       const payload = {
         subjectId: isSkill ? undefined : subject.id,
         skillId: isSkill ? subject.id : undefined,
+        flexibleGoalId: flexibleGoalId || undefined,
         calendarEventId: scheduleEventId,
         taskId: taskId || null,
         actualDurationSeconds: seconds,
@@ -84,6 +91,7 @@ export function TimerCompleteModal({
       offlineData.push({ ...payload, timestamp: Date.now() });
       localStorage.setItem("offline_study_sessions", JSON.stringify(offlineData));
       toast.success("Đã xảy ra lỗi mạng. Đã lưu phiên học ngoại tuyến (Offline).");
+      window.dispatchEvent(new Event("chronomind-study-updated"));
       onClose();
     } finally {
       setIsSubmitting(false);
