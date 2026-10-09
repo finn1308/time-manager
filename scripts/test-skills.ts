@@ -59,7 +59,7 @@ async function runTests() {
     data: {
       userId: user.id,
       skillId: skill.id,
-      taskId: task.id,
+      skillTaskId: task.id,
       actualStart: new Date(Date.now() - 30 * 60000), // 30 mins ago
       actualEnd: new Date(),
       actualDurationSeconds: 30 * 60,
