@@ -67,7 +67,7 @@ async function runFlexibleGoalsAcceptanceTests() {
         subjectId: vocabSubject.id,
         targetMinutes: 30,
         startDate: new Date("2026-10-01T00:00:00.000Z"),
-        activeDays: [1, 2, 3, 4, 5], // Monday to Friday
+        activeDays: JSON.stringify([1, 2, 3, 4, 5]), // Monday to Friday
         preferredPeriod: "ANY_TIME",
         status: "ACTIVE",
       },

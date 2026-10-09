@@ -24,7 +24,7 @@ export async function POST(
               orderBy: { order: "asc" },
               include: {
                 tasks: {
-                  where: { status: "PENDING" },
+                  where: { status: { not: "COMPLETED" } },
                   orderBy: { order: "asc" },
                 },
               },
