@@ -16,12 +16,13 @@ const modelCache = new Map<string, { model: string; timestamp: number }>();
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
 const PREFERRED_MODEL_ORDER = [
+  "gemini-2.5-flash",
   "gemini-2.0-flash",
-  "gemini-1.5-flash-latest",
   "gemini-1.5-flash",
+  "gemini-2.5-pro",
+  "gemini-1.5-pro",
   "gemini-1.5-flash-8b",
   "gemini-2.0-flash-exp",
-  "gemini-1.5-pro",
   "gemini-pro",
 ];
 

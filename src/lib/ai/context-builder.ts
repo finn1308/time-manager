@@ -96,7 +96,7 @@ export interface ComprehensiveStudyContext {
     id: string;
     name: string;
     category: string;
-    targetHours: number;
+    totalPlannedHours: number | null;
   }>;
 }
 
