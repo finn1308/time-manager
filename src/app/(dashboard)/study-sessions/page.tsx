@@ -5,8 +5,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePipTimer, TimerMode, PomodoroPhase } from "@/components/timer/pip-timer-provider";
-import {
 import { toast } from "sonner";
+import {
   Clock,
   History,
   CheckCircle2,
