@@ -47,6 +47,11 @@
 - **Outputs/Deliverables:** Created `/api/skills/route.ts` and `/api/skills/[id]/route.ts`.
 - **Hand-off Notes:** Secured API routes for GET, POST, PATCH, and DELETE operations. DB logic uses `prisma.skill`.
 
+### Skill Completed: AI Integration - Skill Analysis & Roadmap Generation
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Created `src/lib/ai/skill-analyzer.ts` and `src/app/api/skills/[id]/analyze/route.ts`.
+- **Hand-off Notes:** Integrated Gemini AI to generate Knowledge Map, Strategy, Phases, Units, and Tasks following Ultra Learning principles. Persists the hierarchy into the database.
+
 ### Skill Completed: UI - Skill Details & Roadmap View
 - **Status:** `[x] COMPLETED`
 - **Outputs/Deliverables:** Created `skills/[id]/page.tsx`, `skill-details.tsx`, `skills/[id]/roadmap/page.tsx`, and `roadmap-view.tsx`.
