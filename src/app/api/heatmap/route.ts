@@ -134,12 +134,12 @@ export async function GET(req: Request) {
     dayMap[dStr].sessionsCount += 1;
 
     // Subject breakdown
-    const sId = s.subjectId;
+    const sId = s.subjectId || "general";
     if (!dayMap[dStr].subjects[sId]) {
       dayMap[dStr].subjects[sId] = {
-        id: s.subject.id,
-        name: s.subject.name,
-        color: s.subject.color,
+        id: s.subject?.id || sId,
+        name: s.subject?.name || "Khác",
+        color: s.subject?.color || "#2d6a4f",
         minutes: 0,
       };
     }
@@ -148,9 +148,9 @@ export async function GET(req: Request) {
     // Detailed session info
     dayMap[dStr].sessions.push({
       id: s.id,
-      title: s.calendarEvent?.title || s.notes || `${s.subject.name} Session`,
-      subjectName: s.subject.name,
-      subjectColor: s.subject.color,
+      title: s.calendarEvent?.title || s.notes || `${s.subject?.name || "Khác"} Session`,
+      subjectName: s.subject?.name || "Khác",
+      subjectColor: s.subject?.color || "#2d6a4f",
       actualMinutes: durationMinutes,
       startTime: format(s.actualStart, "HH:mm"),
       endTime: format(s.actualEnd, "HH:mm"),
