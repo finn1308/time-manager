@@ -139,8 +139,8 @@ export async function POST(req: Request) {
     }
 
     // 2. Validate Dates (Only if not using schedules array)
-    let start: Date;
-    let end: Date;
+    let start: Date | undefined;
+    let end: Date | undefined;
     if (!schedules || schedules.length === 0) {
       start = new Date(startTime);
       end = new Date(endTime);
