@@ -234,7 +234,7 @@ export function EventModal({
       if (editingEvent.plannedDurationMinutes) setPlannedDurationMinutes(editingEvent.plannedDurationMinutes);
       const isStudy = isStudyEventCategory(normalizedType, editingEvent.subjectId);
       setTrackStudyTime(isStudy ? true : (editingEvent.trackStudyTime ?? false));
-      setRecurrence(editingEvent.recurrence && editingEvent.recurrence !== "NONE" ? editingEvent.recurrence : "NONE");
+      setRecurrence((editingEvent.recurrence && editingEvent.recurrence !== "NONE" ? editingEvent.recurrence : "NONE") as any);
 
       // Parse weekly days from recurrenceRule if present
       if (editingEvent.recurrenceRule && editingEvent.recurrenceRule.includes("BYDAY=")) {
@@ -1248,7 +1248,7 @@ export function EventModal({
                       {isMultiSlot ? (
                         <select
                           value={recurrence}
-                          onChange={(e) => setRecurrence(e.target.value)}
+                          onChange={(e) => setRecurrence(e.target.value as any)}
                           className="h-8 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
                         >
                           <option value="NONE">Chỉ chọn trong tuần này (Không lặp)</option>
@@ -1257,7 +1257,7 @@ export function EventModal({
                       ) : (
                         <select
                           value={recurrence}
-                          onChange={(e) => setRecurrence(e.target.value)}
+                          onChange={(e) => setRecurrence(e.target.value as any)}
                           className="h-8 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
                         >
                           <option value="NONE">Không lặp (Một lần)</option>
