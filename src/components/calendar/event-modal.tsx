@@ -142,6 +142,12 @@ export function EventModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const [isAllDay, setIsAllDay] = useState<boolean>(false);
+  const [plannedDurationMinutes, setPlannedDurationMinutes] = useState<number>(90);
+  const [recurrence, setRecurrence] = useState<"NONE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY">("NONE");
+  const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>("");
+
   // Recurring delete modal states
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [deleteModeChoice, setDeleteModeChoice] = useState<"SINGLE" | "ALL" | "FUTURE" | "SERIES">("SINGLE");
