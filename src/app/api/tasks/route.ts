@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import {
+  getDateKey,
+  getTodayKey,
+  calculateCompletionStats,
+  syncDailyTaskSummary,
+} from "@/lib/tasks/smart-todo";
+import { VIETNAM_TIMEZONE } from "@/lib/date-utils";
 
 export async function GET(req: Request) {
   const user = await getCurrentUser();
@@ -8,18 +15,48 @@ export async function GET(req: Request) {
 
   try {
     const { searchParams } = new URL(req.url);
+    const list = searchParams.get("list") || "all"; // today, important, planned, pending, completed, all
+    const dateKey = searchParams.get("dateKey") || searchParams.get("date");
     const status = searchParams.get("status");
     const subjectId = searchParams.get("subjectId");
+    const priority = searchParams.get("priority");
     const search = searchParams.get("search");
+
+    const userTimezone = user.timezone || VIETNAM_TIMEZONE;
+    const todayKey = getTodayKey(userTimezone);
 
     const where: any = { userId: user.id };
 
+    // 1. List / View Filtering (Microsoft To Do System)
+    if (list === "today") {
+      where.scheduledDate = dateKey || todayKey;
+    } else if (list === "important") {
+      where.isImportant = true;
+    } else if (list === "planned") {
+      where.OR = [
+        { scheduledDate: { not: null } },
+        { deadline: { not: null } },
+      ];
+    } else if (list === "pending") {
+      where.isCompleted = false;
+    } else if (list === "completed") {
+      where.isCompleted = true;
+    } else if (dateKey) {
+      // Explicit dateKey filter without "today" list
+      where.scheduledDate = dateKey;
+    }
+
+    // 2. Extra Filters
     if (status && status !== "ALL") {
       where.status = status;
     }
 
     if (subjectId && subjectId !== "ALL") {
       where.subjectId = subjectId;
+    }
+
+    if (priority && priority !== "ALL") {
+      where.priority = priority;
     }
 
     if (search) {
@@ -61,10 +98,38 @@ export async function GET(req: Request) {
           },
         },
       },
-      orderBy: [{ isCompleted: "asc" }, { order: "asc" }, { createdAt: "desc" }],
+      orderBy: [
+        { isCompleted: "asc" },
+        { isImportant: "desc" },
+        { order: "asc" },
+        { createdAt: "desc" },
+      ],
     });
 
-    return NextResponse.json({ tasks });
+    // Compute stats for current view
+    const stats = calculateCompletionStats(tasks);
+
+    // Also get daily closure info for the selected dateKey if viewing a specific date
+    let daySummary = null;
+    const targetDate = dateKey || (list === "today" ? todayKey : null);
+    if (targetDate) {
+      daySummary = await prisma.dailyTaskSummary.findUnique({
+        where: {
+          userId_dateKey: {
+            userId: user.id,
+            dateKey: targetDate,
+          },
+        },
+      });
+    }
+
+    return NextResponse.json({
+      tasks,
+      stats,
+      todayKey,
+      selectedDateKey: targetDate || todayKey,
+      daySummary,
+    });
   } catch (err: any) {
     console.error("GET /api/tasks error:", err);
     return NextResponse.json({ error: "Lỗi tải danh sách task" }, { status: 500 });
@@ -83,7 +148,9 @@ export async function POST(req: Request) {
       priority = "MEDIUM",
       estimatedMinutes = 60,
       deadline,
-      status = "INBOX",
+      status = "TODO",
+      scheduledDate,
+      isImportant = false,
       subjectId,
       goalId,
       milestoneId,
@@ -92,8 +159,12 @@ export async function POST(req: Request) {
     } = body;
 
     if (!title || typeof title !== "string" || !title.trim()) {
-      return NextResponse.json({ error: "Tiêu đề task không được để trống" }, { status: 400 });
+      return NextResponse.json({ error: "Tiêu đề nhiệm vụ không được để trống" }, { status: 400 });
     }
+
+    const userTimezone = user.timezone || VIETNAM_TIMEZONE;
+    const todayKey = getTodayKey(userTimezone);
+    const assignedDate = scheduledDate || todayKey;
 
     const isDone = status === "DONE";
 
@@ -105,7 +176,10 @@ export async function POST(req: Request) {
         priority: ["LOW", "MEDIUM", "HIGH", "URGENT"].includes(priority) ? priority : "MEDIUM",
         estimatedMinutes: Math.max(5, parseInt(estimatedMinutes, 10) || 60),
         deadline: deadline ? new Date(deadline) : null,
-        status: ["INBOX", "TODO", "IN_PROGRESS", "DONE", "CANCELLED"].includes(status) ? status : "INBOX",
+        scheduledDate: assignedDate,
+        originalDate: assignedDate,
+        isImportant: Boolean(isImportant),
+        status: ["INBOX", "TODO", "IN_PROGRESS", "DONE", "CANCELLED"].includes(status) ? status : "TODO",
         isCompleted: isDone,
         completedAt: isDone ? new Date() : null,
         subjectId: subjectId || null,
@@ -124,7 +198,9 @@ export async function POST(req: Request) {
             : undefined,
       },
       include: {
-        subject: true,
+        subject: {
+          select: { id: true, name: true, code: true, color: true },
+        },
         dependencies: {
           include: {
             prerequisite: true,
@@ -133,9 +209,14 @@ export async function POST(req: Request) {
       },
     });
 
+    // Sync live daily task summary for the assigned date
+    if (assignedDate) {
+      await syncDailyTaskSummary(user.id, assignedDate);
+    }
+
     return NextResponse.json({ success: true, task }, { status: 201 });
   } catch (err: any) {
     console.error("POST /api/tasks error:", err);
-    return NextResponse.json({ error: "Lỗi tạo task mới" }, { status: 500 });
+    return NextResponse.json({ error: "Lỗi tạo nhiệm vụ mới" }, { status: 500 });
   }
 }
