@@ -35,9 +35,10 @@ export function TimerCompleteModal({
   const handleSave = async () => {
     try {
       setIsSubmitting(true);
-      
+      const isSkill = subject.color === "#2d6a4f" && !subject.code;
       const payload = {
-        subjectId: subject.id,
+        subjectId: isSkill ? undefined : subject.id,
+        skillId: isSkill ? subject.id : undefined,
         calendarEventId: scheduleEventId,
         taskId: taskId || null,
         actualDurationSeconds: seconds,
@@ -69,9 +70,10 @@ export function TimerCompleteModal({
       onClose();
     } catch (e) {
       console.error(e);
-      // Fallback if fetch fails
+      const isSkill = subject.color === "#2d6a4f" && !subject.code;
       const payload = {
-        subjectId: subject.id,
+        subjectId: isSkill ? undefined : subject.id,
+        skillId: isSkill ? subject.id : undefined,
         calendarEventId: scheduleEventId,
         taskId: taskId || null,
         actualDurationSeconds: seconds,
