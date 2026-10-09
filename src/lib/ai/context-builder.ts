@@ -78,6 +78,26 @@ export interface ComprehensiveStudyContext {
     isLocked: boolean;
     type: string;
   }>;
+  flexibleGoals: Array<{
+    id: string;
+    title: string;
+    subjectId: string | null;
+    subjectName?: string;
+    skillId: string | null;
+    skillName?: string;
+    targetMinutes: number;
+    startDate: string;
+    endDate: string | null;
+    activeDays: number[];
+    preferredPeriod: string;
+    deadline: string | null;
+  }>;
+  skills: Array<{
+    id: string;
+    name: string;
+    category: string;
+    targetHours: number;
+  }>;
 }
 
 /**
@@ -300,6 +320,52 @@ export async function buildComprehensiveStudyContext(params: {
     type: e.type || "STUDY",
   }));
 
+  // 8. Fetch active flexible goals & skills
+  const [rawFlexibleGoals, rawSkills] = await Promise.all([
+    prisma.flexibleStudyGoal.findMany({
+      where: {
+        userId,
+        status: "ACTIVE",
+      },
+      include: {
+        subject: { select: { id: true, name: true, code: true, color: true } },
+        skill: { select: { id: true, name: true, category: true } },
+      },
+    }),
+    prisma.skill.findMany({
+      where: { userId, status: "ACTIVE" },
+      select: { id: true, name: true, category: true, targetHours: true },
+    }),
+  ]);
+
+  const flexibleGoalsPayload = rawFlexibleGoals.map((g) => {
+    let activeDays: number[] = [1, 2, 3, 4, 5];
+    try {
+      if (Array.isArray(g.activeDays)) {
+        activeDays = g.activeDays as number[];
+      } else if (typeof g.activeDays === "string") {
+        activeDays = JSON.parse(g.activeDays);
+      }
+    } catch {
+      activeDays = [1, 2, 3, 4, 5];
+    }
+
+    return {
+      id: g.id,
+      title: g.title,
+      subjectId: g.subjectId,
+      subjectName: g.subject?.name,
+      skillId: g.skillId,
+      skillName: g.skill?.name,
+      targetMinutes: g.targetMinutes,
+      startDate: g.startDate ? formatInTimeZone(g.startDate, VIETNAM_TIMEZONE, "yyyy-MM-dd") : startDate,
+      endDate: g.endDate ? formatInTimeZone(g.endDate, VIETNAM_TIMEZONE, "yyyy-MM-dd") : null,
+      activeDays,
+      preferredPeriod: g.preferredPeriod,
+      deadline: g.deadline ? formatInTimeZone(g.deadline, VIETNAM_TIMEZONE, "yyyy-MM-dd") : null,
+    };
+  });
+
   return {
     user: userRecord,
     preferences,
@@ -309,5 +375,7 @@ export async function buildComprehensiveStudyContext(params: {
     historySummary,
     availabilityRules,
     existingEvents: existingEventsPayload,
+    flexibleGoals: flexibleGoalsPayload,
+    skills: rawSkills,
   };
 }
