@@ -34,6 +34,8 @@ export function TaskModal({
   const [status, setStatus] = useState<string>("INBOX");
   const [estimatedMinutes, setEstimatedMinutes] = useState<number>(60);
   const [deadline, setDeadline] = useState<string>("");
+  const [scheduledDate, setScheduledDate] = useState<string>("");
+  const [isImportant, setIsImportant] = useState<boolean>(false);
   const [selectedPrereqIds, setSelectedPrereqIds] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,6 +47,8 @@ export function TaskModal({
       setPriority(taskToEdit.priority || "MEDIUM");
       setStatus(taskToEdit.status || "INBOX");
       setEstimatedMinutes(taskToEdit.estimatedMinutes || 60);
+      setScheduledDate(taskToEdit.scheduledDate || "");
+      setIsImportant(Boolean(taskToEdit.isImportant));
       if (taskToEdit.deadline) {
         const d = new Date(taskToEdit.deadline);
         const iso = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -63,6 +67,8 @@ export function TaskModal({
       setStatus("INBOX");
       setEstimatedMinutes(60);
       setDeadline("");
+      setScheduledDate(new Date().toISOString().slice(0, 10));
+      setIsImportant(false);
       setSelectedPrereqIds([]);
     }
   }, [taskToEdit, subjects, open]);
@@ -80,6 +86,8 @@ export function TaskModal({
         priority,
         status,
         estimatedMinutes,
+        scheduledDate: scheduledDate || null,
+        isImportant,
         deadline: deadline ? new Date(deadline).toISOString() : null,
         prerequisiteTaskIds: selectedPrereqIds,
       };
@@ -243,17 +251,45 @@ export function TaskModal({
             </div>
           </div>
 
-          {/* Deadline */}
-          <div>
-            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
-              Hạn chót (Deadline)
-            </label>
-            <Input
-              type="datetime-local"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="rounded-2xl border-[#dbe7dd] text-xs"
+          {/* Scheduled Date & Deadline */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                Ngày thực hiện (Lên lịch)
+              </label>
+              <Input
+                type="date"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                className="rounded-2xl border-[#dbe7dd] text-xs"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                Hạn chót (Deadline)
+              </label>
+              <Input
+                type="datetime-local"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                className="rounded-2xl border-[#dbe7dd] text-xs"
+              />
+            </div>
+          </div>
+
+          {/* Important toggle */}
+          <div className="flex items-center space-x-2 pt-1">
+            <input
+              type="checkbox"
+              id="modal-is-important"
+              checked={isImportant}
+              onChange={(e) => setIsImportant(e.target.checked)}
+              className="w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#2d6a4f]"
             />
+            <label htmlFor="modal-is-important" className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer">
+              Đánh dấu là nhiệm vụ quan trọng ⭐
+            </label>
           </div>
 
           {/* Prerequisite Dependencies (DAG) */}
