@@ -922,6 +922,7 @@ model Resource {
   id              String         @id @default(cuid())
   userId          String
   subjectId       String?
+  skillId         String?
   calendarEventId String?
   title           String
   type            String         // MEETING, STORAGE, LEARNING, OTHER
@@ -935,11 +936,13 @@ model Resource {
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  skill         Skill?         @relation(fields: [skillId], references: [id], onDelete: Cascade)
   calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([calendarEventId])
   @@index([subjectId])
+  @@index([skillId])
 }
 
 model StudyNote {
@@ -1056,6 +1059,7 @@ model Skill {
   phases         SkillPhase[]
   calendarEvents CalendarEvent[]
   studySessions  StudySession[]
+  resources      Resource[]
 
   @@unique([userId, name])
   @@index([userId])
