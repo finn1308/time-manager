@@ -8,14 +8,25 @@ export const metadata = {
   title: "Skill Details",
 };
 
-export default async function SkillPage({ params }: { params: { id: string } }) {
+export default async function SkillPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
+  const { id } = await params;
   const skill = await prisma.skill.findUnique({
-    where: { id: params.id },
+    where: { id: id },
     include: {
       resources: true,
+      phases: {
+        include: {
+          units: {
+            include: {
+              tasks: true,
+            },
+          },
+        },
+      },
+      studySessions: true,
     },
   });
 
