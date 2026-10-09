@@ -48,6 +48,25 @@ export function AiSchedulePreviewModal({
 
   const [results, setResults] = useState<{
     proposedEvents: ProposedEvent[];
+    recommendedSlotsForFlexibleGoals?: Array<{
+      goalId: string;
+      goalTitle: string;
+      date: string;
+      recommendedStart: string;
+      recommendedEnd: string;
+      durationMinutes: number;
+      reason: string;
+    }>;
+    workloadAnalysis?: Array<{
+      date: string;
+      dayOfWeek: number;
+      flexibleGoalMinutes: number;
+      fixedStudyMinutes: number;
+      totalStudyMinutes: number;
+      maxDailyMinutes: number;
+      isOverloaded: boolean;
+      notes?: string;
+    }>;
     summary: string;
     providerUsed: string;
   } | null>(null);
@@ -214,6 +233,37 @@ export function AiSchedulePreviewModal({
               <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] leading-relaxed">
                 {results.summary}
               </p>
+
+              {/* Overload Notice if any */}
+              {results.workloadAnalysis?.some((w) => w.isOverloaded) && (
+                <div className="mt-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-800 dark:text-amber-200 flex items-start space-x-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
+                  <div>
+                    <span className="font-bold">Cảnh báo tải trọng:</span> Một số ngày có nguy cơ vượt định mức tối đa. Hãy cân nhắc giảm bớt mục tiêu linh hoạt hoặc giãn ngày.
+                  </div>
+                </div>
+              )}
+
+              {/* Recommended Slots for Flexible Goals */}
+              {results.recommendedSlotsForFlexibleGoals && results.recommendedSlotsForFlexibleGoals.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-[#dbe7dd] dark:border-[#263d2e] space-y-1.5">
+                  <div className="text-[11px] font-bold text-[#1b4332] dark:text-[#74c69d] flex items-center space-x-1.5">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Gợi ý khung giờ rảnh cho Mục tiêu linh hoạt (Không tự ý gán vào lịch):</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                    {results.recommendedSlotsForFlexibleGoals.slice(0, 4).map((rec, i) => (
+                      <div key={i} className="p-2 rounded-xl bg-white dark:bg-[#1b2f21] border border-[#dbe7dd] dark:border-[#263d2e] text-[11px]">
+                        <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">{rec.goalTitle}:</span>{" "}
+                        <span className="text-[#2d6a4f] dark:text-[#52b788] font-mono">
+                          {formatVN(new Date(rec.recommendedStart), "dd/MM • HH:mm")}
+                        </span>
+                        <div className="text-[10px] text-[#526b5c] dark:text-[#8ba393] truncate">{rec.reason}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between text-xs text-[#526b5c] dark:text-[#a3bda9] px-1 font-medium">
