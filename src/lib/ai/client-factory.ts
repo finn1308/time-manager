@@ -215,9 +215,13 @@ export function runLocalHeuristicScheduler(params: {
   historySummary?: any;
   blockedSlots: Array<{ title: string; startTime: string; endTime: string; dayOfWeek?: number | null; specificDate?: string | null; isLocked: boolean }>;
   existingEvents: Array<{ title: string; startTime: string; endTime: string }>;
+  flexibleGoals?: Array<{ id: string; title: string; targetMinutes: number; startDate: string; endDate?: string | null; activeDays: number[]; preferredPeriod: string }>;
+  skills?: Array<{ id: string; name: string; category: string; targetHours: number }>;
   customInstructions?: string;
 }): AISchedulerResponse {
   const proposedEvents: ProposedEvent[] = [];
+  const recommendedSlotsForFlexibleGoals: RecommendedFlexibleSlot[] = [];
+  const workloadAnalysis: DayWorkloadAnalysis[] = [];
 
   const startDay = parseISO(params.startDate);
   const endDay = parseISO(params.endDate);
@@ -228,33 +232,33 @@ export function runLocalHeuristicScheduler(params: {
 
   // Candidate study windows across the 4 BUỔI in Vietnam timezone, ordered by preference
   let candidateWindows = [
-    { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
-    { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
-    { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
-    { start: "12:30", end: "13:30", duration: 60, label: "Trưa", emoji: "☀️", period: "noon" },
-    { start: "21:15", end: "22:45", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+    { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "MORNING" },
+    { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "AFTERNOON" },
+    { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "EVENING" },
+    { start: "12:30", end: "13:30", duration: 60, label: "Trưa", emoji: "☀️", period: "NOON" },
+    { start: "21:15", end: "22:45", duration: 90, label: "Tối", emoji: "🌙", period: "EVENING" },
   ];
 
   if (timePref === "MORNING") {
     candidateWindows = [
-      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
-      { start: "10:15", end: "11:45", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
-      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
-      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "MORNING" },
+      { start: "10:15", end: "11:45", duration: 90, label: "Sáng", emoji: "🌅", period: "MORNING" },
+      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "AFTERNOON" },
+      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "EVENING" },
     ];
   } else if (timePref === "EVENING") {
     candidateWindows = [
-      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
-      { start: "21:15", end: "22:45", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
-      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
-      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
+      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "EVENING" },
+      { start: "21:15", end: "22:45", duration: 90, label: "Tối", emoji: "🌙", period: "EVENING" },
+      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "AFTERNOON" },
+      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "MORNING" },
     ];
   } else if (timePref === "AFTERNOON") {
     candidateWindows = [
-      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
-      { start: "16:15", end: "17:45", duration: 90, label: "Chiều", emoji: "🌤️", period: "afternoon" },
-      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "morning" },
-      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "evening" },
+      { start: "14:30", end: "16:00", duration: 90, label: "Chiều", emoji: "🌤️", period: "AFTERNOON" },
+      { start: "16:15", end: "17:45", duration: 90, label: "Chiều", emoji: "🌤️", period: "AFTERNOON" },
+      { start: "08:30", end: "10:00", duration: 90, label: "Sáng", emoji: "🌅", period: "MORNING" },
+      { start: "19:30", end: "21:00", duration: 90, label: "Tối", emoji: "🌙", period: "EVENING" },
     ];
   }
 
@@ -269,27 +273,90 @@ export function runLocalHeuristicScheduler(params: {
 
   let curDay = new Date(startDay);
   let subjectIdx = 0;
+  let overloadedDaysCount = 0;
 
   while (curDay <= endDay) {
     const curDateKey = getDateKeyVN(curDay);
     const dayOfWeek = curDay.getDay();
 
-    // Respect rest days unless specifically instructed
+    // 1. Determine active flexible goals for this date
+    const activeFlexibleGoals = (params.flexibleGoals || []).filter((g) => {
+      const start = g.startDate || params.startDate;
+      const end = g.endDate || null;
+      const days = Array.isArray(g.activeDays) ? g.activeDays : [1, 2, 3, 4, 5];
+      return start <= curDateKey && (!end || end >= curDateKey) && days.includes(dayOfWeek);
+    });
+
+    const dailyFlexibleMinutes = activeFlexibleGoals.reduce(
+      (acc, g) => acc + (g.targetMinutes || 0),
+      0
+    );
+
+    // Check for rest day
     const isRestDay = restDays.includes(dayOfWeek);
-    if (isRestDay && !params.customInstructions?.toLowerCase().includes("chủ nhật")) {
+    const allowStudyOnRestDay =
+      params.customInstructions?.toLowerCase().includes("chủ nhật") ||
+      params.customInstructions?.toLowerCase().includes("ngày nghỉ");
+
+    if (isRestDay && !allowStudyOnRestDay) {
+      workloadAnalysis.push({
+        date: curDateKey,
+        dayOfWeek,
+        flexibleGoalMinutes: dailyFlexibleMinutes,
+        fixedStudyMinutes: 0,
+        totalStudyMinutes: dailyFlexibleMinutes,
+        maxDailyMinutes,
+        isOverloaded: dailyFlexibleMinutes > maxDailyMinutes,
+        notes: "Ngày nghỉ định kỳ (Rest Day).",
+      });
       curDay = addDays(curDay, 1);
       continue;
     }
 
-    dailyMinutesMap[curDateKey] = 0;
+    // Daily budget begins with the flexible goals already reserved!
+    dailyMinutesMap[curDateKey] = dailyFlexibleMinutes;
+    let fixedMinutesAdded = 0;
 
+    // 2. Generate optional recommended slots for flexible goals in free candidate windows
+    for (const g of activeFlexibleGoals) {
+      const matchWindow = candidateWindows.find((w) => {
+        if (g.preferredPeriod && g.preferredPeriod !== "ANY_TIME" && g.preferredPeriod !== w.period) {
+          return false;
+        }
+        const candStart = makeVNDate(curDateKey, w.start);
+        const candEnd = makeVNDate(curDateKey, w.end);
+        const block = collidesWithBlockedSlot(candStart, candEnd, params.blockedSlots);
+        if (block.conflict) return false;
+        const evCol = params.existingEvents.some((ev) =>
+          isOverlapping({ start: candStart, end: candEnd }, { start: new Date(ev.startTime), end: new Date(ev.endTime) }, 5)
+        );
+        return !evCol;
+      });
+
+      if (matchWindow) {
+        const recStart = makeVNDate(curDateKey, matchWindow.start);
+        const recEnd = new Date(recStart.getTime() + (g.targetMinutes || 30) * 60 * 1000);
+        recommendedSlotsForFlexibleGoals.push({
+          goalId: g.id,
+          goalTitle: g.title,
+          date: curDateKey,
+          recommendedStart: recStart.toISOString(),
+          recommendedEnd: recEnd.toISOString(),
+          durationMinutes: g.targetMinutes || 30,
+          reason: `Gợi ý hoàn thành mục tiêu ${g.title} (${g.targetMinutes} phút) vào Buổi ${matchWindow.label} (${matchWindow.start}).`,
+        });
+      }
+    }
+
+    // 3. Propose fixed events respecting the remaining budget for this day
     for (const win of candidateWindows) {
       if (sortedSubjects.length === 0) break;
-      if (dailyMinutesMap[curDateKey] >= maxDailyMinutes) break;
+      if (dailyMinutesMap[curDateKey] + win.duration > maxDailyMinutes) {
+        // Prevent overloading the day!
+        break;
+      }
 
       const sub = sortedSubjects[subjectIdx % sortedSubjects.length];
-
-      // Find any linked active task for this subject
       const linkedTask = params.activeTasks?.find((t) => t.subjectId === sub.id);
 
       const candStart = makeVNDate(curDateKey, win.start);
@@ -315,7 +382,6 @@ export function runLocalHeuristicScheduler(params: {
       });
       if (alreadyProposedCollision) continue;
 
-      // Found a safe, conflict-free slot!
       const sessionTitle = linkedTask
         ? `[Nhiệm vụ] ${linkedTask.title} (${sub.name})`
         : `Ôn tập & Luyện chuyên sâu: ${sub.name}`;
@@ -336,15 +402,42 @@ export function runLocalHeuristicScheduler(params: {
       });
 
       dailyMinutesMap[curDateKey] += win.duration;
+      fixedMinutesAdded += win.duration;
       subjectIdx++;
     }
+
+    const totalDayMinutes = dailyMinutesMap[curDateKey];
+    const isDayOverloaded = totalDayMinutes > maxDailyMinutes;
+    if (isDayOverloaded) overloadedDaysCount++;
+
+    workloadAnalysis.push({
+      date: curDateKey,
+      dayOfWeek,
+      flexibleGoalMinutes: dailyFlexibleMinutes,
+      fixedStudyMinutes: fixedMinutesAdded,
+      totalStudyMinutes: totalDayMinutes,
+      maxDailyMinutes,
+      isOverloaded: isDayOverloaded,
+      notes: isDayOverloaded
+        ? `Cảnh báo quá tải: ${totalDayMinutes} phút (vượt định mức ${maxDailyMinutes} phút/ngày).`
+        : `Cân đối: ${dailyFlexibleMinutes}p mục tiêu linh hoạt + ${fixedMinutesAdded}p lịch cố định (${totalDayMinutes}/${maxDailyMinutes}p).`,
+    });
 
     curDay = addDays(curDay, 1);
   }
 
+  let summaryText = `Đã phân bổ ${proposedEvents.length} buổi học cố định, đồng thời bảo toàn và tích hợp ${params.flexibleGoals?.length || 0} mục tiêu học linh hoạt hàng ngày vào tải trọng học tập.`;
+  if (overloadedDaysCount > 0) {
+    summaryText += ` Lưu ý: Có ${overloadedDaysCount} ngày có nguy cơ quá tải do tổng thời lượng mục tiêu linh hoạt và lịch cố định vượt ngưỡng. Khuyến nghị bạn giảm thời lượng mục tiêu linh hoạt hoặc giãn ngày học.`;
+  } else {
+    summaryText += ` Tất cả các ngày đều được cân đối tải trọng tối ưu, không vượt quá giới hạn tối đa và tránh hoàn toàn các khung giờ bận/khóa.`;
+  }
+
   return {
     proposedEvents,
-    summary: `Đã tự động tính toán và phân bổ ${proposedEvents.length} buổi học tối ưu qua 4 Buổi (Sáng, Trưa, Chiều, Tối), tôn trọng ngày nghỉ, thời điểm ưa thích (${timePref}) và tránh hoàn toàn mọi khung giờ bị khóa.`,
-    providerUsed: "ChronoMind Local Constraint Satisfaction Engine (4-Period Aware)",
+    recommendedSlotsForFlexibleGoals,
+    workloadAnalysis,
+    summary: summaryText,
+    providerUsed: "ChronoMind Local Constraint Satisfaction Engine (Flexible Goals & 4-Period Aware)",
   };
 }
