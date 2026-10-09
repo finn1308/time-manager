@@ -364,6 +364,8 @@ model CalendarEvent {
   userId        String
   subjectId     String?
   taskId        String?
+  skillId       String?
+  skillTaskId   String?
   title         String
   description   String?  @db.Text
   startTime     DateTime
@@ -402,6 +404,8 @@ model CalendarEvent {
   subject       Subject?        @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   task          Task?           @relation(fields: [taskId], references: [id], onDelete: SetNull)
   goal          Goal?           @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  skill         Skill?          @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  skillTask     SkillTask?      @relation(fields: [skillTaskId], references: [id], onDelete: SetNull)
   studySessions StudySession[]
   parent        CalendarEvent?  @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
   exceptions    CalendarEvent[] @relation("EventExceptions")
@@ -1024,14 +1028,94 @@ model Skill {
   category    String   @default("TECH") // TECH, LANGUAGE, SOFT, DESIGN, OTHER
   level       String   @default("INTERMEDIATE") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
   description String?  @db.Text
+  
+  // Ultra Learning Fields
+  targetLevel            String?
+  status                 String   @default("NOT_STARTED") // NOT_STARTED, LEARNING, PAUSED, COMPLETED
+  totalPlannedHours      Int?     @default(0)
+  totalActualHours       Int?     @default(0)
+  weeklyHoursCommitment  Int?     @default(0)
+  deadline               DateTime?
+  specificGoal           String?  @db.Text
+  knowledgeMap           Json?    // Stores the AI-generated domain/subskill structure
+  learningStrategy       Json?    // Stores the Metalearning strategy
+  progressPercentage     Int?     @default(0)
+  currentStreak          Int?     @default(0)
+  nextRecommendedAction  String?  @db.Text
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projects ProjectSkill[]
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects       ProjectSkill[]
+  phases         SkillPhase[]
+  calendarEvents CalendarEvent[]
 
   @@unique([userId, name])
   @@index([userId])
+}
+
+model SkillPhase {
+  id              String   @id @default(cuid())
+  skillId         String
+  name            String
+  description     String?  @db.Text
+  order           Int      @default(0)
+  status          String   @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, COMPLETED
+  plannedHours    Int      @default(0)
+  actualHours     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  skill           Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  units           SkillUnit[]
+}
+
+model SkillUnit {
+  id              String   @id @default(cuid())
+  phaseId         String
+  name            String
+  description     String?  @db.Text
+  order           Int      @default(0)
+  status          String   @default("NOT_STARTED")
+  plannedMinutes  Int      @default(0)
+  actualMinutes   Int      @default(0)
+  masteryLevel    Int      @default(0) // 0-100
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  phase           SkillPhase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  tasks           SkillTask[]
+}
+
+model SkillTask {
+  id              String   @id @default(cuid())
+  unitId          String
+  name            String
+  description     String?  @db.Text
+  taskType        String   @default("PRACTICE") // THEORY, PRACTICE, DRILL, RETRIEVAL, FEEDBACK, PROJECT
+  order           Int      @default(0)
+  status          String   @default("NOT_STARTED")
+  plannedMinutes  Int      @default(30)
+  actualMinutes   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  unit            SkillUnit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  assessments     SkillAssessment[]
+  calendarEvents  CalendarEvent[]
+}
+
+model SkillAssessment {
+  id              String   @id @default(cuid())
+  taskId          String
+  score           Int?     // 0-100
+  feedback        String?  @db.Text
+  weaknesses      Json?    // Weak points identified
+  strengths       Json?
+  createdAt       DateTime @default(now())
+
+  task            SkillTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 model Project {
