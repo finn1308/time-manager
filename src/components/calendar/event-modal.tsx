@@ -992,11 +992,282 @@ export function EventModal({
                   </div>
                 </div>
 
-                {/* 1. Event Type Selector (Section 8) */}
-                <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
-                    Loại lịch sự kiện <span className="text-rose-500">*</span>
-                  </label>
+                {schedulingMode === "FLEXIBLE" ? (
+                  <div className="space-y-4 pt-1">
+                    {/* Subject or Skill Selector */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0]">
+                          Môn học hoặc Kỹ năng <span className="text-rose-500">*</span>
+                        </label>
+                        <div className="flex rounded-xl bg-[#eef5f0] dark:bg-[#15251b] p-0.5 border border-[#dbe7dd] dark:border-[#263d2e] text-[11px]">
+                          <button
+                            type="button"
+                            onClick={() => setTargetType("SUBJECT")}
+                            className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                              targetType === "SUBJECT"
+                                ? "bg-[#2d6a4f] text-white shadow-2xs"
+                                : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                            }`}
+                          >
+                            Môn học
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setTargetType("SKILL")}
+                            className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                              targetType === "SKILL"
+                                ? "bg-[#2d6a4f] text-white shadow-2xs"
+                                : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                            }`}
+                          >
+                            Kỹ năng / Skill
+                          </button>
+                        </div>
+                      </div>
+
+                      {targetType === "SUBJECT" ? (
+                        <select
+                          value={subjectId}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setSubjectId(val);
+                            const found = subjects.find((s) => s.id === val);
+                            if (found && !title) setTitle(found.name);
+                          }}
+                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                        >
+                          <option value="">-- Chọn môn học --</option>
+                          {subjects.map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.name} {sub.code ? `(${sub.code})` : ""}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <select
+                          value={skillId}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setSkillId(val);
+                            const found = skills.find((s) => s.id === val);
+                            if (found && !title) setTitle(found.name);
+                          }}
+                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                        >
+                          <option value="">-- Chọn kỹ năng / Skill --</option>
+                          {skills.map((sk) => (
+                            <option key={sk.id} value={sk.id}>
+                              {sk.name} {sk.category ? `(${sk.category})` : ""}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+
+                      <div className="mt-2.5">
+                        <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                          Tên mục tiêu / Kỹ năng cần học <span className="text-rose-500">*</span>
+                        </label>
+                        <Input
+                          required
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          placeholder="Ví dụ: English Vocabulary, Giải đề LeetCode, Ôn tập HSK 4..."
+                          className="rounded-2xl h-10 text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Daily Target Duration */}
+                    <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+                          <Clock className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                          <span>Thời lượng mục tiêu mỗi ngày <span className="text-rose-500">*</span></span>
+                        </label>
+                        <span className="font-mono text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                          {flexibleTargetMinutes} phút / ngày
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5">
+                        {[15, 30, 45, 60, 90, 120].map((mins) => (
+                          <button
+                            key={mins}
+                            type="button"
+                            onClick={() => setFlexibleTargetMinutes(mins)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                              flexibleTargetMinutes === mins
+                                ? "bg-[#2d6a4f] text-white shadow-2xs"
+                                : "bg-white dark:bg-[#1b2b20] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#eef5f0]"
+                            }`}
+                          >
+                            {mins} phút
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center space-x-2 pt-1">
+                        <span className="text-[11px] text-[#526b5c] dark:text-[#a3bda9]">Hoặc tự nhập:</span>
+                        <Input
+                          type="number"
+                          min={5}
+                          max={600}
+                          value={flexibleTargetMinutes}
+                          onChange={(e) => setFlexibleTargetMinutes(Math.max(5, parseInt(e.target.value, 10) || 5))}
+                          className="w-24 h-8 text-xs font-mono rounded-xl"
+                        />
+                        <span className="text-xs text-[#526b5c]">phút</span>
+                      </div>
+                    </div>
+
+                    {/* Start Date & Optional End Date */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          Ngày bắt đầu <span className="text-rose-500">*</span>
+                        </label>
+                        <Input
+                          type="date"
+                          required
+                          value={startDateStr}
+                          onChange={(e) => setStartDateStr(e.target.value)}
+                          className="rounded-2xl h-10 text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          Ngày kết thúc (Tùy chọn)
+                        </label>
+                        <Input
+                          type="date"
+                          value={endDateStr}
+                          onChange={(e) => setEndDateStr(e.target.value)}
+                          className="rounded-2xl h-10 text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Active Weekdays */}
+                    <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                          Các ngày áp dụng trong tuần
+                        </label>
+                        <div className="flex space-x-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setFlexibleActiveDays([0, 1, 2, 3, 4, 5, 6])}
+                            className="text-[10px] font-bold text-[#2d6a4f] hover:underline cursor-pointer"
+                          >
+                            Cả tuần
+                          </button>
+                          <span className="text-[#526b5c] text-[10px]">•</span>
+                          <button
+                            type="button"
+                            onClick={() => setFlexibleActiveDays([1, 2, 3, 4, 5])}
+                            className="text-[10px] font-bold text-[#2d6a4f] hover:underline cursor-pointer"
+                          >
+                            T2 - T6
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-1.5">
+                        {[
+                          { label: "CN", val: 0 },
+                          { label: "T2", val: 1 },
+                          { label: "T3", val: 2 },
+                          { label: "T4", val: 3 },
+                          { label: "T5", val: 4 },
+                          { label: "T6", val: 5 },
+                          { label: "T7", val: 6 },
+                        ].map((d) => {
+                          const isSelected = flexibleActiveDays.includes(d.val);
+                          return (
+                            <button
+                              key={d.val}
+                              type="button"
+                              onClick={() => {
+                                if (isSelected) {
+                                  if (flexibleActiveDays.length > 1) {
+                                    setFlexibleActiveDays(flexibleActiveDays.filter((x) => x !== d.val));
+                                  } else {
+                                    toast.error("Cần chọn ít nhất 1 ngày trong tuần");
+                                  }
+                                } else {
+                                  setFlexibleActiveDays([...flexibleActiveDays, d.val].sort());
+                                }
+                              }}
+                              className={`flex-1 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                                isSelected
+                                  ? "bg-[#2d6a4f] text-white shadow-2xs"
+                                  : "bg-white dark:bg-[#1b2b20] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#eef5f0]"
+                              }`}
+                            >
+                              {d.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Preferred Study Period */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                        <Sun className="w-3.5 h-3.5 text-[#52b788]" />
+                        <span>Khung giờ ưu tiên trong ngày (Tùy chọn)</span>
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {[
+                          { id: "ANY_TIME", label: "Bất kỳ lúc nào", icon: Compass },
+                          { id: "MORNING", label: "Buổi sáng", icon: Sun },
+                          { id: "AFTERNOON", label: "Buổi chiều", icon: Sunset },
+                          { id: "EVENING", label: "Buổi tối", icon: Moon },
+                        ].map((p) => {
+                          const Icon = p.icon;
+                          const isSelected = preferredPeriod === p.id;
+                          return (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => setPreferredPeriod(p.id as any)}
+                              className={`p-2.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer flex flex-col items-center justify-center space-y-1 text-center ${
+                                isSelected
+                                  ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] text-[#2d6a4f] dark:text-[#52b788] ring-1 ring-[#2d6a4f]"
+                                  : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f8fbf8]"
+                              }`}
+                            >
+                              <Icon className="w-4 h-4" />
+                              <span className="text-[11px] leading-tight">{p.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Optional Deadline */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                        <Target className="w-3.5 h-3.5 text-rose-500" />
+                        <span>Hạn chót hoàn thành mục tiêu (Tùy chọn)</span>
+                      </label>
+                      <Input
+                        type="date"
+                        value={flexibleDeadline}
+                        onChange={(e) => setFlexibleDeadline(e.target.value)}
+                        className="rounded-2xl h-10 text-xs"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {/* 1. Event Type Selector (Section 8) */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        Loại lịch sự kiện <span className="text-rose-500">*</span>
+                      </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {PRIMARY_EVENT_TYPES.map((t) => {
                       const cfg = getEventTypeConfig(t);
@@ -1473,6 +1744,8 @@ export function EventModal({
                     </div>
                   </label>
                 </div>
+                  </>
+                )}
 
                 {/* 8. Description */}
                 <div>
