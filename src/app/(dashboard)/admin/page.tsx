@@ -22,7 +22,7 @@ export default async function AdminHubPage() {
     {
       title: "Quản trị người dùng",
       description: "Xem danh sách và phân quyền tài khoản (Demo)",
-      href: "#",
+      href: "/admin/users",
       icon: Users,
       color: "bg-slate-100 text-slate-700",
       border: "border-slate-200"
