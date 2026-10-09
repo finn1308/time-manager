@@ -40,23 +40,23 @@ export async function POST(req: Request) {
 
     const sourceDates = new Set<string>();
 
-    await prisma.$transaction(async (tx) => {
-      for (const t of tasks) {
-        if (t.scheduledDate) sourceDates.add(t.scheduledDate);
+    for (const t of tasks) {
+      if (t.scheduledDate) sourceDates.add(t.scheduledDate);
 
-        await tx.task.update({
-          where: { id: t.id },
-          data: {
-            scheduledDate: destinationDate,
-            originalDate: t.originalDate || t.scheduledDate || destinationDate,
-            isRollover: true,
-            rolloverCount: { increment: 1 },
-            lastRolloverAt: new Date(),
-          },
-        });
-      }
+      await prisma.task.update({
+        where: { id: t.id },
+        data: {
+          scheduledDate: destinationDate,
+          originalDate: t.originalDate || t.scheduledDate || destinationDate,
+          isRollover: true,
+          rolloverCount: { increment: 1 },
+          lastRolloverAt: new Date(),
+        },
+      });
+    }
 
-      await tx.auditLog.create({
+    try {
+      await prisma.auditLog.create({
         data: {
           userId: user.id,
           entityType: "TASK",
@@ -69,7 +69,9 @@ export async function POST(req: Request) {
           }),
         },
       });
-    });
+    } catch {
+      // Non-fatal if auditLog fails
+    }
 
     // Sync all affected dates' summaries
     for (const sDate of sourceDates) {

@@ -94,6 +94,15 @@ export async function GET(req: Request) {
         orderBy: { createdAt: "desc" },
         take: 5,
       },
+      flexibleGoal: {
+        select: {
+          id: true,
+          title: true,
+          targetMinutes: true,
+          activeDays: true,
+          preferredPeriod: true,
+        },
+      },
     },
     orderBy: { startTime: "asc" },
   });
