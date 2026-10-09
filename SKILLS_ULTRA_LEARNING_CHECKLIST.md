@@ -40,12 +40,12 @@
 - [x] Prevent overlaps and respect blocked times
 
 ## 9. Study Timer Integration
-- [ ] Link `CalendarEvent` or `SkillTask` to existing timer
-- [ ] Record actual study duration in `SkillTask`
+- [x] Link `CalendarEvent` or `SkillTask` to existing timer
+- [x] Record actual study duration in `SkillTask`
 
 ## 10. Progress Analytics
-- [ ] Calculate planned vs actual hours
-- [ ] Display phase completion and progress percentage
+- [x] Calculate planned vs actual hours
+- [x] Display phase completion and progress percentage
 
 ## 11. Adaptive Learning
 - [ ] Adjust roadmap based on task outcomes and assessments
