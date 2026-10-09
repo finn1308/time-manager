@@ -883,8 +883,113 @@ export default async function DashboardPage() {
           </Card>
         </div>
 
-        {/* Right: Recent Study Sessions (4 Cols) */}
+        {/* Right: Recent Study Sessions & Smart Daily To-Do (4 Cols) */}
         <div className="lg:col-span-4 space-y-6">
+          {/* Smart Daily To-Do Widget */}
+          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <div>
+                <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+                  <div className="w-8 h-8 rounded-xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] flex items-center justify-center">
+                    <CheckSquare className="w-4 h-4" />
+                  </div>
+                  <span>Nhiệm vụ hôm nay</span>
+                </CardTitle>
+                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                  {todayTasks.length > 0
+                    ? `${todayTasks.filter((t) => t.isCompleted).length}/${todayTasks.length} hoàn thành (${todayClosure?.completionRate || (Math.round((todayTasks.filter((t) => t.isCompleted).length / todayTasks.length) * 100))}%)`
+                    : "Chưa có nhiệm vụ hôm nay"}
+                </p>
+              </div>
+
+              <Link href="/tasks">
+                <Button variant="ghost" size="sm" className="text-xs text-[#2d6a4f] dark:text-[#52b788] font-bold space-x-1">
+                  <span>Mở To-Do</span>
+                  <ArrowRight className="w-3 h-3" />
+                </Button>
+              </Link>
+            </CardHeader>
+
+            <CardContent className="p-6 pt-0 space-y-3">
+              {todayTasks.length > 0 && (
+                <div className="w-full bg-[#dbe7dd]/60 dark:bg-[#263d2e] h-2 rounded-full overflow-hidden mb-3">
+                  <div
+                    className="bg-gradient-to-r from-[#2d6a4f] to-[#52b788] h-full rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(
+                        100,
+                        Math.max(
+                          0,
+                          todayClosure?.completionRate ||
+                            Math.round(
+                              (todayTasks.filter((t) => t.isCompleted).length /
+                                todayTasks.length) *
+                                100
+                            )
+                        )
+                      )}%`,
+                    }}
+                  />
+                </div>
+              )}
+
+              {todayTasks.length === 0 ? (
+                <div className="text-center py-6 text-xs text-[#526b5c] dark:text-[#a3bda9] bg-[#f8fbf8] dark:bg-[#142318] rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e] space-y-2">
+                  <p className="font-medium">Chưa có nhiệm vụ nào cho ngày hôm nay.</p>
+                  <Link href="/tasks">
+                    <Button variant="default" size="sm" className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl font-semibold">
+                      Thêm nhiệm vụ ngay
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {todayTasks.map((task) => (
+                    <div
+                      key={task.id}
+                      className={`flex items-center justify-between p-2.5 rounded-2xl border text-xs transition-all ${
+                        task.isCompleted
+                          ? "bg-[#f8fbf8] dark:bg-[#142318]/50 border-[#dbe7dd]/60 dark:border-[#263d2e]/60 opacity-75"
+                          : "bg-white dark:bg-[#17261c] border-[#dbe7dd] dark:border-[#263d2e] hover:border-[#b7d8c3]"
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2.5 truncate flex-1 min-w-0">
+                        <span
+                          className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                            task.isCompleted
+                              ? "bg-[#2d6a4f] border-[#2d6a4f] text-white"
+                              : "border-[#8fa897] dark:border-[#4d6b56]"
+                          }`}
+                        >
+                          {task.isCompleted && <span className="text-[8px] font-bold">✓</span>}
+                        </span>
+                        <span
+                          className={`truncate font-semibold ${
+                            task.isCompleted
+                              ? "line-through text-[#73927d]"
+                              : "text-[#192e22] dark:text-[#f0f7f2]"
+                          }`}
+                        >
+                          {task.title}
+                        </span>
+                      </div>
+
+                      {task.subject && (
+                        <span
+                          className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white shrink-0 ml-2 shadow-2xs"
+                          style={{ backgroundColor: task.subject.color || "#2d6a4f" }}
+                        >
+                          {task.subject.name}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Phiên học gần đây Card */}
           <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
