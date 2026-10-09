@@ -10,6 +10,7 @@ export async function POST(req: Request) {
     const {
       sessionId,
       subjectId,
+      skillId,
       actualDurationSeconds,
       notes,
       productivityScore,
@@ -53,7 +54,9 @@ export async function POST(req: Request) {
                 description: targetEvent.description,
                 location: targetEvent.location,
                 subjectId: targetEvent.subjectId,
+                skillId: targetEvent.skillId,
                 taskId: targetEvent.taskId,
+                skillTaskId: targetEvent.skillTaskId,
                 goalId: targetEvent.goalId,
                 startTime: now,
                 endTime: now,
@@ -112,7 +115,8 @@ export async function POST(req: Request) {
       session = await prisma.studySession.create({
         data: {
           userId: user.id,
-          subjectId,
+          subjectId: subjectId || null,
+          skillId: skillId || null,
           calendarEventId: resolvedEventId || null,
           taskId: taskId || null,
           goalId: goalId || null,
@@ -124,10 +128,29 @@ export async function POST(req: Request) {
           productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
           source: source || "PIP_TIMER",
         },
-        include: { subject: true },
+        include: { subject: true, skill: true },
+      });
+    } else if (skillId) {
+      const start = new Date(now.getTime() - durationSeconds * 1000);
+      session = await prisma.studySession.create({
+        data: {
+          userId: user.id,
+          skillId,
+          calendarEventId: resolvedEventId || null,
+          taskId: taskId || null,
+          goalId: goalId || null,
+          actualStart: start,
+          actualEnd: now,
+          actualDurationSeconds: durationSeconds,
+          status: "COMPLETED",
+          notes: notes?.trim() || null,
+          productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
+          source: source || "PIP_TIMER",
+        },
+        include: { skill: true },
       });
     } else {
-      return NextResponse.json({ error: "Thiếu sessionId hoặc subjectId" }, { status: 400 });
+      return NextResponse.json({ error: "Thiếu sessionId, subjectId hoặc skillId" }, { status: 400 });
     }
 
     // Accumulate actual study time into Subject.completedHours via aggregate to prevent any drift
@@ -141,6 +164,27 @@ export async function POST(req: Request) {
         where: { id: session.subjectId, userId: user.id },
         data: { completedHours: totalHours },
       }).catch((e) => console.error("Error updating subject completedHours:", e));
+    } else if (session.skillId) {
+      const agg = await prisma.studySession.aggregate({
+        where: { skillId: session.skillId, userId: user.id, status: "COMPLETED" },
+        _sum: { actualDurationSeconds: true },
+      });
+      const totalHours = Math.round(((agg._sum.actualDurationSeconds || 0) / 3600));
+      await prisma.skill.update({
+        where: { id: session.skillId, userId: user.id },
+        data: { totalActualHours: totalHours },
+      }).catch((e) => console.error("Error updating skill totalActualHours:", e));
+      
+      // We also update the task status if a taskId was provided
+      if (taskId) {
+        await prisma.skillTask.update({
+          where: { id: taskId },
+          data: { 
+            status: "COMPLETED", 
+            actualMinutes: Math.round(durationSeconds / 60)
+          }
+        }).catch(e => console.error(e));
+      }
     }
 
     // Award XP based on study duration (min 10 XP, +1 XP per minute)
