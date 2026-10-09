@@ -230,8 +230,8 @@ async function runFlexibleGoalsAcceptanceTests() {
     console.log("\n🧪 Test 7: Persistence test across session reload");
     const rawProgressRecord = await prisma.dailyGoalProgress.findUnique({
       where: {
-        flexibleGoalId_dateKey: {
-          flexibleGoalId: flexGoal.id,
+        goalId_dateKey: {
+          goalId: flexGoal.id,
           dateKey: todayKey,
         },
       },
@@ -242,11 +242,11 @@ async function runFlexibleGoalsAcceptanceTests() {
 
     assert(
       rawProgressRecord !== null &&
-      rawProgressRecord.actualSeconds === 1800 &&
+      rawProgressRecord.actualMinutes === 30 &&
       reloadedGoal?.actualMinutes === 30 &&
       reloadedGoal?.isCompleted === true,
-      "Test 7: Data persisted in PostgreSQL database accurately retaining 1800s actual study time",
-      `Expected actualSeconds=1800, got ${rawProgressRecord?.actualSeconds}`
+      "Test 7: Data persisted in PostgreSQL database accurately retaining 30 mins actual study time",
+      `Expected actualMinutes=30, got ${rawProgressRecord?.actualMinutes}`
     );
 
     // ==============================================================================
