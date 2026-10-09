@@ -124,6 +124,8 @@ async function callOpenAIAPI(apiKey: string, userPrompt: string): Promise<AISche
   const parsed = JSON.parse(json.choices[0].message.content);
   return {
     proposedEvents: parsed.proposedEvents || [],
+    recommendedSlotsForFlexibleGoals: parsed.recommendedSlotsForFlexibleGoals || [],
+    workloadAnalysis: parsed.workloadAnalysis || [],
     summary: parsed.summary || "Lịch học đã được phân bổ tối ưu theo OpenAI.",
     providerUsed: "OpenAI GPT-4o-mini",
   };
@@ -159,6 +161,8 @@ async function callGeminiAPI(apiKey: string, userPrompt: string): Promise<AISche
   const parsed = JSON.parse(jsonStr);
   return {
     proposedEvents: parsed.proposedEvents || [],
+    recommendedSlotsForFlexibleGoals: parsed.recommendedSlotsForFlexibleGoals || [],
+    workloadAnalysis: parsed.workloadAnalysis || [],
     summary: parsed.summary || `Lịch học đã được phân bổ tự động bằng Google Gemini (${modelUsed}).`,
     providerUsed: `Google Gemini (${modelUsed})`,
   };
@@ -190,6 +194,8 @@ async function callAnthropicAPI(apiKey: string, userPrompt: string): Promise<AIS
   const parsed = JSON.parse(rawText);
   return {
     proposedEvents: parsed.proposedEvents || [],
+    recommendedSlotsForFlexibleGoals: parsed.recommendedSlotsForFlexibleGoals || [],
+    workloadAnalysis: parsed.workloadAnalysis || [],
     summary: parsed.summary || "Lịch học đã được lập thành công bằng Anthropic Claude.",
     providerUsed: "Anthropic Claude 3.5 Haiku",
   };
