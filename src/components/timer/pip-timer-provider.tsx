@@ -83,6 +83,7 @@ function playTimerChime() {
 export function PipTimerProvider({ children }: { children: React.ReactNode }) {
   const [activeSubject, setActiveSubject] = useState<ActiveSubject | null>(null);
   const [scheduleEventId, setScheduleEventId] = useState<string | null>(null);
+  const [flexibleGoalId, setFlexibleGoalId] = useState<string | null>(null);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [mode, setMode] = useState<TimerMode>("POMODORO");
   const [pomodoroPhase, setPomodoroPhase] = useState<PomodoroPhase>("WORK");
@@ -133,6 +134,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
         if (parsed.activeSubject) {
           setActiveSubject(parsed.activeSubject);
           setScheduleEventId(parsed.scheduleEventId || null);
+          setFlexibleGoalId(parsed.flexibleGoalId || null);
           setTaskId(parsed.taskId || null);
           setMode(parsed.mode || "POMODORO");
           setPomodoroPhase(parsed.pomodoroPhase || "WORK");

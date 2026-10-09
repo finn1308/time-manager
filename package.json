@@ -16,7 +16,8 @@
     "test:practice": "tsx scripts/test-practice.ts",
     "test:study": "tsx scripts/test-flashcard-study.ts",
     "test:adaptive": "tsx scripts/test-adaptive-learning.ts",
-    "test:all": "npm run test:scheduling && npm run test:learning && npm run test:academic && npm run test:practice && npm run test:study && npm run test:adaptive"
+    "test:todo": "tsx scripts/test-smart-todo.ts",
+    "test:all": "npm run test:scheduling && npm run test:learning && npm run test:academic && npm run test:practice && npm run test:study && npm run test:adaptive && npm run test:todo"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
