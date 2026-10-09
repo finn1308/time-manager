@@ -140,14 +140,82 @@ export async function POST(req: Request) {
       schedules,
       isAllDay,
       plannedDurationMinutes,
+      schedulingMode, // "FIXED" | "FLEXIBLE"
+      skillId,
+      targetMinutes,
+      startDate,
+      endDate,
+      activeDays,
+      preferredPeriod,
+      deadline,
     } = body;
 
     // 1. Validate Title
     if (!title?.trim()) {
-      return NextResponse.json({ error: "Tiêu đề sự kiện không được để trống" }, { status: 400 });
+      return NextResponse.json({ error: "Tiêu đề không được để trống" }, { status: 400 });
     }
 
-    // 2. Validate Dates (Only if not using schedules array)
+    // 1b. Support Flexible Daily Goal creation directly without required times
+    if (schedulingMode === "FLEXIBLE") {
+      if (subjectId) {
+        const subject = await prisma.subject.findFirst({
+          where: { id: subjectId, userId: user.id },
+        });
+        if (!subject) {
+          return NextResponse.json({ error: "Môn học không tồn tại" }, { status: 400 });
+        }
+      }
+
+      if (skillId) {
+        const skill = await prisma.skill.findFirst({
+          where: { id: skillId, userId: user.id },
+        });
+        if (!skill) {
+          return NextResponse.json({ error: "Kỹ năng không tồn tại" }, { status: 400 });
+        }
+      }
+
+      const parsedActiveDays = Array.isArray(activeDays)
+        ? activeDays.join(",")
+        : typeof activeDays === "string" && activeDays.trim().length > 0
+        ? activeDays
+        : "1,2,3,4,5";
+
+      const targetMins = Math.max(
+        5,
+        parseInt(String(targetMinutes || plannedDurationMinutes || 30), 10) || 30
+      );
+
+      const startD = startDate ? new Date(startDate) : (startTime ? new Date(startTime) : new Date());
+      const endD = endDate ? new Date(endDate) : (recurrenceEnd ? new Date(recurrenceEnd) : null);
+      const deadlineD = deadline ? new Date(deadline) : null;
+
+      const flexibleGoal = await prisma.flexibleStudyGoal.create({
+        data: {
+          userId: user.id,
+          title: title.trim(),
+          description: description?.trim() || null,
+          subjectId: subjectId || null,
+          skillId: skillId || null,
+          targetMinutes: targetMins,
+          startDate: startD,
+          endDate: endD,
+          activeDays: parsedActiveDays,
+          preferredPeriod: preferredPeriod || "ANY_TIME",
+          deadline: deadlineD,
+          status: "ACTIVE",
+        },
+        include: {
+          subject: true,
+          skill: true,
+        },
+      });
+
+      invalidateCalendarServerCache(user.id);
+      return NextResponse.json({ success: true, flexibleGoal, schedulingMode: "FLEXIBLE" });
+    }
+
+    // 2. Validate Dates for FIXED Schedule (Only if not using schedules array)
     let start: Date | undefined;
     let end: Date | undefined;
     if (!schedules || schedules.length === 0) {
@@ -272,6 +340,7 @@ export async function POST(req: Request) {
       description: description?.trim() || null,
       location: location?.trim() || null,
       subjectId: subjectId || null,
+      skillId: skillId || null,
       taskId: taskId || null,
       goalId: goalId || null,
       completed: false,
@@ -282,6 +351,9 @@ export async function POST(req: Request) {
       timezone: timezone || "Asia/Ho_Chi_Minh",
       isAiGenerated: false,
       isAllDay: !!isAllDay,
+      schedulingMode: "FIXED",
+      preferredPeriod: preferredPeriod || null,
+      flexibleGoalId: body.flexibleGoalId || null,
       recurrenceEnd: recurrenceEnd ? new Date(recurrenceEnd) : null,
     };
 
