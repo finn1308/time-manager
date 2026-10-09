@@ -97,6 +97,8 @@ export default function SettingsPage() {
   const [budgetInput, setBudgetInput] = useState("20");
   const [examMode, setExamMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
+  const [autoDayClosure, setAutoDayClosure] = useState(false);
+  const [autoRollover, setAutoRollover] = useState(false);
   const [savingBudget, setSavingBudget] = useState(false);
 
   // Study Preferences State
