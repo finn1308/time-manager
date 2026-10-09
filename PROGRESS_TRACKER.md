@@ -113,3 +113,14 @@
   - [x] Chạy kiểm thử tự động hệ thống (31/31 unit & integration tests passed)
   - [x] Build production `npm run build` (81/81 routes generated successfully)
   - [x] Lập Báo cáo Tổng kết Hoàn thành (Final Audit Report)
+
+- [x] **Tác vụ 21: Smart Daily To-Do System (Microsoft To Do UX & Daily Discipline Tracker)**
+  - [x] Cập nhật Prisma Schema (`Task` extended, `DailyTaskSummary` model, `UserSettings` flags) và sync Supabase
+  - [x] 6 Danh sách To-Do chuẩn Microsoft UX: Hôm nay (My Day), Quan trọng (Important), Đã lên lịch (Planned), Chưa hoàn thành (Pending), Đã hoàn thành (Completed), Tất cả (All Tasks)
+  - [x] Quick Add Input theo ngày, Checkbox tròn tức thì với Optimistic UI & Idempotent backend
+  - [x] Quy trình Chốt ngày & Hỏi chuyển ngày (Daily Checkout Modal): Phân tách rõ `[Có, chuyển sang ngày mai]` vs `[Không, giữ ở ngày cũ]`, bảo toàn snapshot ngày cũ (không viết lại lịch sử)
+  - [x] Thống kê Kỷ luật theo ngày (Discipline History): KPI tỷ lệ hoàn thành, snapshot nhiệm vụ đóng băng, bộ lọc Tuần/Tháng/Toàn thời gian
+  - [x] Tích hợp với Lịch học & Study Timer (PIP): Nút bấm mở session học trực tiếp từ nhiệm vụ, không cộng giờ ảo khi tick hoàn thành
+  - [x] Tùy chọn Settings: Chốt ngày tự động (`autoDayClosureEnabled`) và Tự động chuyển việc (`autoRolloverTasksEnabled`)
+  - [x] Kiểm thử tự động 10/10 kịch bản theo yêu cầu (10/10 PASSED: scripts/test-smart-todo.ts)
+
