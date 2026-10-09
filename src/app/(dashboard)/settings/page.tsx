@@ -877,6 +877,46 @@ export default function SettingsPage() {
                   </label>
                 </div>
 
+                {/* Auto Day Closure & Auto Rollover Settings (Smart Daily To-Do) */}
+                <div className="pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="autoDayClosure"
+                      checked={autoDayClosure}
+                      onChange={(e) => setAutoDayClosure(e.target.checked)}
+                      className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
+                    />
+                    <div>
+                      <label htmlFor="autoDayClosure" className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer block">
+                        Tự động chốt ngày cuối ngày (Auto Daily Closure)
+                      </label>
+                      <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                        Khi qua nửa đêm theo múi giờ Việt Nam, hệ thống tự động tổng kết và đóng băng snapshot kết quả kỷ luật của ngày hôm trước.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 pl-7">
+                    <input
+                      type="checkbox"
+                      id="autoRollover"
+                      checked={autoRollover}
+                      onChange={(e) => setAutoRollover(e.target.checked)}
+                      disabled={!autoDayClosure}
+                      className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer disabled:opacity-50"
+                    />
+                    <div>
+                      <label htmlFor="autoRollover" className={`text-xs font-semibold cursor-pointer block ${!autoDayClosure ? "text-[#73927d]" : "text-[#192e22] dark:text-[#f0f7f2]"}`}>
+                        Tự động chuyển tiếp nhiệm vụ chưa xong sang ngày hôm sau
+                      </label>
+                      <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                        Tự động dời nhiệm vụ chưa hoàn thành sang ngày mới mà không cần xác nhận thủ công. (Mặc định: tắt để người dùng chủ động chọn).
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <Button
                   type="submit"
                   disabled={savingBudget}

@@ -98,6 +98,17 @@ export async function POST(req: Request) {
       }
     }
 
+    // If linked to flexible goal, resolve subject/skill if not explicitly provided
+    if (flexibleGoalId && !subjectId && !skillId) {
+      const targetGoal = await prisma.flexibleStudyGoal.findUnique({
+        where: { id: flexibleGoalId, userId: user.id },
+      });
+      if (targetGoal) {
+        subjectId = targetGoal.subjectId || null;
+        skillId = targetGoal.skillId || null;
+      }
+    }
+
     if (sessionId) {
       // Update existing in-progress session
       session = await prisma.studySession.update({
@@ -107,14 +118,15 @@ export async function POST(req: Request) {
           actualDurationSeconds: durationSeconds,
           status: "COMPLETED",
           calendarEventId: resolvedEventId || undefined,
+          flexibleGoalId: flexibleGoalId || undefined,
           notes: notes?.trim() || null,
           productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
           taskId: taskId || undefined,
           goalId: goalId || undefined,
         },
-        include: { subject: true },
+        include: { subject: true, skill: true, flexibleGoal: true },
       });
-    } else if (subjectId) {
+    } else if (subjectId || skillId || flexibleGoalId) {
       // Create new completed session
       const start = new Date(now.getTime() - durationSeconds * 1000);
       session = await prisma.studySession.create({
@@ -122,6 +134,7 @@ export async function POST(req: Request) {
           userId: user.id,
           subjectId: subjectId || null,
           skillId: skillId || null,
+          flexibleGoalId: flexibleGoalId || null,
           calendarEventId: resolvedEventId || null,
           taskId: (subjectId && taskId) ? taskId : null,
           skillTaskId: (skillId && taskId) ? taskId : null,
@@ -134,30 +147,27 @@ export async function POST(req: Request) {
           productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
           source: source || "PIP_TIMER",
         },
-        include: { subject: true, skill: true },
-      });
-    } else if (skillId) {
-      const start = new Date(now.getTime() - durationSeconds * 1000);
-      session = await prisma.studySession.create({
-        data: {
-          userId: user.id,
-          skillId,
-          calendarEventId: resolvedEventId || null,
-          taskId: null,
-          skillTaskId: taskId || null,
-          goalId: goalId || null,
-          actualStart: start,
-          actualEnd: now,
-          actualDurationSeconds: durationSeconds,
-          status: "COMPLETED",
-          notes: notes?.trim() || null,
-          productivityScore: productivityScore ? parseInt(productivityScore, 10) : null,
-          source: source || "PIP_TIMER",
-        },
-        include: { skill: true },
+        include: { subject: true, skill: true, flexibleGoal: true },
       });
     } else {
-      return NextResponse.json({ error: "Thiếu sessionId, subjectId hoặc skillId" }, { status: 400 });
+      return NextResponse.json({ error: "Thiếu sessionId, subjectId, skillId hoặc flexibleGoalId" }, { status: 400 });
+    }
+
+    // Update DailyGoalProgress if linked to a flexible goal
+    if (flexibleGoalId) {
+      try {
+        const { recordFlexibleGoalProgress } = await import("@/lib/flexible-goals/service");
+        const { getDateKeyVN } = await import("@/lib/date-utils");
+        const dateKey = getDateKeyVN(now);
+        await recordFlexibleGoalProgress({
+          userId: user.id,
+          goalId: flexibleGoalId,
+          dateKey,
+          additionalDurationSeconds: durationSeconds,
+        });
+      } catch (err) {
+        console.warn("Could not record flexible goal progress from timer:", err);
+      }
     }
 
     // Accumulate actual study time into Subject.completedHours via aggregate to prevent any drift
