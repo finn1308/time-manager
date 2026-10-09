@@ -178,6 +178,7 @@ export async function POST(req: Request) {
                 calendarEventId: targetEvent.id,
                 taskId: targetEvent.taskId || null,
                 goalId: targetEvent.goalId || null,
+                flexibleGoalId: targetEvent.flexibleGoalId || null,
                 plannedStart: targetEvent.startTime,
                 plannedEnd: targetEvent.endTime,
                 actualStart: targetEvent.startTime,
@@ -207,6 +208,40 @@ export async function POST(req: Request) {
             where: { id: targetEvent.subjectId! },
             data: { completedHours: totalHours },
           });
+        }
+
+        // d. Sync DailyGoalProgress if linked to a flexible goal
+        if (targetEvent.flexibleGoalId) {
+          const dKey = getDateKeyVN(targetEvent.startTime);
+          const goal = await tx.flexibleStudyGoal.findUnique({
+            where: { id: targetEvent.flexibleGoalId },
+          });
+          if (goal) {
+            // Aggregate all actual minutes on this day for this goal
+            const aggSessions = await tx.studySession.aggregate({
+              where: {
+                flexibleGoalId: targetEvent.flexibleGoalId,
+                userId: user.id,
+                status: "COMPLETED",
+              },
+              _sum: { actualDurationSeconds: true },
+            });
+            const totalActualMins = Math.round((aggSessions._sum.actualDurationSeconds || 0) / 60);
+            const isGoalDone = totalActualMins >= goal.targetMinutes;
+
+            await tx.dailyGoalProgress.upsert({
+              where: { goalId_dateKey: { goalId: targetEvent.flexibleGoalId, dateKey: dKey } },
+              update: { actualMinutes: totalActualMins, completed: isGoalDone },
+              create: {
+                userId: user.id,
+                goalId: targetEvent.flexibleGoalId,
+                dateKey: dKey,
+                targetMinutes: goal.targetMinutes,
+                actualMinutes: totalActualMins,
+                completed: isGoalDone,
+              },
+            });
+          }
         }
 
         return {
@@ -253,6 +288,39 @@ export async function POST(req: Request) {
             where: { id: targetEvent.subjectId! },
             data: { completedHours: totalHours },
           });
+        }
+
+        // d. Sync DailyGoalProgress if linked to a flexible goal
+        if (targetEvent.flexibleGoalId) {
+          const dKey = getDateKeyVN(targetEvent.startTime);
+          const goal = await tx.flexibleStudyGoal.findUnique({
+            where: { id: targetEvent.flexibleGoalId },
+          });
+          if (goal) {
+            const aggSessions = await tx.studySession.aggregate({
+              where: {
+                flexibleGoalId: targetEvent.flexibleGoalId,
+                userId: user.id,
+                status: "COMPLETED",
+              },
+              _sum: { actualDurationSeconds: true },
+            });
+            const totalActualMins = Math.round((aggSessions._sum.actualDurationSeconds || 0) / 60);
+            const isGoalDone = totalActualMins >= goal.targetMinutes;
+
+            await tx.dailyGoalProgress.upsert({
+              where: { goalId_dateKey: { goalId: targetEvent.flexibleGoalId, dateKey: dKey } },
+              update: { actualMinutes: totalActualMins, completed: isGoalDone },
+              create: {
+                userId: user.id,
+                goalId: targetEvent.flexibleGoalId,
+                dateKey: dKey,
+                targetMinutes: goal.targetMinutes,
+                actualMinutes: totalActualMins,
+                completed: isGoalDone,
+              },
+            });
+          }
         }
 
         return {
