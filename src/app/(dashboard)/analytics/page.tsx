@@ -264,13 +264,14 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
   // 6. Subject Breakdown
   const subjectMap = new Map<string, { name: string; color: string; seconds: number }>();
   allSessions.forEach((s) => {
-    const existing = subjectMap.get(s.subjectId) || {
-      name: s.subject?.name || "Môn học",
+    const sId = s.subjectId || "general";
+    const existing = subjectMap.get(sId) || {
+      name: s.subject?.name || "Khác",
       color: s.subject?.color || "#2d6a4f",
       seconds: 0,
     };
     existing.seconds += s.actualDurationSeconds;
-    subjectMap.set(s.subjectId, existing);
+    subjectMap.set(sId, existing);
   });
   const subjectBreakdown = Array.from(subjectMap.values()).sort((a, b) => b.seconds - a.seconds);
 
