@@ -14,11 +14,10 @@ async function runTests() {
 
   console.log(`Using user: ${user.email}`);
 
-  // Test 1: Create Skill
   const skill = await prisma.skill.create({
     data: {
       userId: user.id,
-      name: "Test E2E Skill - Python",
+      name: `Test E2E Skill - Python - ${Date.now()}`,
       category: "TECH",
       level: "BEGINNER",
       targetLevel: "INTERMEDIATE",
