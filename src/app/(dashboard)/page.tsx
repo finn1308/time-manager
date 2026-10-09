@@ -44,6 +44,7 @@ import {
 import { getEventTypeConfig, canStartStudyTimer } from "@/lib/calendar/event-types";
 import { EventCompleteCheckbox } from "@/components/calendar/event-complete-checkbox";
 import { DashboardRefresher } from "@/components/dashboard/dashboard-refresher";
+import { DailyFlexibleGoals } from "@/components/calendar/daily-flexible-goals";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -568,6 +569,9 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Today's Schedule + Subject Progress (8 Cols) */}
         <div className="lg:col-span-8 space-y-6">
+          {/* Today's Flexible Goals */}
+          <DailyFlexibleGoals targetDateKey={todayKey} />
+
           {/* Today's Schedule */}
           <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
