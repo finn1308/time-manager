@@ -27,13 +27,14 @@ export async function PUT(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const {
-    weeklyStudyBudgetHours,
-    notificationsEnabled,
-    examMode,
-    autoDayClosureEnabled,
-    autoRolloverTasksEnabled,
-  } = await req.json();
+  try {
+    const {
+      weeklyStudyBudgetHours,
+      notificationsEnabled,
+      examMode,
+      autoDayClosureEnabled,
+      autoRolloverTasksEnabled,
+    } = await req.json();
 
   const settings = await prisma.userSettings.upsert({
     where: { userId: user.id },
