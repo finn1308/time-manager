@@ -5,7 +5,7 @@
 2. [x] **Database Schema & Migrations**
 3. [x] **UI - Skills Dashboard**
 4. [x] **UI - Create/Edit Skill Form**
-5. [ ] **API - Skills CRUD**
+5. [x] **API - Skills CRUD**
 6. [ ] **AI Integration - Skill Analysis & Knowledge Map**
 7. [ ] **AI Integration - Roadmap Generation (Ultra Learning)**
 8. [ ] **UI - Skill Details & Roadmap View**
@@ -41,3 +41,8 @@
 - **Status:** `[x] COMPLETED`
 - **Outputs/Deliverables:** Created `skills/create/page.tsx` and `create-skill-form.tsx`.
 - **Hand-off Notes:** The form captures all required Ultra Learning parameters including target level, weekly hours commitment, and optional deadline. It POSTs to `/api/skills`.
+
+### Skill Completed: API - Skills CRUD
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Created `/api/skills/route.ts` and `/api/skills/[id]/route.ts`.
+- **Hand-off Notes:** Secured API routes for GET, POST, PATCH, and DELETE operations. DB logic uses `prisma.skill`.
