@@ -10,8 +10,8 @@
 7. [x] **AI Integration - Roadmap Generation (Ultra Learning)**
 8. [x] **UI - Skill Details & Roadmap View**
 9. [x] **Feature - Calendar Scheduling Integration**
-10. [ ] **Feature - Study Timer Integration**
-11. [ ] **Feature - Progress Analytics**
+10. [x] **Feature - Study Timer Integration**
+11. [x] **Feature - Progress Analytics**
 12. [ ] **Feature - Adaptive Learning Engine**
 13. [ ] **Feature - Resource Management**
 14. [ ] **Testing & Quality Assurance**
@@ -61,3 +61,13 @@
 - **Status:** `[x] COMPLETED`
 - **Outputs/Deliverables:** Created `api/skills/[id]/schedule/route.ts` and updated `roadmap-view.tsx`.
 - **Hand-off Notes:** Users can schedule pending tasks into the Calendar. Tasks are mapped to `CalendarEvent` considering planned duration.
+
+### Skill Completed: Feature - Study Timer Integration
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Updated `prisma/schema.prisma` to include `skillId`/`skillTaskId` in `StudySession`, updated `api/timer/stop/route.ts` and `timer-complete-modal.tsx`.
+- **Hand-off Notes:** Roadmap Play button starts the timer for the task, session end saves actual duration, and correctly tracks skill learning time.
+
+### Skill Completed: Feature - Progress Analytics
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Created `skills/[id]/analytics/page.tsx` and `skill-analytics.tsx`.
+- **Hand-off Notes:** Visualizes time spent vs planned time, completion percentage, task counts, and phase breakdown.
