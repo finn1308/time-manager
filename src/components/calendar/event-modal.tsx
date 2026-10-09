@@ -19,6 +19,12 @@ import {
   BookOpen,
   Target,
   Sliders,
+  CalendarClock,
+  Sun,
+  Sunset,
+  Moon,
+  Compass,
+  CheckCircle2,
 } from "lucide-react";
 import { formatVN, getDateKeyVN, makeVNDate } from "@/lib/date-utils";
 import { ResourceManager } from "@/components/study/resource-manager";
@@ -52,6 +58,7 @@ interface EventModalProps {
     description?: string | null;
     location?: string | null;
     subjectId?: string | null;
+    skillId?: string | null;
     taskId?: string | null;
     startTime: string | Date;
     endTime: string | Date;
@@ -68,7 +75,13 @@ interface EventModalProps {
     completedAt?: string | Date | null;
     actualDurationMinutes?: number | null;
     plannedDurationMinutes?: number | null;
+    schedulingMode?: string;
+    targetMinutes?: number;
+    activeDays?: number[] | string;
+    preferredPeriod?: string;
+    deadline?: string | Date | null;
     subject?: { id: string; name: string; code: string | null; color: string } | null;
+    skill?: { id: string; name: string; category?: string } | null;
   } | null;
 }
 
