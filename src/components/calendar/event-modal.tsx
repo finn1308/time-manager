@@ -942,6 +942,56 @@ export function EventModal({
                   </div>
                 )}
 
+                {/* 0. Cách sắp xếp thời gian (Scheduling Mode Selector - Section 1) */}
+                <div className="space-y-1.5 pb-1">
+                  <label className="block text-xs font-bold text-[#192e22] dark:text-[#d8ebe0]">
+                    Cách sắp xếp thời gian <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {/* Option A: Lịch cố định */}
+                    <button
+                      type="button"
+                      onClick={() => setSchedulingMode("FIXED")}
+                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative ${
+                        schedulingMode === "FIXED"
+                          ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
+                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <CalendarClock className={`w-4 h-4 ${schedulingMode === "FIXED" ? "text-[#2d6a4f] dark:text-[#52b788]" : "text-[#526b5c]"}`} />
+                        <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                          Lịch cố định
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                        Học vào khung giờ cụ thể.
+                      </p>
+                    </button>
+
+                    {/* Option B: Mục tiêu học linh hoạt */}
+                    <button
+                      type="button"
+                      onClick={() => setSchedulingMode("FLEXIBLE")}
+                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative ${
+                        schedulingMode === "FLEXIBLE"
+                          ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
+                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Sparkles className={`w-4 h-4 ${schedulingMode === "FLEXIBLE" ? "text-[#2d6a4f] dark:text-[#52b788]" : "text-[#526b5c]"}`} />
+                        <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                          Mục tiêu học linh hoạt
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                        Hoàn thành đủ thời lượng trong ngày, không cần chọn giờ bắt đầu.
+                      </p>
+                    </button>
+                  </div>
+                </div>
+
                 {/* 1. Event Type Selector (Section 8) */}
                 <div>
                   <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
