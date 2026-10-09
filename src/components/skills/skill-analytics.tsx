@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowLeft, Clock, Target, CheckCircle2, TrendingUp, BarChart3, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { toast } from "sonner";
+
 interface SkillAnalyticsProps {
   initialSkill: any;
 }
@@ -27,14 +29,14 @@ export function SkillAnalytics({ initialSkill }: SkillAnalyticsProps) {
       const res = await fetch(`/api/skills/${skill.id}/adapt`, { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message || `Đã thêm ${data.addedTasks} bài tập mới. Lý do: ${data.reasoning}`);
+        toast.success(data.message || `Đã thêm ${data.addedTasks} bài tập mới. Lý do: ${data.reasoning}`);
         router.refresh();
       } else {
-        alert(data.error || data.message || "Lỗi khi chạy Adaptive Learning.");
+        toast.error(data.error || data.message || "Lỗi khi chạy Adaptive Learning.");
       }
     } catch (e) {
       console.error(e);
-      alert("Lỗi kết nối.");
+      toast.error("Lỗi kết nối.");
     } finally {
       setIsAdapting(false);
     }

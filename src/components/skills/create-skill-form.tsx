@@ -39,14 +39,15 @@ export function CreateSkillForm() {
 
       if (res.ok) {
         const skill = await res.json();
+        toast.success("Đã tạo kỹ năng thành công!");
         router.push(`/skills/${skill.id}`);
       } else {
         const data = await res.json();
-        alert(data.error || "Có lỗi xảy ra");
+        toast.error(data.error || "Có lỗi xảy ra khi tạo kỹ năng.");
       }
     } catch (error) {
       console.error(error);
-      alert("Đã xảy ra lỗi hệ thống.");
+      toast.error("Đã xảy ra lỗi hệ thống.");
     } finally {
       setIsSubmitting(false);
     }
