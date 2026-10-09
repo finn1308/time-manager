@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { syncDailyTaskSummary } from "@/lib/tasks/smart-todo";
 
 export async function GET(
   req: Request,
@@ -33,13 +34,13 @@ export async function GET(
     });
 
     if (!task) {
-      return NextResponse.json({ error: "Không tìm thấy task" }, { status: 404 });
+      return NextResponse.json({ error: "Không tìm thấy nhiệm vụ" }, { status: 404 });
     }
 
     return NextResponse.json({ task });
   } catch (err: any) {
     console.error("GET /api/tasks/[id] error:", err);
-    return NextResponse.json({ error: "Lỗi tải thông tin task" }, { status: 500 });
+    return NextResponse.json({ error: "Lỗi tải thông tin nhiệm vụ" }, { status: 500 });
   }
 }
 
@@ -62,6 +63,8 @@ export async function PATCH(
       deadline,
       status,
       isCompleted,
+      isImportant,
+      scheduledDate,
       subjectId,
       goalId,
       milestoneId,
@@ -81,7 +84,7 @@ export async function PATCH(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: "Không tìm thấy task" }, { status: 404 });
+      return NextResponse.json({ error: "Không tìm thấy nhiệm vụ" }, { status: 404 });
     }
 
     // Dependency check: If attempting to advance to IN_PROGRESS or DONE
@@ -97,9 +100,9 @@ export async function PATCH(
         return NextResponse.json(
           {
             error: "BLOCKED_BY_DEPENDENCIES",
-            message: `Task này bị chặn bởi: ${incompletePrereqs
+            message: `Nhiệm vụ này bị chặn bởi: ${incompletePrereqs
               .map((d) => `"${d.prerequisite.title}"`)
-              .join(", ")}. Vui lòng hoàn thành các task tiên quyết trước!`,
+              .join(", ")}. Vui lòng hoàn thành các nhiệm vụ tiên quyết trước!`,
             blockingTasks: incompletePrereqs.map((d) => ({
               id: d.prerequisite.id,
               title: d.prerequisite.title,
@@ -120,12 +123,22 @@ export async function PATCH(
     if (subjectId !== undefined) updateData.subjectId = subjectId || null;
     if (goalId !== undefined) updateData.goalId = goalId || null;
     if (milestoneId !== undefined) updateData.milestoneId = milestoneId || null;
+    if (isImportant !== undefined) updateData.isImportant = Boolean(isImportant);
 
+    const oldScheduledDate = existing.scheduledDate;
+    if (scheduledDate !== undefined) {
+      updateData.scheduledDate = scheduledDate || null;
+      if (!existing.originalDate && scheduledDate) {
+        updateData.originalDate = scheduledDate;
+      }
+    }
+
+    // Handling Status & Completion atomically
     if (status !== undefined) {
       updateData.status = status;
       if (status === "DONE") {
         updateData.isCompleted = true;
-        updateData.completedAt = new Date();
+        updateData.completedAt = existing.completedAt || new Date();
       } else {
         updateData.isCompleted = false;
         updateData.completedAt = null;
@@ -133,12 +146,14 @@ export async function PATCH(
     }
 
     if (isCompleted !== undefined) {
-      updateData.isCompleted = isCompleted;
+      updateData.isCompleted = Boolean(isCompleted);
       if (isCompleted) {
         updateData.status = "DONE";
-        updateData.completedAt = new Date();
-      } else if (existing.status === "DONE") {
-        updateData.status = "TODO";
+        updateData.completedAt = existing.completedAt || new Date();
+      } else {
+        if (existing.status === "DONE") {
+          updateData.status = "TODO";
+        }
         updateData.completedAt = null;
       }
     }
@@ -152,7 +167,7 @@ export async function PATCH(
       if (prerequisiteTaskIds.length > 0) {
         await prisma.taskDependency.createMany({
           data: prerequisiteTaskIds
-            .filter((pId: string) => pId !== id) // Prevent self loop
+            .filter((pId: string) => pId !== id)
             .map((pId: string) => ({
               taskId: id,
               prerequisiteId: pId,
@@ -165,7 +180,9 @@ export async function PATCH(
       where: { id },
       data: updateData,
       include: {
-        subject: true,
+        subject: {
+          select: { id: true, name: true, code: true, color: true },
+        },
         dependencies: {
           include: {
             prerequisite: true,
@@ -180,15 +197,29 @@ export async function PATCH(
     });
 
     // Award XP if task was just marked as DONE
-    if (updated.status === "DONE" && existing.status !== "DONE") {
-      const { awardUserXp } = await import("@/lib/gamification/engine");
-      await awardUserXp(user.id, 15, `Hoàn thành nhiệm vụ: ${updated.title}`);
+    const wasJustCompleted = updated.isCompleted && !existing.isCompleted;
+    if (wasJustCompleted) {
+      try {
+        const { awardUserXp } = await import("@/lib/gamification/engine");
+        await awardUserXp(user.id, 15, `Hoàn thành nhiệm vụ: ${updated.title}`);
+      } catch (err) {
+        console.warn("Could not award XP for task:", err);
+      }
+    }
+
+    // Automatically sync live daily summaries
+    const newScheduledDate = updated.scheduledDate;
+    if (oldScheduledDate && oldScheduledDate !== newScheduledDate) {
+      await syncDailyTaskSummary(user.id, oldScheduledDate);
+    }
+    if (newScheduledDate) {
+      await syncDailyTaskSummary(user.id, newScheduledDate);
     }
 
     return NextResponse.json({ success: true, task: updated });
   } catch (err: any) {
     console.error("PATCH /api/tasks/[id] error:", err);
-    return NextResponse.json({ error: "Lỗi cập nhật task" }, { status: 500 });
+    return NextResponse.json({ error: "Lỗi cập nhật nhiệm vụ" }, { status: 500 });
   }
 }
 
@@ -207,16 +238,23 @@ export async function DELETE(
     });
 
     if (!task) {
-      return NextResponse.json({ error: "Không tìm thấy task" }, { status: 404 });
+      return NextResponse.json({ error: "Không tìm thấy nhiệm vụ" }, { status: 404 });
     }
+
+    const scheduledDate = task.scheduledDate;
 
     await prisma.task.delete({
       where: { id },
     });
 
+    // Recalculate daily summary after deletion
+    if (scheduledDate) {
+      await syncDailyTaskSummary(user.id, scheduledDate);
+    }
+
     return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error("DELETE /api/tasks/[id] error:", err);
-    return NextResponse.json({ error: "Lỗi xóa task" }, { status: 500 });
+    return NextResponse.json({ error: "Lỗi xóa nhiệm vụ" }, { status: 500 });
   }
 }
