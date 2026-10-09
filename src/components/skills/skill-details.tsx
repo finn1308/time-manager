@@ -59,8 +59,14 @@ export function SkillDetails({ initialSkill }: SkillDetailsProps) {
         </div>
         <div className="flex items-center space-x-3">
           <Link
-            href={`/skills/${skill.id}/roadmap`}
+            href={`/skills/${skill.id}/analytics`}
             className="px-4 py-2 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-xl text-sm font-bold text-[#1b4332] shadow-sm hover:bg-[#f0f7f2]"
+          >
+            Analytics
+          </Link>
+          <Link
+            href={`/skills/${skill.id}/roadmap`}
+            className="px-4 py-2 bg-[#2d6a4f] text-white rounded-xl text-sm font-bold shadow-sm hover:bg-[#1b4332]"
           >
             <Map className="w-4 h-4 inline-block mr-2" />
             Xem Roadmap

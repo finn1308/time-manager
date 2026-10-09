@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { TaskCard } from "@/components/tasks/task-card";
 import { TaskModal } from "@/components/tasks/task-modal";
 import { TaskDependencyAlertModal } from "@/components/tasks/task-dependency-alert-modal";
-import {
 import { toast } from "sonner";
+import {
   CheckSquare,
   Sparkles,
   Plus,
