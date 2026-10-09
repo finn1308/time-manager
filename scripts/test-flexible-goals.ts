@@ -135,7 +135,7 @@ async function runFlexibleGoalsAcceptanceTests() {
         title: "Chinese Practice",
         targetMinutes: 30,
         startDate: new Date("2026-10-01T00:00:00.000Z"),
-        activeDays: [1, 2, 3, 4, 5],
+        activeDays: JSON.stringify([1, 2, 3, 4, 5]),
         preferredPeriod: "EVENING",
         status: "ACTIVE",
       },
@@ -201,7 +201,7 @@ async function runFlexibleGoalsAcceptanceTests() {
         title: "Practice Programming MWF",
         targetMinutes: 60,
         startDate: new Date("2026-10-01T00:00:00.000Z"),
-        activeDays: [1, 3, 5], // Monday, Wednesday, Friday
+        activeDays: JSON.stringify([1, 3, 5]), // Monday, Wednesday, Friday
         status: "ACTIVE",
       },
     });

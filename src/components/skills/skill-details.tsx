@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Map, Target, Brain, Sparkles, Loader2, Play, BookOpen, ExternalLink, Plus } from "lucide-react";
 import Link from "next/link";
 
+import { toast } from "sonner";
+
 interface SkillDetailsProps {
   initialSkill: any;
 }
@@ -23,16 +25,16 @@ export function SkillDetails({ initialSkill }: SkillDetailsProps) {
         method: "POST",
       });
       if (res.ok) {
-        alert("Roadmap generated successfully!");
+        toast.success("Lộ trình Ultra Learning đã được tạo thành công!");
         router.refresh();
         router.push(`/skills/${skill.id}/roadmap`);
       } else {
         const err = await res.json();
-        alert(err.error || "Failed to generate roadmap");
+        toast.error(err.error || "Không thể tạo lộ trình. Vui lòng thử lại.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error calling AI");
+      toast.error("Lỗi khi kết nối đến dịch vụ AI.");
     } finally {
       setIsGenerating(false);
     }
@@ -51,12 +53,13 @@ export function SkillDetails({ initialSkill }: SkillDetailsProps) {
         const added = await res.json();
         setSkill({ ...skill, resources: [...(skill.resources || []), added] });
         setNewResource({ title: "", url: "" });
+        toast.success("Đã thêm tài liệu thành công!");
       } else {
-        alert("Lỗi khi thêm tài liệu.");
+        toast.error("Lỗi khi thêm tài liệu.");
       }
     } catch (err) {
       console.error(err);
-      alert("Lỗi kết nối.");
+      toast.error("Lỗi kết nối.");
     } finally {
       setIsAddingResource(false);
     }
