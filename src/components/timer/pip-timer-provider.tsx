@@ -288,6 +288,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
             JSON.stringify({
               activeSubject,
               scheduleEventId,
+              flexibleGoalId,
               taskId,
               mode,
               pomodoroPhase,
@@ -319,6 +320,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
     pomodoroPhase,
     activeSubject,
     scheduleEventId,
+    flexibleGoalId,
     taskId,
     pomodoroCycle,
     targetSeconds,
@@ -333,6 +335,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
   const startTimer = useCallback(
     (subject: ActiveSubject, optionsOrEventId?: string | null | StartTimerOptions) => {
       let eventId: string | null = null;
+      let flexGoalId: string | null = null;
       let tId: string | null = null;
       let targetMode: TimerMode = "POMODORO";
       let workMins = 25;
@@ -344,6 +347,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
         eventId = optionsOrEventId;
       } else if (optionsOrEventId && typeof optionsOrEventId === "object") {
         eventId = optionsOrEventId.scheduleEventId || null;
+        flexGoalId = optionsOrEventId.flexibleGoalId || null;
         tId = optionsOrEventId.taskId || null;
         if (optionsOrEventId.mode) targetMode = optionsOrEventId.mode;
         if (optionsOrEventId.pomodoroWorkMinutes) workMins = optionsOrEventId.pomodoroWorkMinutes;
@@ -354,6 +358,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
 
       setActiveSubject(subject);
       setScheduleEventId(eventId);
+      setFlexibleGoalId(flexGoalId);
       setTaskId(tId);
       setMode(targetMode);
       setPomodoroPhase("WORK");
@@ -481,6 +486,7 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
       value={{
         activeSubject,
         scheduleEventId,
+        flexibleGoalId,
         taskId,
         mode,
         pomodoroPhase,
@@ -520,12 +526,14 @@ export function PipTimerProvider({ children }: { children: React.ReactNode }) {
         <TimerCompleteModal
           subject={activeSubject}
           scheduleEventId={scheduleEventId}
+          flexibleGoalId={flexibleGoalId}
           taskId={taskId}
           seconds={stoppedSeconds}
           open={showCompleteModal}
           onClose={() => {
             setShowCompleteModal(false);
             setActiveSubject(null);
+            setFlexibleGoalId(null);
             setSecondsElapsed(0);
             setTotalWorkSeconds(0);
           }}
