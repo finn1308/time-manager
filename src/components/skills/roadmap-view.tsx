@@ -5,6 +5,8 @@ import { ArrowLeft, CheckCircle2, Circle, Clock, Play, BookOpen } from "lucide-r
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { toast } from "sonner";
+
 interface RoadmapViewProps {
   initialSkill: any;
 }
@@ -24,13 +26,14 @@ export function RoadmapView({ initialSkill }: RoadmapViewProps) {
       const res = await fetch(`/api/skills/${skill.id}/schedule`, { method: "POST" });
       if (res.ok) {
         const data = await res.json();
-        alert(`Đã lên lịch thành công cho ${data.count} bài tập!`);
+        toast.success(`Đã lên lịch thành công cho ${data.count} bài tập vào Calendar!`);
+        router.refresh();
       } else {
-        alert("Lỗi khi lên lịch.");
+        toast.error("Lỗi khi lên lịch các bài tập.");
       }
     } catch (err) {
       console.error(err);
-      alert("Lỗi kết nối.");
+      toast.error("Lỗi kết nối.");
     } finally {
       setIsScheduling(false);
     }
