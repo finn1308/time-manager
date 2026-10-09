@@ -9,13 +9,13 @@ interface RoadmapViewProps {
   initialSkill: any;
 }
 
-import { PipTimerContext } from "@/components/timer/pip-timer-provider";
+import { usePipTimer } from "@/components/timer/pip-timer-provider";
 
 export function RoadmapView({ initialSkill }: RoadmapViewProps) {
   const router = useRouter();
   const [skill] = useState(initialSkill);
   const [isScheduling, setIsScheduling] = useState(false);
-  const timerContext = React.useContext(PipTimerContext);
+  const { startTimer } = usePipTimer();
 
   const handleSchedule = async () => {
     if (!confirm("Hệ thống sẽ xếp lịch các bài tập chưa hoàn thành vào Calendar của bạn. Tiếp tục?")) return;
