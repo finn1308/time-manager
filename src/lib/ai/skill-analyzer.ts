@@ -99,3 +99,27 @@ Thời gian dự kiến mỗi tuần: ${skill.weeklyHoursCommitment || 5} giờ.
   const parsed = JSON.parse(text);
   return parsed;
 }
+
+export async function generateAdaptiveTasks(skillName: string, targetLevel: string, completedTasks: any[], sessions: any[]) {
+  const prompt = `Bạn là một chuyên gia về Ultra Learning. Học viên đang học kỹ năng "${skillName}" để đạt trình độ "${targetLevel}".
+Dưới đây là danh sách các bài tập đã hoàn thành:
+${JSON.stringify(completedTasks, null, 2)}
+Dưới đây là lịch sử học tập (StudySessions) kèm theo ghi chú và điểm năng suất:
+${JSON.stringify(sessions, null, 2)}
+
+Dựa trên nguyên lý Ultra Learning (Đặc biệt là Drill và Retrieval), hãy phân tích những điểm yếu hoặc khó khăn (thông qua ghi chú hoặc thời gian học) và đề xuất 1 đến 3 bài tập (SkillTask) mới để khắc phục. 
+CHỈ đề xuất những bài tập thực sự cần thiết. Trả về JSON theo cấu trúc:
+{
+  "tasks": [
+    {
+      "name": "Tên bài tập (VD: Luyện tập vòng lặp while)",
+      "description": "Mô tả chi tiết và cách luyện tập",
+      "taskType": "DRILL",
+      "plannedMinutes": 30
+    }
+  ],
+  "reasoning": "Giải thích ngắn gọn tại sao đề xuất các bài tập này"
+}`;
+
+  return await getGeminiJson(prompt);
+}

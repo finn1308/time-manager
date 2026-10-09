@@ -47,6 +47,7 @@ model User {
   resources             Resource[]
   studyNotes            StudyNote[]
   tasks                 Task[]
+  dailyTaskSummaries    DailyTaskSummary[]
   notes                 Note[]
   tags                  Tag[]
   habits                Habit[]

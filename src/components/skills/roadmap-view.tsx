@@ -106,22 +106,18 @@ export function RoadmapView({ initialSkill }: RoadmapViewProps) {
                         </div>
                         <button 
                           onClick={() => {
-                            if (timerContext) {
-                              timerContext.startTimer(
-                                {
-                                  id: skill.id, // we map skill to subject
-                                  name: skill.name,
-                                  color: "#2d6a4f",
-                                },
-                                {
-                                  taskId: task.id,
-                                  mode: "POMODORO",
-                                  targetMinutes: task.plannedMinutes,
-                                }
-                              );
-                            } else {
-                              alert("Timer chưa được khởi tạo!");
-                            }
+                            startTimer(
+                              {
+                                id: skill.id, // we map skill to subject
+                                name: skill.name,
+                                color: "#2d6a4f",
+                              },
+                              {
+                                taskId: task.id,
+                                mode: "POMODORO",
+                                targetMinutes: task.plannedMinutes,
+                              }
+                            );
                           }}
                           className="w-8 h-8 rounded-full bg-[#eef5f0] text-[#2d6a4f] flex items-center justify-center hover:bg-[#d8ebe0] transition-colors"
                         >
