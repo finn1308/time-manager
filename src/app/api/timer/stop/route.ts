@@ -9,8 +9,9 @@ export async function POST(req: Request) {
   try {
     const {
       sessionId,
-      subjectId,
-      skillId,
+      subjectId: inputSubjectId,
+      skillId: inputSkillId,
+      flexibleGoalId: inputFlexibleGoalId,
       actualDurationSeconds,
       notes,
       productivityScore,
@@ -19,6 +20,10 @@ export async function POST(req: Request) {
       goalId,
       source,
     } = await req.json();
+
+    let subjectId = inputSubjectId || null;
+    let skillId = inputSkillId || null;
+    let flexibleGoalId = inputFlexibleGoalId || null;
 
     const durationSeconds = Math.max(0, parseInt(actualDurationSeconds, 10) || 0);
     const now = new Date();

@@ -142,6 +142,8 @@ export default function SettingsPage() {
         }
         setExamMode(Boolean(data.settings.examMode));
         setNotifications(Boolean(data.settings.notificationsEnabled));
+        setAutoDayClosure(Boolean(data.settings.autoDayClosureEnabled));
+        setAutoRollover(Boolean(data.settings.autoRolloverTasksEnabled));
       }
     } catch (e) {
       console.error(e);
@@ -267,6 +269,8 @@ export default function SettingsPage() {
           weeklyStudyBudgetHours: parseFloat(budgetInput),
           examMode,
           notificationsEnabled: notifications,
+          autoDayClosureEnabled: autoDayClosure,
+          autoRolloverTasksEnabled: autoRollover,
         }),
       });
       const data = await res.json();
