@@ -79,7 +79,7 @@ export async function getBestGeminiModel(apiKey: string): Promise<string> {
 
   const available = await fetchAvailableGeminiModels(apiKey);
 
-  let chosen = "gemini-1.5-flash-latest";
+  let chosen = "gemini-2.0-flash";
 
   if (available.length > 0) {
     // Check if any of our preferred models are present in the key's available list
@@ -132,10 +132,11 @@ export async function callGeminiGenerate(
   const candidateModels = Array.from(
     new Set([
       bestModel,
-      "gemini-1.5-flash-latest",
       "gemini-2.0-flash",
       "gemini-1.5-flash",
+      "gemini-2.5-flash",
       "gemini-1.5-pro",
+      "gemini-1.5-flash-8b",
       "gemini-pro",
     ])
   );
@@ -174,7 +175,8 @@ export async function callGeminiGenerate(
         clearTimeout(timeoutId);
 
         if (res.status === 404) {
-          // Model not found on this version/endpoint, try next
+          // Model not found on this version/endpoint, bust cache and try next
+          modelCache.delete(apiKey);
           console.warn(`[Gemini API] Model ${model} returned 404 on ${apiVersion}, trying next candidate...`);
           continue;
         }

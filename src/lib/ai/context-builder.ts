@@ -333,8 +333,8 @@ export async function buildComprehensiveStudyContext(params: {
       },
     }),
     prisma.skill.findMany({
-      where: { userId, status: "ACTIVE" },
-      select: { id: true, name: true, category: true, targetHours: true },
+      where: { userId, status: { not: "COMPLETED" } },
+      select: { id: true, name: true, category: true, totalPlannedHours: true },
     }),
   ]);
 
