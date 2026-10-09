@@ -121,5 +121,33 @@ CHỈ đề xuất những bài tập thực sự cần thiết. Trả về JSON
   "reasoning": "Giải thích ngắn gọn tại sao đề xuất các bài tập này"
 }`;
 
-  return await getGeminiJson(prompt);
+  try {
+    const { callGeminiGenerate } = await import("./gemini");
+    const activeKey = await prisma.userApiKey.findFirst({
+      where: { isActive: true, provider: "GEMINI" },
+    });
+    if (activeKey) {
+      const plainApiKey = decryptApiKey(activeKey.encryptedKey, activeKey.iv, activeKey.authTag);
+      const { text } = await callGeminiGenerate({
+        apiKey: plainApiKey,
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json", temperature: 0.2 },
+      });
+      return JSON.parse(text);
+    }
+  } catch (err) {
+    console.warn("generateAdaptiveTasks Gemini error, using fallback:", err);
+  }
+
+  return {
+    tasks: [
+      {
+        name: `Luyện tập chuyên sâu: ${skillName}`,
+        description: `Thực hành khắc phục điểm yếu và nâng cao độ thuần thục kỹ năng ${skillName}.`,
+        taskType: "DRILL",
+        plannedMinutes: 30,
+      },
+    ],
+    reasoning: "Gợi ý tự động để củng cố kỹ năng dựa trên tiến độ học tập hiện tại.",
+  };
 }
