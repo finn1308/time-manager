@@ -14,6 +14,9 @@ export default async function SkillPage({ params }: { params: { id: string } }) 
 
   const skill = await prisma.skill.findUnique({
     where: { id: params.id },
+    include: {
+      resources: true,
+    },
   });
 
   if (!skill || skill.userId !== user.id) {

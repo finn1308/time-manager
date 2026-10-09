@@ -201,15 +201,16 @@ export default async function DashboardPage() {
   // Subject breakdown for this week
   const subjectWeekMap: Record<string, { id: string; name: string; color: string; actualHours: number }> = {};
   for (const s of thisWeekSessions) {
-    if (!subjectWeekMap[s.subjectId]) {
-      subjectWeekMap[s.subjectId] = {
-        id: s.subject.id,
-        name: s.subject.name,
-        color: s.subject.color,
+    const sId = s.subjectId || "general";
+    if (!subjectWeekMap[sId]) {
+      subjectWeekMap[sId] = {
+        id: s.subject?.id || sId,
+        name: s.subject?.name || "Khác",
+        color: s.subject?.color || "#2d6a4f",
         actualHours: 0,
       };
     }
-    subjectWeekMap[s.subjectId].actualHours += s.actualDurationSeconds / 3600;
+    subjectWeekMap[sId].actualHours += s.actualDurationSeconds / 3600;
   }
   const weeklySubjectsBreakdown = Object.values(subjectWeekMap);
 
@@ -896,10 +897,10 @@ export default async function DashboardPage() {
                       <div className="flex items-center space-x-2 truncate">
                         <span
                           className="w-2.5 h-2.5 rounded-full shrink-0"
-                          style={{ backgroundColor: session.subject.color || "#2d6a4f" }}
+                          style={{ backgroundColor: session.subject?.color || "#2d6a4f" }}
                         />
                         <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
-                          {session.subject.name}
+                          {session.subject?.name || "Phiên tự học"}
                         </span>
                       </div>
                       <Badge variant="green" className="font-mono font-bold text-[10px]">
