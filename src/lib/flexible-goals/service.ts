@@ -43,9 +43,24 @@ export interface ComputedFlexibleGoal {
 /**
  * Parses comma-separated active days string into array of numbers (0 = Sun .. 6 = Sat)
  */
-export function parseActiveDays(activeDaysStr?: string | null): number[] {
-  if (!activeDaysStr) return [1, 2, 3, 4, 5]; // Default weekdays Mon-Fri
-  return activeDaysStr
+export function parseActiveDays(activeDaysVal?: string | number[] | null): number[] {
+  if (!activeDaysVal) return [1, 2, 3, 4, 5]; // Default weekdays Mon-Fri
+  if (Array.isArray(activeDaysVal)) return activeDaysVal;
+
+  const trimmed = String(activeDaysVal).trim();
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.map((n: any) => Number(n)).filter((n) => !isNaN(n) && n >= 0 && n <= 6);
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  return trimmed
+    .replace(/[\[\]]/g, "")
     .split(",")
     .map((s) => parseInt(s.trim(), 10))
     .filter((n) => !isNaN(n) && n >= 0 && n <= 6);
