@@ -654,11 +654,14 @@ export async function PUT(req: Request) {
         recurrence: recurrence !== undefined ? recurrence : undefined,
         recurrenceRule: recurrenceRule !== undefined ? recurrenceRule : undefined,
         recurrenceEnd: recurrenceEnd !== undefined ? (recurrenceEnd ? new Date(recurrenceEnd) : null) : undefined,
+        preferredPeriod: body.preferredPeriod !== undefined ? body.preferredPeriod : undefined,
+        flexibleGoalId: body.flexibleGoalId !== undefined ? body.flexibleGoalId : undefined,
       },
       include: {
         subject: true,
         task: true,
         goal: true,
+        flexibleGoal: true,
       },
     });
 
