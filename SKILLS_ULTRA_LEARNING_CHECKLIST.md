@@ -15,7 +15,7 @@
 - [x] Run Prisma migration
 
 ## 3. Skills CRUD
-- [ ] API routes for creating/updating/deleting skills
+- [x] API routes for creating/updating/deleting skills
 - [ ] API routes for managing roadmap structure
 
 ## 4. AI Skill Analysis
