@@ -65,6 +65,7 @@ export function Sidebar({ user, subjects = [] }: SidebarProps) {
     { label: "Dashboard", href: "/", icon: Home, iconColor: "text-sky-500" },
     { label: "Calendar", href: "/calendar", icon: Calendar, iconColor: "text-amber-500" },
     { label: "Subjects", href: "/subjects", icon: BookOpen, iconColor: "text-emerald-500" },
+    { label: "Skills", href: "/skills", icon: Target, iconColor: "text-rose-500", highlight: true },
     { label: "Practice", href: "/practice", icon: Brain, iconColor: "text-purple-500" },
     { label: "Statistics", href: "/progress", icon: TrendingUp, iconColor: "text-teal-500" },
     { label: "Settings", href: "/settings", icon: Settings, iconColor: "text-slate-500" },
