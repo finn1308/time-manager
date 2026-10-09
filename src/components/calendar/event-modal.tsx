@@ -122,14 +122,17 @@ export function EventModal({
   const [isFlexible, setIsFlexible] = useState<boolean>(defaultType === "PERSONAL");
   const [trackStudyTime, setTrackStudyTime] = useState<boolean>(isStudyEventCategory(defaultType, null));
 
-  // All Day / Free Study state
-  const [isAllDay, setIsAllDay] = useState<boolean>(false);
-  const [plannedDurationMinutes, setPlannedDurationMinutes] = useState<number>(60);
-
-  // Recurrence state
-  const [recurrence, setRecurrence] = useState<string>("NONE");
-  const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>("");
+  // Scheduling Mode State (Section 1)
+  const [schedulingMode, setSchedulingMode] = useState<"FIXED" | "FLEXIBLE">("FIXED");
+  const [targetType, setTargetType] = useState<"SUBJECT" | "SKILL">("SUBJECT");
+  const [skillId, setSkillId] = useState<string>("");
+  const [skills, setSkills] = useState<Array<{ id: string; name: string; category?: string }>>([]);
+  const [flexibleTargetMinutes, setFlexibleTargetMinutes] = useState<number>(30);
+  const [startDateStr, setStartDateStr] = useState<string>(defaultDate);
+  const [endDateStr, setEndDateStr] = useState<string>("");
+  const [flexibleActiveDays, setFlexibleActiveDays] = useState<number[]>([1, 2, 3, 4, 5]);
+  const [preferredPeriod, setPreferredPeriod] = useState<"ANY_TIME" | "MORNING" | "AFTERNOON" | "EVENING">("ANY_TIME");
+  const [flexibleDeadline, setFlexibleDeadline] = useState<string>("");
 
   // Multi-slot state
   const [isMultiSlot, setIsMultiSlot] = useState(false);
@@ -143,21 +146,23 @@ export function EventModal({
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [deleteModeChoice, setDeleteModeChoice] = useState<"SINGLE" | "ALL" | "FUTURE" | "SERIES">("SINGLE");
 
-  // Fetch tasks and goals for dropdowns
+  // Fetch tasks, goals, and skills for dropdowns
   useEffect(() => {
-    async function loadTasksAndGoals() {
+    async function loadDropdowns() {
       try {
-        const [resTasks, resGoals] = await Promise.all([
+        const [resTasks, resGoals, resSkills] = await Promise.all([
           fetch("/api/tasks").then((r) => (r.ok ? r.json() : { tasks: [] })),
           fetch("/api/goals").then((r) => (r.ok ? r.json() : { goals: [] })),
+          fetch("/api/skills").then((r) => (r.ok ? r.json() : [])),
         ]);
         if (resTasks.tasks) setTasks(resTasks.tasks);
         if (resGoals.goals) setGoals(resGoals.goals);
+        if (Array.isArray(resSkills)) setSkills(resSkills);
       } catch (e) {
-        console.warn("Failed to load tasks/goals:", e);
+        console.warn("Failed to load tasks/goals/skills:", e);
       }
     }
-    loadTasksAndGoals();
+    loadDropdowns();
   }, []);
 
   // Sync state whenever editingEvent or open changes
@@ -169,6 +174,47 @@ export function EventModal({
       setSubjectId(editingEvent.subjectId || "");
       setTaskId(editingEvent.taskId || "");
       setGoalId(editingEvent.goalId || "");
+
+      const isFlexMode = editingEvent.schedulingMode === "FLEXIBLE" || Boolean(editingEvent.targetMinutes);
+      setSchedulingMode(isFlexMode ? "FLEXIBLE" : "FIXED");
+
+      if (editingEvent.skillId) {
+        setTargetType("SKILL");
+        setSkillId(editingEvent.skillId);
+      } else {
+        setTargetType("SUBJECT");
+        setSkillId("");
+      }
+
+      setFlexibleTargetMinutes(editingEvent.targetMinutes || editingEvent.plannedDurationMinutes || 30);
+      setStartDateStr(formatVN(editingEvent.startTime, "yyyy-MM-dd"));
+      if (editingEvent.recurrenceEnd) {
+        setEndDateStr(formatVN(editingEvent.recurrenceEnd, "yyyy-MM-dd"));
+      } else {
+        setEndDateStr("");
+      }
+
+      if (editingEvent.activeDays) {
+        if (Array.isArray(editingEvent.activeDays)) {
+          setFlexibleActiveDays(editingEvent.activeDays);
+        } else if (typeof editingEvent.activeDays === "string") {
+          setFlexibleActiveDays(
+            editingEvent.activeDays
+              .split(",")
+              .map((s) => parseInt(s.trim(), 10))
+              .filter((n) => !isNaN(n))
+          );
+        }
+      } else {
+        setFlexibleActiveDays([1, 2, 3, 4, 5]);
+      }
+
+      setPreferredPeriod((editingEvent.preferredPeriod as any) || "ANY_TIME");
+      if (editingEvent.deadline) {
+        setFlexibleDeadline(formatVN(editingEvent.deadline, "yyyy-MM-dd"));
+      } else {
+        setFlexibleDeadline("");
+      }
 
       const normalizedType = ((editingEvent.type?.toUpperCase() || "OTHER") as CalendarEventType);
       setEventType(normalizedType);
@@ -208,8 +254,17 @@ export function EventModal({
       setDescription("");
       setLocation("");
       setSubjectId(subjects[0]?.id || "");
+      setSkillId("");
+      setTargetType("SUBJECT");
       setTaskId("");
       setGoalId("");
+      setSchedulingMode("FIXED");
+      setFlexibleTargetMinutes(30);
+      setStartDateStr(defaultDate);
+      setEndDateStr("");
+      setFlexibleActiveDays([1, 2, 3, 4, 5]);
+      setPreferredPeriod("ANY_TIME");
+      setFlexibleDeadline("");
       setEventType(defaultType);
       setDateStr(defaultDate);
       setStartTimeStr(defaultStartTime);
@@ -290,6 +345,53 @@ export function EventModal({
     setIsSubmitting(true);
 
     try {
+      if (schedulingMode === "FLEXIBLE") {
+        let finalTitle = title.trim();
+        if (!finalTitle) {
+          if (targetType === "SUBJECT") {
+            const sub = subjects.find((s) => s.id === subjectId);
+            if (sub) finalTitle = sub.name;
+          } else {
+            const sk = skills.find((s) => s.id === skillId);
+            if (sk) finalTitle = sk.name;
+          }
+        }
+        if (!finalTitle) {
+          throw new Error("Vui lòng nhập tên mục tiêu hoặc chọn môn học/kỹ năng");
+        }
+
+        const payload = {
+          id: editingEvent?.id,
+          schedulingMode: "FLEXIBLE",
+          title: finalTitle,
+          description: description.trim() || null,
+          subjectId: targetType === "SUBJECT" && subjectId ? subjectId : null,
+          skillId: targetType === "SKILL" && skillId ? skillId : null,
+          targetMinutes: Number(flexibleTargetMinutes) || 30,
+          startDate: startDateStr || dateStr,
+          endDate: endDateStr || null,
+          activeDays: flexibleActiveDays,
+          preferredPeriod,
+          deadline: flexibleDeadline || null,
+        };
+
+        const res = await fetch("/api/calendar/events", {
+          method: editingEvent ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Không thể lưu mục tiêu học linh hoạt");
+
+        toast.success(editingEvent ? "Đã cập nhật mục tiêu học linh hoạt!" : "Đã tạo mục tiêu học linh hoạt thành công!");
+        window.dispatchEvent(new Event("chronomind-study-updated"));
+        if (onSuccess) onSuccess();
+        router.refresh();
+        onClose();
+        return;
+      }
+
       if (!title.trim()) throw new Error("Vui lòng nhập tiêu đề sự kiện");
       if (!dateStr) throw new Error("Vui lòng chọn ngày");
       if (!isAllDay && (!startTimeStr || !endTimeStr)) throw new Error("Vui lòng nhập giờ bắt đầu và kết thúc");
