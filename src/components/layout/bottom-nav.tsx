@@ -4,58 +4,71 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard,
+  Home,
   Calendar,
   CheckSquare,
-  Flame,
+  Brain,
   Menu,
   X,
   BookOpen,
   Target,
-  Brain,
-  FileText,
-  Sparkles,
-  History,
   TrendingUp,
-  BarChart3,
   Settings,
   LogOut,
   Play,
-  GraduationCap,
-  Briefcase,
-  Home,
-  LayoutGrid,
-  PlaySquare,
-  ShoppingBag,
-  Award,
-  Languages,
-  ShieldCheck,
-  ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
+
+// Bottom bar — 4 primary nav items
+const navItems = [
+  {
+    label: "Dashboard",
+    href: "/",
+    icon: Home,
+    color: "var(--lavender)",
+    bg: "var(--lavender-bg)",
+  },
+  {
+    label: "Lịch học",
+    href: "/calendar",
+    icon: Calendar,
+    color: "var(--peach)",
+    bg: "var(--peach-bg)",
+  },
+  {
+    label: "Nhiệm vụ",
+    href: "/tasks",
+    icon: CheckSquare,
+    color: "var(--mint)",
+    bg: "var(--mint-bg)",
+  },
+  {
+    label: "Practice",
+    href: "/practice",
+    icon: Brain,
+    color: "var(--lemon)",
+    bg: "var(--lemon-bg)",
+  },
+];
+
+// Full drawer items
+const drawerItems = [
+  { label: "Dashboard", href: "/", icon: Home, color: "var(--lavender)" },
+  { label: "Lịch học", href: "/calendar", icon: Calendar, color: "var(--peach)" },
+  { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare, color: "var(--mint)" },
+  { label: "Môn học", href: "/subjects", icon: BookOpen, color: "var(--sky)" },
+  { label: "Practice", href: "/practice", icon: Brain, color: "var(--lemon)" },
+  { label: "Skills", href: "/skills", icon: Target, color: "var(--rose)" },
+  { label: "Thống kê", href: "/progress", icon: TrendingUp, color: "var(--teal)" },
+  { label: "Cài đặt", href: "/settings", icon: Settings, color: "var(--lilac)" },
+];
 
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { startTimer } = usePipTimer();
-
-  const navItems = [
-    { label: "Dashboard", href: "/", icon: Home },
-    { label: "Calendar", href: "/calendar", icon: Calendar },
-    { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare },
-    { label: "Practice", href: "/practice", icon: Brain },
-  ];
-
-  const drawerItems = [
-    { label: "Dashboard", href: "/", icon: Home },
-    { label: "Calendar", href: "/calendar", icon: Calendar },
-    { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare },
-    { label: "Subjects", href: "/subjects", icon: BookOpen },
-    { label: "Practice", href: "/practice", icon: Brain },
-    { label: "Statistics", href: "/progress", icon: TrendingUp },
-    { label: "Settings", href: "/settings", icon: Settings },
-  ];
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -65,88 +78,137 @@ export function BottomNav() {
 
   return (
     <>
-      {/* Bottom Bar for Mobile (< 1024px) */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#132217]/90 backdrop-blur-md border-t border-[#dbe7dd] dark:border-[#263d2e] pb-safe shadow-lg">
-        <div className="flex justify-around items-center h-16 px-1">
+      {/* ── Mobile Bottom Bar ────────────────────────────────── */}
+      <nav
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 pb-safe"
+        style={{
+          background: "rgba(255, 250, 244, 0.92)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          borderTop: "1px solid var(--border-soft)",
+          boxShadow: "0 -4px 20px rgba(26, 21, 37, 0.06)",
+        }}
+      >
+        <div className="flex justify-around items-center h-16 px-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href));
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center w-full min-h-[44px] py-1 transition-colors ${
-                  isActive
-                    ? "text-[#2d6a4f] dark:text-[#52b788]"
-                    : "text-[#73927d] dark:text-[#8ba393] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
-                }`}
+                className="flex flex-col items-center justify-center w-full min-h-[44px] py-1 gap-0.5 transition-all"
               >
                 <div
-                  className={`flex items-center justify-center p-1.5 rounded-2xl transition-all ${
-                    isActive ? "bg-[#d8ebe0] dark:bg-[#1d3827] shadow-2xs scale-105" : ""
-                  }`}
+                  className="flex items-center justify-center w-9 h-7 rounded-xl transition-all"
+                  style={
+                    isActive
+                      ? { background: item.bg }
+                      : { background: "transparent" }
+                  }
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon
+                    className="w-[18px] h-[18px] transition-all"
+                    style={{
+                      color: isActive ? item.color : "var(--text-muted)",
+                    }}
+                  />
                 </div>
-                <span className={`text-[10px] mt-0.5 ${isActive ? "font-bold" : "font-medium"}`}>
+                <span
+                  className="text-[9px] font-semibold transition-colors"
+                  style={{
+                    color: isActive ? item.color : "var(--text-muted)",
+                  }}
+                >
                   {item.label}
                 </span>
               </Link>
             );
           })}
 
-          {/* Menu Drawer Toggle Button */}
+          {/* Menu button */}
           <button
             onClick={() => setDrawerOpen(true)}
-            className={`flex flex-col items-center justify-center w-full min-h-[44px] py-1 transition-colors cursor-pointer ${
-              drawerOpen
-                ? "text-[#2d6a4f] dark:text-[#52b788]"
-                : "text-[#73927d] dark:text-[#8ba393] hover:text-[#192e22]"
-            }`}
+            className="flex flex-col items-center justify-center w-full min-h-[44px] py-1 gap-0.5 cursor-pointer"
           >
-            <div className="flex items-center justify-center p-1.5 rounded-2xl">
-              <Menu className="w-5 h-5" />
+            <div className="flex items-center justify-center w-9 h-7 rounded-xl">
+              <Menu
+                className="w-[18px] h-[18px]"
+                style={{ color: drawerOpen ? "var(--lavender)" : "var(--text-muted)" }}
+              />
             </div>
-            <span className="text-[10px] font-medium">Thêm</span>
+            <span
+              className="text-[9px] font-semibold"
+              style={{ color: drawerOpen ? "var(--lavender)" : "var(--text-muted)" }}
+            >
+              Thêm
+            </span>
           </button>
         </div>
       </nav>
 
-      {/* Mobile Drawer (Menu) */}
+      {/* ── Mobile Drawer ─────────────────────────────────────── */}
       {drawerOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 transition-opacity"
+            style={{ background: "rgba(26, 21, 37, 0.45)", backdropFilter: "blur(4px)" }}
             onClick={() => setDrawerOpen(false)}
           />
 
-          {/* Drawer Content */}
-          <div className="relative w-4/5 max-w-xs bg-white dark:bg-[#132217] h-full shadow-2xl flex flex-col justify-between z-50 p-5 pt-safe pb-safe overflow-y-auto">
-            <div className="space-y-4">
-              {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#dbe7dd] dark:border-[#263d2e]">
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-[#2d6a4f] text-white flex items-center justify-center font-bold text-xs">
-                    CM
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
-                      ChronoMind Menu
-                    </h3>
-                    <p className="text-[10px] text-[#73927d]">Tất cả tính năng học tập</p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setDrawerOpen(false)}
-                  className="p-1.5 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#73927d]"
+          {/* Drawer Panel */}
+          <div
+            className="relative w-4/5 max-w-[300px] h-full flex flex-col z-50 pt-safe pb-safe overflow-y-auto animate-slide-up"
+            style={{
+              background: "var(--bg-sidebar)",
+              boxShadow: "var(--shadow-xl)",
+            }}
+          >
+            {/* Drawer Header */}
+            <div
+              className="flex items-center justify-between px-5 py-4 shrink-0"
+              style={{ borderBottom: "1px solid var(--border-soft)" }}
+            >
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="w-8 h-8 rounded-xl flex items-center justify-center"
+                  style={{
+                    background: "linear-gradient(135deg, var(--lavender) 0%, var(--peach) 100%)",
+                  }}
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p
+                    className="text-sm font-extrabold"
+                    style={{
+                      color: "var(--text-ink)",
+                      fontFamily: "var(--font-nunito, Nunito)",
+                    }}
+                  >
+                    ChronoMind
+                  </p>
+                  <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    Tất cả tính năng
+                  </p>
+                </div>
               </div>
 
-              {/* Quick Study Launcher */}
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="p-1.5 rounded-xl cursor-pointer transition-colors"
+                style={{ color: "var(--text-muted)", background: "var(--bg-elevated)" }}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Quick Timer CTA */}
+            <div className="px-4 pt-4">
               <button
                 onClick={() => {
                   setDrawerOpen(false);
@@ -154,44 +216,86 @@ export function BottomNav() {
                     id: "general",
                     name: "Phiên học tự do",
                     code: "STUDY",
-                    color: "#2d6a4f",
+                    color: "var(--mint)",
                   });
                 }}
-                className="w-full flex items-center justify-center space-x-2 p-2.5 rounded-2xl bg-[#2d6a4f] text-white font-bold text-xs shadow-2xs cursor-pointer active:scale-98 transition-transform"
+                className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl text-sm font-bold text-white cursor-pointer active:scale-[0.98] transition-transform"
+                style={{
+                  background: "linear-gradient(135deg, var(--mint) 0%, var(--sky) 100%)",
+                  boxShadow: "0 4px 16px rgba(58, 188, 162, 0.35)",
+                }}
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>Bật Study Timer ngay</span>
               </button>
-
-              {/* Navigation Links */}
-              <div className="space-y-1">
-                {drawerItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setDrawerOpen(false)}
-                      className={`flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-medium transition-colors ${
-                        isActive
-                          ? "bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#9cd1b1] font-bold"
-                          : "text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f4f8f5] dark:hover:bg-[#17261c]"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
             </div>
 
-            {/* Drawer Footer */}
-            <div className="pt-4 border-t border-[#dbe7dd] dark:border-[#263d2e]">
+            {/* Navigation Links */}
+            <nav className="flex-1 px-3 pt-3 pb-3 space-y-0.5">
+              {drawerItems.map((item) => {
+                const Icon = item.icon;
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/" && pathname.startsWith(item.href));
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                    style={
+                      isActive
+                        ? {
+                            background: "var(--bg-elevated)",
+                            color: item.color,
+                          }
+                        : { color: "var(--text-body)" }
+                    }
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        (e.currentTarget as HTMLAnchorElement).style.background = "var(--bg-elevated)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                      }
+                    }}
+                  >
+                    <div
+                      className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ background: "var(--bg-elevated)" }}
+                    >
+                      <Icon className="w-3.5 h-3.5" style={{ color: item.color }} />
+                    </div>
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <div
+                        className="ml-auto w-1.5 h-1.5 rounded-full"
+                        style={{ background: item.color }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Drawer Footer - Logout */}
+            <div
+              className="px-4 py-3 shrink-0"
+              style={{ borderTop: "1px solid var(--border-soft)" }}
+            >
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center space-x-2 px-3 py-2 rounded-2xl text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer"
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-colors"
+                style={{ color: "var(--rose)" }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "var(--rose-bg)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                }}
               >
                 <LogOut className="w-4 h-4" />
                 <span>Đăng xuất tài khoản</span>

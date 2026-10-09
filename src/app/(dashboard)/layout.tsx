@@ -19,7 +19,7 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  // Fetch subjects for sidebar quick access
+  // Fetch subjects for sidebar quick-start
   const subjects = await prisma.subject.findMany({
     where: { userId: user.id },
     select: {
@@ -33,12 +33,18 @@ export default async function DashboardLayout({
 
   return (
     <PipTimerProvider>
-      <div className="min-h-screen bg-[#f4f8f5] dark:bg-[#101c14] text-[#192e22] dark:text-[#f0f7f2] flex bg-pastel-grid">
-        {/* Rounded Pill Sidebar */}
+      <div
+        className="min-h-screen flex bg-pastel-grid"
+        style={{
+          backgroundColor: "var(--bg-base)",
+          color: "var(--text-ink)",
+        }}
+      >
+        {/* Sidebar (desktop) */}
         <Sidebar user={user} subjects={subjects} />
 
-        {/* Main Content Area */}
-        <div className="flex-1 lg:pl-64 flex flex-col min-w-0 w-full overflow-x-hidden transition-all duration-300">
+        {/* Main Content */}
+        <div className="flex-1 lg:pl-[240px] flex flex-col min-w-0 w-full overflow-x-hidden transition-all duration-300">
           <TopBar user={user} />
 
           <main className="flex-1 max-w-[1440px] w-full mx-auto p-3.5 sm:p-6 lg:p-8 pb-28 lg:pb-8 transition-all">
@@ -46,9 +52,10 @@ export default async function DashboardLayout({
           </main>
         </div>
 
+        {/* Mobile bottom nav */}
         <BottomNav />
 
-        {/* Floating PIP / In-App Fallback Timer Widget */}
+        {/* Floating PIP / In-App Fallback Timer */}
         <FloatingFallbackTimer />
       </div>
     </PipTimerProvider>
