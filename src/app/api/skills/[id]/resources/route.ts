@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -12,6 +12,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params;
     const data = await req.json();
     const { title, url } = data;
 
@@ -20,7 +21,7 @@ export async function POST(
     }
 
     const skill = await prisma.skill.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!skill || skill.userId !== user.id) {
