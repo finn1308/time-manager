@@ -441,6 +441,58 @@ export async function PUT(req: Request) {
 
     if (!id) return NextResponse.json({ error: "Thiếu ID sự kiện" }, { status: 400 });
 
+    // Handle switching scheduling mode from FIXED to FLEXIBLE
+    if (body.schedulingMode === "FLEXIBLE") {
+      const cleanId = id.includes("_") ? id.split("_")[0] : id;
+      const existing = await prisma.calendarEvent.findFirst({
+        where: { id: cleanId, userId: user.id },
+      });
+      if (!existing) {
+        return NextResponse.json({ error: "Sự kiện không tồn tại" }, { status: 404 });
+      }
+
+      const parsedActiveDays = Array.isArray(body.activeDays)
+        ? body.activeDays.join(",")
+        : typeof body.activeDays === "string" && body.activeDays.trim().length > 0
+        ? body.activeDays
+        : "1,2,3,4,5";
+
+      const targetMins = Math.max(
+        5,
+        parseInt(String(body.targetMinutes || body.plannedDurationMinutes || existing.plannedDurationMinutes || 30), 10) || 30
+      );
+
+      const flexGoal = await prisma.flexibleStudyGoal.create({
+        data: {
+          userId: user.id,
+          title: (title || existing.title).trim(),
+          description: description !== undefined ? (description?.trim() || null) : existing.description,
+          subjectId: subjectId !== undefined ? (subjectId || null) : existing.subjectId,
+          skillId: body.skillId !== undefined ? (body.skillId || null) : existing.skillId,
+          targetMinutes: targetMins,
+          startDate: body.startDate ? new Date(body.startDate) : existing.startTime,
+          endDate: body.endDate ? new Date(body.endDate) : existing.recurrenceEnd,
+          activeDays: parsedActiveDays,
+          preferredPeriod: body.preferredPeriod || "ANY_TIME",
+          deadline: body.deadline ? new Date(body.deadline) : null,
+          status: "ACTIVE",
+        },
+        include: { subject: true, skill: true },
+      });
+
+      // Migrate existing study sessions to the new flexible goal so history is preserved
+      await prisma.studySession.updateMany({
+        where: { calendarEventId: existing.id, userId: user.id },
+        data: { flexibleGoalId: flexGoal.id },
+      });
+
+      // Delete the fixed calendar event
+      await prisma.calendarEvent.delete({ where: { id: existing.id } });
+
+      invalidateCalendarServerCache(user.id);
+      return NextResponse.json({ success: true, flexibleGoal: flexGoal, converted: true });
+    }
+
     const start = startTime ? new Date(startTime) : undefined;
     const end = endTime ? new Date(endTime) : undefined;
 
