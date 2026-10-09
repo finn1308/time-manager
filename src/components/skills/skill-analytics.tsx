@@ -2,14 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft, Clock, Target, CheckCircle2, TrendingUp, BarChart3 } from "lucide-react";
+import { ArrowLeft, Clock, Target, CheckCircle2, TrendingUp, BarChart3, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface SkillAnalyticsProps {
   initialSkill: any;
 }
 
 export function SkillAnalytics({ initialSkill }: SkillAnalyticsProps) {
-  const skill = initialSkill;
+  const router = useRouter();
+  const [skill, setSkill] = useState(initialSkill);
+  const [isAdapting, setIsAdapting] = useState(false);
 
   // Calculate stats
   const totalPlannedMinutes = skill.phases.reduce((acc: number, p: any) => acc + (p.plannedHours * 60), 0);
@@ -18,21 +21,51 @@ export function SkillAnalytics({ initialSkill }: SkillAnalyticsProps) {
   const totalCompletedTasks = skill.phases.reduce((acc: number, p: any) => acc + p.units.reduce((uAcc: number, u: any) => uAcc + u.tasks.filter((t: any) => t.status === "COMPLETED").length, 0), 0);
   const totalTasks = skill.phases.reduce((acc: number, p: any) => acc + p.units.reduce((uAcc: number, u: any) => uAcc + u.tasks.length, 0), 0);
 
+  const handleAdapt = async () => {
+    setIsAdapting(true);
+    try {
+      const res = await fetch(`/api/skills/${skill.id}/adapt`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message || `Đã thêm ${data.addedTasks} bài tập mới. Lý do: ${data.reasoning}`);
+        router.refresh();
+      } else {
+        alert(data.error || data.message || "Lỗi khi chạy Adaptive Learning.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Lỗi kết nối.");
+    } finally {
+      setIsAdapting(false);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8 space-y-8">
       {/* Header */}
-      <div className="flex items-center space-x-4">
-        <Link href={`/skills/${skill.id}`} className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c]">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1b4332] dark:text-[#9cd1b1]">
-            Phân tích Kỹ năng: {skill.name}
-          </h1>
-          <p className="text-sm text-[#526b5c]">
-            Đo lường thời gian học thực tế so với mục tiêu và tiến độ lộ trình.
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Link href={`/skills/${skill.id}`} className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c]">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-[#1b4332] dark:text-[#9cd1b1]">
+              Phân tích Kỹ năng: {skill.name}
+            </h1>
+            <p className="text-sm text-[#526b5c]">
+              Đo lường thời gian học thực tế so với mục tiêu và tiến độ lộ trình.
+            </p>
+          </div>
         </div>
+        
+        <button
+          onClick={handleAdapt}
+          disabled={isAdapting}
+          className="bg-[#2d6a4f] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-[#1b4332] disabled:opacity-70 flex items-center"
+        >
+          {isAdapting ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+          Adaptive Review (AI)
+        </button>
       </div>
 
       {/* Overview Cards */}

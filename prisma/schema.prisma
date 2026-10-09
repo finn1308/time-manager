@@ -180,6 +180,8 @@ model UserSettings {
   notificationsEnabled   Boolean  @default(true)
   autoShareResources     Boolean  @default(false)
   remindMissingResources Boolean  @default(true)
+  autoDayClosureEnabled   Boolean  @default(false)
+  autoRolloverTasksEnabled Boolean  @default(false)
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
