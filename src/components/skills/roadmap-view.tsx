@@ -9,10 +9,13 @@ interface RoadmapViewProps {
   initialSkill: any;
 }
 
+import { PipTimerContext } from "@/components/timer/pip-timer-provider";
+
 export function RoadmapView({ initialSkill }: RoadmapViewProps) {
   const router = useRouter();
   const [skill] = useState(initialSkill);
   const [isScheduling, setIsScheduling] = useState(false);
+  const timerContext = React.useContext(PipTimerContext);
 
   const handleSchedule = async () => {
     if (!confirm("Hệ thống sẽ xếp lịch các bài tập chưa hoàn thành vào Calendar của bạn. Tiếp tục?")) return;
@@ -101,7 +104,27 @@ export function RoadmapView({ initialSkill }: RoadmapViewProps) {
                             </div>
                           </div>
                         </div>
-                        <button className="w-8 h-8 rounded-full bg-[#eef5f0] text-[#2d6a4f] flex items-center justify-center hover:bg-[#d8ebe0] transition-colors">
+                        <button 
+                          onClick={() => {
+                            if (timerContext) {
+                              timerContext.startTimer(
+                                {
+                                  id: skill.id, // we map skill to subject
+                                  name: skill.name,
+                                  color: "#2d6a4f",
+                                },
+                                {
+                                  taskId: task.id,
+                                  mode: "POMODORO",
+                                  targetMinutes: task.plannedMinutes,
+                                }
+                              );
+                            } else {
+                              alert("Timer chưa được khởi tạo!");
+                            }
+                          }}
+                          className="w-8 h-8 rounded-full bg-[#eef5f0] text-[#2d6a4f] flex items-center justify-center hover:bg-[#d8ebe0] transition-colors"
+                        >
                           <Play className="w-3.5 h-3.5 ml-0.5" />
                         </button>
                       </div>

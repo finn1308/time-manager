@@ -444,7 +444,9 @@ model AvailabilityRule {
 model StudySession {
   id                     String    @id @default(cuid())
   userId                 String
-  subjectId              String
+  subjectId              String?
+  skillId                String?
+  skillTaskId            String?
   calendarEventId        String?
   taskId                 String?
   goalId                 String?
@@ -463,13 +465,16 @@ model StudySession {
   updatedAt              DateTime  @updatedAt
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  skill         Skill?         @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillTask     SkillTask?     @relation(fields: [skillTaskId], references: [id], onDelete: SetNull)
   calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: SetNull)
   task          Task?          @relation(fields: [taskId], references: [id], onDelete: SetNull)
   goal          Goal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
 
   @@index([userId, actualStart])
   @@index([userId, subjectId])
+  @@index([skillId])
   @@index([calendarEventId])
   @@index([taskId])
   @@index([goalId])
@@ -1050,6 +1055,7 @@ model Skill {
   projects       ProjectSkill[]
   phases         SkillPhase[]
   calendarEvents CalendarEvent[]
+  studySessions  StudySession[]
 
   @@unique([userId, name])
   @@index([userId])
@@ -1104,6 +1110,7 @@ model SkillTask {
   unit            SkillUnit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
   assessments     SkillAssessment[]
   calendarEvents  CalendarEvent[]
+  studySessions   StudySession[]
 }
 
 model SkillAssessment {
