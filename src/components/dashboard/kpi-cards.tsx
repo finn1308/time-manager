@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock, Target, Flame, TrendingUp } from "lucide-react";
+import { Clock, Target, Flame, TrendingUp, Zap } from "lucide-react";
 
 interface KpiCardsProps {
   actualHours: number;
@@ -11,6 +11,49 @@ interface KpiCardsProps {
   scheduledHours?: number;
 }
 
+const metrics = [
+  {
+    key: "actual",
+    icon: Clock,
+    label: "Thực tế học",
+    sublabel: "Actual",
+    iconBg: "var(--mint-bg)",
+    iconColor: "var(--mint)",
+    valueColor: "var(--mint-dark)",
+    borderColor: "var(--mint-soft)",
+  },
+  {
+    key: "planned",
+    icon: Target,
+    label: "Kế hoạch",
+    sublabel: "Planned",
+    iconBg: "var(--lavender-bg)",
+    iconColor: "var(--lavender)",
+    valueColor: "var(--lavender-dark)",
+    borderColor: "var(--lavender-soft)",
+  },
+  {
+    key: "completion",
+    icon: TrendingUp,
+    label: "Hoàn thành",
+    sublabel: "Completion",
+    iconBg: "var(--sky-bg)",
+    iconColor: "var(--sky)",
+    valueColor: "var(--sky-dark)",
+    borderColor: "var(--sky-soft)",
+  },
+  {
+    key: "streak",
+    icon: Flame,
+    label: "Chuỗi ngày",
+    sublabel: "Streak",
+    iconBg: "var(--peach-bg)",
+    iconColor: "var(--peach)",
+    valueColor: "var(--peach-dark)",
+    borderColor: "var(--peach-soft)",
+  },
+];
+
 export function KpiCards({
   actualHours,
   plannedHours,
@@ -21,129 +64,170 @@ export function KpiCards({
   scheduledHours,
 }: KpiCardsProps) {
   const daysOfWeek = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-  const currentDayIndex = (new Date().getDay() + 6) % 7; // Monday = 0, Sunday = 6
+  const currentDayIndex = (new Date().getDay() + 6) % 7; // Monday = 0
+
+  const values = [
+    `${actualHours.toFixed(1)}h`,
+    `${plannedHours.toFixed(1)}h`,
+    `${completionRate}%`,
+    `${streakDays}`,
+  ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      {/* 4 Clean Metric Cards (Left 7 Cols) */}
+      {/* ── Four Pastel KPI Cards ───────────────────────────── */}
       <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {/* Metric 1: Actual */}
-        <div className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 soft-card-shadow flex flex-col items-center justify-center text-center soft-card-hover">
-          <div className="w-10 h-10 rounded-2xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] dark:text-[#9cd1b1] flex items-center justify-center mb-2 shadow-2xs">
-            <Clock className="w-5 h-5" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
-            {actualHours.toFixed(1)}h
-          </div>
-          <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
-            Thực tế (Actual)
-          </span>
-        </div>
+        {metrics.map((m, i) => {
+          const Icon = m.icon;
+          return (
+            <div
+              key={m.key}
+              className="rounded-2xl p-4 flex flex-col items-center justify-center text-center card-shadow card-hover relative overflow-hidden"
+              style={{
+                background: "var(--bg-surface)",
+                border: `1px solid ${m.borderColor}`,
+              }}
+            >
+              {/* Soft color wash in top-right corner */}
+              <div
+                className="absolute top-0 right-0 w-16 h-16 rounded-full opacity-30 -translate-y-6 translate-x-6"
+                style={{ background: m.iconBg }}
+              />
 
-        {/* Metric 2: Planned */}
-        <div className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 soft-card-shadow flex flex-col items-center justify-center text-center soft-card-hover">
-          <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#40916c] dark:text-[#74c69d] flex items-center justify-center mb-2 shadow-2xs">
-            <Target className="w-5 h-5" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
-            {plannedHours.toFixed(1)}h
-          </div>
-          <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
-            Kế hoạch (Planned)
-          </span>
-        </div>
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 relative z-10"
+                style={{ background: m.iconBg }}
+              >
+                <Icon className="w-5 h-5" style={{ color: m.iconColor }} />
+              </div>
 
-        {/* Metric 3: Completion */}
-        <div className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 soft-card-shadow flex flex-col items-center justify-center text-center soft-card-hover">
-          <div className="w-10 h-10 rounded-2xl bg-[#e2ede7] dark:bg-[#203328] text-[#2c473a] dark:text-[#a3c9b4] flex items-center justify-center mb-2 shadow-2xs">
-            <TrendingUp className="w-5 h-5" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
-            {completionRate}%
-          </div>
-          <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
-            Tỷ lệ hoàn thành
-          </span>
-        </div>
-
-        {/* Metric 4: Streak */}
-        <div className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 soft-card-shadow flex flex-col items-center justify-center text-center soft-card-hover">
-          <div className="w-10 h-10 rounded-2xl bg-[#edf0dc] dark:bg-[#2b301c] text-[#595e2b] dark:text-[#d3d89e] flex items-center justify-center mb-2 shadow-2xs">
-            <Flame className="w-5 h-5" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[#2d6a4f] dark:text-[#52b788]">
-            {streakDays}
-          </div>
-          <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
-            Chuỗi ngày học
-          </span>
-        </div>
+              <div
+                className="text-2xl font-black tracking-tight relative z-10"
+                style={{ color: m.valueColor, fontFamily: "var(--font-nunito, Nunito)" }}
+              >
+                {values[i]}
+              </div>
+              <span
+                className="text-[10px] font-semibold mt-1 relative z-10"
+                style={{ color: "var(--text-muted)" }}
+              >
+                {m.label}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Botanical Sage Streak Banner (Right 5 Cols) */}
-      <div className="lg:col-span-5 rounded-[26px] bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#3a7d5e] text-white p-5 soft-card-shadow flex flex-col justify-between relative overflow-hidden soft-card-hover">
-        <div className="relative z-10">
-          <div className="flex items-center space-x-1.5 text-[11px] font-bold uppercase tracking-wider text-[#b7d8c3]">
-            <Flame className="w-4 h-4 text-[#74c69d] fill-current" />
-            <span>CHUỖI NGÀY HỌC TẬP (STREAK)</span>
-          </div>
+      {/* ── Streak Banner Card ──────────────────────────────── */}
+      <div
+        className="lg:col-span-5 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden card-shadow card-hover"
+        style={{
+          background: "linear-gradient(135deg, var(--lavender-dark) 0%, var(--blush-dark, #BE185D) 100%)",
+          color: "#fff",
+        }}
+      >
+        {/* Background blobs */}
+        <div
+          className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-20 -translate-y-10 translate-x-10"
+          style={{ background: "#fff" }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-24 h-24 rounded-full opacity-15 translate-y-8 -translate-x-8"
+          style={{ background: "#fff" }}
+        />
 
-          <div className="flex items-baseline space-x-2 mt-2">
-            <span className="text-3xl sm:text-4xl font-black tracking-tight">{streakDays}</span>
-            <span className="text-sm font-semibold text-[#d8ebe0]">ngày liên tục</span>
+        <div className="relative z-10">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Flame className="w-4 h-4 fill-current opacity-80" />
+            <span className="text-[11px] font-bold uppercase tracking-widest opacity-80">
+              Chuỗi ngày học tập
+            </span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span
+              className="text-4xl font-black tracking-tight"
+              style={{ fontFamily: "var(--font-nunito, Nunito)" }}
+            >
+              {streakDays}
+            </span>
+            <span className="text-sm font-semibold opacity-80">ngày liên tục</span>
           </div>
         </div>
 
-        {/* 7 Circular Day Bubbles */}
-        <div className="relative z-10 grid grid-cols-7 gap-1.5 mt-3 pt-3 border-t border-white/15">
+        {/* 7-day bubbles */}
+        <div className="relative z-10 grid grid-cols-7 gap-1 mt-3 pt-3 border-t border-white/20">
           {daysOfWeek.map((day, idx) => {
             const isCompleted = idx <= currentDayIndex && streakDays > 0;
             const isToday = idx === currentDayIndex;
 
             return (
-              <div key={day} className="flex flex-col items-center space-y-1">
+              <div key={day} className="flex flex-col items-center gap-1">
                 <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] transition-all shadow-2xs ${
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
                     isToday
-                      ? "bg-white text-[#1b4332] ring-2 ring-[#74c69d] scale-105"
+                      ? "bg-white scale-110 shadow-md"
                       : isCompleted
-                      ? "bg-[#52b788] text-white"
-                      : "bg-white/15 text-[#b7d8c3]"
+                      ? "bg-white/30"
+                      : "bg-white/10"
                   }`}
+                  style={{
+                    color: isToday
+                      ? "var(--lavender-dark)"
+                      : "rgba(255,255,255,0.9)",
+                  }}
                 >
-                  {isCompleted ? <Flame className="w-3.5 h-3.5 fill-current" /> : day}
+                  {isCompleted ? (
+                    <Flame className="w-3.5 h-3.5 fill-current" />
+                  ) : (
+                    day
+                  )}
                 </div>
-                <span className="text-[10px] font-medium text-[#d8ebe0]">{day}</span>
+                <span className="text-[9px] font-medium opacity-70">{day}</span>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Time Categories Breakdown Banner */}
-      {(schoolHours !== undefined || personalHours !== undefined || scheduledHours !== undefined) && (
-        <div className="lg:col-span-12 p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8faf8] dark:bg-[#152319] flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-[#2d6a4f] dark:text-[#74c69d] font-semibold">
-            <span className="w-2 h-2 rounded-full bg-[#52b788] animate-pulse" />
-            <span>Phân định loại thời gian (Calendar ≠ Study Session):</span>
+      {/* ── Time Categories Breakdown Strip ─────────────────── */}
+      {(schoolHours !== undefined ||
+        personalHours !== undefined ||
+        scheduledHours !== undefined) && (
+        <div
+          className="lg:col-span-12 p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs"
+          style={{
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-soft)",
+          }}
+        >
+          <div className="flex items-center gap-2 font-semibold" style={{ color: "var(--text-subtle)" }}>
+            <span
+              className="w-2 h-2 rounded-full animate-pulse-soft"
+              style={{ background: "var(--mint)" }}
+            />
+            <span>Phân loại thời gian hôm nay</span>
           </div>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 font-mono text-[13px]">
-            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#1e3a8a] dark:text-[#93c5fd]">
-              <span>🏫 Đi học:</span>
-              <strong className="font-bold">{(schoolHours ?? 0).toFixed(1)}h</strong>
-            </span>
-            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#166534] dark:text-[#86efac]">
-              <span>🏠 Tự học thực tế:</span>
-              <strong className="font-bold">{actualHours.toFixed(1)}h</strong>
-            </span>
-            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#6b21a8] dark:text-[#d8b4fe]">
-              <span>🎮 Cá nhân:</span>
-              <strong className="font-bold">{(personalHours ?? 0).toFixed(1)}h</strong>
-            </span>
-            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#2d4635] text-[#374151] dark:text-[#d1d5db]">
-              <span>📅 Tổng lịch xếp:</span>
-              <strong className="font-bold">{(scheduledHours ?? 0).toFixed(1)}h</strong>
-            </span>
+
+          <div className="flex flex-wrap items-center gap-2 font-mono">
+            {[
+              { label: "🏫 Đi học", value: schoolHours ?? 0, color: "var(--sky)", bg: "var(--sky-bg)", border: "var(--sky-soft)" },
+              { label: "🏠 Tự học", value: actualHours, color: "var(--mint)", bg: "var(--mint-bg)", border: "var(--mint-soft)" },
+              { label: "🎮 Cá nhân", value: personalHours ?? 0, color: "var(--lilac)", bg: "var(--lilac-bg)", border: "var(--lilac-soft)" },
+              { label: "📅 Lịch xếp", value: scheduledHours ?? 0, color: "var(--peach)", bg: "var(--peach-bg)", border: "var(--peach-soft)" },
+            ].map((cat) => (
+              <span
+                key={cat.label}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold"
+                style={{
+                  background: cat.bg,
+                  border: `1px solid ${cat.border}`,
+                  color: cat.color,
+                }}
+              >
+                <span style={{ color: "var(--text-body)" }}>{cat.label}:</span>
+                <strong>{cat.value.toFixed(1)}h</strong>
+              </span>
+            ))}
           </div>
         </div>
       )}
