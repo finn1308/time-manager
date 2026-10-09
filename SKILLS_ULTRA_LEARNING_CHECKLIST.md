@@ -35,9 +35,9 @@
 - [ ] Implement Active Recall & Retrieval
 
 ## 8. Calendar Integration
-- [ ] Match proposed sessions with user's availability
-- [ ] Insert calendar events for skill tasks
-- [ ] Prevent overlaps and respect blocked times
+- [x] Match proposed sessions with user's availability
+- [x] Insert calendar events for skill tasks
+- [x] Prevent overlaps and respect blocked times
 
 ## 9. Study Timer Integration
 - [ ] Link `CalendarEvent` or `SkillTask` to existing timer

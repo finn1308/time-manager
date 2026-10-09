@@ -9,7 +9,7 @@
 6. [x] **AI Integration - Skill Analysis & Knowledge Map**
 7. [x] **AI Integration - Roadmap Generation (Ultra Learning)**
 8. [x] **UI - Skill Details & Roadmap View**
-9. [ ] **Feature - Calendar Scheduling Integration**
+9. [x] **Feature - Calendar Scheduling Integration**
 10. [ ] **Feature - Study Timer Integration**
 11. [ ] **Feature - Progress Analytics**
 12. [ ] **Feature - Adaptive Learning Engine**
@@ -56,3 +56,8 @@
 - **Status:** `[x] COMPLETED`
 - **Outputs/Deliverables:** Created `skills/[id]/page.tsx`, `skill-details.tsx`, `skills/[id]/roadmap/page.tsx`, and `roadmap-view.tsx`.
 - **Hand-off Notes:** The Details view shows goals, Knowledge Map, and Learning Strategy. Includes an AI Generation button. The Roadmap view visualizes Phases, Units, and Tasks with interactive UI.
+
+### Skill Completed: Feature - Calendar Scheduling Integration
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Created `api/skills/[id]/schedule/route.ts` and updated `roadmap-view.tsx`.
+- **Hand-off Notes:** Users can schedule pending tasks into the Calendar. Tasks are mapped to `CalendarEvent` considering planned duration.

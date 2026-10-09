@@ -12,6 +12,26 @@ interface RoadmapViewProps {
 export function RoadmapView({ initialSkill }: RoadmapViewProps) {
   const router = useRouter();
   const [skill] = useState(initialSkill);
+  const [isScheduling, setIsScheduling] = useState(false);
+
+  const handleSchedule = async () => {
+    if (!confirm("Hệ thống sẽ xếp lịch các bài tập chưa hoàn thành vào Calendar của bạn. Tiếp tục?")) return;
+    setIsScheduling(true);
+    try {
+      const res = await fetch(`/api/skills/${skill.id}/schedule`, { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        alert(`Đã lên lịch thành công cho ${data.count} bài tập!`);
+      } else {
+        alert("Lỗi khi lên lịch.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi kết nối.");
+    } finally {
+      setIsScheduling(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 lg:p-8 space-y-8">
@@ -27,6 +47,16 @@ export function RoadmapView({ initialSkill }: RoadmapViewProps) {
             Được tạo bởi AI dựa trên nguyên lý Ultra Learning
           </p>
         </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          onClick={handleSchedule}
+          disabled={isScheduling}
+          className="bg-[#2d6a4f] text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-[#1b4332] disabled:opacity-70"
+        >
+          {isScheduling ? "Đang lên lịch..." : "Lên lịch vào Calendar"}
+        </button>
       </div>
 
       <div className="space-y-8">
