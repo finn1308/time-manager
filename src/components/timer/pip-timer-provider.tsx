@@ -18,6 +18,8 @@ export type PomodoroPhase = "WORK" | "SHORT_BREAK" | "LONG_BREAK";
 
 export interface StartTimerOptions {
   scheduleEventId?: string | null;
+  flexibleGoalId?: string | null;
+  skillId?: string | null;
   taskId?: string | null;
   mode?: TimerMode;
   targetMinutes?: number;
@@ -29,6 +31,7 @@ export interface StartTimerOptions {
 export interface PipTimerContextType {
   activeSubject: ActiveSubject | null;
   scheduleEventId: string | null;
+  flexibleGoalId: string | null;
   taskId: string | null;
   mode: TimerMode;
   pomodoroPhase: PomodoroPhase;
