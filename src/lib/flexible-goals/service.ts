@@ -186,11 +186,18 @@ export async function getDailyFlexibleGoals(
  */
 export async function recordFlexibleGoalProgress(params: {
   userId: string;
-  goalId: string;
-  dateKey: string;
-  additionalDurationSeconds: number;
+  goalId?: string;
+  flexibleGoalId?: string;
+  dateKey?: string;
+  targetDateKey?: string;
+  additionalDurationSeconds?: number;
+  studyDurationSeconds?: number;
 }) {
-  const { userId, goalId, dateKey, additionalDurationSeconds } = params;
+  const userId = params.userId;
+  const goalId = params.goalId || params.flexibleGoalId;
+  if (!goalId) return null;
+  const dateKey = params.dateKey || params.targetDateKey || getDateKeyVN(new Date());
+  const additionalDurationSeconds = params.additionalDurationSeconds ?? params.studyDurationSeconds ?? 0;
   const addedMinutes = Math.round(additionalDurationSeconds / 60);
 
   const goal = await prisma.flexibleStudyGoal.findUnique({

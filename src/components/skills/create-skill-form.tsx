@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Target, ArrowLeft, Loader2, Sparkles, Clock, Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export function CreateSkillForm() {
   const router = useRouter();
