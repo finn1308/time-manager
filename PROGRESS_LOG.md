@@ -13,7 +13,7 @@
 10. [x] **Feature - Study Timer Integration**
 11. [x] **Feature - Progress Analytics**
 12. [ ] **Feature - Adaptive Learning Engine**
-13. [ ] **Feature - Resource Management**
+13. [x] **Feature - Resource Management**
 14. [ ] **Testing & Quality Assurance**
 
 ---
@@ -71,3 +71,8 @@
 - **Status:** `[x] COMPLETED`
 - **Outputs/Deliverables:** Created `skills/[id]/analytics/page.tsx` and `skill-analytics.tsx`.
 - **Hand-off Notes:** Visualizes time spent vs planned time, completion percentage, task counts, and phase breakdown.
+
+### Skill Completed: Feature - Resource Management
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Updated `prisma/schema.prisma` with `skillId` in `Resource`. Created `api/skills/[id]/resources/route.ts`. Updated `skill-details.tsx`.
+- **Hand-off Notes:** Users can attach links and resources to their skill. Resources are mapped to the skill and displayed in the details page.

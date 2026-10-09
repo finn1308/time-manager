@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Map, Target, Brain, Sparkles, Loader2, Play } from "lucide-react";
+import { ArrowLeft, Map, Target, Brain, Sparkles, Loader2, Play, BookOpen, ExternalLink, Plus } from "lucide-react";
 import Link from "next/link";
 
 interface SkillDetailsProps {
@@ -13,6 +13,8 @@ export function SkillDetails({ initialSkill }: SkillDetailsProps) {
   const router = useRouter();
   const [skill, setSkill] = useState(initialSkill);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [newResource, setNewResource] = useState({ title: "", url: "" });
+  const [isAddingResource, setIsAddingResource] = useState(false);
 
   const handleGenerateRoadmap = async () => {
     setIsGenerating(true);

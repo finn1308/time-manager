@@ -5,7 +5,7 @@ import { addDays, setHours, setMinutes } from "date-fns";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -13,8 +13,9 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params;
     const skill = await prisma.skill.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         phases: {
           orderBy: { order: "asc" },
@@ -56,7 +57,7 @@ export async function POST(
     currentDate = setHours(setMinutes(currentDate, 0), 19); // start at 19:00 PM each day
     
     let currentDayMinutes = 0;
-    const maxMinutesPerDay = (skill.weeklyHoursCommitment / 7) * 60 || 60; // default 60 min
+    const maxMinutesPerDay = ((skill.weeklyHoursCommitment || 7) / 7) * 60 || 60; // default 60 min
 
     for (const task of pendingTasks) {
       if (currentDayMinutes + task.plannedMinutes > maxMinutesPerDay) {
@@ -75,10 +76,10 @@ export async function POST(
           description: task.description || "",
           startTime,
           endTime,
-          isCompleted: false,
+          completed: false,
           skillId: skill.id,
           skillTaskId: task.id,
-          eventType: "LEARNING",
+          type: "SELF_STUDY",
         },
       });
 

@@ -51,8 +51,8 @@
 - [ ] Adjust roadmap based on task outcomes and assessments
 
 ## 12. Resource Management
-- [ ] Allow adding URLs to skills/tasks
-- [ ] Link resources to AI generation context
+- [x] Allow adding URLs to skills/tasks
+- [x] Link resources to AI generation context
 
 ## 13. Security and Data Integrity
 - [ ] Ensure user data isolation
