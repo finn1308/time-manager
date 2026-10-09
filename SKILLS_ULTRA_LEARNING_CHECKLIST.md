@@ -48,7 +48,7 @@
 - [x] Display phase completion and progress percentage
 
 ## 11. Adaptive Learning
-- [ ] Adjust roadmap based on task outcomes and assessments
+- [x] Adjust roadmap based on task outcomes and assessments
 
 ## 12. Resource Management
 - [x] Allow adding URLs to skills/tasks

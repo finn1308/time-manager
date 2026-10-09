@@ -12,7 +12,7 @@
 9. [x] **Feature - Calendar Scheduling Integration**
 10. [x] **Feature - Study Timer Integration**
 11. [x] **Feature - Progress Analytics**
-12. [ ] **Feature - Adaptive Learning Engine**
+12. [x] **Feature - Adaptive Learning Engine**
 13. [x] **Feature - Resource Management**
 14. [ ] **Testing & Quality Assurance**
 
@@ -76,3 +76,8 @@
 - **Status:** `[x] COMPLETED`
 - **Outputs/Deliverables:** Updated `prisma/schema.prisma` with `skillId` in `Resource`. Created `api/skills/[id]/resources/route.ts`. Updated `skill-details.tsx`.
 - **Hand-off Notes:** Users can attach links and resources to their skill. Resources are mapped to the skill and displayed in the details page.
+
+### Skill Completed: Feature - Adaptive Learning Engine
+- **Status:** `[x] COMPLETED`
+- **Outputs/Deliverables:** Created `api/skills/[id]/adapt/route.ts`, added `generateAdaptiveTasks` in `skill-analyzer.ts`, and updated `skill-analytics.tsx`.
+- **Hand-off Notes:** Added "Adaptive Review (AI)" button that evaluates completed tasks and creates a new "Targeted Practice" phase with drill/retrieval exercises.
