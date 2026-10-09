@@ -1,129 +1,242 @@
 @import "tailwindcss";
 
+/* ============================================================
+   CHRONOMIND 2.0 — PASTEL POP × COZY CAMPUS DESIGN SYSTEM
+   Premium multicolor pastel design for a teen productivity app
+   ============================================================ */
+
+/* Google Fonts: Plus Jakarta Sans (primary) + Nunito (display) */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Nunito:wght@400;600;700;800;900&display=swap");
+
 @layer base {
   :root {
-    /* 100% Pastel Green / Sage / Mint Design System */
-    --background: #f4f8f5;
-    --surface: #ffffff;
-    --surface-secondary: #eef5f0;
-    --primary: #2d6a4f;
-    --primary-light: #d8ebe0;
-    --primary-dark: #1b4332;
-    --accent: #52b788;
-    --text-primary: #192e22;
-    --text-secondary: #526b5c;
-    --border: #dbe7dd;
-    --success: #40916c;
-    --warning: #a3a86c;
-    --danger: #b87474;
+    /* ── Base Backgrounds ─────────────────────────────── */
+    --bg-base:     #FFFAF4;   /* Milk Cream – main canvas  */
+    --bg-surface:  #FFFFFF;   /* Pure White – cards, panels */
+    --bg-elevated: #FFF5EC;   /* Warm Cream – hover / lifted */
+    --bg-muted:    #F4EFE8;   /* Soft Beige – secondary areas */
+    --bg-sidebar:  #FEFCF8;   /* Parchment – sidebar bg     */
 
-    /* Shadcn/Standard compatibility mapping */
-    --card: var(--surface);
-    --card-foreground: var(--text-primary);
-    --popover: var(--surface);
-    --popover-foreground: var(--text-primary);
-    --muted: var(--surface-secondary);
-    --muted-foreground: var(--text-secondary);
-    --input: var(--border);
-    --ring: var(--primary);
+    /* ── Text Colors ──────────────────────────────────── */
+    --text-ink:    #1A1525;   /* Dark Ink – primary text    */
+    --text-body:   #3D3552;   /* Body – paragraph text      */
+    --text-subtle: #6D6483;   /* Subtle – secondary labels  */
+    --text-muted:  #A49DB8;   /* Muted – placeholders       */
+    --text-on-dark: #FFFFFF;
 
-    /* Consistent Border Radius Hierarchy */
-    --radius-xs: 8px;
-    --radius-sm: 12px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --radius-xl: 28px;
-    --radius-2xl: 36px;
+    /* ── Border & Divider ────────────────────────────── */
+    --border:      #EBE4D8;   /* Warm divider               */
+    --border-soft: #F2EDE4;   /* Ultra-soft hairline        */
+
+    /* ── Multi-Color Pastel Feature Palette ──────────── */
+    /* Each feature has: bg (tint), soft (button bg), main (icon/accent) */
+
+    /* Lavender – Calendar / Schedule */
+    --lavender-bg:   #F0EAFF;
+    --lavender-soft: #DDD3F5;
+    --lavender:      #9B7FE8;
+    --lavender-dark: #6E52C7;
+
+    /* Peach – Tasks / Deadlines */
+    --peach-bg:      #FFF1EB;
+    --peach-soft:    #FFCCB3;
+    --peach:         #FF8C5A;
+    --peach-dark:    #D9622E;
+
+    /* Mint – Study Sessions / Learning */
+    --mint-bg:       #EAFFF5;
+    --mint-soft:     #B5EDD3;
+    --mint:          #3ABCA2;
+    --mint-dark:     #258B76;
+
+    /* Sky – Statistics / Analytics */
+    --sky-bg:        #EBF8FF;
+    --sky-soft:      #BAE6FD;
+    --sky:           #38BDF8;
+    --sky-dark:      #0284C7;
+
+    /* Rose – Skills / Goals */
+    --rose-bg:       #FFF0F5;
+    --rose-soft:     #FECDD3;
+    --rose:          #FB7185;
+    --rose-dark:     #E11D48;
+
+    /* Lemon – Practice / Quiz */
+    --lemon-bg:      #FFFCE8;
+    --lemon-soft:    #FDE68A;
+    --lemon:         #F59E0B;
+    --lemon-dark:    #B45309;
+
+    /* Lilac – Notes / Notion */
+    --lilac-bg:      #F5F0FF;
+    --lilac-soft:    #D8B4FE;
+    --lilac:         #A855F7;
+    --lilac-dark:    #7E22CE;
+
+    /* Teal – Habits / Streaks */
+    --teal-bg:       #E6FAFA;
+    --teal-soft:     #99E6E6;
+    --teal:          #14B8A6;
+    --teal-dark:     #0F766E;
+
+    /* Coral – Flashcards */
+    --coral-bg:      #FFF3EE;
+    --coral-soft:    #FCA9A9;
+    --coral:         #F87171;
+    --coral-dark:    #DC2626;
+
+    /* Blush – Subjects */
+    --blush-bg:      #FFF5F7;
+    --blush-soft:    #F9A8D4;
+    --blush:         #EC4899;
+    --blush-dark:    #BE185D;
+
+    /* ── Semantic Aliases (for shadcn compat) ─────────── */
+    --background:           var(--bg-base);
+    --surface:              var(--bg-surface);
+    --surface-secondary:    var(--bg-muted);
+    --primary:              var(--mint);
+    --primary-light:        var(--mint-bg);
+    --primary-dark:         var(--mint-dark);
+    --accent:               var(--lavender);
+    --text-primary:         var(--text-ink);
+    --text-secondary:       var(--text-subtle);
+    --success:              var(--mint);
+    --warning:              var(--lemon);
+    --danger:               var(--rose);
+
+    --card:                 var(--bg-surface);
+    --card-foreground:      var(--text-ink);
+    --popover:              var(--bg-surface);
+    --popover-foreground:   var(--text-ink);
+    --muted:                var(--bg-muted);
+    --muted-foreground:     var(--text-subtle);
+    --input:                var(--border);
+    --ring:                 var(--lavender);
+
+    /* ── Radius System ───────────────────────────────── */
+    --radius-xs:   6px;
+    --radius-sm:   10px;
+    --radius-md:   14px;
+    --radius-lg:   20px;
+    --radius-xl:   26px;
+    --radius-2xl:  32px;
     --radius-pill: 9999px;
-    --radius: 20px;
+    --radius:      16px;
 
-    /* Safe Area Insets for Mobile / iPhone 15 */
-    --sat: env(safe-area-inset-top, 0px);
+    /* ── Shadows ─────────────────────────────────────── */
+    --shadow-xs: 0 1px 3px rgba(26, 21, 37, 0.06);
+    --shadow-sm: 0 2px 8px rgba(26, 21, 37, 0.08);
+    --shadow-md: 0 4px 16px rgba(26, 21, 37, 0.10);
+    --shadow-lg: 0 8px 32px rgba(26, 21, 37, 0.12);
+    --shadow-xl: 0 16px 48px rgba(26, 21, 37, 0.14);
+
+    /* ── Safe Area ───────────────────────────────────── */
+    --sat: env(safe-area-inset-top,    0px);
     --sab: env(safe-area-inset-bottom, 0px);
-    --sal: env(safe-area-inset-left, 0px);
-    --sar: env(safe-area-inset-right, 0px);
+    --sal: env(safe-area-inset-left,   0px);
+    --sar: env(safe-area-inset-right,  0px);
   }
 
   .dark {
-    --background: #101c14;
-    --surface: #17261c;
-    --surface-secondary: #1d3024;
-    --primary: #52b788;
-    --primary-light: #243e2f;
-    --primary-dark: #74c69d;
-    --accent: #40916c;
-    --text-primary: #f0f7f2;
-    --text-secondary: #a3bda9;
-    --border: #263d2e;
-    --success: #52b788;
-    --warning: #c2c97a;
-    --danger: #c97f7f;
+    /* ── Dark Mode: Deep Twilight Purple ──────────────── */
+    --bg-base:     #13111A;
+    --bg-surface:  #1C1924;
+    --bg-elevated: #24202E;
+    --bg-muted:    #2A2636;
+    --bg-sidebar:  #171421;
 
-    --card: var(--surface);
-    --card-foreground: var(--text-primary);
-    --popover: var(--surface);
-    --popover-foreground: var(--text-primary);
-    --muted: var(--surface-secondary);
-    --muted-foreground: var(--text-secondary);
-    --input: var(--border);
-    --ring: var(--primary);
+    --text-ink:    #F2EEF9;
+    --text-body:   #C9C3D9;
+    --text-subtle: #8C84A3;
+    --text-muted:  #5A5470;
+    --text-on-dark: #FFFFFF;
+
+    --border:      #2E2A3C;
+    --border-soft: #261F35;
+
+    /* Dark tints */
+    --lavender-bg:   #1E1735;
+    --lavender-soft: #3D3070;
+    --mint-bg:       #0E2620;
+    --mint-soft:     #1A4038;
+    --peach-bg:      #2A1A12;
+    --peach-soft:    #4A2C1A;
+    --sky-bg:        #0E1F2E;
+    --sky-soft:      #1A3A52;
+    --rose-bg:       #280D17;
+    --rose-soft:     #4A1528;
+    --lemon-bg:      #211A07;
+    --lemon-soft:    #3D3010;
+    --lilac-bg:      #1A1030;
+    --lilac-soft:    #351A5A;
+    --teal-bg:       #0A1E1E;
+    --teal-soft:     #14343A;
+    --coral-bg:      #280E0E;
+    --coral-soft:    #4A1A1A;
+    --blush-bg:      #230D18;
+    --blush-soft:    #421628;
+
+    --background:           var(--bg-base);
+    --surface:              var(--bg-surface);
+    --surface-secondary:    var(--bg-muted);
+    --primary:              var(--mint);
+    --primary-light:        var(--mint-bg);
+    --primary-dark:         var(--mint-soft);
+    --accent:               var(--lavender);
+    --text-primary:         var(--text-ink);
+    --text-secondary:       var(--text-subtle);
+
+    --card:                 var(--bg-surface);
+    --card-foreground:      var(--text-ink);
+    --popover:              var(--bg-surface);
+    --popover-foreground:   var(--text-ink);
+    --muted:                var(--bg-muted);
+    --muted-foreground:     var(--text-subtle);
+    --input:                var(--border);
+    --ring:                 var(--lavender);
   }
 }
 
-/* ZERO HORIZONTAL OVERFLOW ENFORCEMENT */
-html,
-body {
+/* ── Global Base Styles ──────────────────────────────────── */
+html, body {
   max-width: 100vw;
   overflow-x: clip;
-  background-color: var(--background);
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
-  letter-spacing: -0.015em;
+  background-color: var(--bg-base);
+  color: var(--text-ink);
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   touch-action: manipulation;
 }
 
-/* Mobile Safe Area Padding Utilities */
-.pt-safe {
-  padding-top: max(0.75rem, env(safe-area-inset-top));
-}
-.pb-safe {
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-}
-.pl-safe {
-  padding-left: max(0.75rem, env(safe-area-inset-left));
-}
-.pr-safe {
-  padding-right: max(0.75rem, env(safe-area-inset-right));
+/* ── Selection Color ─────────────────────────────────────── */
+::selection {
+  background: rgba(155, 127, 232, 0.25);
+  color: var(--text-ink);
 }
 
-/* Touch Friendly Utilities */
+/* ── Safe Area Utilities ─────────────────────────────────── */
+.pt-safe { padding-top: max(0.75rem, env(safe-area-inset-top)); }
+.pb-safe { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+.pl-safe { padding-left: max(0.75rem, env(safe-area-inset-left)); }
+.pr-safe { padding-right: max(0.75rem, env(safe-area-inset-right)); }
+
+/* ── Touch Targets ───────────────────────────────────────── */
 @media (pointer: coarse) {
-  .touch-target {
-    min-height: 44px;
-    min-width: 44px;
-  }
+  .touch-target { min-height: 44px; min-width: 44px; }
 }
 
-/* Fluid Typography Utilities */
-.text-fluid-h1 {
-  font-size: clamp(1.5rem, 4vw + 0.5rem, 2.5rem);
-  line-height: 1.15;
-}
-.text-fluid-h2 {
-  font-size: clamp(1.25rem, 3vw + 0.25rem, 2rem);
-  line-height: 1.2;
-}
-.text-fluid-h3 {
-  font-size: clamp(1.1rem, 2vw + 0.2rem, 1.5rem);
-  line-height: 1.3;
-}
-.text-fluid-body {
-  font-size: clamp(0.8125rem, 1vw + 0.4rem, 0.9375rem);
-}
+/* ── Fluid Typography ─────────────────────────────────────── */
+.text-fluid-h1 { font-size: clamp(1.5rem, 4vw + 0.5rem, 2.5rem); line-height: 1.15; }
+.text-fluid-h2 { font-size: clamp(1.25rem, 3vw + 0.25rem, 2rem); line-height: 1.2; }
+.text-fluid-h3 { font-size: clamp(1.1rem, 2vw + 0.2rem, 1.5rem); line-height: 1.3; }
+.text-fluid-body { font-size: clamp(0.8125rem, 1vw + 0.4rem, 0.9375rem); }
 
-/* Responsive Table Scroll Container */
+/* ── Responsive Table ────────────────────────────────────── */
 .responsive-table-container {
   width: 100%;
   overflow-x: auto;
@@ -131,88 +244,244 @@ body {
   border-radius: var(--radius-lg);
 }
 
-/* Subtle Mint Grid Background */
+/* ── Pastel Dot Grid Background ──────────────────────────── */
 .bg-pastel-grid {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(45, 106, 79, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(45, 106, 79, 0.05) 1px, transparent 1px);
+  background-image:
+    radial-gradient(circle, rgba(155, 127, 232, 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
-
 .dark .bg-pastel-grid {
-  background-image: 
-    linear-gradient(to right, rgba(82, 183, 136, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(82, 183, 136, 0.06) 1px, transparent 1px);
+  background-image:
+    radial-gradient(circle, rgba(155, 127, 232, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
-/* Smooth Rounded Scrollbars in Pastel Green */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ── Smooth Scrollbars ───────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(82, 183, 136, 0.28);
+  background: rgba(155, 127, 232, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(82, 183, 136, 0.55);
+  background: rgba(155, 127, 232, 0.50);
 }
 
-/* Soft Notion/Linear Card Shadows */
-.soft-card-shadow {
-  box-shadow: 0 4px 20px -2px rgba(45, 106, 79, 0.04), 0 2px 6px -1px rgba(45, 106, 79, 0.02);
+/* ── Card Shadows ────────────────────────────────────────── */
+.card-shadow {
+  box-shadow: var(--shadow-sm);
+}
+.card-shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.card-hover {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
 }
 
-.soft-card-hover {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+/* ── Glassmorphism Panel ─────────────────────────────────── */
+.glass-panel {
+  background: rgba(255, 250, 244, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(235, 228, 216, 0.7);
 }
-.soft-card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -4px rgba(45, 106, 79, 0.08), 0 4px 10px -2px rgba(45, 106, 79, 0.03);
+.dark .glass-panel {
+  background: rgba(28, 25, 36, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(46, 42, 60, 0.7);
 }
 
-/* Diagonal stripe pattern for locked/blocked slots (Pastel Olive/Sage) */
+/* ── Gradient Blobs / Aura Background ───────────────────── */
+.pastel-aura {
+  position: relative;
+  overflow: hidden;
+}
+.pastel-aura::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 45%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(155, 127, 232, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.pastel-aura::after {
+  content: "";
+  position: absolute;
+  bottom: -20%;
+  left: -5%;
+  width: 40%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255, 140, 90, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Feature Color Pill Badges ───────────────────────────── */
+.badge-lavender {
+  background: var(--lavender-bg);
+  color: var(--lavender-dark);
+  border: 1px solid var(--lavender-soft);
+}
+.badge-peach {
+  background: var(--peach-bg);
+  color: var(--peach-dark);
+  border: 1px solid var(--peach-soft);
+}
+.badge-mint {
+  background: var(--mint-bg);
+  color: var(--mint-dark);
+  border: 1px solid var(--mint-soft);
+}
+.badge-sky {
+  background: var(--sky-bg);
+  color: var(--sky-dark);
+  border: 1px solid var(--sky-soft);
+}
+.badge-rose {
+  background: var(--rose-bg);
+  color: var(--rose-dark);
+  border: 1px solid var(--rose-soft);
+}
+.badge-lemon {
+  background: var(--lemon-bg);
+  color: var(--lemon-dark);
+  border: 1px solid var(--lemon-soft);
+}
+
+/* ── Blocked Slot Pattern (diagonal hatching) ────────────── */
 .blocked-slot-pattern {
   background: repeating-linear-gradient(
     45deg,
-    rgba(82, 112, 92, 0.08),
-    rgba(82, 112, 92, 0.08) 8px,
-    rgba(82, 112, 92, 0.15) 8px,
-    rgba(82, 112, 92, 0.15) 16px
+    rgba(109, 100, 131, 0.08),
+    rgba(109, 100, 131, 0.08) 8px,
+    rgba(109, 100, 131, 0.14) 8px,
+    rgba(109, 100, 131, 0.14) 16px
   );
 }
 
-/* Pastel Green Glassmorphism */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+/* ── Micro Animations ─────────────────────────────────────── */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes bounce-subtle {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
 }
 
-.dark .glass-panel {
-  background: rgba(23, 38, 28, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+.animate-float        { animation: float-gentle 4s ease-in-out infinite; }
+.animate-pulse-soft   { animation: pulse-soft   2s ease-in-out infinite; }
+.animate-slide-up     { animation: slide-up-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-scale-in     { animation: scale-in     0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-bounce-icon  { animation: bounce-subtle 0.4s ease; }
+
+/* Shimmer skeleton loader */
+.shimmer {
+  background: linear-gradient(90deg,
+    var(--bg-muted) 0%,
+    var(--bg-surface) 50%,
+    var(--bg-muted) 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.4s linear infinite;
 }
 
-/* Responsive Grid Helpers */
+/* ── Interactive Ripple Effect ────────────────────────────── */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-ripple:active::after { opacity: 1; }
+
+/* ── Responsive Grid ─────────────────────────────────────── */
 .grid-responsive-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 1rem;
 }
-
 @media (min-width: 640px) {
-  .grid-responsive-cards {
-    gap: 1.25rem;
-  }
+  .grid-responsive-cards { gap: 1.25rem; }
+}
+@media (min-width: 1024px) {
+  .grid-responsive-cards { gap: 1.5rem; }
 }
 
-@media (min-width: 1024px) {
-  .grid-responsive-cards {
-    gap: 1.5rem;
-  }
+/* ── Sidebar Active Indicator ─────────────────────────────── */
+.sidebar-active-indicator {
+  position: relative;
+}
+.sidebar-active-indicator::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  border-radius: 9999px;
+  background: var(--lavender);
+}
+
+/* ── Soft Glow Focus Ring ─────────────────────────────────── */
+.focus-glow:focus-visible {
+  outline: 2px solid var(--lavender);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(155, 127, 232, 0.2);
+}
+
+/* ── Status Dot ──────────────────────────────────────────── */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-dot.online  { background: var(--mint); box-shadow: 0 0 0 2px rgba(58, 188, 162, 0.25); }
+.status-dot.busy    { background: var(--peach); }
+.status-dot.offline { background: var(--text-muted); }
+
+/* ── Gradient Text Utility ────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--lavender) 0%, var(--peach) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-mint {
+  background: linear-gradient(135deg, var(--mint) 0%, var(--sky) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

@@ -1,21 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Nunito } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
+  weight: ["400", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "ChronoMind — Hệ điều hành Quản lý Thời gian & Luyện Từ Thông minh",
+  title: "ChronoMind 2.0 — Study OS",
   description:
-    "Hệ thống quản lý thời gian, học tập và luyện từ vựng tiếng Anh theo phương pháp Spaced Repetition, tích hợp Floating Study Timer và thuật toán AI lập lịch học thích ứng.",
+    "Hệ thống quản lý thời gian học tập thông minh, tích hợp AI lập lịch thích ứng, theo dõi kỹ năng và luyện từ vựng theo phương pháp Spaced Repetition.",
   icons: {
     icon: "/favicon.ico",
   },
@@ -33,8 +37,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f8f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#101c14" },
+    { media: "(prefers-color-scheme: light)", color: "#FFFAF4" },
+    { media: "(prefers-color-scheme: dark)",  color: "#13111A" },
   ],
 };
 
@@ -48,11 +52,28 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plusJakartaSans.variable} ${nunito.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#f4f8f5] dark:bg-[#101c14] text-[#192e22] dark:text-[#f0f7f2] overflow-x-hidden selection:bg-[#52b788]/30">
+      <body
+        className="min-h-full flex flex-col overflow-x-hidden"
+        style={{
+          backgroundColor: "var(--bg-base)",
+          color: "var(--text-ink)",
+          fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
+        }}
+      >
         {children}
-        <Toaster position="bottom-right" richColors closeButton />
+        <Toaster
+          position="bottom-right"
+          richColors
+          closeButton
+          toastOptions={{
+            style: {
+              fontFamily: "var(--font-jakarta)",
+              borderRadius: "14px",
+            },
+          }}
+        />
       </body>
     </html>
   );
