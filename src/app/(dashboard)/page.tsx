@@ -71,7 +71,9 @@ export default async function DashboardPage() {
     recentEvents,
     streakData,
     allEventsMinimal,
-    sessionAggregates
+    sessionAggregates,
+    todayTasks,
+    todayClosure,
   ] = await Promise.all([
     prisma.userSettings.findUnique({ where: { userId: user.id } }),
     prisma.degreeProgram.findUnique({ where: { userId: user.id } }),
