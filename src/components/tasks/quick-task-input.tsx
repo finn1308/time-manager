@@ -31,6 +31,7 @@ export function QuickTaskInput({
   const [isImportant, setIsImportant] = useState(isImportantView);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [isCustomDuration, setIsCustomDuration] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +52,7 @@ export function QuickTaskInput({
       setPriority("MEDIUM");
       setSubjectId(null);
       if (!isImportantView) setIsImportant(false);
+      setIsCustomDuration(false);
       setShowOptions(false);
     } finally {
       setIsSubmitting(false);
@@ -125,18 +127,50 @@ export function QuickTaskInput({
             </select>
 
             {/* Estimated Duration */}
-            <select
-              value={estimatedMinutes}
-              onChange={(e) => setEstimatedMinutes(parseInt(e.target.value, 10))}
-              className="rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-ink)] focus:outline-none"
-            >
-              <option value={15}>15 phút</option>
-              <option value={30}>30 phút</option>
-              <option value={45}>45 phút</option>
-              <option value={60}>60 phút</option>
-              <option value={90}>90 phút</option>
-              <option value={120}>2 tiếng</option>
-            </select>
+            {isCustomDuration ? (
+              <div className="flex items-center space-x-1 bg-[var(--bg-muted)] px-2 py-0.5 rounded-xl border border-[var(--border)]">
+                <input
+                  type="number"
+                  min={1}
+                  max={720}
+                  value={estimatedMinutes}
+                  onChange={(e) => setEstimatedMinutes(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                  className="w-14 h-6 text-[11px] font-mono font-bold bg-transparent border-none focus:outline-none"
+                  placeholder="28"
+                  autoFocus
+                />
+                <span className="text-[10px] text-[var(--text-subtle)]">phút</span>
+                <button
+                  type="button"
+                  onClick={() => setIsCustomDuration(false)}
+                  className="text-[10px] text-[var(--mint-dark)] font-bold hover:underline ml-1"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <select
+                value={estimatedMinutes}
+                onChange={(e) => {
+                  if (e.target.value === "CUSTOM") {
+                    setIsCustomDuration(true);
+                  } else {
+                    setEstimatedMinutes(parseInt(e.target.value, 10));
+                  }
+                }}
+                className="rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-ink)] focus:outline-none"
+              >
+                <option value={15}>15 phút</option>
+                <option value={25}>25 phút (Pomo)</option>
+                <option value={28}>28 phút</option>
+                <option value={30}>30 phút</option>
+                <option value={45}>45 phút</option>
+                <option value={60}>60 phút</option>
+                <option value={90}>90 phút</option>
+                <option value={120}>2 tiếng</option>
+                <option value="CUSTOM">Tùy chỉnh...</option>
+              </select>
+            )}
           </div>
 
           {/* Star Toggle */}
