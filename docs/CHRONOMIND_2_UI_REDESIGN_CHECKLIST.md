@@ -29,38 +29,38 @@
 - [x] Dashboard.
 - [x] Calendar.
 - [x] Tasks.
-- [ ] Subjects.
-- [ ] Timer.
-- [ ] Goals.
-- [ ] Habits.
-- [ ] Notes.
+- [x] Subjects.
+- [x] Timer.
+- [x] Goals.
+- [x] Habits.
+- [x] Notes.
 
 ## Phase 5: Learning Experience
-- [ ] Learning.
-- [ ] Practice.
-- [ ] Flashcards.
-- [ ] Skills.
-- [ ] Quizzes.
-- [ ] Study reviews.
-- [ ] Learning roadmaps.
-- [ ] Mini-games.
+- [x] Learning.
+- [x] Practice.
+- [x] Flashcards.
+- [x] Skills.
+- [x] Quizzes.
+- [x] Study reviews.
+- [x] Learning roadmaps.
+- [x] Mini-games.
 
 ## Phase 6: Academic and Analytics
-- [ ] Academic management.
-- [ ] Analytics.
-- [ ] Career.
-- [ ] Assignments.
-- [ ] Knowledge graph.
-- [ ] Learning profile.
-- [ ] Exams.
-- [ ] Deadlines.
-- [ ] Weekly review.
+- [x] Academic management.
+- [x] Analytics.
+- [x] Career.
+- [x] Assignments.
+- [x] Knowledge graph.
+- [x] Learning profile.
+- [x] Exams.
+- [x] Deadlines.
+- [x] Weekly review.
 
 ## Phase 7: System Pages
-- [ ] Settings.
-- [ ] Authentication.
-- [ ] Backup.
-- [ ] Administration.
+- [x] Settings.
+- [x] Authentication.
+- [x] Backup.
+- [x] Administration.
 
 ## Phase 8: QA and Refinement
 - [ ] Accessibility.
