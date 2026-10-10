@@ -345,7 +345,9 @@ export function EventModal({
         setSkillId("");
       }
 
-      setFlexibleTargetMinutes(editingEvent.targetMinutes || editingEvent.plannedDurationMinutes || 30);
+      const fTarget = editingEvent.targetMinutes || editingEvent.plannedDurationMinutes || 30;
+      setFlexibleTargetMinutes(fTarget);
+      setFlexibleTargetInput(String(fTarget));
       setStartDateStr(formatVN(editingEvent.startTime, "yyyy-MM-dd"));
       if (editingEvent.recurrenceEnd) {
         setEndDateStr(formatVN(editingEvent.recurrenceEnd, "yyyy-MM-dd"));
@@ -379,12 +381,19 @@ export function EventModal({
       setEventType(normalizedType);
 
       setDateStr(formatVN(editingEvent.startTime, "yyyy-MM-dd"));
-      setStartTimeStr(formatVN(editingEvent.startTime, "HH:mm"));
-      setEndTimeStr(formatVN(editingEvent.endTime, "HH:mm"));
+      const sStr = formatVN(editingEvent.startTime, "HH:mm");
+      const eStr = formatVN(editingEvent.endTime, "HH:mm");
+      setStartTimeStr(sStr);
+      setEndTimeStr(eStr);
+      const diffMins = calcMinutesBetweenTimes(sStr, eStr);
+      setFixedDurationMinutes(diffMins);
+      setFixedDurationInput(String(diffMins));
       setIsLocked(!!editingEvent.isLocked);
       setIsFlexible(editingEvent.isFlexible ?? (normalizedType === "PERSONAL"));
       setIsAllDay((editingEvent as any).isAllDay || false);
-      if (editingEvent.plannedDurationMinutes) setPlannedDurationMinutes(editingEvent.plannedDurationMinutes);
+      const pMins = editingEvent.plannedDurationMinutes || 90;
+      setPlannedDurationMinutes(pMins);
+      setPlannedDurationInput(String(pMins));
       const isStudy = isStudyEventCategory(normalizedType, editingEvent.subjectId);
       setTrackStudyTime(isStudy ? true : (editingEvent.trackStudyTime ?? false));
       setRecurrence((editingEvent.recurrence && editingEvent.recurrence !== "NONE" ? editingEvent.recurrence : "NONE") as any);
@@ -419,6 +428,7 @@ export function EventModal({
       setGoalId("");
       setSchedulingMode("FIXED");
       setFlexibleTargetMinutes(30);
+      setFlexibleTargetInput("30");
       setStartDateStr(defaultDate);
       setEndDateStr("");
       setFlexibleActiveDays([1, 2, 3, 4, 5]);
@@ -428,6 +438,12 @@ export function EventModal({
       setDateStr(defaultDate);
       setStartTimeStr(defaultStartTime);
       setEndTimeStr(defaultEndTime);
+      const initialDiff = calcMinutesBetweenTimes(defaultStartTime, defaultEndTime);
+      setFixedDurationMinutes(initialDiff);
+      setFixedDurationInput(String(initialDiff));
+      setIsAllDay(false);
+      setPlannedDurationMinutes(90);
+      setPlannedDurationInput("90");
       setIsLocked(defaultType === "SCHOOL" || defaultType === "EXAM");
       setIsFlexible(defaultType === "PERSONAL");
       setTrackStudyTime(isStudyEventCategory(defaultType, null));
@@ -526,7 +542,7 @@ export function EventModal({
           description: description.trim() || null,
           subjectId: targetType === "SUBJECT" && subjectId ? subjectId : null,
           skillId: targetType === "SKILL" && skillId ? skillId : null,
-          targetMinutes: Number(flexibleTargetMinutes) || 30,
+          targetMinutes: Math.max(5, parseInt(flexibleTargetInput, 10) || flexibleTargetMinutes || 30),
           startDate: startDateStr || dateStr,
           endDate: endDateStr || null,
           activeDays: flexibleActiveDays,
