@@ -165,6 +165,7 @@ export function EventModal({
   const [skillId, setSkillId] = useState<string>("");
   const [skills, setSkills] = useState<Array<{ id: string; name: string; category?: string }>>([]);
   const [flexibleTargetMinutes, setFlexibleTargetMinutes] = useState<number>(30);
+  const [flexibleTargetInput, setFlexibleTargetInput] = useState<string>("30");
   const [startDateStr, setStartDateStr] = useState<string>(defaultDate);
   const [endDateStr, setEndDateStr] = useState<string>("");
   const [flexibleActiveDays, setFlexibleActiveDays] = useState<number[]>([1, 2, 3, 4, 5]);
@@ -181,6 +182,121 @@ export function EventModal({
 
   const [isAllDay, setIsAllDay] = useState<boolean>(false);
   const [plannedDurationMinutes, setPlannedDurationMinutes] = useState<number>(90);
+  const [plannedDurationInput, setPlannedDurationInput] = useState<string>("90");
+
+  const [fixedDurationMinutes, setFixedDurationMinutes] = useState<number>(() =>
+    calcMinutesBetweenTimes(defaultStartTime, defaultEndTime)
+  );
+  const [fixedDurationInput, setFixedDurationInput] = useState<string>(() =>
+    String(calcMinutesBetweenTimes(defaultStartTime, defaultEndTime))
+  );
+
+  const handleSetPlannedDuration = (mins: number) => {
+    setPlannedDurationMinutes(mins);
+    setPlannedDurationInput(String(mins));
+  };
+
+  const handlePlannedDurationInputChange = (val: string) => {
+    setPlannedDurationInput(val);
+    const parsed = parseInt(val, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      setPlannedDurationMinutes(parsed);
+    }
+  };
+
+  const handlePlannedDurationInputBlur = () => {
+    const parsed = parseInt(plannedDurationInput, 10);
+    const clamped = Math.max(1, Math.min(1440, isNaN(parsed) ? plannedDurationMinutes : parsed));
+    setPlannedDurationMinutes(clamped);
+    setPlannedDurationInput(String(clamped));
+  };
+
+  const handleNudgePlannedDuration = (delta: number) => {
+    const next = Math.max(1, Math.min(1440, (plannedDurationMinutes || 60) + delta));
+    setPlannedDurationMinutes(next);
+    setPlannedDurationInput(String(next));
+  };
+
+  const handleSetFlexibleTarget = (mins: number) => {
+    setFlexibleTargetMinutes(mins);
+    setFlexibleTargetInput(String(mins));
+  };
+
+  const handleFlexibleTargetInputChange = (val: string) => {
+    setFlexibleTargetInput(val);
+    const parsed = parseInt(val, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      setFlexibleTargetMinutes(parsed);
+    }
+  };
+
+  const handleFlexibleTargetInputBlur = () => {
+    const parsed = parseInt(flexibleTargetInput, 10);
+    const clamped = Math.max(5, Math.min(1440, isNaN(parsed) ? flexibleTargetMinutes : parsed));
+    setFlexibleTargetMinutes(clamped);
+    setFlexibleTargetInput(String(clamped));
+  };
+
+  const handleNudgeFlexibleTarget = (delta: number) => {
+    const next = Math.max(5, Math.min(1440, (flexibleTargetMinutes || 30) + delta));
+    setFlexibleTargetMinutes(next);
+    setFlexibleTargetInput(String(next));
+  };
+
+  const handleStartTimeChange = (newStart: string) => {
+    setStartTimeStr(newStart);
+    if (newStart && fixedDurationMinutes > 0) {
+      const newEnd = addMinutesToTimeString(newStart, fixedDurationMinutes);
+      if (newEnd) setEndTimeStr(newEnd);
+    }
+  };
+
+  const handleEndTimeChange = (newEnd: string) => {
+    setEndTimeStr(newEnd);
+    if (startTimeStr && newEnd) {
+      const diff = calcMinutesBetweenTimes(startTimeStr, newEnd);
+      setFixedDurationMinutes(diff);
+      setFixedDurationInput(String(diff));
+    }
+  };
+
+  const handleApplyFixedDuration = (mins: number) => {
+    setFixedDurationMinutes(mins);
+    setFixedDurationInput(String(mins));
+    if (startTimeStr) {
+      const newEnd = addMinutesToTimeString(startTimeStr, mins);
+      if (newEnd) setEndTimeStr(newEnd);
+    }
+  };
+
+  const handleFixedDurationInputChange = (val: string) => {
+    setFixedDurationInput(val);
+    const parsed = parseInt(val, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      setFixedDurationMinutes(parsed);
+      if (startTimeStr) {
+        const newEnd = addMinutesToTimeString(startTimeStr, parsed);
+        if (newEnd) setEndTimeStr(newEnd);
+      }
+    }
+  };
+
+  const handleFixedDurationInputBlur = () => {
+    const parsed = parseInt(fixedDurationInput, 10);
+    const clamped = Math.max(1, Math.min(1440, isNaN(parsed) ? fixedDurationMinutes : parsed));
+    setFixedDurationMinutes(clamped);
+    setFixedDurationInput(String(clamped));
+    if (startTimeStr) {
+      const newEnd = addMinutesToTimeString(startTimeStr, clamped);
+      if (newEnd) setEndTimeStr(newEnd);
+    }
+  };
+
+  const handleNudgeFixedDuration = (delta: number) => {
+    const next = Math.max(1, Math.min(1440, (fixedDurationMinutes || 60) + delta));
+    handleApplyFixedDuration(next);
+  };
+
   const [recurrence, setRecurrence] = useState<"NONE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY">("NONE");
   const [weeklyDays, setWeeklyDays] = useState<number[]>([]);
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>("");
