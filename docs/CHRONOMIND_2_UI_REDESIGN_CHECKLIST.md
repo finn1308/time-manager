@@ -9,25 +9,25 @@
 - [x] Create a redesign checklist.
 
 ## Phase 2: Design System
-- [ ] Color tokens.
-- [ ] Typography.
-- [ ] Radius and shadow scales.
-- [ ] Component variants.
-- [ ] Light and dark themes.
-- [ ] Verify contrast and readability.
+- [x] Color tokens.
+- [x] Typography.
+- [x] Radius and shadow scales.
+- [x] Component variants.
+- [x] Light and dark themes.
+- [x] Verify contrast and readability.
 
 ## Phase 3: Global Shell
-- [ ] Global navigation.
-- [ ] Gesture system.
-- [ ] Redesign the application layout.
-- [ ] Redesign sidebar and top navigation.
-- [ ] Redesign mobile navigation.
-- [ ] Unify quick actions.
-- [ ] Implement the interaction system.
+- [x] Global navigation.
+- [x] Gesture system.
+- [x] Redesign the application layout.
+- [x] Redesign sidebar and top navigation.
+- [x] Redesign mobile navigation.
+- [x] Unify quick actions.
+- [x] Implement the interaction system.
 
 ## Phase 4: Core Product
-- [ ] Dashboard.
-- [ ] Calendar.
+- [x] Dashboard.
+- [~] Calendar.
 - [ ] Tasks.
 - [ ] Subjects.
 - [ ] Timer.
