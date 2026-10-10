@@ -593,16 +593,29 @@ export default function DeadlinesPage() {
               <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1">
                 Thời lượng mỗi buổi học
               </label>
-              <select
-                value={sessionDuration}
-                onChange={(e) => setSessionDuration(parseInt(e.target.value, 10))}
-                className="w-full h-9 rounded-xl border border-[var(--border)] bg-white dark:bg-[#142318] px-3 text-xs text-[var(--text-ink)]"
-              >
-                <option value={45}>45 phút (Tập trung nhanh)</option>
-                <option value={60}>60 phút (Tiêu chuẩn 1h)</option>
-                <option value={90}>90 phút (Deep work khối)</option>
-                <option value={120}>120 phút (Ôn thi chuyên sâu)</option>
-              </select>
+              <div className="flex items-center space-x-1.5">
+                <Input
+                  type="number"
+                  min={5}
+                  max={480}
+                  value={sessionDuration}
+                  onChange={(e) => setSessionDuration(Math.max(5, parseInt(e.target.value, 10) || 45))}
+                  className="w-20 h-9 rounded-xl text-xs font-mono font-bold"
+                  placeholder="VD: 28"
+                />
+                <select
+                  value={sessionDuration}
+                  onChange={(e) => setSessionDuration(parseInt(e.target.value, 10))}
+                  className="flex-1 h-9 rounded-xl border border-[var(--border)] bg-white dark:bg-[#142318] px-2 text-xs text-[var(--text-ink)]"
+                >
+                  <option value={25}>25 phút (Pomo)</option>
+                  <option value={28}>28 phút</option>
+                  <option value={45}>45 phút (Nhanh)</option>
+                  <option value={60}>60 phút (Tiêu chuẩn)</option>
+                  <option value={90}>90 phút (Deep work)</option>
+                  <option value={120}>120 phút (Chuyên sâu)</option>
+                </select>
+              </div>
             </div>
 
             <div>
