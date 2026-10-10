@@ -321,8 +321,11 @@ export function EventQuickModal({
             <button
               type="button"
               onClick={() => {
-                setShowCustomDuration(!showCustomDuration);
-                if (!customMinutes) setCustomMinutes(plannedMins);
+                const nextShow = !showCustomDuration;
+                setShowCustomDuration(nextShow);
+                const initVal = customMinutes || plannedMins;
+                if (!customMinutes) setCustomMinutes(initVal);
+                setCustomMinutesInput(String(initVal));
               }}
               className="hover:underline flex items-center space-x-1 cursor-pointer font-medium text-[var(--mint-dark)]"
             >
@@ -351,14 +354,17 @@ export function EventQuickModal({
               {/* Quick Presets */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 {[-30, -15, 0, 15, 30].map((delta) => {
-                  const targetVal = Math.max(5, plannedMins + delta);
+                  const targetVal = Math.max(1, plannedMins + delta);
                   return (
                     <button
                       key={delta}
                       type="button"
-                      onClick={() => setCustomMinutes(targetVal)}
-                      className={`px-2 py-1 rounded-lg text-xs font-bold border transition-colors ${
-                        customMinutes === targetVal
+                      onClick={() => {
+                        setCustomMinutes(targetVal);
+                        setCustomMinutesInput(String(targetVal));
+                      }}
+                      className={`px-2 py-1 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
+                        (customMinutes || plannedMins) === targetVal
                           ? "bg-[var(--mint)] text-white border-[var(--mint)]"
                           : "bg-white dark:bg-[#1a2d1f] text-[var(--text-subtle)] border-[var(--border)] hover:border-[var(--mint)]"
                       }`}
@@ -370,19 +376,39 @@ export function EventQuickModal({
               </div>
 
               <div className="flex items-center space-x-2 pt-1">
-                <Input
-                  type="number"
-                  min={1}
-                  max={720}
-                  value={customMinutes || plannedMins}
-                  onChange={(e) => setCustomMinutes(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                  className="h-8 text-xs font-mono rounded-xl"
-                  placeholder="Nhập số phút..."
-                />
+                <div className="relative flex-1">
+                  <Input
+                    type="number"
+                    min={1}
+                    max={720}
+                    value={customMinutesInput !== "" ? customMinutesInput : (customMinutes || plannedMins)}
+                    onChange={(e) => {
+                      setCustomMinutesInput(e.target.value);
+                      const parsed = parseInt(e.target.value, 10);
+                      if (!isNaN(parsed) && parsed > 0) {
+                        setCustomMinutes(parsed);
+                      }
+                    }}
+                    onBlur={() => {
+                      const parsed = parseInt(customMinutesInput, 10);
+                      const clamped = Math.max(1, Math.min(720, isNaN(parsed) ? (customMinutes || plannedMins) : parsed));
+                      setCustomMinutes(clamped);
+                      setCustomMinutesInput(String(clamped));
+                    }}
+                    className="h-8 pr-8 text-xs font-mono font-bold rounded-xl"
+                    placeholder="VD: 28"
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-[var(--text-subtle)] pointer-events-none">
+                    phút
+                  </span>
+                </div>
                 <Button
                   size="sm"
                   variant="default"
-                  onClick={() => handleToggleComplete(customMinutes)}
+                  onClick={() => {
+                    const finalMins = Math.max(1, parseInt(customMinutesInput, 10) || customMinutes || plannedMins);
+                    handleToggleComplete(finalMins);
+                  }}
                   className="h-8 text-xs font-bold bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl shrink-0"
                 >
                   Lưu số phút
