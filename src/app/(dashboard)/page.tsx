@@ -320,29 +320,29 @@ export default async function DashboardPage() {
       {/* Smart Daily AI Briefing Widget */}
       <DailyAiBriefing />
 
-      {/* Friendly Hero Banner in Pastel Green */}
-      <div className="rounded-[30px] bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c] text-white p-6 sm:p-7 soft-card-shadow relative overflow-hidden">
-        <div className="absolute inset-0 bg-pastel-grid opacity-15 pointer-events-none" />
+      {/* Friendly Hero Banner in Pastel Pop */}
+      <div className="rounded-[30px] pastel-aura bg-gradient-to-br from-[var(--lavender-bg)] to-[var(--peach-bg)] text-[var(--text-ink)] p-6 sm:p-7 card-shadow-md relative overflow-hidden border border-[var(--lavender-soft)]">
+        <div className="absolute inset-0 bg-pastel-grid opacity-30 pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/15 text-[#d8ebe0] text-xs font-semibold backdrop-blur-xs">
-              <span className="w-2 h-2 rounded-full bg-[#74c69d] animate-pulse" />
+          <div className="space-y-3 max-w-xl">
+            <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-white/40 text-[var(--text-subtle)] text-xs font-semibold backdrop-blur-md border border-white/60">
+              <span className="w-2 h-2 rounded-full bg-[var(--mint)] animate-pulse" />
               <span>ChronoMind Operating System • Múi giờ Asia/Ho_Chi_Minh</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight" style={{ color: "var(--text-ink)" }}>
               Xin chào {user.name || "bạn"}, bắt đầu ngày học hiệu quả!
             </h1>
 
-            <p className="text-[#d8ebe0] text-xs sm:text-sm leading-relaxed">
+            <p className="text-[var(--text-body)] text-sm leading-relaxed">
               Quản lý mục tiêu môn học, xếp lịch 4 buổi không xung đột và ghi nhận thời gian thực tế với Picture-in-Picture Timer.
             </p>
 
             <div className="pt-2 flex flex-wrap gap-2.5">
               <Link href="/calendar">
-                <Button variant="pill" size="default" className="font-bold text-[#1b4332] shadow-sm space-x-2 hover:bg-[#eef5f0]">
-                  <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
+                <Button variant="default" size="default" className="font-bold shadow-sm space-x-2 rounded-xl btn-ripple text-white" style={{ background: "linear-gradient(135deg, var(--lavender) 0%, var(--peach) 100%)" }}>
+                  <Sparkles className="w-4 h-4 text-white" />
                   <span>Mở lịch học & Day View →</span>
                 </Button>
               </Link>
@@ -350,12 +350,12 @@ export default async function DashboardPage() {
           </div>
 
           <div className="hidden lg:flex flex-col items-end shrink-0">
-            <div className="p-4 rounded-2xl bg-white/95 text-[#192e22] max-w-[240px] shadow-lg mb-2">
+            <div className="p-4 rounded-2xl bg-white/95 text-[var(--text-body)] max-w-[240px] shadow-lg mb-2 border border-[var(--border-soft)]">
               <p className="text-xs font-semibold leading-relaxed">
-                Tập trung học thật, lưu database thật, không dùng số liệu ảo! 🌿
+                Tập trung học thật, lưu database thật, không dùng số liệu ảo! ✨
               </p>
             </div>
-            <div className="w-12 h-12 rounded-full bg-[#52b788] border-2 border-white shadow-md flex items-center justify-center text-xl select-none mr-4 text-white font-bold">
+            <div className="w-12 h-12 rounded-full border-2 border-white shadow-md flex items-center justify-center text-xl select-none mr-4 text-white font-bold" style={{ background: "linear-gradient(135deg, var(--sky) 0%, var(--mint) 100%)" }}>
               CM
             </div>
           </div>
@@ -363,34 +363,34 @@ export default async function DashboardPage() {
       </div>
 
       {/* 4-Year Academic & Degree Progress Widget */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 sm:p-5 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 card-hover">
         <div className="flex items-center space-x-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-[#ebf4ee] dark:bg-[#1e3425] text-[#2d6a4f] dark:text-[#74c69d] flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-11 h-11 rounded-2xl bg-[var(--sky-bg)] text-[var(--sky-dark)] flex items-center justify-center shrink-0 shadow-xs">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#74c69d] uppercase tracking-wider">
+              <span className="text-xs font-bold text-[var(--sky-dark)] uppercase tracking-wider">
                 {activeSemester ? `${activeSemester.academicYear.name} • ${activeSemester.name}` : "Hệ điều hành học thuật 4 năm"}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#52b788]/20 text-[#2d6a4f] dark:text-[#74c69d] font-semibold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--sky-soft)] text-[var(--sky-dark)] font-semibold">
                 {degreeProgram?.major || "Công nghệ Thông tin"}
               </span>
             </div>
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
-              Đã tích lũy <strong>{degreeProgram?.currentCredits || 0} / {degreeProgram?.totalCreditsRequired || 130}</strong> tín chỉ ({Math.min(100, Math.round(((degreeProgram?.currentCredits || 0) / (degreeProgram?.totalCreditsRequired || 130)) * 100))}%) • GPA tích lũy: <strong className="text-[#2d6a4f] dark:text-[#74c69d]">{degreeProgram?.currentGpa !== undefined ? degreeProgram.currentGpa.toFixed(2) : "0.00"}/4.00</strong>
+            <p className="text-xs text-[var(--text-subtle)] mt-0.5">
+              Đã tích lũy <strong className="text-[var(--text-ink)]">{degreeProgram?.currentCredits || 0} / {degreeProgram?.totalCreditsRequired || 130}</strong> tín chỉ ({Math.min(100, Math.round(((degreeProgram?.currentCredits || 0) / (degreeProgram?.totalCreditsRequired || 130)) * 100))}%) • GPA tích lũy: <strong className="text-[var(--sky-dark)]">{degreeProgram?.currentGpa !== undefined ? degreeProgram.currentGpa.toFixed(2) : "0.00"}/4.00</strong>
             </p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2.5 shrink-0">
           <Link href="/academic">
-            <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#ebf4ee] dark:hover:bg-[#1e3425]">
+            <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold border-[var(--border)] hover:bg-[var(--bg-elevated)]">
               Quản lý học thuật & GPA →
             </Button>
           </Link>
           <Link href="/career">
-            <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#ebf4ee] dark:hover:bg-[#1e3425]">
+            <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold border-[var(--border)] hover:bg-[var(--bg-elevated)]">
               Hồ sơ & Nghề nghiệp
             </Button>
           </Link>
