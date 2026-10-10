@@ -33,6 +33,7 @@ export function TaskModal({
   const [priority, setPriority] = useState<"LOW" | "MEDIUM" | "HIGH" | "URGENT">("MEDIUM");
   const [status, setStatus] = useState<string>("INBOX");
   const [estimatedMinutes, setEstimatedMinutes] = useState<number>(60);
+  const [estimatedMinutesInput, setEstimatedMinutesInput] = useState<string>("60");
   const [deadline, setDeadline] = useState<string>("");
   const [scheduledDate, setScheduledDate] = useState<string>("");
   const [isImportant, setIsImportant] = useState<boolean>(false);
@@ -46,7 +47,9 @@ export function TaskModal({
       setSubjectId(taskToEdit.subjectId || "");
       setPriority(taskToEdit.priority || "MEDIUM");
       setStatus(taskToEdit.status || "INBOX");
-      setEstimatedMinutes(taskToEdit.estimatedMinutes || 60);
+      const estM = taskToEdit.estimatedMinutes || 60;
+      setEstimatedMinutes(estM);
+      setEstimatedMinutesInput(String(estM));
       setScheduledDate(taskToEdit.scheduledDate || "");
       setIsImportant(Boolean(taskToEdit.isImportant));
       if (taskToEdit.deadline) {
@@ -66,6 +69,7 @@ export function TaskModal({
       setPriority("MEDIUM");
       setStatus("INBOX");
       setEstimatedMinutes(60);
+      setEstimatedMinutesInput("60");
       setDeadline("");
       setScheduledDate(new Date().toISOString().slice(0, 10));
       setIsImportant(false);
@@ -85,7 +89,7 @@ export function TaskModal({
         subjectId: subjectId || null,
         priority,
         status,
-        estimatedMinutes,
+        estimatedMinutes: Math.max(1, parseInt(estimatedMinutesInput, 10) || estimatedMinutes || 60),
         scheduledDate: scheduledDate || null,
         isImportant,
         deadline: deadline ? new Date(deadline).toISOString() : null,
