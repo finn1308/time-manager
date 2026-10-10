@@ -1650,48 +1650,135 @@ export function EventModal({
                     </div>
 
                     {!isAllDay ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
-                            {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày bắt đầu"}
-                          </label>
-                          <Input
-                            type="date"
-                            required
-                            value={dateStr}
-                            onChange={(e) => setDateStr(e.target.value)}
-                            className="rounded-2xl h-10 text-xs"
-                          />
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
+                              {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày bắt đầu"}
+                            </label>
+                            <Input
+                              type="date"
+                              required
+                              value={dateStr}
+                              onChange={(e) => setDateStr(e.target.value)}
+                              className="rounded-2xl h-10 text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
+                              {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
+                            </label>
+                            <Input
+                              type="time"
+                              required
+                              value={startTimeStr}
+                              onChange={(e) => handleStartTimeChange(e.target.value)}
+                              className="rounded-2xl h-10 text-xs"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
+                              Kết thúc
+                            </label>
+                            <Input
+                              type="time"
+                              required
+                              value={endTimeStr}
+                              onChange={(e) => handleEndTimeChange(e.target.value)}
+                              className="rounded-2xl h-10 text-xs"
+                            />
+                          </div>
                         </div>
 
-                        <div>
-                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
-                            {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
-                          </label>
-                          <Input
-                            type="time"
-                            required
-                            value={startTimeStr}
-                            onChange={(e) => setStartTimeStr(e.target.value)}
-                            className="rounded-2xl h-10 text-xs"
-                          />
-                        </div>
+                        {/* Interactive Duration Assistant for Fixed Time */}
+                        {eventType !== "DEADLINE" && (
+                          <div className="p-3 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] font-semibold text-[var(--text-ink)] flex items-center space-x-1.5">
+                                <Clock className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
+                                <span>Thời lượng buổi học:</span>
+                              </span>
+                              <span className="font-mono text-xs font-bold text-[var(--mint-dark)]">
+                                {formatDurationLabelVN(fixedDurationMinutes)}
+                              </span>
+                            </div>
 
-                        <div>
-                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
-                            Kết thúc
-                          </label>
-                          <Input
-                            type="time"
-                            required
-                            value={endTimeStr}
-                            onChange={(e) => setEndTimeStr(e.target.value)}
-                            className="rounded-2xl h-10 text-xs"
-                          />
-                        </div>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] text-[var(--text-subtle)]">Đặt nhanh:</span>
+                              {[15, 25, 28, 30, 45, 60, 90, 120].map((mins) => (
+                                <button
+                                  key={mins}
+                                  type="button"
+                                  onClick={() => handleApplyFixedDuration(mins)}
+                                  className={`px-2 py-0.5 rounded-lg text-[11px] font-bold border transition-colors cursor-pointer ${
+                                    fixedDurationMinutes === mins
+                                      ? "bg-[var(--mint-dark)] text-white border-[var(--mint-dark)]"
+                                      : "bg-[var(--bg-muted)] border-[var(--border)] text-[var(--text-subtle)] hover:border-[var(--mint-dark)]"
+                                  }`}
+                                >
+                                  {mins === 25 ? "25p (Pomo)" : mins === 28 ? "28p" : mins < 60 ? `${mins}p` : `${mins / 60}h`}
+                                </button>
+                              ))}
+                            </div>
+
+                            <div className="flex items-center space-x-2 pt-0.5">
+                              <span className="text-[11px] text-[var(--text-subtle)] whitespace-nowrap">
+                                Tự nhập thời lượng:
+                              </span>
+                              <div className="relative w-24">
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  max={1440}
+                                  value={fixedDurationInput}
+                                  onChange={(e) => handleFixedDurationInputChange(e.target.value)}
+                                  onBlur={handleFixedDurationInputBlur}
+                                  placeholder="VD: 28"
+                                  className="h-7 pr-7 text-xs font-mono font-bold rounded-lg"
+                                />
+                                <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-[var(--text-subtle)] pointer-events-none">
+                                  phút
+                                </span>
+                              </div>
+
+                              <div className="flex items-center space-x-1">
+                                <button
+                                  type="button"
+                                  title="Giảm 5 phút"
+                                  onClick={() => handleNudgeFixedDuration(-5)}
+                                  className="h-7 px-1.5 rounded-lg text-[10px] font-bold border border-[var(--border)] bg-[var(--bg-muted)] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                                >
+                                  -5p
+                                </button>
+                                <button
+                                  type="button"
+                                  title="Tăng 5 phút"
+                                  onClick={() => handleNudgeFixedDuration(5)}
+                                  className="h-7 px-1.5 rounded-lg text-[10px] font-bold border border-[var(--border)] bg-[var(--bg-muted)] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                                >
+                                  +5p
+                                </button>
+                                <button
+                                  type="button"
+                                  title="Tăng 15 phút"
+                                  onClick={() => handleNudgeFixedDuration(15)}
+                                  className="h-7 px-1.5 rounded-lg text-[10px] font-bold border border-[var(--border)] bg-[var(--bg-muted)] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                                >
+                                  +15p
+                                </button>
+                              </div>
+
+                              <span className="text-[10px] text-[var(--text-subtle)] hidden sm:inline">
+                                (Tự động cập nhật giờ Kết thúc)
+                              </span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-3">
                         <div>
                           <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                             Ngày
@@ -1704,24 +1791,86 @@ export function EventModal({
                             className="rounded-2xl h-10 text-xs"
                           />
                         </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
-                            Thời lượng (phút)
-                          </label>
-                          <select
-                            value={plannedDurationMinutes}
-                            onChange={(e) => setPlannedDurationMinutes(Number(e.target.value))}
-                            className="w-full rounded-2xl h-10 text-xs px-3 border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-ink)]"
-                          >
-                            <option value={15}>15 phút</option>
-                            <option value={30}>30 phút</option>
-                            <option value={45}>45 phút</option>
-                            <option value={60}>60 phút (1 giờ)</option>
-                            <option value={90}>90 phút (1.5 giờ)</option>
-                            <option value={120}>120 phút (2 giờ)</option>
-                            <option value={180}>180 phút (3 giờ)</option>
-                            <option value={240}>240 phút (4 giờ)</option>
-                          </select>
+
+                        {/* Flexible Duration Config for All-Day Self Study */}
+                        <div className="p-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-semibold text-[var(--text-ink)] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+                              <Clock className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
+                              <span>Thời lượng học tự do</span>
+                            </label>
+                            <span className="font-mono text-xs font-bold text-[var(--mint-dark)]">
+                              {formatDurationLabelVN(plannedDurationMinutes)}
+                            </span>
+                          </div>
+
+                          {/* Quick Preset Buttons */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {[15, 25, 28, 30, 45, 60, 90, 120, 180, 240].map((mins) => (
+                              <button
+                                key={mins}
+                                type="button"
+                                onClick={() => handleSetPlannedDuration(mins)}
+                                className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                                  plannedDurationMinutes === mins
+                                    ? "bg-[var(--mint-dark)] text-white shadow-xs"
+                                    : "bg-[var(--bg-muted)] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-pale)]"
+                                }`}
+                              >
+                                {mins === 25 ? "25p (Pomo)" : mins === 28 ? "28p" : mins < 60 ? `${mins}p` : `${mins / 60}h`}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Custom Input + Steppers */}
+                          <div className="flex items-center space-x-2 pt-1">
+                            <span className="text-[11px] text-[var(--text-subtle)] whitespace-nowrap">
+                              Hoặc tự nhập:
+                            </span>
+                            <div className="relative w-28">
+                              <Input
+                                type="number"
+                                min={1}
+                                max={1440}
+                                value={plannedDurationInput}
+                                onChange={(e) => handlePlannedDurationInputChange(e.target.value)}
+                                onBlur={handlePlannedDurationInputBlur}
+                                placeholder="VD: 28"
+                                className="h-8 pr-8 text-xs font-mono font-bold rounded-xl"
+                              />
+                              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-[var(--text-subtle)] pointer-events-none">
+                                phút
+                              </span>
+                            </div>
+
+                            {/* Stepper nudge buttons */}
+                            <div className="flex items-center space-x-1">
+                              <button
+                                type="button"
+                                title="Giảm 5 phút"
+                                onClick={() => handleNudgePlannedDuration(-5)}
+                                className="h-8 px-2 rounded-xl text-[11px] font-bold border border-[var(--border)] bg-[var(--bg-muted)] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                              >
+                                -5p
+                              </button>
+                              <button
+                                type="button"
+                                title="Tăng 5 phút"
+                                onClick={() => handleNudgePlannedDuration(5)}
+                                className="h-8 px-2 rounded-xl text-[11px] font-bold border border-[var(--border)] bg-[var(--bg-muted)] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                              >
+                                +5p
+                              </button>
+                              <button
+                                type="button"
+                                title="Tăng 15 phút"
+                                onClick={() => handleNudgePlannedDuration(15)}
+                                className="h-8 px-2 rounded-xl text-[11px] font-bold border border-[var(--border)] bg-[var(--bg-muted)] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                              >
+                                +15p
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
