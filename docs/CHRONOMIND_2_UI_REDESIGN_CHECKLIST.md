@@ -27,7 +27,7 @@
 
 ## Phase 4: Core Product
 - [x] Dashboard.
-- [~] Calendar.
+- [x] Calendar.
 - [ ] Tasks.
 - [ ] Subjects.
 - [ ] Timer.

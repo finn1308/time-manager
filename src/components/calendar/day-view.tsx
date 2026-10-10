@@ -288,7 +288,7 @@ export function DayView({
   return (
     <div className="flex flex-col space-y-5">
       {/* Navigation Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#17261c] p-4 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-surface)] p-4 rounded-[24px] border border-[var(--border)] soft-card-shadow">
         <div className="flex items-center space-x-2.5">
           <Button
             variant="pill"
@@ -321,8 +321,8 @@ export function DayView({
           </div>
 
           <div className="flex items-center space-x-2 px-2">
-            <Calendar className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
-            <span className="font-bold text-base text-[#192e22] dark:text-[#f0f7f2]">
+            <Calendar className="w-4 h-4 text-[var(--mint-dark)]" />
+            <span className="font-bold text-[var(--text-subtle)]ase text-[var(--text-ink)]">
               {dayNameVN}, {formatVN(currentDateObj, "dd/MM/yyyy")}
             </span>
             {isToday && (
@@ -350,18 +350,18 @@ export function DayView({
       </div>
 
       {/* Daily Overview Card (Requirements 8 & 13) */}
-      <div className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 soft-card-shadow space-y-4">
+      <div className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-6 soft-card-shadow space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2 text-xs font-bold text-[#526b5c] dark:text-[#a3bda9] uppercase tracking-wider">
+            <div className="flex items-center space-x-2 text-xs font-bold text-[var(--text-subtle)] uppercase tracking-wider">
               <span>Tổng quan ngày</span>
               <span>•</span>
-              <span className="text-[#2d6a4f] dark:text-[#52b788]">{dayNameVN}, {formatVN(currentDateObj, "dd/MM")}</span>
+              <span className="text-[var(--mint-dark)]">{dayNameVN}, {formatVN(currentDateObj, "dd/MM")}</span>
             </div>
             <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mt-2">
               <div>
-                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">Tự học (Thực tế): </span>
-                <strong className="text-xl font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                <span className="text-xs text-[var(--text-muted)]">Tự học (Thực tế): </span>
+                <strong className="text-xl font-bold text-[var(--mint-dark)]">
                   {formatMinutesVN(selfStudyActualMinutes)}
                 </strong>
                 {selfStudyPlannedMinutes > 0 && (
@@ -370,22 +370,22 @@ export function DayView({
               </div>
               <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
               <div>
-                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">🏫 Đi học trường: </span>
+                <span className="text-xs text-[var(--text-muted)]">🏫 Đi học trường: </span>
                 <strong className="text-sm font-bold text-sky-700 dark:text-sky-400">
                   {formatMinutesVN(schoolMinutes)}
                 </strong>
               </div>
               <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
               <div>
-                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">🎮 Cá nhân / Đi chơi: </span>
+                <span className="text-xs text-[var(--text-muted)]">🎮 Cá nhân / Đi chơi: </span>
                 <strong className="text-sm font-bold text-amber-700 dark:text-amber-400">
                   {formatMinutesVN(personalMinutes)}
                 </strong>
               </div>
               <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
               <div>
-                <span className="text-xs text-[#73927d] dark:text-[#8ba393]">📅 Tổng lịch: </span>
-                <strong className="text-sm font-bold text-[#526b5c] dark:text-[#a3bda9]">
+                <span className="text-xs text-[var(--text-muted)]">📅 Tổng lịch: </span>
+                <strong className="text-sm font-bold text-[var(--text-subtle)]">
                   {formatMinutesVN(totalScheduledMinutes)}
                 </strong>
               </div>
@@ -395,12 +395,12 @@ export function DayView({
           {/* Overall Day Progress */}
           <div className="w-full md:w-64 space-y-1.5">
             <div className="flex justify-between text-xs font-semibold">
-              <span className="text-[#526b5c] dark:text-[#a3bda9]">Tiến độ học thực tế</span>
-              <span className="text-[#2d6a4f] dark:text-[#52b788]">{progressPercent}%</span>
+              <span className="text-[var(--text-subtle)]">Tiến độ học thực tế</span>
+              <span className="text-[var(--mint-dark)]">{progressPercent}%</span>
             </div>
-            <div className="w-full h-3 rounded-full bg-[#eef5f0] dark:bg-[#1d3024] overflow-hidden">
+            <div className="w-full h-3 rounded-full bg-[var(--mint-bg)] overflow-hidden">
               <div
-                className="h-full rounded-full bg-[#2d6a4f] transition-all duration-500"
+                className="h-full rounded-full bg-[var(--mint)] transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -408,21 +408,21 @@ export function DayView({
         </div>
 
         {/* 4 Periods Mini Summary Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e]">
           {DAY_PERIODS.map((period) => {
             const stats = periodStats[period.key];
             return (
               <div
                 key={period.key}
-                className="p-2.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] text-xs"
+                className="p-2.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)]/80 dark:border-[#263d2e] text-xs"
               >
-                <div className="flex items-center space-x-1.5 font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <div className="flex items-center space-x-1.5 font-bold text-[var(--text-ink)]">
                   <span>{period.emoji}</span>
                   <span>{period.label}</span>
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1 font-mono">
+                <div className="flex items-center justify-between text-[11px] text-[var(--text-subtle)] mt-1 font-mono">
                   <span>Pl: <strong>{formatMinutesVN(stats.plannedMinutes)}</strong></span>
-                  <span>Act: <strong className="text-[#2d6a4f] dark:text-[#52b788]">{formatMinutesVN(stats.actualMinutes)}</strong></span>
+                  <span>Act: <strong className="text-[var(--mint-dark)]">{formatMinutesVN(stats.actualMinutes)}</strong></span>
                 </div>
               </div>
             );
@@ -441,7 +441,7 @@ export function DayView({
             {dayBlockedSlots.map((bs) => (
               <span
                 key={bs.id}
-                className="px-2.5 py-1 rounded-xl bg-white dark:bg-[#17261c] border border-[#edd38c] font-mono text-[11px] text-[#7d682e] dark:text-[#edd38c]"
+                className="px-2.5 py-1 rounded-xl bg-[var(--bg-surface)] border border-[#edd38c] font-mono text-[11px] text-[#7d682e] dark:text-[#edd38c]"
               >
                 {bs.title}: {bs.startTime} – {bs.endTime} (Khóa)
               </span>
@@ -461,27 +461,27 @@ export function DayView({
               key={period.key}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDropOnPeriod(e, period.key)}
-              className="flex flex-col rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-5 soft-card-shadow transition-all"
+              className="flex flex-col rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-5 soft-card-shadow transition-all"
             >
               {/* Period Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#dbe7dd]/80 dark:border-[#263d2e]">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]/80 dark:border-[#263d2e]">
                 <div className="flex items-center space-x-2">
                   <span className="text-xl">{period.emoji}</span>
                   <div>
-                    <h3 className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                    <h3 className="font-bold text-sm text-[var(--text-ink)]">
                       BUỔI {period.label.toUpperCase()}
                     </h3>
-                    <p className="text-[10px] text-[#73927d] dark:text-[#8ba393] font-mono">
+                    <p className="text-[10px] text-[var(--text-muted)] font-mono">
                       {period.nominalRange}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-[11px] font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                  <div className="text-[11px] font-semibold text-[var(--text-ink)]">
                     Kế hoạch: {formatMinutesVN(stats.plannedMinutes)}
                   </div>
-                  <div className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                  <div className="text-[11px] font-bold text-[var(--mint-dark)]">
                     Đã học: {formatMinutesVN(stats.actualMinutes)}
                   </div>
                 </div>
@@ -505,8 +505,8 @@ export function DayView({
                         ev.completed
                           ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
                           : isTimerActive
-                          ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] ring-2 ring-[#2d6a4f]/30"
-                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs"
+                          ? "border-[var(--mint)] bg-[var(--mint-bg)] ring-2 ring-[#2d6a4f]/30"
+                          : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[var(--mint-soft)] hover:shadow-2xs"
                       }`}
                       style={{ borderLeftColor: typeCfg.borderLeftColor || subjectColor, borderLeftWidth: "5px" }}
                     >
@@ -533,14 +533,14 @@ export function DayView({
                           </div>
 
                           <div className="flex items-center space-x-2">
-                            <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2] line-clamp-1">
+                            <span className="font-bold text-xs text-[var(--text-ink)] line-clamp-1">
                               {ev.title}
                             </span>
                           </div>
 
                           {(ev as any).location && (
-                            <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
-                              <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                            <div className="flex items-center space-x-1 text-[10px] text-[var(--text-subtle)]">
+                              <MapPin className="w-2.5 h-2.5 shrink-0 text-[var(--mint-dark)]" />
                               <span className="truncate">{(ev as any).location}</span>
                             </div>
                           )}
@@ -574,7 +574,7 @@ export function DayView({
                             }}
                           />
                           {isTimerActive ? (
-                            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#2d6a4f] text-white text-[10px] font-mono animate-pulse">
+                            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[var(--mint)] text-white text-[10px] font-mono animate-pulse">
                               <span>⏱ {formatTime(secondsElapsed)}</span>
                               {isRunning && !isPaused ? (
                                 <button
@@ -626,7 +626,7 @@ export function DayView({
                       </div>
 
                       {/* Time Details & Progress */}
-                      <div className="flex flex-wrap items-center justify-between text-[10px] text-[#73927d] dark:text-[#8ba393] mt-2.5 pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                      <div className="flex flex-wrap items-center justify-between text-[10px] text-[var(--text-muted)] mt-2.5 pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e]">
                         <span className="font-mono font-medium">
                           {(ev as any).isAllDay ? `Tự do trong ngày (${(ev as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(ev.startTime), "HH:mm")} – ${formatVN(new Date(ev.endTime), "HH:mm")}`}
                         </span>
@@ -634,7 +634,7 @@ export function DayView({
                         <div className="flex items-center space-x-2">
                           <span>Kế hoạch: <strong>{formatMinutesVN(ev.plannedMinutes)}</strong></span>
                           <span>•</span>
-                          <span>Đã học: <strong className="text-[#2d6a4f] dark:text-[#52b788]">{formatMinutesVN(ev.actualMinutes)}</strong></span>
+                          <span>Đã học: <strong className="text-[var(--mint-dark)]">{formatMinutesVN(ev.actualMinutes)}</strong></span>
                           {ev.remainingMinutes > 0 && (
                             <>
                               <span>•</span>
@@ -655,7 +655,7 @@ export function DayView({
                 })}
 
                 {events.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-8 text-center space-y-2">
+                  <div className="flex flex-col items-center justify-center py-8 text-[var(--text-subtle)]enter space-y-2">
                     <p className="text-xs text-[#8ba393] font-medium">
                       Chưa có lịch học {period.label.toLowerCase()}
                     </p>
@@ -668,7 +668,7 @@ export function DayView({
                         setModalDefaultEndTime(period.defaultEnd);
                         setIsEventModalOpen(true);
                       }}
-                      className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs h-8 space-x-1 font-semibold"
+                      className="rounded-2xl border-[var(--border)] text-[var(--mint-dark)] text-xs h-8 space-x-1 font-semibold"
                     >
                       <Plus className="w-3 h-3" />
                       <span>+ Thêm lịch {period.label}</span>
@@ -679,7 +679,7 @@ export function DayView({
 
               {/* Period Footer: Add button if has events */}
               {events.length > 0 && (
-                <div className="pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] flex justify-end">
+                <div className="pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e] flex justify-end">
                   <button
                     onClick={() => {
                       setEditingEvent(null);
@@ -687,7 +687,7 @@ export function DayView({
                       setModalDefaultEndTime(period.defaultEnd);
                       setIsEventModalOpen(true);
                     }}
-                    className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#52b788] hover:underline flex items-center space-x-1 cursor-pointer"
+                    className="text-[11px] font-bold text-[var(--mint-dark)] hover:underline flex items-center space-x-1 cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
                     <span>Thêm môn {period.label}</span>
@@ -702,47 +702,47 @@ export function DayView({
       {/* Session Details / PIP Control Modal (Requirement 12) */}
       {selectedSessionEvent && (
         <Dialog open={!!selectedSessionEvent} onOpenChange={(open) => !open && setSelectedSessionEvent(null)}>
-          <DialogContent onClose={() => setSelectedSessionEvent(null)} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+          <DialogContent onClose={() => setSelectedSessionEvent(null)} className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
             <DialogHeader>
-              <div className="flex items-center space-x-2 text-xs font-semibold text-[#2d6a4f] dark:text-[#52b788] mb-1">
+              <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--mint-dark)] mb-1">
                 <Clock className="w-4 h-4" />
                 <span>Chi tiết phiên học & Điều khiển Timer</span>
               </div>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
                 {selectedSessionEvent.title}
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Thông tin phiên học và điều khiển bộ đếm giờ thực tế PIP.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-2 text-xs">
               {/* Subject Badge & Time */}
-              <div className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+              <div className="p-4 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#526b5c] dark:text-[#a3bda9]">Môn học:</span>
-                  <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  <span className="text-[var(--text-subtle)]">Môn học:</span>
+                  <span className="font-bold text-[var(--text-ink)]">
                     {selectedSessionEvent.subject?.name || "(Chung)"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-[#526b5c] dark:text-[#a3bda9]">Khung giờ:</span>
-                  <span className="font-mono font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                  <span className="text-[var(--text-subtle)]">Khung giờ:</span>
+                  <span className="font-mono font-bold text-[var(--mint-dark)]">
                     {(selectedSessionEvent as any).isAllDay ? `Tự do trong ngày (${(selectedSessionEvent as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(selectedSessionEvent.startTime), "HH:mm")} – ${formatVN(new Date(selectedSessionEvent.endTime), "HH:mm")}`}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] text-center">
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e] text-[var(--text-subtle)]enter">
                   <div>
                     <div className="text-[10px] text-[#73927d]">Kế hoạch (Planned)</div>
-                    <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                    <div className="font-bold text-sm text-[var(--text-ink)]">
                       {formatMinutesVN(selectedSessionEvent.plannedMinutes)}
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px] text-[#73927d]">Thực tế (Actual)</div>
-                    <div className="font-bold text-sm text-[#2d6a4f] dark:text-[#52b788]">
+                    <div className="font-bold text-sm text-[var(--mint-dark)]">
                       {formatMinutesVN(selectedSessionEvent.actualMinutes)}
                     </div>
                   </div>
@@ -757,20 +757,20 @@ export function DayView({
 
               {/* Contextual Info for Non-SelfStudy Events */}
               {!canStartStudyTimer(selectedSessionEvent.type) && (
-                <div className="p-4 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] space-y-2">
+                <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)] space-y-2">
                   <div className="flex items-center space-x-2">
-                    <span className="text-base">{getEventTypeConfig(selectedSessionEvent.type).emoji}</span>
-                    <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                    <span className="text-[var(--text-subtle)]ase">{getEventTypeConfig(selectedSessionEvent.type).emoji}</span>
+                    <span className="font-bold text-xs text-[var(--text-ink)]">
                       {getEventTypeConfig(selectedSessionEvent.type).label}
                     </span>
                   </div>
                   {selectedSessionEvent.location && (
-                    <div className="flex items-center space-x-1.5 text-xs text-[#526b5c] dark:text-[#a3bda9]">
-                      <MapPin className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                    <div className="flex items-center space-x-1.5 text-xs text-[var(--text-subtle)]">
+                      <MapPin className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
                       <span>Địa điểm: <strong>{selectedSessionEvent.location}</strong></span>
                     </div>
                   )}
-                  <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                  <p className="text-[11px] text-[var(--text-subtle)]">
                     {isSchoolEvent(selectedSessionEvent.type)
                       ? "Lịch đi học cố định tại trường. Không tạo Study Session và không tính giờ tự học."
                       : isPersonalEvent(selectedSessionEvent.type)
@@ -784,9 +784,9 @@ export function DayView({
 
               {/* Timer Control Bar inside Modal - ONLY for SELF_STUDY */}
               {canStartStudyTimer(selectedSessionEvent.type) && (
-                <div className="p-4 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] space-y-3">
+                <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">PIP Floating Timer:</span>
+                    <span className="font-bold text-[var(--text-ink)]">PIP Floating Timer:</span>
                     {isEventActiveTimer(selectedSessionEvent.id) ? (
                       <Badge variant="green" className="animate-pulse">
                         Đang chạy: {formatTime(secondsElapsed)}
@@ -812,7 +812,7 @@ export function DayView({
                             );
                           }
                         }}
-                        className="flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs space-x-1.5"
+                        className="flex-1 rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs space-x-1.5"
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
                         <span>▶ Start (Bắt đầu học)</span>
@@ -823,7 +823,7 @@ export function DayView({
                           <Button
                             onClick={pauseTimer}
                             variant="outline"
-                            className="flex-1 rounded-2xl border-[#dbe7dd] text-xs font-semibold space-x-1"
+                            className="flex-1 rounded-2xl border-[var(--border)] text-xs font-semibold space-x-1"
                           >
                             <Pause className="w-3.5 h-3.5" />
                             <span>⏸ Pause (Tạm dừng)</span>
@@ -831,7 +831,7 @@ export function DayView({
                         ) : (
                           <Button
                             onClick={resumeTimer}
-                            className="flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold space-x-1"
+                            className="flex-1 rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-semibold space-x-1"
                           >
                             <Play className="w-3.5 h-3.5 fill-current" />
                             <span>▶ Resume (Tiếp tục)</span>
@@ -857,7 +857,7 @@ export function DayView({
 
               {/* Change Period Dropdown Selector */}
               <div className="flex items-center justify-between pt-1">
-                <span className="text-xs text-[#526b5c] dark:text-[#a3bda9]">Chuyển sang buổi khác:</span>
+                <span className="text-xs text-[var(--text-subtle)]">Chuyển sang buổi khác:</span>
                 <div className="flex items-center space-x-1">
                   {DAY_PERIODS.map((p) => (
                     <button
@@ -867,7 +867,7 @@ export function DayView({
                         setSelectedSessionEvent(null);
                       }}
                       title={`Chuyển sang Buổi ${p.label}`}
-                      className="px-2.5 py-1 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[11px] font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer transition-colors"
+                      className="px-2.5 py-1 rounded-xl border border-[var(--border)] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[11px] font-semibold text-[var(--text-ink)] cursor-pointer transition-colors"
                     >
                       {p.emoji} {p.label}
                     </button>
@@ -886,7 +886,7 @@ export function DayView({
                   setSelectedSessionEvent(null);
                   setIsEventModalOpen(true);
                 }}
-                className="rounded-2xl border-[#dbe7dd] text-xs font-semibold text-[#526b5c]"
+                className="rounded-2xl border-[var(--border)] text-xs font-semibold text-[#526b5c]"
               >
                 Chỉnh sửa chi tiết
               </Button>

@@ -280,7 +280,7 @@ export function WeekView({
       <AiResourceReminderBanner onOpenResourceManager={handleOpenResources} />
 
       {/* Calendar Navigation Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#17261c] p-4 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-surface)] p-4 rounded-[24px] border border-[var(--border)] soft-card-shadow">
         <div className="flex items-center space-x-2.5">
           <Button
             variant="pill"
@@ -306,7 +306,7 @@ export function WeekView({
             </button>
           </div>
 
-          <span className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <span className="text-sm font-bold text-[var(--text-ink)]">
             {weekDays[0].fullFormatted} – {weekDays[6].fullFormatted}
           </span>
         </div>
@@ -339,31 +339,31 @@ export function WeekView({
       </div>
 
       {/* Weekly Planned vs Actual Statistics Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs text-xs">
         <div className="flex items-center space-x-2">
-          <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
-          <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <Clock className="w-4 h-4 text-[var(--mint-dark)]" />
+          <span className="font-bold text-[var(--text-ink)]">
             Tiến độ học tuần này:
           </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <div>
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">Kế hoạch: </span>
-            <strong className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <span className="text-[var(--text-subtle)]">Kế hoạch: </span>
+            <strong className="font-bold text-[var(--text-ink)]">
               {formatMinutesVN(weekPlannedMins)}
             </strong>
           </div>
           <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
           <div>
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đã học thực tế: </span>
-            <strong className="font-bold text-[#2d6a4f] dark:text-[#52b788]">
+            <span className="text-[var(--text-subtle)]">Đã học thực tế: </span>
+            <strong className="font-bold text-[var(--mint-dark)]">
               {formatMinutesVN(weekActualMins)}
             </strong>
           </div>
           <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
           <div className="flex items-center space-x-1.5">
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đạt: </span>
+            <span className="text-[var(--text-subtle)]">Đạt: </span>
             <span className="px-2 py-0.5 rounded-full font-bold bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1f3828] dark:text-[#74c69d]">
               {weekProgressPct}%
             </span>
@@ -393,19 +393,19 @@ export function WeekView({
               className={`flex flex-col rounded-[24px] border transition-all soft-card-shadow ${
                 day.isToday
                   ? "border-[#52b788] bg-[#d8ebe0]/20 dark:bg-[#1d3827]/20 ring-2 ring-[#52b788]/20"
-                  : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                  : "border-[var(--border)] bg-[var(--bg-surface)]"
               }`}
             >
               {/* Day Header */}
               <div
-                className={`p-3 border-b text-center rounded-t-[24px] relative ${
+                className={`p-3 border-b text-[var(--text-subtle)]enter rounded-t-[24px] relative ${
                   day.isToday
                     ? "border-[#b7d8c3] bg-[#d8ebe0]/50 dark:bg-[#1d3827]/40"
-                    : "border-[#dbe7dd]/80 dark:border-[#263d2e]"
+                    : "border-[var(--border)]/80 dark:border-[#263d2e]"
                 }`}
               >
                 <div className="flex items-center justify-between px-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-subtle)]">
                     {day.dayName}
                   </span>
                   <button
@@ -424,8 +424,8 @@ export function WeekView({
                 <div
                   className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold mt-1 ${
                     day.isToday
-                      ? "bg-[#2d6a4f] text-white shadow-2xs"
-                      : "text-[#192e22] dark:text-[#f0f7f2]"
+                      ? "bg-[var(--mint)] text-white shadow-2xs"
+                      : "text-[var(--text-ink)]"
                   }`}
                 >
                   {day.dayOfMonth}
@@ -442,8 +442,8 @@ export function WeekView({
 
                   if (dayPlanned === 0 && dayActual === 0) return null;
                   return (
-                    <div className="text-[9px] font-mono mt-1 text-[#526b5c] dark:text-[#a3bda9]">
-                      <span className="text-[#2d6a4f] dark:text-[#52b788] font-bold">{formatMinutesVN(dayActual)}</span>
+                    <div className="text-[9px] font-mono mt-1 text-[var(--text-subtle)]">
+                      <span className="text-[var(--mint-dark)] font-bold">{formatMinutesVN(dayActual)}</span>
                       {dayPlanned > 0 && <span className="opacity-70"> / {formatMinutesVN(dayPlanned)}</span>}
                     </div>
                   );
@@ -456,9 +456,9 @@ export function WeekView({
                 {dayBlockedSlots.map((bs) => (
                   <div
                     key={bs.id}
-                    className="p-2 rounded-[14px] border border-dashed border-[#dbe7dd] dark:border-[#263d2e] blocked-slot-pattern text-xs select-none"
+                    className="p-2 rounded-[14px] border border-dashed border-[var(--border)] blocked-slot-pattern text-xs select-none"
                   >
-                    <div className="flex items-center space-x-1.5 text-[#526b5c] dark:text-[#a3bda9]">
+                    <div className="flex items-center space-x-1.5 text-[var(--text-subtle)]">
                       <Lock className="w-3 h-3 shrink-0 text-[#a3a86c]" />
                       <span className="font-bold truncate text-[11px]">{bs.title}</span>
                     </div>
@@ -488,7 +488,7 @@ export function WeekView({
                       className={`group relative p-2.5 rounded-[16px] border transition-all cursor-pointer text-xs ${
                         ev.completed
                           ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
-                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882] hover:shadow-2xs"
+                          : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[var(--mint-soft)] hover:shadow-2xs"
                       }`}
                       style={{ borderLeftColor: typeCfg.borderLeftColor || subjectColor, borderLeftWidth: "4px" }}
                     >
@@ -537,15 +537,15 @@ export function WeekView({
 
                       {/* Title on Card */}
                       <div className="flex items-start justify-between">
-                        <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] line-clamp-2 text-[11px] flex-1">
+                        <span className="font-bold text-[var(--text-ink)] line-clamp-2 text-[11px] flex-1">
                           {ev.title}
                         </span>
                       </div>
 
                       {/* Location Badge if available */}
                       {(ev as any).location && (
-                        <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-1 truncate">
-                          <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                        <div className="flex items-center space-x-1 text-[10px] text-[var(--text-subtle)] mt-1 truncate">
+                          <MapPin className="w-2.5 h-2.5 shrink-0 text-[var(--mint-dark)]" />
                           <span className="truncate">{(ev as any).location}</span>
                         </div>
                       )}
@@ -616,7 +616,7 @@ export function WeekView({
                               setIsEventModalOpen(true);
                             }}
                             title="Thêm tài liệu hoặc Zoom vào buổi học này"
-                            className="inline-flex items-center space-x-0.5 px-1 py-0.5 rounded-md border border-dashed border-[#b7d8c3] text-[#526b5c] dark:text-[#a3bda9] text-[9px] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-colors"
+                            className="inline-flex items-center space-x-0.5 px-1 py-0.5 rounded-md border border-dashed border-[#b7d8c3] text-[var(--text-subtle)] text-[9px] hover:border-[var(--mint)] hover:text-[var(--mint-dark)] transition-colors"
                           >
                             <Plus className="w-2 h-2" />
                             <span>Resource</span>
@@ -625,7 +625,7 @@ export function WeekView({
                       </div>
 
                       {/* Time and Quick Start Study Timer */}
-                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-[var(--border)]/60 dark:border-[#263d2e]">
                         <span className="font-mono text-[10px] font-medium text-[#73927d]">
                           {(ev as any).isAllDay ? `Tự do trong ngày (${(ev as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(ev.startTime), "HH:mm")} - ${formatVN(new Date(ev.endTime), "HH:mm")}`}
                         </span>
@@ -635,7 +635,7 @@ export function WeekView({
                             type="button"
                             onClick={(e) => handleQuickResize(e, ev, -15)}
                             title="Giảm 15 phút"
-                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[#526b5c] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[#dbe7dd]/60"
+                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[#526b5c] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[var(--border)]/60"
                           >
                             -15m
                           </button>
@@ -643,7 +643,7 @@ export function WeekView({
                             type="button"
                             onClick={(e) => handleQuickResize(e, ev, 15)}
                             title="Tăng 15 phút"
-                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[#2d6a4f] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[#dbe7dd]/60"
+                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[var(--mint-dark)] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[var(--border)]/60"
                           >
                             +15m
                           </button>
@@ -675,7 +675,7 @@ export function WeekView({
                 })}
 
                 {dayEvents.length === 0 && dayBlockedSlots.length === 0 && (
-                  <div className="text-center py-12 text-[11px] text-[#8ba393] font-medium">
+                  <div className="text-[var(--text-subtle)]enter py-12 text-[11px] text-[#8ba393] font-medium">
                     Trống lịch
                   </div>
                 )}

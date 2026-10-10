@@ -136,16 +136,16 @@ export function WhatIfSimulatorModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-lg rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+      <DialogContent onClose={onClose} className="max-w-lg rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
         <DialogHeader>
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#2d6a4f] dark:text-[#52b788] mb-1">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--mint-dark)] mb-1">
             <Sparkles className="w-4 h-4" />
             <span>Kịch bản giả định (What-If Simulator)</span>
           </div>
-          <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
             Thử nghiệm phân bổ thời gian trước khi lưu
           </DialogTitle>
-          <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+          <DialogDescription className="text-xs text-[var(--text-subtle)]">
             Khảo sát: "Nếu tôi thêm X giờ cho môn Y vào thứ Z thì sẽ ảnh hưởng thế nào đến deadline và ngân sách tuần?"
           </DialogDescription>
         </DialogHeader>
@@ -153,13 +153,13 @@ export function WhatIfSimulatorModal({
         <form onSubmit={handleSimulate} className="space-y-4 py-2">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                 Môn học muốn thử
               </label>
               <select
                 value={selectedSubjectId}
                 onChange={(e) => setSelectedSubjectId(e.target.value)}
-                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
+                className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[var(--text-ink)] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
               >
                 {subjects.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -170,7 +170,7 @@ export function WhatIfSimulatorModal({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                 Số giờ thêm (Hours)
               </label>
               <Input
@@ -181,20 +181,20 @@ export function WhatIfSimulatorModal({
                 value={additionalHours}
                 onChange={(e) => setAdditionalHours(e.target.value)}
                 required
-                className="rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
+                className="rounded-2xl border-[var(--border)] focus:ring-[#2d6a4f] text-xs h-10"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                 Vào ngày trong tuần
               </label>
               <select
                 value={targetDayOfWeek}
                 onChange={(e) => setTargetDayOfWeek(e.target.value)}
-                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
+                className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[var(--text-ink)] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
               >
                 <option value="1">Thứ Hai</option>
                 <option value="2">Thứ Ba</option>
@@ -207,13 +207,13 @@ export function WhatIfSimulatorModal({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                 Khung giờ ưu tiên
               </label>
               <select
                 value={timeSlot}
                 onChange={(e) => setTimeSlot(e.target.value)}
-                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
+                className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[var(--text-ink)] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
               >
                 <option value="morning">🌅 Buổi sáng (08:30)</option>
                 <option value="noon">☀️ Buổi trưa (12:30)</option>
@@ -226,7 +226,7 @@ export function WhatIfSimulatorModal({
           <Button
             type="submit"
             variant="outline"
-            className="w-full rounded-2xl border-[#dbe7dd] text-[#2d6a4f] hover:bg-[#d8ebe0] font-semibold text-xs h-10 space-x-1.5"
+            className="w-full rounded-2xl border-[var(--border)] text-[var(--mint-dark)] hover:bg-[#d8ebe0] font-semibold text-xs h-10 space-x-1.5"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Chạy mô phỏng kịch bản (Simulate)</span>
@@ -235,9 +235,9 @@ export function WhatIfSimulatorModal({
 
         {/* Simulation Output Area */}
         {simResult && (
-          <div className="mt-3 p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
+          <div className="mt-3 p-4 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <span className="text-xs font-bold text-[var(--text-ink)]">
                 Kết quả dự báo kịch bản:
               </span>
               <Badge variant={simResult.hasConflict ? "yellow" : "green"} className="text-[11px]">
@@ -246,23 +246,23 @@ export function WhatIfSimulatorModal({
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-2.5 rounded-xl bg-white dark:bg-[#111e14] border border-[#dbe7dd]/80 dark:border-[#263d2e]">
-                <div className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">Tiến độ môn học</div>
-                <div className="text-sm font-bold text-[#2d6a4f] dark:text-[#52b788] mt-0.5">
+              <div className="p-2.5 rounded-xl bg-white dark:bg-[#111e14] border border-[var(--border)]/80 dark:border-[#263d2e]">
+                <div className="text-[10px] text-[var(--text-subtle)]">Tiến độ môn học</div>
+                <div className="text-sm font-bold text-[var(--mint-dark)] mt-0.5">
                   {simResult.oldProgress}% → {simResult.newProgress}%
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-white dark:bg-[#111e14] border border-[#dbe7dd]/80 dark:border-[#263d2e]">
-                <div className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">Ngân sách tuần</div>
-                <div className="text-sm font-bold text-[#2d6a4f] dark:text-[#52b788] mt-0.5">
+              <div className="p-2.5 rounded-xl bg-white dark:bg-[#111e14] border border-[var(--border)]/80 dark:border-[#263d2e]">
+                <div className="text-[10px] text-[var(--text-subtle)]">Ngân sách tuần</div>
+                <div className="text-sm font-bold text-[var(--mint-dark)] mt-0.5">
                   {simResult.newWeeklyTotal}h ({simResult.budgetPercent}%)
                 </div>
               </div>
             </div>
 
-            <div className="text-xs text-[#526b5c] dark:text-[#a3bda9] flex items-center space-x-1.5">
-              <Calendar className="w-3.5 h-3.5 text-[#2d6a4f]" />
+            <div className="text-xs text-[var(--text-subtle)] flex items-center space-x-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
               <span>Thời gian đề xuất: <strong>{simResult.suggestedTime}</strong></span>
             </div>
 
@@ -276,7 +276,7 @@ export function WhatIfSimulatorModal({
               type="button"
               onClick={handleApplyScenario}
               disabled={isApplying}
-              className="w-full rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs h-10 mt-2 space-x-1.5"
+              className="w-full rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs h-10 mt-2 space-x-1.5"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>{isApplying ? "Đang áp dụng..." : "Áp dụng kịch bản vào Lịch thật"}</span>

@@ -654,7 +654,7 @@ export function EventModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl max-h-[92vh] overflow-y-auto">
+      <DialogContent onClose={onClose} className="max-w-xl rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl max-h-[92vh] overflow-y-auto">
         {/* DELETE CONFIRMATION MODAL (Sections 17-20) */}
         {showDeleteConfirmModal && editingEvent ? (
           <div className="space-y-4 py-2">
@@ -663,9 +663,9 @@ export function EventModal({
                 <AlertTriangle className="w-5 h-5" />
                 <span>Xác nhận xóa lịch "{editingEvent.title}"</span>
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Sự kiện này thuộc chuỗi lịch lặp:{" "}
-                <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                <span className="font-semibold text-[var(--text-ink)]">
                   {editingEvent.recurrence === "WEEKLY"
                     ? "Lặp hàng tuần"
                     : editingEvent.recurrence === "DAILY"
@@ -680,7 +680,7 @@ export function EventModal({
                 Buổi đang chọn: {formatVN(editingEvent.startTime, "EEEE, dd/MM/yyyy (HH:mm - ")}
                 {formatVN(editingEvent.endTime, "HH:mm)")}
               </p>
-              <p className="text-[#526b5c] dark:text-[#a3bda9]">
+              <p className="text-[var(--text-subtle)]">
                 Bạn muốn áp dụng việc xóa cho:
               </p>
             </div>
@@ -690,8 +690,8 @@ export function EventModal({
                 onClick={() => setDeleteModeChoice("SINGLE")}
                 className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
                   deleteModeChoice === "SINGLE"
-                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] ring-1 ring-[#2d6a4f]"
-                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                    ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] ring-1 ring-[#2d6a4f]"
+                    : "border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)]"
                 }`}
               >
                 <input
@@ -699,13 +699,13 @@ export function EventModal({
                   name="deleteMode"
                   checked={deleteModeChoice === "SINGLE"}
                   onChange={() => setDeleteModeChoice("SINGLE")}
-                  className="mt-0.5 text-[#2d6a4f] focus:ring-[#52b788]"
+                  className="mt-0.5 text-[var(--mint-dark)] focus:ring-[#52b788]"
                 />
                 <div>
-                  <div className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                  <div className="font-bold text-xs text-[var(--text-ink)]">
                     Chỉ xóa lịch này
                   </div>
-                  <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                  <div className="text-[11px] text-[var(--text-subtle)] mt-0.5">
                     Chỉ hủy occurrence vào ngày {formatVN(editingEvent.startTime, "dd/MM/yyyy")}. Các buổi học khác trong chuỗi vẫn giữ nguyên vẹn.
                   </div>
                 </div>
@@ -716,7 +716,7 @@ export function EventModal({
                 className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
                   deleteModeChoice === "ALL"
                     ? "border-rose-600 bg-rose-50 dark:bg-rose-950/40 ring-1 ring-rose-600"
-                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                    : "border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)]"
                 }`}
               >
                 <input
@@ -730,7 +730,7 @@ export function EventModal({
                   <div className="font-bold text-xs text-rose-700 dark:text-rose-300">
                     Xóa tất cả lịch trong chuỗi
                   </div>
-                  <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                  <div className="text-[11px] text-[var(--text-subtle)] mt-0.5">
                     Xóa toàn bộ chuỗi sự kiện này (các buổi học đã diễn ra có StudySession thực tế vẫn được bảo toàn dữ liệu lịch sử).
                   </div>
                 </div>
@@ -741,7 +741,7 @@ export function EventModal({
                 className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
                   deleteModeChoice === "FUTURE"
                     ? "border-amber-600 bg-amber-50 dark:bg-amber-950/40 ring-1 ring-amber-600"
-                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                    : "border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)]"
                 }`}
               >
                 <input
@@ -755,7 +755,7 @@ export function EventModal({
                   <div className="font-bold text-xs text-amber-800 dark:text-amber-300">
                     Xóa từ lịch này trở đi
                   </div>
-                  <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                  <div className="text-[11px] text-[var(--text-subtle)] mt-0.5">
                     Dừng chuỗi lặp lại từ ngày {formatVN(editingEvent.startTime, "dd/MM/yyyy")}. Các buổi trước ngày này vẫn giữ nguyên.
                   </div>
                 </div>
@@ -767,7 +767,7 @@ export function EventModal({
                   className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
                     deleteModeChoice === "SERIES"
                       ? "border-purple-600 bg-purple-50 dark:bg-purple-950/40 ring-1 ring-purple-600"
-                      : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#f8fbf8]"
+                      : "border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)]"
                   }`}
                 >
                   <input
@@ -781,7 +781,7 @@ export function EventModal({
                     <div className="font-bold text-xs text-purple-700 dark:text-purple-300">
                       Xóa toàn bộ nhóm lịch môn này
                     </div>
-                    <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                    <div className="text-[11px] text-[var(--text-subtle)] mt-0.5">
                       Xóa tất cả các khung giờ thuộc các ngày khác nhau (T2, T3...) được tạo cùng đợt.
                     </div>
                   </div>
@@ -789,13 +789,13 @@ export function EventModal({
               )}
             </div>
 
-            <DialogFooter className="flex justify-between items-center pt-3 border-t border-[#dbe7dd] dark:border-[#263d2e] mt-4">
+            <DialogFooter className="flex justify-between items-center pt-3 border-t border-[var(--border)] mt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setShowDeleteConfirmModal(false)}
                 disabled={isSubmitting}
-                className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+                className="rounded-2xl border-[var(--border)] text-xs h-9"
               >
                 Hủy
               </Button>
@@ -815,19 +815,19 @@ export function EventModal({
           <>
             <DialogHeader>
               <div className="flex items-center justify-between">
-                <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
+                <DialogTitle className="text-lg font-bold text-[var(--text-ink)] flex items-center space-x-2">
                   <span className="text-xl">{currentTypeConfig.emoji}</span>
                   <span>{editingEvent ? "Chi tiết sự kiện" : "Tạo lịch mới"}</span>
                 </DialogTitle>
 
                 {countdownText && (
-                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#eef5f0] text-[#2d6a4f] dark:bg-[#1b3426] dark:text-[#74c69d] flex items-center space-x-1">
+                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#eef5f0] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#74c69d] flex items-center space-x-1">
                     <Clock className="w-3 h-3" />
                     <span>{countdownText}</span>
                   </span>
                 )}
               </div>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Múi giờ Asia/Ho_Chi_Minh. Phân biệt rõ lịch học ngoài đời, tự học, cá nhân và thi cử.
               </DialogDescription>
             </DialogHeader>
@@ -849,7 +849,7 @@ export function EventModal({
                     }}
                   />
                   {editingEvent.completed && (
-                    <span className="text-xs font-mono font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                    <span className="text-xs font-mono font-bold text-[var(--mint-dark)]">
                       (Đã học: {editingEvent.actualDurationMinutes || 0} phút)
                     </span>
                   )}
@@ -860,7 +860,7 @@ export function EventModal({
                     type="button"
                     onClick={handleStartTimer}
                     size="sm"
-                    className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl text-xs font-bold space-x-1.5 shadow-2xs self-start sm:self-auto"
+                    className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl text-xs font-bold space-x-1.5 shadow-2xs self-start sm:self-auto"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
                     <span>Start Study Timer</span>
@@ -871,14 +871,14 @@ export function EventModal({
 
             {/* Mode Tabs if Editing Existing Event */}
             {editingEvent && (
-              <div className="flex rounded-2xl bg-[#f0f6f2] dark:bg-[#15251b] p-1 border border-[#dbe7dd] dark:border-[#263d2e] my-3">
+              <div className="flex rounded-2xl bg-[#f0f6f2] dark:bg-[#15251b] p-1 border border-[var(--border)] my-3">
                 <button
                   type="button"
                   onClick={() => setActiveModalTab("schedule")}
                   className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
                     activeModalTab === "schedule"
-                      ? "bg-white dark:bg-[#1f3426] text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-                      : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                      ? "bg-white dark:bg-[#1f3426] text-[var(--text-ink)] shadow-2xs"
+                      : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
                   }`}
                 >
                   <CalendarIcon className="w-3.5 h-3.5" />
@@ -889,8 +889,8 @@ export function EventModal({
                   onClick={() => setActiveModalTab("resources")}
                   className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
                     activeModalTab === "resources"
-                      ? "bg-white dark:bg-[#1f3426] text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-                      : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                      ? "bg-white dark:bg-[#1f3426] text-[var(--text-ink)] shadow-2xs"
+                      : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
                   }`}
                 >
                   <FolderOpen className="w-3.5 h-3.5 text-[#52b788]" />
@@ -912,7 +912,7 @@ export function EventModal({
                   onSubjectChange={(newSubId) => setSubjectId(newSubId)}
                   onRefreshCalendar={onSuccess}
                 />
-                <div className="flex justify-between items-center pt-4 border-t border-[#dbe7dd] dark:border-[#263d2e] mt-4">
+                <div className="flex justify-between items-center pt-4 border-t border-[var(--border)] mt-4">
                   <Button
                     type="button"
                     variant="destructive"
@@ -927,7 +927,7 @@ export function EventModal({
                     type="button"
                     variant="outline"
                     onClick={onClose}
-                    className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+                    className="rounded-2xl border-[var(--border)] text-xs h-9"
                   >
                     Đóng
                   </Button>
@@ -944,7 +944,7 @@ export function EventModal({
 
                 {/* 0. Cách sắp xếp thời gian (Scheduling Mode Selector - Section 1) */}
                 <div className="space-y-1.5 pb-1">
-                  <label className="block text-xs font-bold text-[#192e22] dark:text-[#d8ebe0]">
+                  <label className="block text-xs font-bold text-[var(--text-ink)] dark:text-[#d8ebe0]">
                     Cách sắp xếp thời gian <span className="text-rose-500">*</span>
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -954,17 +954,17 @@ export function EventModal({
                       onClick={() => setSchedulingMode("FIXED")}
                       className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative ${
                         schedulingMode === "FIXED"
-                          ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
-                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
+                          ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
+                          : "border-[var(--border)] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
                       }`}
                     >
                       <div className="flex items-center space-x-2">
-                        <CalendarClock className={`w-4 h-4 ${schedulingMode === "FIXED" ? "text-[#2d6a4f] dark:text-[#52b788]" : "text-[#526b5c]"}`} />
-                        <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                        <CalendarClock className={`w-4 h-4 ${schedulingMode === "FIXED" ? "text-[var(--mint-dark)]" : "text-[#526b5c]"}`} />
+                        <span className="text-xs font-bold text-[var(--text-ink)]">
                           Lịch cố định
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                      <p className="text-[11px] text-[var(--text-subtle)] mt-1">
                         Học vào khung giờ cụ thể.
                       </p>
                     </button>
@@ -975,17 +975,17 @@ export function EventModal({
                       onClick={() => setSchedulingMode("FLEXIBLE")}
                       className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative ${
                         schedulingMode === "FLEXIBLE"
-                          ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
-                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
+                          ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
+                          : "border-[var(--border)] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
                       }`}
                     >
                       <div className="flex items-center space-x-2">
-                        <Sparkles className={`w-4 h-4 ${schedulingMode === "FLEXIBLE" ? "text-[#2d6a4f] dark:text-[#52b788]" : "text-[#526b5c]"}`} />
-                        <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                        <Sparkles className={`w-4 h-4 ${schedulingMode === "FLEXIBLE" ? "text-[var(--mint-dark)]" : "text-[#526b5c]"}`} />
+                        <span className="text-xs font-bold text-[var(--text-ink)]">
                           Mục tiêu học linh hoạt
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                      <p className="text-[11px] text-[var(--text-subtle)] mt-1">
                         Hoàn thành đủ thời lượng trong ngày, không cần chọn giờ bắt đầu.
                       </p>
                     </button>
@@ -997,17 +997,17 @@ export function EventModal({
                     {/* Subject or Skill Selector */}
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0]">
+                        <label className="text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0]">
                           Môn học hoặc Kỹ năng <span className="text-rose-500">*</span>
                         </label>
-                        <div className="flex rounded-xl bg-[#eef5f0] dark:bg-[#15251b] p-0.5 border border-[#dbe7dd] dark:border-[#263d2e] text-[11px]">
+                        <div className="flex rounded-xl bg-[#eef5f0] dark:bg-[#15251b] p-0.5 border border-[var(--border)] text-[11px]">
                           <button
                             type="button"
                             onClick={() => setTargetType("SUBJECT")}
                             className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                               targetType === "SUBJECT"
-                                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                                : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                                ? "bg-[var(--mint)] text-white shadow-2xs"
+                                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
                             }`}
                           >
                             Môn học
@@ -1017,8 +1017,8 @@ export function EventModal({
                             onClick={() => setTargetType("SKILL")}
                             className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                               targetType === "SKILL"
-                                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                                : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                                ? "bg-[var(--mint)] text-white shadow-2xs"
+                                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
                             }`}
                           >
                             Kỹ năng / Skill
@@ -1035,7 +1035,7 @@ export function EventModal({
                             const found = subjects.find((s) => s.id === val);
                             if (found && !title) setTitle(found.name);
                           }}
-                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                          className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 text-xs text-[var(--text-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
                         >
                           <option value="">-- Chọn môn học --</option>
                           {subjects.map((sub) => (
@@ -1053,7 +1053,7 @@ export function EventModal({
                             const found = skills.find((s) => s.id === val);
                             if (found && !title) setTitle(found.name);
                           }}
-                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                          className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 text-xs text-[var(--text-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
                         >
                           <option value="">-- Chọn kỹ năng / Skill --</option>
                           {skills.map((sk) => (
@@ -1065,7 +1065,7 @@ export function EventModal({
                       )}
 
                       <div className="mt-2.5">
-                        <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                        <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1">
                           Tên mục tiêu / Kỹ năng cần học <span className="text-rose-500">*</span>
                         </label>
                         <Input
@@ -1079,13 +1079,13 @@ export function EventModal({
                     </div>
 
                     {/* Daily Target Duration */}
-                    <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+                    <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-2.5">
                       <div className="flex items-center justify-between">
-                        <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
-                          <Clock className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                        <label className="text-xs font-semibold text-[var(--text-ink)] flex items-center space-x-1.5">
+                          <Clock className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
                           <span>Thời lượng mục tiêu mỗi ngày <span className="text-rose-500">*</span></span>
                         </label>
-                        <span className="font-mono text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                        <span className="font-mono text-xs font-bold text-[var(--mint-dark)]">
                           {flexibleTargetMinutes} phút / ngày
                         </span>
                       </div>
@@ -1098,8 +1098,8 @@ export function EventModal({
                             onClick={() => setFlexibleTargetMinutes(mins)}
                             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                               flexibleTargetMinutes === mins
-                                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                                : "bg-white dark:bg-[#1b2b20] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#eef5f0]"
+                                ? "bg-[var(--mint)] text-white shadow-2xs"
+                                : "bg-white dark:bg-[#1b2b20] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[#eef5f0]"
                             }`}
                           >
                             {mins} phút
@@ -1108,7 +1108,7 @@ export function EventModal({
                       </div>
 
                       <div className="flex items-center space-x-2 pt-1">
-                        <span className="text-[11px] text-[#526b5c] dark:text-[#a3bda9]">Hoặc tự nhập:</span>
+                        <span className="text-[11px] text-[var(--text-subtle)]">Hoặc tự nhập:</span>
                         <Input
                           type="number"
                           min={5}
@@ -1124,7 +1124,7 @@ export function EventModal({
                     {/* Start Date & Optional End Date */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                           Ngày bắt đầu <span className="text-rose-500">*</span>
                         </label>
                         <Input
@@ -1137,7 +1137,7 @@ export function EventModal({
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                           Ngày kết thúc (Tùy chọn)
                         </label>
                         <Input
@@ -1150,16 +1150,16 @@ export function EventModal({
                     </div>
 
                     {/* Active Weekdays */}
-                    <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+                    <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-2.5">
                       <div className="flex items-center justify-between">
-                        <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                        <label className="text-xs font-semibold text-[var(--text-ink)]">
                           Các ngày áp dụng trong tuần
                         </label>
                         <div className="flex space-x-1.5">
                           <button
                             type="button"
                             onClick={() => setFlexibleActiveDays([0, 1, 2, 3, 4, 5, 6])}
-                            className="text-[10px] font-bold text-[#2d6a4f] hover:underline cursor-pointer"
+                            className="text-[10px] font-bold text-[var(--mint-dark)] hover:underline cursor-pointer"
                           >
                             Cả tuần
                           </button>
@@ -1167,7 +1167,7 @@ export function EventModal({
                           <button
                             type="button"
                             onClick={() => setFlexibleActiveDays([1, 2, 3, 4, 5])}
-                            className="text-[10px] font-bold text-[#2d6a4f] hover:underline cursor-pointer"
+                            className="text-[10px] font-bold text-[var(--mint-dark)] hover:underline cursor-pointer"
                           >
                             T2 - T6
                           </button>
@@ -1202,8 +1202,8 @@ export function EventModal({
                               }}
                               className={`flex-1 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                                 isSelected
-                                  ? "bg-[#2d6a4f] text-white shadow-2xs"
-                                  : "bg-white dark:bg-[#1b2b20] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#eef5f0]"
+                                  ? "bg-[var(--mint)] text-white shadow-2xs"
+                                  : "bg-white dark:bg-[#1b2b20] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[#eef5f0]"
                               }`}
                             >
                               {d.label}
@@ -1215,7 +1215,7 @@ export function EventModal({
 
                     {/* Preferred Study Period */}
                     <div>
-                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                      <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
                         <Sun className="w-3.5 h-3.5 text-[#52b788]" />
                         <span>Khung giờ ưu tiên trong ngày (Tùy chọn)</span>
                       </label>
@@ -1233,10 +1233,10 @@ export function EventModal({
                               key={p.id}
                               type="button"
                               onClick={() => setPreferredPeriod(p.id as any)}
-                              className={`p-2.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer flex flex-col items-center justify-center space-y-1 text-center ${
+                              className={`p-2.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer flex flex-col items-center justify-center space-y-1 text-[var(--text-subtle)]enter ${
                                 isSelected
-                                  ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3426] text-[#2d6a4f] dark:text-[#52b788] ring-1 ring-[#2d6a4f]"
-                                  : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f8fbf8]"
+                                  ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] text-[var(--mint-dark)] ring-1 ring-[#2d6a4f]"
+                                  : "border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-subtle)] hover:bg-[var(--bg-muted)]"
                               }`}
                             >
                               <Icon className="w-4 h-4" />
@@ -1249,7 +1249,7 @@ export function EventModal({
 
                     {/* Optional Deadline */}
                     <div>
-                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                      <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
                         <Target className="w-3.5 h-3.5 text-rose-500" />
                         <span>Hạn chót hoàn thành mục tiêu (Tùy chọn)</span>
                       </label>
@@ -1265,7 +1265,7 @@ export function EventModal({
                   <>
                     {/* 1. Event Type Selector (Section 8) */}
                     <div>
-                      <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                      <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                         Loại lịch sự kiện <span className="text-rose-500">*</span>
                       </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -1280,15 +1280,15 @@ export function EventModal({
                           onClick={() => handleSelectEventType(t)}
                           className={`flex items-center space-x-2 p-2.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer text-left ${
                             isSelected
-                              ? "border-[#2d6a4f] shadow-xs font-bold ring-2 ring-[#2d6a4f]/20"
-                              : "border-[#dbe7dd] dark:border-[#263d2e] opacity-80 hover:opacity-100 bg-[#fbfdfb] dark:bg-[#142318]"
+                              ? "border-[var(--mint)] shadow-xs font-bold ring-2 ring-[#2d6a4f]/20"
+                              : "border-[var(--border)] opacity-80 hover:opacity-100 bg-[#fbfdfb] dark:bg-[#142318]"
                           }`}
                           style={{
                             backgroundColor: isSelected ? cfg.badgeBg : undefined,
                             color: isSelected ? cfg.badgeText : undefined,
                           }}
                         >
-                          <span className="text-base shrink-0">{cfg.emoji}</span>
+                          <span className="text-[var(--text-subtle)]ase shrink-0">{cfg.emoji}</span>
                           <div className="truncate">
                             <div className="truncate font-bold leading-tight">{cfg.shortLabel}</div>
                           </div>
@@ -1296,14 +1296,14 @@ export function EventModal({
                       );
                     })}
                   </div>
-                  <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1.5">
+                  <p className="text-[11px] text-[var(--text-subtle)] mt-1.5">
                     {currentTypeConfig.description}
                   </p>
                 </div>
 
                 {/* 2. Title Field */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                     {isSchoolEvent(eventType)
                       ? "Tên môn học / buổi học ở trường"
                       : isSelfStudyEvent(eventType)
@@ -1343,7 +1343,7 @@ export function EventModal({
                   <div className="space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                           Môn học liên kết {isSelfStudyEvent(eventType) && <span className="text-amber-600 font-normal">(khuyên dùng)</span>}
                         </label>
                         <select
@@ -1353,7 +1353,7 @@ export function EventModal({
                             setSubjectId(val);
                             setTrackStudyTime(isStudyEventCategory(eventType, val));
                           }}
-                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                          className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 text-xs text-[var(--text-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
                         >
                           <option value="">-- Chọn môn học --</option>
                           {subjects.map((sub) => (
@@ -1366,14 +1366,14 @@ export function EventModal({
 
                       {goals.length > 0 && (
                         <div>
-                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
-                            <Target className="w-3 h-3 text-[#2d6a4f]" />
+                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                            <Target className="w-3 h-3 text-[var(--mint-dark)]" />
                             <span>Mục tiêu / Goal (Tùy chọn)</span>
                           </label>
                           <select
                             value={goalId}
                             onChange={(e) => setGoalId(e.target.value)}
-                            className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                            className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 text-xs text-[var(--text-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
                           >
                             <option value="">-- Không gắn mục tiêu --</option>
                             {goals.map((g) => (
@@ -1388,13 +1388,13 @@ export function EventModal({
 
                     {(isSelfStudyEvent(eventType) || eventType === "DEADLINE") && (
                       <div>
-                        <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                        <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                           Nhiệm vụ / Task liên kết (Tùy chọn)
                         </label>
                         <select
                           value={taskId}
                           onChange={(e) => setTaskId(e.target.value)}
-                          className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
+                          className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 text-xs text-[var(--text-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788]"
                         >
                           <option value="">-- Không gắn nhiệm vụ --</option>
                           {availableTasks.map((t) => (
@@ -1411,7 +1411,7 @@ export function EventModal({
                 {/* 4. Location Field (School, Personal, Exam, Other) */}
                 {(isSchoolEvent(eventType) || isPersonalEvent(eventType) || eventType === "EXAM" || eventType === "OTHER") && (
                   <div>
-                    <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
+                    <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5 flex items-center space-x-1">
                       <MapPin className="w-3.5 h-3.5 text-[#52b788]" />
                       <span>{isSchoolEvent(eventType) ? "Địa điểm / Phòng học" : isPersonalEvent(eventType) ? "Địa điểm gặp mặt" : eventType === "EXAM" ? "Phòng thi / Giảng đường" : "Địa điểm"}</span>
                     </label>
@@ -1434,14 +1434,14 @@ export function EventModal({
 
                 {/* 5. Date & Time (Hide if isMultiSlot is ON) */}
                 {!isMultiSlot && (
-                  <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
+                  <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-3">
                     <div className="flex items-center space-x-2">
-                      <label className="flex items-center space-x-1.5 cursor-pointer text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                      <label className="flex items-center space-x-1.5 cursor-pointer text-xs font-bold text-[var(--mint-dark)]">
                         <input 
                           type="checkbox" 
                           checked={isAllDay}
                           onChange={(e) => setIsAllDay(e.target.checked)}
-                          className="rounded text-[#2d6a4f] focus:ring-[#52b788]"
+                          className="rounded text-[var(--mint-dark)] focus:ring-[#52b788]"
                         />
                         <span>Học tự do trong ngày (Không cần xếp giờ)</span>
                       </label>
@@ -1450,7 +1450,7 @@ export function EventModal({
                     {!isAllDay ? (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
-                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                             {eventType === "DEADLINE" ? "Hạn chót (Ngày)" : "Ngày bắt đầu"}
                           </label>
                           <Input
@@ -1463,7 +1463,7 @@ export function EventModal({
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                             {eventType === "DEADLINE" ? "Hạn chót (Giờ)" : "Bắt đầu"}
                           </label>
                           <Input
@@ -1476,7 +1476,7 @@ export function EventModal({
                         </div>
 
                         <div>
-                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                             Kết thúc
                           </label>
                           <Input
@@ -1491,7 +1491,7 @@ export function EventModal({
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                             Ngày
                           </label>
                           <Input
@@ -1503,13 +1503,13 @@ export function EventModal({
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                          <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                             Thời lượng (phút)
                           </label>
                           <select
                             value={plannedDurationMinutes}
                             onChange={(e) => setPlannedDurationMinutes(Number(e.target.value))}
-                            className="w-full rounded-2xl h-10 text-xs px-3 border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-[#192e22] dark:text-[#f0f7f2]"
+                            className="w-full rounded-2xl h-10 text-xs px-3 border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-ink)]"
                           >
                             <option value={15}>15 phút</option>
                             <option value={30}>30 phút</option>
@@ -1529,7 +1529,7 @@ export function EventModal({
                 {isMultiSlot && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1.5">
+                      <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1.5">
                         Tuần bắt đầu học
                       </label>
                       <Input
@@ -1544,15 +1544,15 @@ export function EventModal({
                 )}
 
                 {/* 6. Recurrence Rule Picker (Sections 9, 16) */}
-                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
+                <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+                    <label className="text-xs font-semibold text-[var(--text-ink)] flex items-center space-x-1.5">
                       <Repeat className="w-3.5 h-3.5 text-[#52b788]" />
                       <span>{isMultiSlot ? "Lịch học định kỳ" : "Lặp lại (Chu kỳ)"}</span>
                     </label>
                     <div className="flex items-center space-x-2">
                       {!editingEvent && (
-                        <label className="flex items-center space-x-1.5 cursor-pointer text-[10px] font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                        <label className="flex items-center space-x-1.5 cursor-pointer text-[10px] font-bold text-[var(--mint-dark)]">
                           <input 
                             type="checkbox" 
                             checked={isMultiSlot}
@@ -1561,7 +1561,7 @@ export function EventModal({
                               if (e.target.checked) setRecurrence("WEEKLY");
                               else setRecurrence("NONE");
                             }}
-                            className="rounded text-[#2d6a4f] focus:ring-[#52b788]"
+                            className="rounded text-[var(--mint-dark)] focus:ring-[#52b788]"
                           />
                           <span>Nhiều ngày/Nhiều slot</span>
                         </label>
@@ -1570,7 +1570,7 @@ export function EventModal({
                         <select
                           value={recurrence}
                           onChange={(e) => setRecurrence(e.target.value as any)}
-                          className="h-8 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                          className="h-8 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-2 text-xs text-[var(--text-ink)]"
                         >
                           <option value="NONE">Chỉ chọn trong tuần này (Không lặp)</option>
                           <option value="WEEKLY">Lặp lại hàng tuần</option>
@@ -1579,7 +1579,7 @@ export function EventModal({
                         <select
                           value={recurrence}
                           onChange={(e) => setRecurrence(e.target.value as any)}
-                          className="h-8 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                          className="h-8 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-2 text-xs text-[var(--text-ink)]"
                         >
                           <option value="NONE">Không lặp (Một lần)</option>
                           <option value="DAILY">Hàng ngày</option>
@@ -1592,7 +1592,7 @@ export function EventModal({
 
                   {(recurrence === "WEEKLY" || isMultiSlot) && (
                     <div>
-                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] mb-1.5 font-medium">
+                      <p className="text-[10px] text-[var(--text-subtle)] mb-1.5 font-medium">
                         {isMultiSlot ? "Chọn các ngày trong tuần:" : "Chọn các ngày học hàng tuần:"}
                       </p>
                       <div className="flex items-center justify-between gap-1">
@@ -1605,8 +1605,8 @@ export function EventModal({
                               weeklyDays.includes(i)
                                 ? activeMultiSlotDay === i 
                                   ? "bg-[#1b4332] ring-2 ring-[#52b788] text-white shadow-md"
-                                  : "bg-[#2d6a4f] text-white shadow-2xs"
-                                : "bg-white dark:bg-[#1e3023] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]"
+                                  : "bg-[var(--mint)] text-white shadow-2xs"
+                                : "bg-white dark:bg-[#1e3023] text-[var(--text-subtle)] border border-[var(--border)]"
                             }`}
                           >
                             {label}
@@ -1615,9 +1615,9 @@ export function EventModal({
                       </div>
                       
                       {isMultiSlot && activeMultiSlotDay !== null && weeklyDays.includes(activeMultiSlotDay) && (
-                        <div className="mt-3 p-3 rounded-xl bg-white dark:bg-[#1a2e22] border border-[#dbe7dd] dark:border-[#263d2e]">
+                        <div className="mt-3 p-3 rounded-xl bg-white dark:bg-[#1a2e22] border border-[var(--border)]">
                           <div className="flex justify-between items-center mb-2">
-                            <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                            <span className="text-xs font-bold text-[var(--text-ink)]">
                               Khung giờ {["Chủ Nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"][activeMultiSlotDay]}
                             </span>
                             <div className="flex space-x-2">
@@ -1627,7 +1627,7 @@ export function EventModal({
                                   variant="ghost" 
                                   size="sm" 
                                   onClick={() => applySlotToAllSelectedDays(activeMultiSlotDay)}
-                                  className="h-6 text-[10px] px-2 text-[#2d6a4f] hover:bg-[#eef5f0]"
+                                  className="h-6 text-[10px] px-2 text-[var(--mint-dark)] hover:bg-[#eef5f0]"
                                 >
                                   Copy cho ngày khác
                                 </Button>
@@ -1637,7 +1637,7 @@ export function EventModal({
                                 variant="outline" 
                                 size="sm" 
                                 onClick={() => addSlotToDay(activeMultiSlotDay)}
-                                className="h-6 text-[10px] px-2 border-[#2d6a4f] text-[#2d6a4f]"
+                                className="h-6 text-[10px] px-2 border-[var(--mint)] text-[var(--mint-dark)]"
                               >
                                 + Thêm ca
                               </Button>
@@ -1681,7 +1681,7 @@ export function EventModal({
 
                   {recurrence !== "NONE" && (
                     <div>
-                      <label className="block text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                      <label className="block text-[10px] font-semibold text-[var(--text-subtle)] mb-1">
                         Ngày kết thúc lặp (Tùy chọn)
                       </label>
                       <Input
@@ -1695,9 +1695,9 @@ export function EventModal({
                 </div>
 
                 {/* 7. Advanced Controls: isLocked, isFlexible */}
-                <div className="space-y-2.5 p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
-                  <div className="text-[11px] font-bold text-[#192e22] dark:text-[#f0f7f2] uppercase tracking-wider flex items-center space-x-1.5 mb-1">
-                    <Sliders className="w-3.5 h-3.5 text-[#2d6a4f]" />
+                <div className="space-y-2.5 p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)]">
+                  <div className="text-[11px] font-bold text-[var(--text-ink)] uppercase tracking-wider flex items-center space-x-1.5 mb-1">
+                    <Sliders className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
                     <span>Cấu hình linh hoạt & Ràng buộc AI</span>
                   </div>
 
@@ -1710,14 +1710,14 @@ export function EventModal({
                         setIsLocked(e.target.checked);
                         if (e.target.checked) setIsFlexible(false);
                       }}
-                      className="mt-0.5 w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
+                      className="mt-0.5 w-4 h-4 rounded text-[var(--mint-dark)] focus:ring-[#52b788] cursor-pointer"
                     />
                     <div>
-                      <span className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1">
+                      <span className="text-xs font-semibold text-[var(--text-ink)] flex items-center space-x-1">
                         <Lock className="w-3 h-3 text-[#a3a86c]" />
                         <span>Khóa sự kiện này (Hard Constraint)</span>
                       </span>
-                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+                      <p className="text-[10px] text-[var(--text-subtle)]">
                         Lịch cố định không thể dịch chuyển. AI Scheduler tuyệt đối không được xếp lịch tự học đè lên khung giờ này.
                       </p>
                     </div>
@@ -1732,13 +1732,13 @@ export function EventModal({
                         setIsFlexible(e.target.checked);
                         if (e.target.checked) setIsLocked(false);
                       }}
-                      className="mt-0.5 w-4 h-4 rounded text-[#2d6a4f] focus:ring-[#52b788] cursor-pointer"
+                      className="mt-0.5 w-4 h-4 rounded text-[var(--mint-dark)] focus:ring-[#52b788] cursor-pointer"
                     />
                     <div>
-                      <span className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                      <span className="text-xs font-semibold text-[var(--text-ink)]">
                         Linh hoạt (Flexible Constraint)
                       </span>
-                      <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+                      <p className="text-[10px] text-[var(--text-subtle)]">
                         Cho phép kéo thả tự do hoặc để AI Scheduler đề xuất dời giờ khi phát sinh xung đột khẩn cấp.
                       </p>
                     </div>
@@ -1749,7 +1749,7 @@ export function EventModal({
 
                 {/* 8. Description */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                     Ghi chú chi tiết
                   </label>
                   <textarea
@@ -1765,7 +1765,7 @@ export function EventModal({
                         ? "Ví dụ: Hẹn ăn tối mừng sinh nhật bạn..."
                         : "Ghi chú nội dung..."
                     }
-                    className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
+                    className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[var(--text-ink)]"
                   />
                 </div>
 
@@ -1792,7 +1792,7 @@ export function EventModal({
                       variant="outline"
                       onClick={onClose}
                       disabled={isSubmitting}
-                      className="rounded-2xl border-[#dbe7dd] text-xs"
+                      className="rounded-2xl border-[var(--border)] text-xs"
                     >
                       Hủy
                     </Button>
@@ -1800,7 +1800,7 @@ export function EventModal({
                       type="submit"
                       variant="default"
                       disabled={isSubmitting}
-                      className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold text-xs"
+                      className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl font-semibold text-xs"
                     >
                       {isSubmitting ? "Đang lưu..." : editingEvent ? "Cập nhật" : "Tạo lịch"}
                     </Button>

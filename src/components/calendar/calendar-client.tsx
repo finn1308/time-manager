@@ -176,11 +176,11 @@ export function CalendarClient({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2.5">
-            <CalendarIcon className="w-6 h-6 text-[#2d6a4f] dark:text-[#52b788]" />
+          <h1 className="text-[var(--text-subtle)]xl font-bold tracking-tight text-[var(--text-ink)] flex items-center space-x-2.5">
+            <CalendarIcon className="w-6 h-6 text-[var(--mint-dark)]" />
             <span>Lịch học & Phân bổ thời gian</span>
           </h1>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+          <p className="text-xs text-[var(--text-subtle)] mt-1">
             Múi giờ Asia/Ho_Chi_Minh. AI đọc toàn bộ lịch bận và khung giờ khóa để xếp lịch an toàn không xung đột.
           </p>
         </div>
@@ -192,7 +192,7 @@ export function CalendarClient({
             size="sm"
             variant="outline"
             onClick={() => setIsTimetableOpen(true)}
-            className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs font-semibold space-x-1.5 h-9 bg-white dark:bg-[#17261c] hover:bg-[#eef5f0] dark:hover:bg-[#1b3426]"
+            className="rounded-2xl border-[var(--border)] text-[var(--mint-dark)] text-xs font-semibold space-x-1.5 h-9 bg-[var(--bg-surface)] hover:bg-[var(--mint-soft)]"
           >
             <GraduationCap className="w-3.5 h-3.5" />
             <span>Thời khóa biểu trường</span>
@@ -203,7 +203,7 @@ export function CalendarClient({
             size="sm"
             variant="outline"
             onClick={() => setIsWhatIfOpen(true)}
-            className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs font-semibold space-x-1.5 h-9"
+            className="rounded-2xl border-[var(--border)] text-[var(--mint-dark)] text-xs font-semibold space-x-1.5 h-9"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>What-If? (Giả định)</span>
@@ -214,20 +214,20 @@ export function CalendarClient({
             size="sm"
             variant="outline"
             onClick={handleTriggerReschedule}
-            className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs font-semibold space-x-1.5 h-9"
+            className="rounded-2xl border-[var(--border)] text-[var(--mint-dark)] text-xs font-semibold space-x-1.5 h-9"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
             <span>Smart Reschedule</span>
           </Button>
 
           {/* Day / Week / Month View Switcher */}
-          <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-xs shadow-2xs">
+          <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] text-xs shadow-2xs">
             <button
               onClick={() => setViewMode("day")}
               className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
                 viewMode === "day"
-                  ? "bg-[#2d6a4f] text-white shadow-2xs"
-                  : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
+                  ? "bg-[var(--mint)] text-white shadow-2xs"
+                  : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:hover:text-[#f0f7f2]"
               }`}
             >
               <Clock className="w-3.5 h-3.5" />
@@ -238,8 +238,8 @@ export function CalendarClient({
               onClick={() => setViewMode("week")}
               className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
                 viewMode === "week"
-                  ? "bg-[#2d6a4f] text-white shadow-2xs"
-                  : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
+                  ? "bg-[var(--mint)] text-white shadow-2xs"
+                  : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:hover:text-[#f0f7f2]"
               }`}
             >
               <Grid className="w-3.5 h-3.5" />
@@ -250,8 +250,8 @@ export function CalendarClient({
               onClick={() => setViewMode("month")}
               className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
                 viewMode === "month"
-                  ? "bg-[#2d6a4f] text-white shadow-2xs"
-                  : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
+                  ? "bg-[var(--mint)] text-white shadow-2xs"
+                  : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:hover:text-[#f0f7f2]"
               }`}
             >
               <CalendarDays className="w-3.5 h-3.5" />
@@ -262,8 +262,8 @@ export function CalendarClient({
               onClick={() => setViewMode("agenda")}
               className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
                 viewMode === "agenda"
-                  ? "bg-[#2d6a4f] text-white shadow-2xs"
-                  : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
+                  ? "bg-[var(--mint)] text-white shadow-2xs"
+                  : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:hover:text-[#f0f7f2]"
               }`}
             >
               <List className="w-3.5 h-3.5" />
@@ -279,12 +279,12 @@ export function CalendarClient({
           placeholder="🔍 Tìm kiếm sự kiện..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="bg-white dark:bg-[#17261c] border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs h-10 w-full sm:w-1/3"
+          className="bg-[var(--bg-surface)] border-[var(--border)] rounded-2xl text-xs h-10 w-full sm:w-1/3"
         />
         <select
           value={selectedSubjectFilter}
           onChange={(e) => setSelectedSubjectFilter(e.target.value)}
-          className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs h-10 px-3 w-full sm:w-1/4 outline-none text-[#192e22] dark:text-[#f0f7f2]"
+          className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl text-xs h-10 px-3 w-full sm:w-1/4 outline-none text-[var(--text-ink)]"
         >
           <option value="ALL">Tất cả môn học</option>
           {subjects.map((sub) => (
@@ -296,7 +296,7 @@ export function CalendarClient({
         <select
           value={selectedTypeFilter}
           onChange={(e) => setSelectedTypeFilter(e.target.value)}
-          className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs h-10 px-3 w-full sm:w-1/4 outline-none text-[#192e22] dark:text-[#f0f7f2]"
+          className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl text-xs h-10 px-3 w-full sm:w-1/4 outline-none text-[var(--text-ink)]"
         >
           <option value="ALL">Tất cả loại sự kiện</option>
           {ALL_EVENT_TYPES.map((t) => {
@@ -313,20 +313,20 @@ export function CalendarClient({
       {/* Natural Language Event Quick Input (Section 17 & 44) */}
       <form
         onSubmit={handleParseNlp}
-        className="p-3.5 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow flex items-center space-x-2"
+        className="p-3.5 rounded-[24px] border border-[var(--border)] bg-[var(--bg-surface)] soft-card-shadow flex items-center space-x-2"
       >
-        <Sparkles className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788] shrink-0 ml-2" />
+        <Sparkles className="w-4 h-4 text-[var(--mint-dark)] shrink-0 ml-2" />
         <input
           type="text"
           value={nlpInput}
           onChange={(e) => setNlpInput(e.target.value)}
           placeholder='Nhập lịch bằng ngôn ngữ tự nhiên (VD: "Thứ 3 tuần sau 19:00 học IELTS 90 phút" hoặc "Ngày mai 14h học Toán 2 tiếng")...'
-          className="flex-1 bg-transparent border-none text-xs text-[#192e22] dark:text-[#f0f7f2] placeholder:text-[#8ba393] focus:outline-none"
+          className="flex-1 bg-transparent border-none text-xs text-[var(--text-ink)] placeholder:text-[#8ba393] focus:outline-none"
         />
         <Button
           type="submit"
           disabled={isParsingNlp || !nlpInput.trim()}
-          className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs h-9 px-4 space-x-1.5 shrink-0"
+          className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs h-9 px-4 space-x-1.5 shrink-0"
         >
           <Send className="w-3.5 h-3.5" />
           <span>{isParsingNlp ? "Đang phân tích..." : "Tạo lịch"}</span>
@@ -336,44 +336,44 @@ export function CalendarClient({
       {/* NLP Preview Modal Before Save (Section 17) */}
       {nlpProposal && (
         <Dialog open={!!nlpProposal} onOpenChange={(open) => !open && setNlpProposal(null)}>
-          <DialogContent className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+          <DialogContent className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
             <DialogHeader>
-              <div className="flex items-center space-x-2 text-xs font-semibold text-[#2d6a4f] dark:text-[#52b788] mb-1">
+              <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--mint-dark)] mb-1">
                 <CalendarCheck className="w-4 h-4" />
                 <span>Xem trước sự kiện đã phân tích</span>
               </div>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
                 Xác nhận tạo sự kiện học tập
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Kiểm tra thông tin trước khi ghi vào Database để bảo đảm không trùng lịch.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-3 py-3 text-xs">
-              <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2">
-                <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+              <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-2">
+                <div className="font-bold text-sm text-[var(--text-ink)]">
                   {nlpProposal.title}
                 </div>
 
-                <div className="flex items-center justify-between text-[#526b5c] dark:text-[#a3bda9]">
+                <div className="flex items-center justify-between text-[var(--text-subtle)]">
                   <span>Ngày:</span>
-                  <strong className="text-[#192e22] dark:text-[#f0f7f2]">
+                  <strong className="text-[var(--text-ink)]">
                     {nlpProposal.formattedDate}
                   </strong>
                 </div>
 
-                <div className="flex items-center justify-between text-[#526b5c] dark:text-[#a3bda9]">
+                <div className="flex items-center justify-between text-[var(--text-subtle)]">
                   <span>Thời gian:</span>
-                  <strong className="text-[#2d6a4f] dark:text-[#52b788]">
+                  <strong className="text-[var(--mint-dark)]">
                     {nlpProposal.formattedTime} ({nlpProposal.durationMinutes} phút)
                   </strong>
                 </div>
 
                 {nlpProposal.subjectName && (
-                  <div className="flex items-center justify-between text-[#526b5c] dark:text-[#a3bda9]">
+                  <div className="flex items-center justify-between text-[var(--text-subtle)]">
                     <span>Môn học:</span>
-                    <Badge variant="secondary" className="bg-[#eef5f0] text-[#2d6a4f] dark:bg-[#1d3024] dark:text-[#52b788] text-[10px]">
+                    <Badge variant="secondary" className="bg-[#eef5f0] text-[var(--mint-dark)] dark:bg-[#1d3024] dark:text-[#52b788] text-[10px]">
                       {nlpProposal.subjectName}
                     </Badge>
                   </div>
@@ -386,7 +386,7 @@ export function CalendarClient({
                   <span>Cảnh báo: {nlpProposal.conflictReason || "Khung giờ này bị trùng lịch!"}</span>
                 </div>
               ) : (
-                <div className="p-3 rounded-2xl bg-[#eef5f0] text-[#2d6a4f] border border-[#dbe7dd] text-xs flex items-center space-x-2">
+                <div className="p-3 rounded-2xl bg-[#eef5f0] text-[var(--mint-dark)] border border-[var(--border)] text-xs flex items-center space-x-2">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>Khung giờ hoàn toàn khả dụng và không bị xung đột.</span>
                 </div>
@@ -398,7 +398,7 @@ export function CalendarClient({
                 type="button"
                 variant="outline"
                 onClick={() => setNlpProposal(null)}
-                className="rounded-2xl border-[#dbe7dd] text-[#526b5c] text-xs"
+                className="rounded-2xl border-[var(--border)] text-[#526b5c] text-xs"
               >
                 Hủy bỏ
               </Button>
@@ -406,7 +406,7 @@ export function CalendarClient({
                 type="button"
                 onClick={handleConfirmNlpEvent}
                 disabled={isConfirmingNlp || nlpProposal.hasConflict}
-                className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs space-x-1.5"
+                className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs space-x-1.5"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>{isConfirmingNlp ? "Đang lưu..." : "Xác nhận & Lưu vào lịch"}</span>

@@ -182,17 +182,17 @@ export function SchoolTimetableGeneratorModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-3xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl max-h-[92vh] overflow-y-auto">
+      <DialogContent onClose={onClose} className="max-w-3xl rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center space-x-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#1b3426] flex items-center justify-center text-[#2d6a4f] dark:text-[#52b788]">
+            <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#1b3426] flex items-center justify-center text-[var(--mint-dark)]">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
                 Thời Khóa Biểu Trường Học (Timetable Generator)
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Nhập lịch học trên lớp một lần. Hệ thống tự động tạo chuỗi sự kiện SCHOOL lặp lại hàng tuần, khóa cứng giờ học (Hard Constraint) để AI không bao giờ xếp lịch tự học trùng lên.
               </DialogDescription>
             </div>
@@ -213,26 +213,26 @@ export function SchoolTimetableGeneratorModal({
         )}
 
         {/* Global Settings: Semester Start Date & Number of Weeks */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] my-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] my-3">
           <div>
-            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1.5 flex items-center space-x-1.5">
-              <Calendar className="w-3.5 h-3.5 text-[#2d6a4f]" />
+            <label className="block text-xs font-bold text-[var(--text-ink)] mb-1.5 flex items-center space-x-1.5">
+              <Calendar className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
               <span>Tuần bắt đầu học kỳ</span>
             </label>
             <Input
               type="date"
               value={semesterStartDate}
               onChange={(e) => setSemesterStartDate(e.target.value)}
-              className="rounded-2xl h-10 text-xs bg-white dark:bg-[#17261c]"
+              className="rounded-2xl h-10 text-xs bg-[var(--bg-surface)]"
             />
-            <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1">
+            <p className="text-[11px] text-[var(--text-subtle)] mt-1">
               Thường là ngày Thứ Hai của tuần học đầu tiên
             </p>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1.5 flex items-center space-x-1.5">
-              <Clock className="w-3.5 h-3.5 text-[#2d6a4f]" />
+            <label className="block text-xs font-bold text-[var(--text-ink)] mb-1.5 flex items-center space-x-1.5">
+              <Clock className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
               <span>Thời lượng học kỳ (Số tuần lặp)</span>
             </label>
             <div className="flex items-center space-x-2">
@@ -242,9 +242,9 @@ export function SchoolTimetableGeneratorModal({
                 max={52}
                 value={totalWeeks}
                 onChange={(e) => setTotalWeeks(Number(e.target.value) || 1)}
-                className="rounded-2xl h-10 text-xs bg-white dark:bg-[#17261c] w-28"
+                className="rounded-2xl h-10 text-xs bg-[var(--bg-surface)] w-28"
               />
-              <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] font-medium">tuần (15 tuần = 1 học kỳ)</span>
+              <span className="text-xs text-[var(--text-subtle)] font-medium">tuần (15 tuần = 1 học kỳ)</span>
             </div>
           </div>
         </div>
@@ -252,7 +252,7 @@ export function SchoolTimetableGeneratorModal({
         {/* Timetable Entries List */}
         <div className="space-y-3 my-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-[var(--text-ink)] uppercase tracking-wider">
               Danh sách các buổi học trong tuần ({entries.length} môn)
             </h3>
             <Button
@@ -260,7 +260,7 @@ export function SchoolTimetableGeneratorModal({
               variant="outline"
               size="sm"
               onClick={() => handleAddEntry(1)}
-              className="h-8 rounded-xl border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] space-x-1"
+              className="h-8 rounded-xl border-[var(--border)] text-xs font-bold text-[var(--mint-dark)] space-x-1"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Thêm tiết học</span>
@@ -271,10 +271,10 @@ export function SchoolTimetableGeneratorModal({
             {entries.map((entry, index) => (
               <div
                 key={entry.id}
-                className="p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#15251b] space-y-3 relative group"
+                className="p-3.5 rounded-2xl border border-[var(--border)] bg-white dark:bg-[#15251b] space-y-3 relative group"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-[#eef5f0] text-[#2d6a4f] dark:bg-[#1b3426] dark:text-[#74c69d]">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-[#eef5f0] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#74c69d]">
                     Môn #{index + 1}
                   </span>
                   <button
@@ -290,13 +290,13 @@ export function SchoolTimetableGeneratorModal({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                   {/* Day of Week */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                    <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1">
                       Thứ trong tuần
                     </label>
                     <select
                       value={entry.dayOfWeek}
                       onChange={(e) => handleUpdateEntry(entry.id, { dayOfWeek: Number(e.target.value) })}
-                      className="w-full h-9 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#18281d] px-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                      className="w-full h-9 rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] dark:bg-[#18281d] px-2.5 text-xs text-[var(--text-ink)]"
                     >
                       {DAY_NAMES.map((d) => (
                         <option key={d.day} value={d.day}>
@@ -308,14 +308,14 @@ export function SchoolTimetableGeneratorModal({
 
                   {/* Subject */}
                   <div className="sm:col-span-2">
-                    <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                    <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1">
                       Môn học
                     </label>
                     <div className="flex gap-2">
                       <select
                         value={entry.subjectId}
                         onChange={(e) => handleUpdateEntry(entry.id, { subjectId: e.target.value })}
-                        className="flex-1 h-9 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#18281d] px-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                        className="flex-1 h-9 rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] dark:bg-[#18281d] px-2.5 text-xs text-[var(--text-ink)]"
                       >
                         <option value="">-- Môn học tự do --</option>
                         {subjects.map((sub) => (
@@ -339,7 +339,7 @@ export function SchoolTimetableGeneratorModal({
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {/* Period */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                    <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1">
                       Tiết học
                     </label>
                     <Input
@@ -352,7 +352,7 @@ export function SchoolTimetableGeneratorModal({
 
                   {/* Start Time */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                    <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1">
                       Bắt đầu
                     </label>
                     <Input
@@ -365,7 +365,7 @@ export function SchoolTimetableGeneratorModal({
 
                   {/* End Time */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+                    <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1">
                       Kết thúc
                     </label>
                     <Input
@@ -378,7 +378,7 @@ export function SchoolTimetableGeneratorModal({
 
                   {/* Room */}
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1 flex items-center space-x-1">
+                    <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1 flex items-center space-x-1">
                       <MapPin className="w-3 h-3 text-[#52b788]" />
                       <span>Phòng học</span>
                     </label>
@@ -393,7 +393,7 @@ export function SchoolTimetableGeneratorModal({
 
                 {/* Teacher / Instructor note */}
                 <div>
-                  <label className="block text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1 flex items-center space-x-1">
+                  <label className="block text-[11px] font-semibold text-[var(--text-subtle)] mb-1 flex items-center space-x-1">
                     <User className="w-3 h-3 text-[#52b788]" />
                     <span>Giảng viên / Ghi chú buổi học</span>
                   </label>
@@ -409,13 +409,13 @@ export function SchoolTimetableGeneratorModal({
           </div>
         </div>
 
-        <DialogFooter className="flex justify-between items-center pt-3 border-t border-[#dbe7dd] dark:border-[#263d2e] mt-4">
+        <DialogFooter className="flex justify-between items-center pt-3 border-t border-[var(--border)] mt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isSubmitting}
-            className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+            className="rounded-2xl border-[var(--border)] text-xs h-9"
           >
             Đóng
           </Button>
@@ -424,7 +424,7 @@ export function SchoolTimetableGeneratorModal({
             type="button"
             onClick={handleGenerate}
             disabled={isSubmitting || entries.length === 0}
-            className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl text-xs font-bold space-x-1.5 h-10 px-5 shadow-sm"
+            className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl text-xs font-bold space-x-1.5 h-10 px-5 shadow-sm"
           >
             <Sparkles className="w-4 h-4 fill-current" />
             <span>{isSubmitting ? "Đang tạo thời khóa biểu..." : "Tự động sinh chuỗi sự kiện học"}</span>

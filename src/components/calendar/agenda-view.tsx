@@ -149,14 +149,14 @@ export function AgendaView({
   return (
     <div className="space-y-5">
       {/* Agenda Header & Filter Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#17261c] p-4 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-surface)] p-4 rounded-[24px] border border-[var(--border)] soft-card-shadow">
         <div className="flex flex-wrap items-center gap-2">
           {/* Time range buttons */}
-          <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs">
+          <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)] text-xs">
             <button
               onClick={() => setTimeRangeDays(7)}
               className={`px-3 py-1 rounded-xl font-semibold transition-all cursor-pointer ${
-                timeRangeDays === 7 ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c] dark:text-[#a3bda9]"
+                timeRangeDays === 7 ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               7 ngày tới
@@ -164,7 +164,7 @@ export function AgendaView({
             <button
               onClick={() => setTimeRangeDays(14)}
               className={`px-3 py-1 rounded-xl font-semibold transition-all cursor-pointer ${
-                timeRangeDays === 14 ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c] dark:text-[#a3bda9]"
+                timeRangeDays === 14 ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               14 ngày tới
@@ -172,7 +172,7 @@ export function AgendaView({
             <button
               onClick={() => setTimeRangeDays(30)}
               className={`px-3 py-1 rounded-xl font-semibold transition-all cursor-pointer ${
-                timeRangeDays === 30 ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c] dark:text-[#a3bda9]"
+                timeRangeDays === 30 ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               30 ngày tới
@@ -180,7 +180,7 @@ export function AgendaView({
             <button
               onClick={() => setTimeRangeDays(0)}
               className={`px-3 py-1 rounded-xl font-semibold transition-all cursor-pointer ${
-                timeRangeDays === 0 ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c] dark:text-[#a3bda9]"
+                timeRangeDays === 0 ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               Tất cả
@@ -191,7 +191,7 @@ export function AgendaView({
           <select
             value={selectedTypeFilter}
             onChange={(e) => setSelectedTypeFilter(e.target.value)}
-            className="h-9 px-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#142318] text-xs text-[#192e22] dark:text-[#f0f7f2] font-medium outline-none"
+            className="h-9 px-3 rounded-2xl border border-[var(--border)] bg-white dark:bg-[#142318] text-xs text-[var(--text-ink)] font-medium outline-none"
           >
             <option value="ALL">Tất cả loại sự kiện</option>
             {ALL_EVENT_TYPES.map((t) => {
@@ -212,7 +212,7 @@ export function AgendaView({
             setIsEventModalOpen(true);
           }}
           size="sm"
-          className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl text-xs font-semibold h-9 px-4 flex items-center space-x-1.5 cursor-pointer shadow-2xs"
+          className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl text-xs font-semibold h-9 px-4 flex items-center space-x-1.5 cursor-pointer shadow-2xs"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Thêm sự kiện mới</span>
@@ -221,12 +221,12 @@ export function AgendaView({
 
       {/* Agenda Event Groups */}
       {groupedEvents.length === 0 ? (
-        <div className="p-12 text-center bg-white dark:bg-[#17261c] rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e]">
+        <div className="p-12 text-[var(--text-subtle)]enter bg-[var(--bg-surface)] rounded-[28px] border border-[var(--border)]">
           <CalendarIcon className="w-10 h-10 text-[#73927d] mx-auto mb-3 opacity-60" />
-          <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-sm font-bold text-[var(--text-ink)]">
             Không có lịch trình nào trong khoảng thời gian này
           </h3>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1 max-w-sm mx-auto">
+          <p className="text-xs text-[var(--text-subtle)] mt-1 max-w-sm mx-auto">
             Hãy nhấn "+ Thêm sự kiện mới" hoặc dùng công cụ AI Xếp Lịch Tự Động để lập kế hoạch ôn tập.
           </p>
         </div>
@@ -239,18 +239,18 @@ export function AgendaView({
                 <div className="flex items-center space-x-2">
                   <span
                     className={`text-xs font-bold uppercase tracking-wider ${
-                      group.isToday ? "text-[#2d6a4f] dark:text-[#52b788]" : "text-[#192e22] dark:text-[#f0f7f2]"
+                      group.isToday ? "text-[var(--mint-dark)]" : "text-[var(--text-ink)]"
                     }`}
                   >
                     {group.dateLabel}
                   </span>
                   {group.isToday && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#2d6a4f] text-white">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--mint)] text-white">
                       Hôm nay
                     </span>
                   )}
                 </div>
-                <span className="text-[11px] text-[#73927d] dark:text-[#8ba393] font-medium">
+                <span className="text-[11px] text-[var(--text-muted)] font-medium">
                   {group.events.length} sự kiện
                 </span>
               </div>
@@ -271,7 +271,7 @@ export function AgendaView({
                       className={`group relative p-3.5 rounded-[22px] border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                         ev.completed
                           ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
-                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882] hover:shadow-2xs"
+                          : "border-[var(--border)] bg-[var(--bg-surface)] hover:border-[var(--mint-soft)] hover:shadow-2xs"
                       }`}
                       style={{ borderLeftColor: typeCfg.borderLeftColor, borderLeftWidth: "4.5px" }}
                     >
@@ -279,11 +279,11 @@ export function AgendaView({
                       <div className="flex items-start sm:items-center space-x-3.5 min-w-0">
                         {/* Time Column */}
                         <div className="shrink-0 text-left w-24">
-                          <div className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                          <div className="text-xs font-bold text-[var(--text-ink)]">
                             {(ev as any).isAllDay ? `Tự do` : `${startTimeFormatted} – ${endTimeFormatted}`}
                           </div>
-                          <div className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5 flex items-center space-x-1">
-                            <Clock className="w-3 h-3 text-[#2d6a4f] dark:text-[#52b788]" />
+                          <div className="text-[10px] text-[var(--text-subtle)] mt-0.5 flex items-center space-x-1">
+                            <Clock className="w-3 h-3 text-[var(--mint-dark)]" />
                             <span>{(ev as any).isAllDay ? (ev as any).plannedDurationMinutes || 60 : durationMins} phút</span>
                           </div>
                         </div>
@@ -325,19 +325,19 @@ export function AgendaView({
                             )}
                           </div>
 
-                          <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
+                          <h4 className="text-xs font-bold text-[var(--text-ink)] truncate">
                             {ev.title}
                           </h4>
 
                           {(ev as any).location && (
-                            <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
-                              <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                            <div className="flex items-center space-x-1 text-[10px] text-[var(--text-subtle)]">
+                              <MapPin className="w-2.5 h-2.5 shrink-0 text-[var(--mint-dark)]" />
                               <span className="truncate">{(ev as any).location}</span>
                             </div>
                           )}
 
                           {ev.description && (
-                            <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] line-clamp-1">
+                            <p className="text-[11px] text-[var(--text-subtle)] line-clamp-1">
                               {ev.description}
                             </p>
                           )}
@@ -367,7 +367,7 @@ export function AgendaView({
                               }
                             }}
                             title="Bắt đầu tự học ngay với PIP Timer"
-                            className="p-1.5 rounded-xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#2d6a4f] hover:text-white transition-colors cursor-pointer"
+                            className="p-1.5 rounded-xl bg-[var(--mint-bg)] text-[var(--mint-dark)] hover:bg-[var(--mint)] hover:text-white transition-colors cursor-pointer"
                           >
                             <Play className="w-3.5 h-3.5 fill-current" />
                           </button>
@@ -378,7 +378,7 @@ export function AgendaView({
                           type="button"
                           onClick={(e) => handleQuickResize(e, ev, -15)}
                           title="Giảm 15 phút"
-                          className="px-2 py-1 rounded-lg border border-[#dbe7dd] dark:border-[#263d2e] text-[10px] font-bold text-[#526b5c] hover:bg-[#eef5f0] transition-colors cursor-pointer"
+                          className="px-2 py-1 rounded-lg border border-[var(--border)] text-[10px] font-bold text-[#526b5c] hover:bg-[#eef5f0] transition-colors cursor-pointer"
                         >
                           -15m
                         </button>
@@ -386,7 +386,7 @@ export function AgendaView({
                           type="button"
                           onClick={(e) => handleQuickResize(e, ev, 15)}
                           title="Tăng 15 phút"
-                          className="px-2 py-1 rounded-lg border border-[#dbe7dd] dark:border-[#263d2e] text-[10px] font-bold text-[#2d6a4f] hover:bg-[#eef5f0] transition-colors cursor-pointer"
+                          className="px-2 py-1 rounded-lg border border-[var(--border)] text-[10px] font-bold text-[var(--mint-dark)] hover:bg-[#eef5f0] transition-colors cursor-pointer"
                         >
                           +15m
                         </button>

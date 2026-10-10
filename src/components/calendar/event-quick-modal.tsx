@@ -211,7 +211,7 @@ export function EventQuickModal({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent
         onClose={onClose}
-        className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl space-y-4"
+        className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl space-y-4"
       >
         <DialogHeader className="space-y-1.5">
           <div className="flex items-center justify-between">
@@ -231,7 +231,7 @@ export function EventQuickModal({
             </span>
           </div>
 
-          <DialogTitle className="text-xl font-bold text-[#192e22] dark:text-[#f0f7f2] pt-1">
+          <DialogTitle className="text-xl font-bold text-[var(--text-ink)] pt-1">
             {event.title}
           </DialogTitle>
 
@@ -241,7 +241,7 @@ export function EventQuickModal({
                 className="w-2.5 h-2.5 rounded-full"
                 style={{ backgroundColor: event.subject.color || "#2d6a4f" }}
               />
-              <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+              <span className="text-xs font-bold text-[var(--mint-dark)]">
                 {event.subject.name}
               </span>
             </div>
@@ -249,39 +249,39 @@ export function EventQuickModal({
         </DialogHeader>
 
         {/* Time and Duration Card */}
-        <div className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
+        <div className="p-4 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-3">
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center space-x-1.5 text-[#526b5c] dark:text-[#a3bda9]">
-              <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+            <div className="flex items-center space-x-1.5 text-[var(--text-subtle)]">
+              <Clock className="w-4 h-4 text-[var(--mint-dark)]" />
               <span>Khung giờ:</span>
             </div>
-            <span className="font-mono font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <span className="font-mono font-bold text-[var(--text-ink)]">
               {formatVN(start, "HH:mm")} – {formatVN(end, "HH:mm")} ({formatVN(start, "dd/MM/yyyy")})
             </span>
           </div>
 
           {event.location && (
-            <div className="flex items-center justify-between text-xs pt-1 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
-              <div className="flex items-center space-x-1.5 text-[#526b5c] dark:text-[#a3bda9]">
+            <div className="flex items-center justify-between text-xs pt-1 border-t border-[var(--border)]/60 dark:border-[#263d2e]">
+              <div className="flex items-center space-x-1.5 text-[var(--text-subtle)]">
                 <MapPin className="w-3.5 h-3.5 text-rose-500" />
                 <span>Địa điểm:</span>
               </div>
-              <span className="font-medium text-[#192e22] dark:text-[#f0f7f2] truncate max-w-[200px]">
+              <span className="font-medium text-[var(--text-ink)] truncate max-w-[200px]">
                 {event.location}
               </span>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] text-center">
-            <div className="p-2 rounded-xl bg-white dark:bg-[#1a2d1f] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-              <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">Kế hoạch (Planned)</div>
-              <div className="font-bold text-base text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e] text-[var(--text-subtle)]enter">
+            <div className="p-2 rounded-xl bg-white dark:bg-[#1a2d1f] border border-[var(--border)]/60 dark:border-[#263d2e]">
+              <div className="text-[10px] text-[var(--text-muted)]">Kế hoạch (Planned)</div>
+              <div className="font-bold text-[var(--text-subtle)]ase text-[var(--text-ink)]">
                 {formatMinutesVN(plannedMins)}
               </div>
             </div>
-            <div className="p-2 rounded-xl bg-white dark:bg-[#1a2d1f] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-              <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">Thực tế (Actual)</div>
-              <div className="font-bold text-base text-[#2d6a4f] dark:text-[#52b788]">
+            <div className="p-2 rounded-xl bg-white dark:bg-[#1a2d1f] border border-[var(--border)]/60 dark:border-[#263d2e]">
+              <div className="text-[10px] text-[var(--text-muted)]">Thực tế (Actual)</div>
+              <div className="font-bold text-[var(--text-subtle)]ase text-[var(--mint-dark)]">
                 {isCompleted ? formatMinutesVN(actualMins) : "0 phút"}
               </div>
             </div>
@@ -296,8 +296,8 @@ export function EventQuickModal({
             onClick={() => handleToggleComplete()}
             className={`w-full h-12 text-sm font-bold rounded-2xl flex items-center justify-center space-x-2 transition-all ${
               isCompleted
-                ? "bg-[#2d6a4f] hover:bg-[#1b4332] text-white shadow-md"
-                : "bg-white dark:bg-[#192f20] border-2 border-[#2d6a4f] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#eef5f0] dark:hover:bg-[#233d2c]"
+                ? "bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white shadow-md"
+                : "bg-white dark:bg-[#192f20] border-2 border-[var(--mint)] text-[var(--mint-dark)] hover:bg-[var(--mint-soft)]"
             }`}
           >
             {loading ? (
@@ -316,14 +316,14 @@ export function EventQuickModal({
           </Button>
 
           {/* Option to modify actual study time */}
-          <div className="flex items-center justify-between text-xs px-1 text-[#526b5c] dark:text-[#a3bda9]">
+          <div className="flex items-center justify-between text-xs px-1 text-[var(--text-subtle)]">
             <button
               type="button"
               onClick={() => {
                 setShowCustomDuration(!showCustomDuration);
                 if (!customMinutes) setCustomMinutes(plannedMins);
               }}
-              className="hover:underline flex items-center space-x-1 cursor-pointer font-medium text-[#2d6a4f] dark:text-[#52b788]"
+              className="hover:underline flex items-center space-x-1 cursor-pointer font-medium text-[var(--mint-dark)]"
             >
               <Sliders className="w-3.5 h-3.5" />
               <span>{showCustomDuration ? "Ẩn tùy chỉnh giờ" : "Chỉnh thời gian thực tế"}</span>
@@ -337,12 +337,12 @@ export function EventQuickModal({
           </div>
 
           {showCustomDuration && (
-            <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+            <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                <span className="text-xs font-semibold text-[var(--text-ink)]">
                   Số phút thực tế đã học:
                 </span>
-                <span className="font-mono text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                <span className="font-mono text-xs font-bold text-[var(--mint-dark)]">
                   {formatMinutesVN(customMinutes || plannedMins)}
                 </span>
               </div>
@@ -358,8 +358,8 @@ export function EventQuickModal({
                       onClick={() => setCustomMinutes(targetVal)}
                       className={`px-2 py-1 rounded-lg text-xs font-bold border transition-colors ${
                         customMinutes === targetVal
-                          ? "bg-[#2d6a4f] text-white border-[#2d6a4f]"
-                          : "bg-white dark:bg-[#1a2d1f] text-[#526b5c] dark:text-[#a3bda9] border-[#dbe7dd] dark:border-[#263d2e] hover:border-[#2d6a4f]"
+                          ? "bg-[var(--mint)] text-white border-[var(--mint)]"
+                          : "bg-white dark:bg-[#1a2d1f] text-[var(--text-subtle)] border-[var(--border)] hover:border-[var(--mint)]"
                       }`}
                     >
                       {delta === 0 ? "Mặc định" : delta > 0 ? `+${delta}m` : `${delta}m`}
@@ -382,7 +382,7 @@ export function EventQuickModal({
                   size="sm"
                   variant="default"
                   onClick={() => handleToggleComplete(customMinutes)}
-                  className="h-8 text-xs font-bold bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl shrink-0"
+                  className="h-8 text-xs font-bold bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl shrink-0"
                 >
                   Lưu số phút
                 </Button>
@@ -392,14 +392,14 @@ export function EventQuickModal({
         </div>
 
         {/* Action Buttons: Timer, Edit, Delete */}
-        <div className="flex items-center justify-between pt-2 border-t border-[#dbe7dd]/80 dark:border-[#263d2e]">
+        <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]/80 dark:border-[#263d2e]">
           {canStartStudyTimer(event.type) && event.subject && !isCompleted ? (
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={handleStartTimer}
-              className="rounded-xl border-[#dbe7dd] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#eef5f0] space-x-1 font-bold text-xs h-9"
+              className="rounded-xl border-[var(--border)] text-[var(--mint-dark)] hover:bg-[#eef5f0] space-x-1 font-bold text-xs h-9"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Bắt đầu Timer</span>
@@ -417,7 +417,7 @@ export function EventQuickModal({
                 onClose();
                 onOpenEditModal(event);
               }}
-              className="rounded-xl border-[#dbe7dd] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f8fbf8] space-x-1 font-semibold text-xs h-9"
+              className="rounded-xl border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--bg-muted)] space-x-1 font-semibold text-xs h-9"
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span>Chỉnh sửa</span>

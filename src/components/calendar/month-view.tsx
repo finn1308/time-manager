@@ -139,7 +139,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
   return (
     <div className="flex flex-col space-y-4">
       {/* Month Navigation */}
-      <div className="flex items-center justify-between bg-white dark:bg-[#17261c] p-3.5 rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow flex-wrap gap-2">
+      <div className="flex items-center justify-between bg-[var(--bg-surface)] p-3.5 rounded-[24px] border border-[var(--border)] soft-card-shadow flex-wrap gap-2">
         <div className="flex items-center space-x-2 flex-wrap gap-y-1">
           <Button
             variant="pill"
@@ -167,7 +167,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-          <span className="font-bold text-xs sm:text-sm text-[#192e22] dark:text-[#f0f7f2] px-1 sm:px-2">
+          <span className="font-bold text-xs sm:text-sm text-[var(--text-ink)] px-1 sm:px-2">
             Tháng {formatVN(currentMonth, "MM/yyyy")}
           </span>
         </div>
@@ -189,13 +189,13 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
       {/* Grid Layout: Calendar + Side Info */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Month Matrix */}
-        <div className="lg:col-span-3 bg-white dark:bg-[#17261c] p-3 sm:p-4 rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow">
+        <div className="lg:col-span-3 bg-[var(--bg-surface)] p-3 sm:p-4 rounded-[28px] border border-[var(--border)] soft-card-shadow">
           {/* Day Name Header */}
-          <div className="grid grid-cols-7 mb-2 border-b border-[#dbe7dd]/60 dark:border-[#263d2e] pb-2 text-center">
+          <div className="grid grid-cols-7 mb-2 border-b border-[var(--border)]/60 dark:border-[#263d2e] pb-2 text-[var(--text-subtle)]enter">
             {dayNamesVN.map((name) => (
               <div
                 key={name}
-                className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]"
+                className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--text-subtle)]"
               >
                 {name}
               </div>
@@ -225,7 +225,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                       : isToday
                       ? "border-[#52b788]/60 bg-[#edf7f0]/40 dark:bg-[#16271c]"
                       : isCurrentMonth
-                      ? "border-[#dbe7dd]/60 dark:border-[#263d2e]/80 hover:bg-[#f6faf7] dark:hover:bg-[#1a2d21]"
+                      ? "border-[var(--border)]/60 dark:border-[#263d2e]/80 hover:bg-[#f6faf7] dark:hover:bg-[#1a2d21]"
                       : "border-transparent opacity-40 bg-gray-50/50 dark:bg-black/10"
                   }`}
                 >
@@ -233,8 +233,8 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                     <span
                       className={`text-[11px] sm:text-xs font-bold inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full ${
                         isToday
-                          ? "bg-[#2d6a4f] text-white"
-                          : "text-[#192e22] dark:text-[#f0f7f2]"
+                          ? "bg-[var(--mint)] text-white"
+                          : "text-[var(--text-ink)]"
                       }`}
                     >
                       {formatVN(d, "d")}
@@ -273,7 +273,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                         return (
                           <div
                             key={ev.id}
-                            className="truncate text-[9px] font-medium px-1.5 py-0.5 rounded-md border border-[#dbe7dd]/80 dark:border-[#263d2e]"
+                            className="truncate text-[9px] font-medium px-1.5 py-0.5 rounded-md border border-[var(--border)]/80 dark:border-[#263d2e]"
                             style={{
                               backgroundColor: typeCfg.badgeBg,
                               color: typeCfg.badgeText,
@@ -297,10 +297,10 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
         </div>
 
         {/* Selected Day Details Panel */}
-        <div className="bg-white dark:bg-[#17261c] p-5 rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] soft-card-shadow flex flex-col justify-between">
+        <div className="bg-[var(--bg-surface)] p-5 rounded-[28px] border border-[var(--border)] soft-card-shadow flex flex-col justify-between">
           <div>
-            <h3 className="font-bold text-xs uppercase tracking-wider text-[#192e22] dark:text-[#f0f7f2] pb-3 border-b border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center space-x-2">
-              <Calendar className="w-3.5 h-3.5 text-[#2d6a4f]" />
+            <h3 className="font-bold text-xs uppercase tracking-wider text-[var(--text-ink)] pb-3 border-b border-[var(--border)]/80 dark:border-[#263d2e] flex items-center space-x-2">
+              <Calendar className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
               <span>Ngày: {formatVN(selectedDay, "EEEE, dd/MM/yyyy")}</span>
             </h3>
 
@@ -315,7 +315,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                     className={`p-3 rounded-2xl border text-xs transition-all cursor-pointer group ${
                       ev.completed
                         ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60 shadow-2xs"
-                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#52b788]"
+                        : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[#52b788]"
                     }`}
                     style={{ borderLeftColor: typeCfg.borderLeftColor || ev.subject?.color || "#2d6a4f", borderLeftWidth: "4px" }}
                   >
@@ -369,14 +369,14 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                     )}
 
                     <div className="flex items-start justify-between">
-                      <div className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex-1">
+                      <div className="font-bold text-[var(--text-ink)] flex-1">
                         {ev.title}
                       </div>
                     </div>
 
                     {(ev as any).location && (
-                      <div className="flex items-center space-x-1 text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-1 truncate">
-                        <MapPin className="w-2.5 h-2.5 shrink-0 text-[#2d6a4f] dark:text-[#52b788]" />
+                      <div className="flex items-center space-x-1 text-[10px] text-[var(--text-subtle)] mt-1 truncate">
+                        <MapPin className="w-2.5 h-2.5 shrink-0 text-[var(--mint-dark)]" />
                         <span className="truncate">{(ev as any).location}</span>
                       </div>
                     )}
@@ -389,7 +389,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
               })}
 
               {selectedDayEvents.length === 0 && (
-                <p className="text-xs text-[#8ba393] text-center py-10">
+                <p className="text-xs text-[#8ba393] text-[var(--text-subtle)]enter py-10">
                   Không có buổi học nào vào ngày này.
                 </p>
               )}
@@ -411,31 +411,31 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
       </div>
 
       {/* Monthly Planned vs Actual Statistics Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs text-xs">
         <div className="flex items-center space-x-2">
-          <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
-          <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <Clock className="w-4 h-4 text-[var(--mint-dark)]" />
+          <span className="font-bold text-[var(--text-ink)]">
             Tiến độ học trong tháng ({formatVN(currentMonth, "MM/yyyy")}):
           </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <div>
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">Kế hoạch: </span>
-            <strong className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <span className="text-[var(--text-subtle)]">Kế hoạch: </span>
+            <strong className="font-bold text-[var(--text-ink)]">
               {formatMinutesVN(monthPlannedMins)}
             </strong>
           </div>
           <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
           <div>
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đã học thực tế: </span>
-            <strong className="font-bold text-[#2d6a4f] dark:text-[#52b788]">
+            <span className="text-[var(--text-subtle)]">Đã học thực tế: </span>
+            <strong className="font-bold text-[var(--mint-dark)]">
               {formatMinutesVN(monthActualMins)}
             </strong>
           </div>
           <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
           <div className="flex items-center space-x-1.5">
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">Đạt: </span>
+            <span className="text-[var(--text-subtle)]">Đạt: </span>
             <span className="px-2 py-0.5 rounded-full font-bold bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1f3828] dark:text-[#74c69d]">
               {monthProgressPct}%
             </span>

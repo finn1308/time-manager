@@ -107,12 +107,12 @@ export function EventCompleteCheckbox({
       <div
         className={`${sizeClasses[size]} shrink-0 flex items-center justify-center border transition-all duration-200 ${
           completed
-            ? "bg-[#2d6a4f] dark:bg-[#52b788] border-[#2d6a4f] dark:border-[#52b788] text-white shadow-xs"
-            : "bg-white dark:bg-[#1a2e21] border-[#b7d8c3] dark:border-[#2f523c] group-hover:border-[#2d6a4f] group-hover:bg-[#eef5f0] dark:group-hover:bg-[#233d2c]"
+            ? "bg-[var(--mint)] border-[var(--mint)] dark:border-[#52b788] text-white shadow-xs"
+            : "bg-white dark:bg-[#1a2e21] border-[var(--mint-soft)] group-hover:border-[var(--mint)] group-hover:bg-[#eef5f0] dark:group-hover:bg-[#233d2c]"
         }`}
       >
         {loading ? (
-          <Loader2 className="w-3 h-3 animate-spin text-current" />
+          <Loader2 className="w-3 h-3 animate-spin text-[var(--text-subtle)]urrent" />
         ) : completed ? (
           <Check className="w-3 h-3 stroke-[3]" />
         ) : null}
@@ -122,8 +122,8 @@ export function EventCompleteCheckbox({
         <span
           className={`text-xs font-semibold transition-colors ${
             completed
-              ? "text-[#2d6a4f] dark:text-[#52b788] line-through opacity-85"
-              : "text-[#526b5c] dark:text-[#a3bda9] group-hover:text-[#192e22] dark:group-hover:text-[#f0f7f2]"
+              ? "text-[var(--mint-dark)] line-through opacity-85"
+              : "text-[var(--text-subtle)] group-hover:text-[var(--text-ink)] dark:group-hover:text-[#f0f7f2]"
           }`}
         >
           {completed ? "Đã học" : "Chưa học"}
