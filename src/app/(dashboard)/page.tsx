@@ -417,84 +417,84 @@ export default async function DashboardPage() {
 
       {/* Quick Action Navigation Cards */}
       <div className="space-y-2.5">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9] px-1">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)] px-1">
           Truy cập nhanh
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <Link href="/calendar" className="group">
-            <div className="p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow soft-card-hover flex items-center justify-between">
+            <div className="p-3.5 rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] card-shadow-sm card-hover flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] dark:text-[#9cd1b1] flex items-center justify-center shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--lavender-bg)] text-[var(--lavender-dark)] flex items-center justify-center shadow-2xs group-hover:bg-[var(--lavender)] group-hover:text-white transition-colors">
                   <CalendarIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
+                  <h3 className="text-xs font-bold text-[var(--text-ink)] group-hover:text-[var(--lavender-dark)] transition-colors">
                     Lịch học 4 buổi
                   </h3>
-                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                  <p className="text-[11px] text-[var(--text-muted)]">
                     Day • Week • Month
                   </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
 
           <Link href="/subjects" className="group">
-            <div className="p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow soft-card-hover flex items-center justify-between">
+            <div className="p-3.5 rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] card-shadow-sm card-hover flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#192f20] text-[#40916c] flex items-center justify-center shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--sky-bg)] text-[var(--sky-dark)] flex items-center justify-center shadow-2xs group-hover:bg-[var(--sky)] group-hover:text-white transition-colors">
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
+                  <h3 className="text-xs font-bold text-[var(--text-ink)] group-hover:text-[var(--sky-dark)] transition-colors">
                     Môn học & Mục tiêu
                   </h3>
-                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                  <p className="text-[11px] text-[var(--text-muted)]">
                     {subjects.length} môn đang học
                   </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
 
           <Link href="/blocked-slots" className="group">
-            <div className="p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow soft-card-hover flex items-center justify-between">
+            <div className="p-3.5 rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] card-shadow-sm card-hover flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#fbf9f1] dark:bg-[#201d14] text-[#a3a86c] flex items-center justify-center shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--peach-bg)] text-[var(--peach-dark)] flex items-center justify-center shadow-2xs group-hover:bg-[var(--peach)] group-hover:text-white transition-colors">
                   <Lock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
+                  <h3 className="text-xs font-bold text-[var(--text-ink)] group-hover:text-[var(--peach-dark)] transition-colors">
                     Khung giờ khóa
                   </h3>
-                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                  <p className="text-[11px] text-[var(--text-muted)]">
                     Lịch bận & Giờ ngủ
                   </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
 
           <Link href="/learning" className="group">
-            <div className="p-3.5 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow soft-card-hover flex items-center justify-between">
+            <div className="p-3.5 rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] card-shadow-sm card-hover flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#e8f4ec] dark:bg-[#172d1f] text-[#2d6a4f] flex items-center justify-center shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center shadow-2xs group-hover:bg-[var(--mint)] group-hover:text-white transition-colors">
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] transition-colors">
+                  <h3 className="text-xs font-bold text-[var(--text-ink)] group-hover:text-[var(--mint-dark)] transition-colors">
                     Learning Hub & Quiz
                   </h3>
-                  <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                  <p className="text-[11px] text-[var(--text-muted)]">
                     AI Giáo trình & Lộ trình
                   </p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-[#73927d] group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
         </div>
@@ -519,40 +519,40 @@ export default async function DashboardPage() {
 
       {/* AI Recommendations & Continue Learning */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4 pb-2">
-        <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+        <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] card-shadow">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-              <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+            <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+              <div className="w-8 h-8 rounded-xl bg-[var(--lilac-bg)] text-[var(--lilac-dark)] flex items-center justify-center">
                 <Brain className="w-4 h-4" />
               </div>
               <span>Đề xuất học tập cho bạn</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/40">
-              <h4 className="font-bold text-purple-900 dark:text-purple-100 text-sm mb-1">Cần ôn tập ngay (SM-2)</h4>
-              <p className="text-xs text-purple-700 dark:text-purple-300 mb-3">Từ vựng đến chu kỳ ôn tập ngắt quãng để khắc sâu vào trí nhớ dài hạn.</p>
+            <div className="p-4 rounded-2xl bg-[var(--lilac-bg)] border border-[var(--lilac-soft)]">
+              <h4 className="font-bold text-[var(--lilac-dark)] text-sm mb-1">Cần ôn tập ngay (SM-2)</h4>
+              <p className="text-xs text-[var(--text-subtle)] mb-3">Từ vựng đến chu kỳ ôn tập ngắt quãng để khắc sâu vào trí nhớ dài hạn.</p>
               <Link href="/practice/review">
-                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl w-full font-bold">Ôn tập ngay</Button>
+                <Button size="sm" className="bg-[var(--lilac)] hover:bg-[var(--lilac-dark)] text-white rounded-xl w-full font-bold">Ôn tập ngay</Button>
               </Link>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+        <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] card-shadow">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+            <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+              <div className="w-8 h-8 rounded-xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center">
                 <Brain className="w-4 h-4" />
               </div>
               <span>Luyện tập chủ động (Practice)</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-             <div className="flex items-center justify-between p-3 border border-[#dbe7dd] dark:border-[#263d2e] rounded-xl hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] transition-colors">
+             <div className="flex items-center justify-between p-3 border border-[var(--border)] rounded-xl hover:bg-[var(--bg-elevated)] transition-colors">
                 <div>
-                   <h4 className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">Trung tâm Luyện tập</h4>
-                   <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">Ôn tập tổng hợp & Ngân hàng lỗi sai</p>
+                   <h4 className="font-bold text-sm text-[var(--text-ink)]">Trung tâm Luyện tập</h4>
+                   <p className="text-xs text-[var(--text-subtle)]">Ôn tập tổng hợp & Ngân hàng lỗi sai</p>
                 </div>
                 <Link href="/practice">
                   <Button variant="outline" size="sm" className="rounded-xl font-bold"><Play className="w-3 h-3 mr-1.5"/> Luyện tập</Button>
