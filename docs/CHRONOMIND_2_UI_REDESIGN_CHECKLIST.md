@@ -66,5 +66,5 @@
 - [ ] Accessibility.
 - [ ] Mobile responsiveness.
 - [ ] Performance.
-- [ ] Backend integrity.
-- [ ] Regression testing.
+- [x] Backend integrity.
+- [x] Regression testing.
