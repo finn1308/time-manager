@@ -637,7 +637,7 @@ export function EventModal({
         isLocked,
         isFlexible,
         isAllDay,
-        plannedDurationMinutes: isAllDay ? plannedDurationMinutes : undefined,
+        plannedDurationMinutes: isAllDay ? Math.max(1, parseInt(plannedDurationInput, 10) || plannedDurationMinutes || 90) : undefined,
         trackStudyTime: isStudyEventCategory(eventType, subjectId),
         timezone: "Asia/Ho_Chi_Minh",
         recurrence,
@@ -1255,38 +1255,71 @@ export function EventModal({
                           <span>Thời lượng mục tiêu mỗi ngày <span className="text-rose-500">*</span></span>
                         </label>
                         <span className="font-mono text-xs font-bold text-[var(--mint-dark)]">
-                          {flexibleTargetMinutes} phút / ngày
+                          {formatDurationLabelVN(flexibleTargetMinutes)} / ngày
                         </span>
                       </div>
 
                       <div className="flex flex-wrap gap-1.5">
-                        {[15, 30, 45, 60, 90, 120].map((mins) => (
+                        {[15, 25, 28, 30, 45, 60, 90, 120].map((mins) => (
                           <button
                             key={mins}
                             type="button"
-                            onClick={() => setFlexibleTargetMinutes(mins)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            onClick={() => handleSetFlexibleTarget(mins)}
+                            className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                               flexibleTargetMinutes === mins
                                 ? "bg-[var(--mint)] text-white shadow-2xs"
                                 : "bg-white dark:bg-[#1b2b20] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                             }`}
                           >
-                            {mins} phút
+                            {mins === 25 ? "25p (Pomo)" : mins === 28 ? "28p" : mins < 60 ? `${mins}p` : `${mins / 60}h`}
                           </button>
                         ))}
                       </div>
 
                       <div className="flex items-center space-x-2 pt-1">
-                        <span className="text-[11px] text-[var(--text-subtle)]">Hoặc tự nhập:</span>
-                        <Input
-                          type="number"
-                          min={5}
-                          max={600}
-                          value={flexibleTargetMinutes}
-                          onChange={(e) => setFlexibleTargetMinutes(Math.max(5, parseInt(e.target.value, 10) || 5))}
-                          className="w-24 h-8 text-xs font-mono rounded-xl"
-                        />
-                        <span className="text-xs text-[var(--text-subtle)]">phút</span>
+                        <span className="text-[11px] text-[var(--text-subtle)] whitespace-nowrap">Hoặc tự nhập:</span>
+                        <div className="relative w-28">
+                          <Input
+                            type="number"
+                            min={5}
+                            max={600}
+                            value={flexibleTargetInput}
+                            onChange={(e) => handleFlexibleTargetInputChange(e.target.value)}
+                            onBlur={handleFlexibleTargetInputBlur}
+                            placeholder="VD: 28"
+                            className="h-8 pr-8 text-xs font-mono font-bold rounded-xl"
+                          />
+                          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-[var(--text-subtle)] pointer-events-none">
+                            phút
+                          </span>
+                        </div>
+
+                        <div className="flex items-center space-x-1">
+                          <button
+                            type="button"
+                            title="Giảm 5 phút"
+                            onClick={() => handleNudgeFlexibleTarget(-5)}
+                            className="h-8 px-2 rounded-xl text-[11px] font-bold border border-[var(--border)] bg-white dark:bg-[#1b2b20] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                          >
+                            -5p
+                          </button>
+                          <button
+                            type="button"
+                            title="Tăng 5 phút"
+                            onClick={() => handleNudgeFlexibleTarget(5)}
+                            className="h-8 px-2 rounded-xl text-[11px] font-bold border border-[var(--border)] bg-white dark:bg-[#1b2b20] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                          >
+                            +5p
+                          </button>
+                          <button
+                            type="button"
+                            title="Tăng 15 phút"
+                            onClick={() => handleNudgeFlexibleTarget(15)}
+                            className="h-8 px-2 rounded-xl text-[11px] font-bold border border-[var(--border)] bg-white dark:bg-[#1b2b20] hover:bg-[var(--mint-pale)] text-[var(--text-subtle)] cursor-pointer"
+                          >
+                            +15p
+                          </button>
+                        </div>
                       </div>
                     </div>
 
