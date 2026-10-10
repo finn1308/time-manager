@@ -74,6 +74,7 @@ export function EventQuickModal({
   const [loading, setLoading] = useState(false);
   const [showCustomDuration, setShowCustomDuration] = useState(false);
   const [customMinutes, setCustomMinutes] = useState<number>(0);
+  const [customMinutesInput, setCustomMinutesInput] = useState<string>("");
 
   if (!event) return null;
 
