@@ -51,7 +51,7 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] font-medium">
+        <p className="text-xs text-[var(--text-subtle)] font-medium">
           Có {slots.length} khung giờ được thiết lập. AI và Scheduler sẽ coi đây là vùng bất khả xâm phạm.
         </p>
 
@@ -61,17 +61,17 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
             setEditingSlot(null);
             setIsModalOpen(true);
           }}
-          className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl space-x-1.5 text-xs font-semibold shadow-2xs"
+          className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl space-x-1.5 text-xs font-semibold shadow-2xs"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Thêm khung giờ mới</span>
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+      <div className="overflow-x-auto rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] soft-card-shadow">
         <table className="w-full min-w-[600px] text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[#dbe7dd]/80 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9] font-bold uppercase tracking-wider">
+            <tr className="border-b border-[var(--border)] bg-[var(--bg-muted)] text-[var(--text-subtle)] font-bold uppercase tracking-wider">
               <th className="py-3.5 px-5">Mục đích / Tiêu đề</th>
               <th className="py-3.5 px-4">Khung giờ</th>
               <th className="py-3.5 px-4">Ngày lặp lại</th>
@@ -81,23 +81,23 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
           </thead>
           <tbody className="divide-y divide-[#dbe7dd]/60 dark:divide-[#263d2e]">
             {slots.map((slot) => (
-              <tr key={slot.id} className="hover:bg-[#f8fbf8] dark:hover:bg-[#142318] transition-colors">
+              <tr key={slot.id} className="hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318] transition-colors">
                 <td className="py-4 px-5">
                   <div className="flex items-center space-x-2.5">
                     <div className="w-8 h-8 rounded-xl bg-[#edf0dc] dark:bg-[#2b301c] text-[#595e2b] dark:text-[#d3d89e] flex items-center justify-center shrink-0">
                       <Lock className="w-4 h-4" />
                     </div>
-                    <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                    <span className="font-bold text-sm text-[var(--text-ink)]">
                       {slot.title}
                     </span>
                   </div>
                 </td>
 
-                <td className="py-4 px-4 font-mono font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <td className="py-4 px-4 font-mono font-bold text-[var(--text-ink)]">
                   {slot.startTime} - {slot.endTime}
                 </td>
 
-                <td className="py-4 px-4 text-[#526b5c] dark:text-[#a3bda9] font-medium">
+                <td className="py-4 px-4 text-[var(--text-subtle)] font-medium">
                   {slot.dayOfWeek !== null && slot.dayOfWeek !== undefined ? (
                     <Badge variant="secondary">
                       {DAY_LABELS[slot.dayOfWeek]}
@@ -119,7 +119,7 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
                   <div className="flex items-center justify-end space-x-1.5">
                     <button
                       onClick={() => handleDelete(slot.id, slot.title)}
-                      className="p-2 rounded-full hover:bg-[#f7ebeb] text-[#73927d] hover:text-[#b87474] transition-colors cursor-pointer"
+                      className="p-2 rounded-full hover:bg-[#f7ebeb] text-[var(--text-muted)] hover:text-[#b87474] transition-colors cursor-pointer"
                       title="Xóa khung giờ"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -131,7 +131,7 @@ export function BlockedSlotsTable({ slots }: BlockedSlotsTableProps) {
 
             {slots.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-14 text-center text-sm text-[#526b5c] dark:text-[#a3bda9]">
+                <td colSpan={5} className="py-14 text-center text-sm text-[var(--text-subtle)]">
                   Chưa có khung giờ nào bị khóa. Hãy thiết lập giờ ngủ hoặc lịch bận để AI tránh!
                 </td>
               </tr>

@@ -373,7 +373,7 @@ export function CalendarClient({
                 {nlpProposal.subjectName && (
                   <div className="flex items-center justify-between text-[var(--text-subtle)]">
                     <span>Môn học:</span>
-                    <Badge variant="secondary" className="bg-[#eef5f0] text-[var(--mint-dark)] dark:bg-[#1d3024] dark:text-[#52b788] text-[10px]">
+                    <Badge variant="secondary" className="bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1d3024] dark:text-[#52b788] text-[10px]">
                       {nlpProposal.subjectName}
                     </Badge>
                   </div>
@@ -386,7 +386,7 @@ export function CalendarClient({
                   <span>Cảnh báo: {nlpProposal.conflictReason || "Khung giờ này bị trùng lịch!"}</span>
                 </div>
               ) : (
-                <div className="p-3 rounded-2xl bg-[#eef5f0] text-[var(--mint-dark)] border border-[var(--border)] text-xs flex items-center space-x-2">
+                <div className="p-3 rounded-2xl bg-[var(--mint-bg)] text-[var(--mint-dark)] border border-[var(--border)] text-xs flex items-center space-x-2">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>Khung giờ hoàn toàn khả dụng và không bị xung đột.</span>
                 </div>
@@ -398,7 +398,7 @@ export function CalendarClient({
                 type="button"
                 variant="outline"
                 onClick={() => setNlpProposal(null)}
-                className="rounded-2xl border-[var(--border)] text-[#526b5c] text-xs"
+                className="rounded-2xl border-[var(--border)] text-[var(--text-subtle)] text-xs"
               >
                 Hủy bỏ
               </Button>

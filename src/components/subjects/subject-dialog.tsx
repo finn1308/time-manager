@@ -156,7 +156,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
               Tên môn học *
             </label>
             <Input
@@ -164,24 +164,24 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
               onChange={(e) => setName(e.target.value)}
               placeholder="VD: IELTS Academic, Giải tích 1, Lập trình Python..."
               required
-              className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+              className="rounded-2xl border-[var(--border)] h-10 text-xs"
             />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                 Mã môn
               </label>
               <Input
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="IELTS..."
-                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                className="rounded-2xl border-[var(--border)] h-10 text-xs"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                 Chỉ tiêu (giờ/tuần)
               </label>
               <Input
@@ -191,17 +191,17 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
                 value={targetHours}
                 onChange={(e) => setTargetHours(e.target.value)}
                 placeholder="VD: 8"
-                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                className="rounded-2xl border-[var(--border)] h-10 text-xs"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                 Độ ưu tiên (1-5)
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 text-xs text-[var(--text-ink)]"
               >
                 <option value="5">5 (Cao nhất)</option>
                 <option value="4">4 (Cao)</option>
@@ -215,13 +215,13 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
           {/* Difficulty & Workload */}
           <div className="grid grid-cols-2 gap-2.5">
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                 Độ khó (Difficulty)
               </label>
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
-                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 text-xs text-[var(--text-ink)]"
               >
                 <option value="EASY">Dễ (Easy)</option>
                 <option value="MEDIUM">Trung bình</option>
@@ -229,7 +229,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                 Ước tính tải (giờ)
               </label>
               <Input
@@ -239,14 +239,14 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
                 value={estimatedWorkload}
                 onChange={(e) => setEstimatedWorkload(e.target.value)}
                 placeholder="VD: 50h"
-                className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                className="rounded-2xl border-[var(--border)] h-10 text-xs"
               />
             </div>
           </div>
 
           {/* LỰA CHỌN KẾ HOẠCH THI CỬ vs CHỈ THÍCH HỌC */}
           <div className="space-y-2 pt-1 pb-1">
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0]">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0]">
               Kế hoạch thi cử (Tùy chọn)
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -258,17 +258,17 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
                 }}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   !hasExam
-                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
-                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882]"
+                    ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[var(--border)] bg-[var(--bg-surface)] hover:border-[var(--mint-soft)]"
                 }`}
               >
                 <div className="flex items-center space-x-2">
                   <span className="text-base">🌱</span>
-                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  <span className="text-xs font-bold text-[var(--text-ink)]">
                     Chỉ thích học
                   </span>
                 </div>
-                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 line-clamp-2">
+                <p className="text-[11px] text-[var(--text-subtle)] dark:text-[#8aa693] mt-1 line-clamp-2">
                   Học vì đam mê & sở thích, không có kỳ thi hay hạn nộp
                 </p>
               </button>
@@ -278,17 +278,17 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
                 onClick={() => setHasExam(true)}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   hasExam
-                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
-                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882]"
+                    ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[var(--border)] bg-[var(--bg-surface)] hover:border-[var(--mint-soft)]"
                 }`}
               >
                 <div className="flex items-center space-x-2">
                   <span className="text-base">🎯</span>
-                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  <span className="text-xs font-bold text-[var(--text-ink)]">
                     Có kỳ thi / Deadline
                   </span>
                 </div>
-                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 line-clamp-2">
+                <p className="text-[11px] text-[var(--text-subtle)] dark:text-[#8aa693] mt-1 line-clamp-2">
                   Có ngày thi chứng chỉ, kiểm tra hoặc hạn chót hoàn thành
                 </p>
               </button>
@@ -297,45 +297,45 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
 
           {/* Giao diện tương ứng với lựa chọn */}
           {!hasExam ? (
-            <div className="p-3 rounded-2xl bg-[#f4f9f5] dark:bg-[#15271b] border border-[#dbe7dd] dark:border-[#203a27] text-xs text-[#2d6a4f] dark:text-[#7fc498] flex items-center space-x-2.5">
+            <div className="p-3 rounded-2xl bg-[#f4f9f5] dark:bg-[#15271b] border border-[var(--border)] dark:border-[#203a27] text-xs text-[var(--mint-dark)] dark:text-[#7fc498] flex items-center space-x-2.5">
               <span className="text-base shrink-0">✨</span>
               <span className="leading-relaxed">
                 <strong>Chế độ tự học không áp lực:</strong> Bạn không cần thi môn này. AI sẽ tự động phân bổ lịch học đều đặn mỗi tuần theo chỉ tiêu của bạn mà không đếm ngược hay dồn ép kỳ thi.
               </span>
             </div>
           ) : (
-            <div className="space-y-3 p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#15241a] border border-[#dbe7dd] dark:border-[#263d2e] transition-all">
+            <div className="space-y-3 p-3.5 rounded-2xl bg-[var(--bg-muted)] dark:bg-[#15241a] border border-[var(--border)] transition-all">
               <div>
-                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                   📅 Thời gian thi / Ngày thi môn học (Exam Date / Deadline) *
                 </label>
                 <Input
                   type="date"
                   value={deadline}
                   onChange={(e) => setDeadline(e.target.value)}
-                  className="rounded-2xl border-[#dbe7dd] h-10 text-xs bg-white dark:bg-[#17261c]"
+                  className="rounded-2xl border-[var(--border)] h-10 text-xs bg-[var(--bg-surface)]"
                 />
-                <p className="text-[10px] text-[#526b5c] dark:text-[#8aa693] mt-1">
+                <p className="text-[10px] text-[var(--text-subtle)] dark:text-[#8aa693] mt-1">
                   AI sẽ ưu tiên tăng tốc độ ôn luyện và gửi cảnh báo chuẩn bị trước ngày thi.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+                <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                   Mục tiêu điểm số (Target Score - Tùy chọn)
                 </label>
                 <Input
                   value={targetScore}
                   onChange={(e) => setTargetScore(e.target.value)}
                   placeholder="VD: 7.5 IELTS, A+, 9.0, Pass..."
-                  className="rounded-2xl border-[#dbe7dd] h-10 text-xs bg-white dark:bg-[#17261c]"
+                  className="rounded-2xl border-[var(--border)] h-10 text-xs bg-[var(--bg-surface)]"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
               Màu đại diện (Pastel Palette)
             </label>
             <div className="flex flex-wrap gap-2">
@@ -358,7 +358,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
               Mô tả / Đề cương
             </label>
             <textarea
@@ -366,7 +366,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Ghi chú nội dung trọng tâm của môn học này..."
-              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[var(--text-ink)]"
             />
           </div>
 
@@ -378,7 +378,7 @@ export function SubjectDialog({ open, onClose, editingSubject, usedColors }: Sub
               type="submit"
               variant="default"
               disabled={isSubmitting}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold text-xs h-10 px-5"
+              className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl font-semibold text-xs h-10 px-5"
             >
               {isSubmitting ? "Đang lưu..." : editingSubject ? "Cập nhật" : "Tạo môn học"}
             </Button>

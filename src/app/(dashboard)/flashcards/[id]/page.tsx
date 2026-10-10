@@ -203,7 +203,7 @@ export default function FlashcardDeckDetailPage() {
 
   if (loading) {
     return (
-      <div className="py-24 text-center text-xs text-[#526b5c] animate-pulse">
+      <div className="py-24 text-center text-xs text-[var(--text-subtle)] animate-pulse">
         Đang tải thông tin bộ thẻ...
       </div>
     );
@@ -242,24 +242,24 @@ export default function FlashcardDeckDetailPage() {
       {/* ========================================================================= */}
       {/* 1. TOP HEADER & PROGRESS BAR (Matching Reference Image 1) */}
       {/* ========================================================================= */}
-      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+      <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => router.push("/flashcards")}
-              className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] hover:bg-[#eef5f0] w-10 h-10 p-0 shrink-0 cursor-pointer"
+              className="rounded-2xl border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-bg)] w-10 h-10 p-0 shrink-0 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
 
             <div>
-              <h1 className="text-xl sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2] tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-[var(--text-ink)] tracking-tight">
                 {deck.title}
               </h1>
               {deck.description && (
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5 line-clamp-1">
+                <p className="text-xs text-[var(--text-subtle)] mt-0.5 line-clamp-1">
                   {deck.description}
                 </p>
               )}
@@ -278,9 +278,9 @@ export default function FlashcardDeckDetailPage() {
         </div>
 
         {/* Green progress bar */}
-        <div className="w-full bg-[#eef5f0] dark:bg-[#1d3024] rounded-full h-2 overflow-hidden shadow-inner">
+        <div className="w-full bg-[var(--mint-bg)] rounded-full h-2 overflow-hidden shadow-inner">
           <div
-            className="bg-[#2d6a4f] dark:bg-[#52b788] h-2 rounded-full transition-all duration-500"
+            className="bg-[var(--mint)] h-2 rounded-full transition-all duration-500"
             style={{ width: `${learnedPercentage}%` }}
           />
         </div>
@@ -289,10 +289,10 @@ export default function FlashcardDeckDetailPage() {
       {/* ========================================================================= */}
       {/* 2. SECTION TÙY CHỈNH (SETTINGS / FILTERS - Matching Reference Image 1) */}
       {/* ========================================================================= */}
-      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+      <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xs space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
-            <Settings className="w-4 h-4 text-[#526b5c]" />
+          <div className="flex items-center space-x-2 text-sm font-bold text-[var(--text-ink)]">
+            <Settings className="w-4 h-4 text-[var(--text-subtle)]" />
             <span>Tùy chỉnh</span>
           </div>
 
@@ -305,13 +305,13 @@ export default function FlashcardDeckDetailPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* TRẠNG THÁI */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+            <label className="text-[10px] font-black uppercase text-[var(--text-muted)] tracking-wider">
               TRẠNG THÁI
             </label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden focus:border-[#2d6a4f] cursor-pointer"
+              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[var(--border)] text-xs font-bold text-[var(--text-ink)] focus:outline-hidden focus:border-[var(--mint)] cursor-pointer"
             >
               <option value="ALL">Toàn bộ</option>
               <option value="NEW">Chưa học (Mới)</option>
@@ -322,13 +322,13 @@ export default function FlashcardDeckDetailPage() {
 
           {/* SỐ LƯỢNG */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+            <label className="text-[10px] font-black uppercase text-[var(--text-muted)] tracking-wider">
               SỐ LƯỢNG
             </label>
             <select
               value={countLimit}
               onChange={(e) => setCountLimit(Number(e.target.value))}
-              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden focus:border-[#2d6a4f] cursor-pointer"
+              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[var(--border)] text-xs font-bold text-[var(--text-ink)] focus:outline-hidden focus:border-[var(--mint)] cursor-pointer"
             >
               <option value={0}>Tất cả ({customizedCards.length} từ)</option>
               <option value={10}>10 từ</option>
@@ -339,13 +339,13 @@ export default function FlashcardDeckDetailPage() {
 
           {/* THỨ TỰ */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+            <label className="text-[10px] font-black uppercase text-[var(--text-muted)] tracking-wider">
               THỨ TỰ
             </label>
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as any)}
-              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden focus:border-[#2d6a4f] cursor-pointer"
+              className="w-full h-11 px-3.5 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[var(--border)] text-xs font-bold text-[var(--text-ink)] focus:outline-hidden focus:border-[var(--mint)] cursor-pointer"
             >
               <option value="DEFAULT">Mặc định (Theo thứ tự)</option>
               <option value="RANDOM">Ngẫu nhiên (Xáo trộn)</option>
@@ -357,12 +357,12 @@ export default function FlashcardDeckDetailPage() {
       {/* ========================================================================= */}
       {/* 3. SECTION CHỌN CHẾ ĐỘ HỌC (6 STUDY MODES - Matching Reference Image 1) */}
       {/* ========================================================================= */}
-      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+      <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xs space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <h2 className="text-base font-black text-[var(--text-ink)]">
             Chọn chế độ học
           </h2>
-          <span className="text-xs text-[#73927d]">6 phương pháp luyện tập</span>
+          <span className="text-xs text-[var(--text-muted)]">6 phương pháp luyện tập</span>
         </div>
 
         {/* 6 Colorful Gradient Cards Grid */}
@@ -480,24 +480,24 @@ export default function FlashcardDeckDetailPage() {
       {/* ========================================================================= */}
       {/* 4. SECTION DANH SÁCH TỪ VỰNG (VOCABULARY TABLE - Matching Reference Image 1) */}
       {/* ========================================================================= */}
-      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xs space-y-4">
+      <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
-            <h2 className="text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-base font-black text-[var(--text-ink)]">
               Danh sách từ vựng
             </h2>
-            <span className="text-xs text-[#73927d]">({parsedCards.length} từ)</span>
+            <span className="text-xs text-[var(--text-muted)]">({parsedCards.length} từ)</span>
           </div>
 
           <div className="flex items-center space-x-2">
             {/* Search input */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-[#73927d]" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-[var(--text-muted)]" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm từ vựng..."
-                className="pl-8 h-9 text-xs rounded-xl border-[#dbe7dd] w-48 sm:w-56"
+                className="pl-8 h-9 text-xs rounded-xl border-[var(--border)] w-48 sm:w-56"
               />
             </div>
 
@@ -505,7 +505,7 @@ export default function FlashcardDeckDetailPage() {
             <select
               value={tableFilter}
               onChange={(e) => setTableFilter(e.target.value)}
-              className="h-9 px-3 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] text-xs font-bold text-[#192e22] cursor-pointer"
+              className="h-9 px-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] text-xs font-bold text-[var(--text-ink)] cursor-pointer"
             >
               <option value="ALL">Tất cả</option>
               <option value="NEW">Mới</option>
@@ -517,7 +517,7 @@ export default function FlashcardDeckDetailPage() {
             <Button
               onClick={() => setIsAddCardOpen(true)}
               size="sm"
-              className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold h-9 px-3 space-x-1"
+              className="rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold h-9 px-3 space-x-1"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Thêm từ</span>
@@ -529,7 +529,7 @@ export default function FlashcardDeckDetailPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-[#eef5f0] dark:border-[#263d2e] text-[10px] font-black uppercase text-[#73927d] tracking-wider">
+              <tr className="border-b border-[#eef5f0] dark:border-[#263d2e] text-[10px] font-black uppercase text-[var(--text-muted)] tracking-wider">
                 <th className="py-3 px-3">TỪ VỰNG</th>
                 <th className="py-3 px-3">NGHĨA</th>
                 <th className="py-3 px-3">LOẠI TỪ</th>
@@ -541,7 +541,7 @@ export default function FlashcardDeckDetailPage() {
             <tbody className="divide-y divide-[#f0f7f2] dark:divide-[#203326]">
               {displayTableCards.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-xs text-[#73927d]">
+                  <td colSpan={6} className="py-8 text-center text-xs text-[var(--text-muted)]">
                     Không có từ vựng nào phù hợp với bộ lọc tìm kiếm.
                   </td>
                 </tr>
@@ -555,11 +555,11 @@ export default function FlashcardDeckDetailPage() {
                       className="hover:bg-[#fbfdfb] dark:hover:bg-[#1b3022] transition-colors"
                     >
                       {/* Cột 1: Word + Loa audio */}
-                      <td className="py-3 px-3 font-extrabold text-[#192e22] dark:text-[#f0f7f2] whitespace-nowrap">
+                      <td className="py-3 px-3 font-extrabold text-[var(--text-ink)] whitespace-nowrap">
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => speakWord(card.word, 1.0)}
-                            className="p-1 rounded-lg text-[#2d6a4f] hover:bg-[#eef5f0] transition-colors cursor-pointer"
+                            className="p-1 rounded-lg text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] transition-colors cursor-pointer"
                             title="Phát âm"
                           >
                             <Volume2 className="w-3.5 h-3.5" />
@@ -569,29 +569,29 @@ export default function FlashcardDeckDetailPage() {
                       </td>
 
                       {/* Cột 2: Meaning */}
-                      <td className="py-3 px-3 font-semibold text-[#2d6a4f] dark:text-[#52b788]">
+                      <td className="py-3 px-3 font-semibold text-[var(--mint-dark)]">
                         {card.meaning}
                       </td>
 
                       {/* Cột 3: Loại từ & Phiên âm */}
-                      <td className="py-3 px-3 text-[#526b5c] dark:text-[#a3bda9] whitespace-nowrap">
+                      <td className="py-3 px-3 text-[var(--text-subtle)] whitespace-nowrap">
                         <div className="flex flex-col">
                           <span>{card.partOfSpeech || "noun"}</span>
                           {card.phonetic && (
-                            <span className="text-[10px] text-[#73927d]">{card.phonetic}</span>
+                            <span className="text-[10px] text-[var(--text-muted)]">{card.phonetic}</span>
                           )}
                         </div>
                       </td>
 
                       {/* Cột 4: Ví dụ */}
-                      <td className="py-3 px-3 text-[#526b5c] dark:text-[#a3bda9] max-w-xs">
+                      <td className="py-3 px-3 text-[var(--text-subtle)] max-w-xs">
                         {card.exampleSentence ? (
                           <div className="line-clamp-2">
-                            <span className="font-medium text-[#192e22] dark:text-[#f0f7f2]">
+                            <span className="font-medium text-[var(--text-ink)]">
                               "{card.exampleSentence}"
                             </span>
                             {card.exampleMeaning && (
-                              <span className="text-[11px] text-[#73927d] block">
+                              <span className="text-[11px] text-[var(--text-muted)] block">
                                 {card.exampleMeaning}
                               </span>
                             )}
@@ -641,9 +641,9 @@ export default function FlashcardDeckDetailPage() {
       {/* DIALOG: THÊM TỪ MỚI */}
       {/* ========================================================================= */}
       <Dialog open={isAddCardOpen} onOpenChange={setIsAddCardOpen}>
-        <DialogContent className="rounded-[28px] max-w-lg p-6 bg-white dark:bg-[#17261c] border border-[#dbe7dd]">
+        <DialogContent className="rounded-[28px] max-w-lg p-6 bg-[var(--bg-surface)] border border-[var(--border)]">
           <DialogHeader>
-            <DialogTitle className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <DialogTitle className="text-lg font-black text-[var(--text-ink)]">
               Thêm từ vựng mới vào bộ thẻ
             </DialogTitle>
           </DialogHeader>
@@ -651,7 +651,7 @@ export default function FlashcardDeckDetailPage() {
           <form onSubmit={handleCreateCard} className="space-y-3 pt-2">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="text-xs font-bold text-[var(--text-ink)]">
                   Từ tiếng Anh *
                 </label>
                 <Input
@@ -663,7 +663,7 @@ export default function FlashcardDeckDetailPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="text-xs font-bold text-[var(--text-ink)]">
                   Phiên âm IPA
                 </label>
                 <Input
@@ -677,7 +677,7 @@ export default function FlashcardDeckDetailPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="text-xs font-bold text-[var(--text-ink)]">
                   Nghĩa tiếng Việt *
                 </label>
                 <Input
@@ -689,13 +689,13 @@ export default function FlashcardDeckDetailPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="text-xs font-bold text-[var(--text-ink)]">
                   Từ loại
                 </label>
                 <select
                   value={newPartOfSpeech}
                   onChange={(e) => setNewPartOfSpeech(e.target.value)}
-                  className="w-full h-9 mt-1 px-3 rounded-xl border border-[#dbe7dd] text-xs font-bold bg-white dark:bg-[#17261c]"
+                  className="w-full h-9 mt-1 px-3 rounded-xl border border-[var(--border)] text-xs font-bold bg-[var(--bg-surface)]"
                 >
                   <option value="noun">noun (danh từ)</option>
                   <option value="verb">verb (động từ)</option>
@@ -707,7 +707,7 @@ export default function FlashcardDeckDetailPage() {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <label className="text-xs font-bold text-[var(--text-ink)]">
                 Câu ví dụ tiếng Anh
               </label>
               <Input
@@ -719,7 +719,7 @@ export default function FlashcardDeckDetailPage() {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <label className="text-xs font-bold text-[var(--text-ink)]">
                 Dịch nghĩa câu ví dụ
               </label>
               <Input
@@ -731,7 +731,7 @@ export default function FlashcardDeckDetailPage() {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <label className="text-xs font-bold text-[var(--text-ink)]">
                 Gợi ý ghi nhớ (Hint)
               </label>
               <Input
@@ -754,7 +754,7 @@ export default function FlashcardDeckDetailPage() {
               <Button
                 type="submit"
                 disabled={isSubmittingCard}
-                className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold px-5"
+                className="rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold px-5"
               >
                 {isSubmittingCard ? "Đang lưu..." : "Thêm vào bộ thẻ"}
               </Button>

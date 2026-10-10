@@ -65,7 +65,7 @@ export default function BackupCenterPage() {
       {/* Header */}
       <div className="flex items-center space-x-3">
         <Link href="/settings">
-          <Button variant="ghost" size="icon" className="rounded-xl text-[#526b5c]">
+          <Button variant="ghost" size="icon" className="rounded-xl text-[var(--text-subtle)]">
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
@@ -73,22 +73,22 @@ export default function BackupCenterPage() {
           <Database className="w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h1 className="text-2xl font-bold text-[var(--text-ink)]">
             Trung tâm Sao lưu & Quyền sở hữu Dữ liệu (Backup Center)
           </h1>
-          <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
+          <p className="text-sm text-[var(--text-subtle)]">
             Toàn quyền xuất, nhập và lưu trữ ngoại tuyến toàn bộ dữ liệu học tập 4 năm đại học của bạn
           </p>
         </div>
       </div>
 
       {/* Export Section */}
-      <Card className="p-6 rounded-3xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] space-y-4">
+      <Card className="p-6 rounded-3xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] space-y-4">
         <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-bold text-base">
           <Download className="w-5 h-5" />
           Xuất dữ liệu học tập (Data Export)
         </div>
-        <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+        <p className="text-xs text-[var(--text-subtle)]">
           Dữ liệu bao gồm: Môn học, Đề cương, Ghi chú, Flashcards, Dữ liệu luyện tập, Lịch học, Nhiệm vụ, Ngân hàng lỗi sai, Kế hoạch ôn thi và Hồ sơ nhận thức AI.
         </p>
 
@@ -113,22 +113,22 @@ export default function BackupCenterPage() {
       </Card>
 
       {/* Import / Restore Section */}
-      <Card className="p-6 rounded-3xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] space-y-4">
-        <div className="flex items-center gap-2 text-[#192e22] dark:text-[#f0f7f2] font-bold text-base">
+      <Card className="p-6 rounded-3xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] space-y-4">
+        <div className="flex items-center gap-2 text-[var(--text-ink)] font-bold text-base">
           <Upload className="w-5 h-5 text-purple-600" />
           Khôi phục từ tệp sao lưu (Restore Backup)
         </div>
-        <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+        <p className="text-xs text-[var(--text-subtle)]">
           Chọn tệp JSON đã tải về trước đó để đồng bộ hóa hoặc khôi phục lại tài khoản. Hệ thống tự động kiểm tra và bảo đảm an toàn dữ liệu.
         </p>
 
         <div className="pt-2">
           <label className="border-2 border-dashed border-emerald-200 dark:border-[#263d2e] rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50/30 transition-all">
             <Upload className="w-8 h-8 text-emerald-600 mb-2" />
-            <span className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <span className="text-sm font-bold text-[var(--text-ink)]">
               {restoring ? "Đang giải nén và khôi phục dữ liệu..." : "Bấm vào đây để chọn tệp .json sao lưu"}
             </span>
-            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+            <span className="text-xs text-[var(--text-subtle)] mt-1">
               Hỗ trợ định dạng JSON sao lưu chuẩn ChronoMind
             </span>
             <input

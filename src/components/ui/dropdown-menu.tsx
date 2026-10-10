@@ -93,7 +93,7 @@ export function DropdownMenuContent({
   return (
     <div
       onClick={(e) => e.stopPropagation()}
-      className={`absolute z-50 mt-1 min-w-[8rem] overflow-hidden rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] p-1 shadow-lg ring-1 ring-black/5 focus:outline-none ${alignClass} ${className}`}
+      className={`absolute z-50 mt-1 min-w-[8rem] overflow-hidden rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] p-1 shadow-lg ring-1 ring-black/5 focus:outline-none ${alignClass} ${className}`}
     >
       {children}
     </div>
@@ -118,7 +118,7 @@ export function DropdownMenuItem({
         setOpen(false);
         onClick?.(e);
       }}
-      className={`flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs text-[#192e22] dark:text-[#f0f7f2] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] outline-none transition-colors ${className}`}
+      className={`flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs text-[var(--text-ink)] hover:bg-[var(--mint-soft)] outline-none transition-colors ${className}`}
     >
       {children}
     </div>

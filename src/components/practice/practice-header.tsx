@@ -41,7 +41,7 @@ export function PracticeHeader({
   };
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#dbe7dd] dark:border-[#263d2e] pb-6">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--border)] pb-6">
       {/* Title & Brand */}
       <div className="flex items-center space-x-3.5">
         <div className="p-3 bg-gradient-to-tr from-[#1b4332] via-[#2d6a4f] to-[#52b788] text-white rounded-2xl shadow-sm">
@@ -49,14 +49,14 @@ export function PracticeHeader({
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-ink)]">
               Luyện tập (Practice)
             </h1>
             <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               ChronoMind
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+          <p className="text-xs sm:text-sm text-[var(--text-subtle)] mt-0.5">
             Học tập chủ động, ôn tập ngắt quãng và mini-games tương tác
           </p>
         </div>
@@ -89,7 +89,7 @@ export function PracticeHeader({
             className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center space-x-2 cursor-pointer active:scale-95 ${
               isCurrentRunning
                 ? "bg-amber-500 hover:bg-amber-600 text-white animate-pulse"
-                : "bg-[#2d6a4f] hover:bg-[#1b4332] text-white"
+                : "bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white"
             }`}
             title={
               isCurrentRunning

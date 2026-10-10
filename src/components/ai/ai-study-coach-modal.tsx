@@ -67,16 +67,16 @@ export function AiStudyCoachModal({ open, onClose }: AiStudyCoachModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 sm:p-6 shadow-2xl flex flex-col h-[min(600px,85dvh)] max-h-[85dvh]">
-        <DialogHeader className="shrink-0 pb-3 border-b border-[#dbe7dd]/60 dark:border-[#263d2e]">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#2d6a4f] dark:text-[#52b788] mb-1">
+      <DialogContent onClose={onClose} className="max-w-xl rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-4 sm:p-6 shadow-2xl flex flex-col h-[min(600px,85dvh)] max-h-[85dvh]">
+        <DialogHeader className="shrink-0 pb-3 border-b border-[var(--border)]">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--mint-dark)] mb-1">
             <Sparkles className="w-4 h-4" />
             <span>ChronoMind AI Study Coach</span>
           </div>
-          <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
             Cố vấn học tập thông minh cá nhân
           </DialogTitle>
-          <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+          <DialogDescription className="text-xs text-[var(--text-subtle)]">
             Phân tích 100% dựa trên nhật ký học thực tế, chỉ tiêu môn học và hạn mức ngân sách tuần.
           </DialogDescription>
         </DialogHeader>
@@ -93,8 +93,8 @@ export function AiStudyCoachModal({ open, onClose }: AiStudyCoachModalProps) {
               <div
                 className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center ${
                   m.role === "user"
-                    ? "bg-[#2d6a4f] text-white"
-                    : "bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] dark:text-[#9cd1b1]"
+                    ? "bg-[var(--mint)] text-white"
+                    : "bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:text-[#9cd1b1]"
                 }`}
               >
                 {m.role === "user" ? <UserIcon className="w-3.5 h-3.5" /> : <Bot className="w-4 h-4" />}
@@ -103,8 +103,8 @@ export function AiStudyCoachModal({ open, onClose }: AiStudyCoachModalProps) {
               <div
                 className={`max-w-[85%] p-3.5 rounded-2xl whitespace-pre-line leading-relaxed break-words ${
                   m.role === "user"
-                    ? "bg-[#2d6a4f] text-white rounded-tr-xs"
-                    : "bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] rounded-tl-xs"
+                    ? "bg-[var(--mint)] text-white rounded-tr-xs"
+                    : "bg-[var(--bg-muted)] border border-[var(--border)] text-[var(--text-ink)] rounded-tl-xs"
                 }`}
               >
                 {m.text}
@@ -113,21 +113,21 @@ export function AiStudyCoachModal({ open, onClose }: AiStudyCoachModalProps) {
           ))}
 
           {isLoading && (
-            <div className="flex items-center space-x-2 text-xs text-[#526b5c] dark:text-[#a3bda9] p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] w-fit">
-              <Loader2 className="w-4 h-4 animate-spin text-[#2d6a4f]" />
+            <div className="flex items-center space-x-2 text-xs text-[var(--text-subtle)] p-3 rounded-2xl bg-[var(--bg-muted)] w-fit">
+              <Loader2 className="w-4 h-4 animate-spin text-[var(--mint-dark)]" />
               <span>AI Coach đang phân tích số liệu thực tế...</span>
             </div>
           )}
         </div>
 
         {/* Quick Prompts */}
-        <div className="shrink-0 pt-2 pb-2 flex flex-wrap gap-1.5 border-t border-[#dbe7dd]/60 dark:border-[#263d2e]">
+        <div className="shrink-0 pt-2 pb-2 flex flex-wrap gap-1.5 border-t border-[var(--border)]">
           {quickPrompts.map((p, i) => (
             <button
               key={i}
               onClick={() => handleSend(p)}
               disabled={isLoading}
-              className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#9cd1b1] hover:bg-[#d8ebe0] transition-colors cursor-pointer border border-[#dbe7dd]/80 dark:border-[#263d2e]"
+              className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:text-[#9cd1b1] hover:bg-[var(--mint-bg)] transition-colors cursor-pointer border border-[var(--border)]"
             >
               {p}
             </button>
@@ -147,12 +147,12 @@ export function AiStudyCoachModal({ open, onClose }: AiStudyCoachModalProps) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Hỏi AI Coach về lịch trình, môn học, thời gian..."
             disabled={isLoading}
-            className="flex-1 rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
+            className="flex-1 rounded-2xl border-[var(--border)] focus:ring-[#2d6a4f] text-xs h-10"
           />
           <Button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs h-10 px-4 space-x-1"
+            className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs h-10 px-4 space-x-1"
           >
             <Send className="w-3.5 h-3.5" />
             <span>Gửi</span>

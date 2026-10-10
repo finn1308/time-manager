@@ -130,28 +130,28 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xl">
+      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
-            <div className="flex items-center space-x-1.5 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] mb-1">
+            <div className="flex items-center space-x-1.5 text-xs font-bold text-[var(--mint-dark)] mb-1">
               <Zap className="w-4 h-4 fill-current" />
               <span>QUICK CAPTURE (TẠO NHANH TIỆN ÍCH)</span>
             </div>
-            <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
               Ghi nhận nhanh mọi ý tưởng
             </DialogTitle>
-            <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            <DialogDescription className="text-xs text-[var(--text-subtle)]">
               Lưu trữ ngay lập tức mà không cần rời màn hình hiện tại.
             </DialogDescription>
           </DialogHeader>
 
           {/* Quick Capture Tabs */}
-          <div className="flex items-center space-x-1 p-1 bg-[#f4f8f5] dark:bg-[#101c14] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs font-bold shadow-2xs">
+          <div className="flex items-center space-x-1 p-1 bg-[var(--mint-bg)] dark:bg-[#101c14] border border-[var(--border)] rounded-2xl text-xs font-bold shadow-2xs">
             <button
               type="button"
               onClick={() => setActiveTab("TASK")}
               className={`flex-1 py-1.5 rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-1 ${
-                activeTab === "TASK" ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c]"
+                activeTab === "TASK" ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               <CheckSquare className="w-3.5 h-3.5" />
@@ -161,7 +161,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
               type="button"
               onClick={() => setActiveTab("NOTE")}
               className={`flex-1 py-1.5 rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-1 ${
-                activeTab === "NOTE" ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c]"
+                activeTab === "NOTE" ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
@@ -171,7 +171,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
               type="button"
               onClick={() => setActiveTab("EVENT")}
               className={`flex-1 py-1.5 rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-1 ${
-                activeTab === "EVENT" ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c]"
+                activeTab === "EVENT" ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               <CalendarIcon className="w-3.5 h-3.5" />
@@ -181,7 +181,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
               type="button"
               onClick={() => setActiveTab("GOAL")}
               className={`flex-1 py-1.5 rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-1 ${
-                activeTab === "GOAL" ? "bg-[#2d6a4f] text-white shadow-2xs" : "text-[#526b5c]"
+                activeTab === "GOAL" ? "bg-[var(--mint)] text-white shadow-2xs" : "text-[var(--text-subtle)]"
               }`}
             >
               <Target className="w-3.5 h-3.5" />
@@ -191,7 +191,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
 
           {/* Title */}
           <div>
-            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+            <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
               Tiêu đề *
             </label>
             <Input
@@ -208,19 +208,19 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
               }
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="rounded-2xl border-[#dbe7dd] text-xs h-10"
+              className="rounded-2xl border-[var(--border)] text-xs h-10"
             />
           </div>
 
           {/* Subject Selector */}
           <div>
-            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+            <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
               Môn học liên quan
             </label>
             <select
               value={subjectId}
               onChange={(e) => setSubjectId(e.target.value)}
-              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 text-xs text-[var(--text-ink)]"
             >
               <option value="">(Không gắn môn cụ thể)</option>
               {subjects.map((s) => (
@@ -235,13 +235,13 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
           {activeTab === "TASK" && (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Độ ưu tiên
                 </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-2 text-xs text-[var(--text-ink)]"
                 >
                   <option value="LOW">Thấp (Low)</option>
                   <option value="MEDIUM">Trung bình (Medium)</option>
@@ -251,14 +251,14 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Hạn chót (Deadline)
                 </label>
                 <Input
                   type="datetime-local"
                   value={deadline}
                   onChange={(e) => setDeadline(e.target.value)}
-                  className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+                  className="rounded-2xl border-[var(--border)] text-xs h-9"
                 />
               </div>
             </div>
@@ -266,7 +266,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
 
           {activeTab === "NOTE" && (
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Nội dung nhanh
               </label>
               <textarea
@@ -274,7 +274,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
                 placeholder="Ghi nhanh ý tưởng, gạch đầu dòng..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
               />
             </div>
           )}
@@ -282,7 +282,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
           {activeTab === "EVENT" && (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Bắt đầu
                 </label>
                 <Input
@@ -290,11 +290,11 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
                   required
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+                  className="rounded-2xl border-[var(--border)] text-xs h-9"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Kết thúc
                 </label>
                 <Input
@@ -302,7 +302,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
                   required
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+                  className="rounded-2xl border-[var(--border)] text-xs h-9"
                 />
               </div>
             </div>
@@ -310,14 +310,14 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
 
           {activeTab === "GOAL" && (
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Ngày mục tiêu cần đạt
               </label>
               <Input
                 type="date"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
-                className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+                className="rounded-2xl border-[var(--border)] text-xs h-9"
               />
             </div>
           )}
@@ -334,7 +334,7 @@ export function QuickCaptureModal({ open, onClose, onSuccess }: QuickCaptureModa
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold"
+              className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold"
             >
               {isSubmitting ? "Đang lưu..." : "Lưu ngay"}
             </Button>

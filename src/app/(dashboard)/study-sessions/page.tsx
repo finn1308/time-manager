@@ -165,72 +165,72 @@ export default function StudySessionsPage() {
     <div className="space-y-8 max-w-6xl mx-auto pb-16">
       {/* Page Header */}
       <div>
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#86e2a8] text-xs font-bold mb-2">
-          <Clock className="w-3.5 h-3.5 text-[#2d6a4f] dark:text-[#52b788]" />
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] text-xs font-bold mb-2">
+          <Clock className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
           <span>CHRONOMIND FOCUS & STUDY TIMER</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-ink)]">
           Study Timer & Nhật ký học tập thực tế
         </h1>
-        <p className="text-xs sm:text-sm text-[#526b5c] dark:text-[#a3bda9] mt-1 max-w-2xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[var(--text-subtle)] mt-1 max-w-2xl leading-relaxed">
           Tích hợp Pomodoro, hẹn giờ đếm ngược và cửa sổ nổi Picture-in-Picture chạy liên tục khi chuyển trang hoặc ra màn hình ngoài.
         </p>
       </div>
 
       {/* Today Statistics Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
-            <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
+            <Clock className="w-4 h-4 text-[var(--mint-dark)]" />
             <span>Học hôm nay</span>
           </div>
-          <div className="text-lg sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="text-lg sm:text-2xl font-black text-[var(--text-ink)]">
             {Math.floor(totalTodaySeconds / 3600)}h {Math.floor((totalTodaySeconds % 3600) / 60)}m
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Thời gian thực tế ghi nhận</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Thời gian thực tế ghi nhận</div>
         </Card>
 
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
-            <CheckCircle2 className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
+            <CheckCircle2 className="w-4 h-4 text-[var(--mint-dark)]" />
             <span>Phiên hoàn thành</span>
           </div>
-          <div className="text-lg sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="text-lg sm:text-2xl font-black text-[var(--text-ink)]">
             {completedTodayCount} phiên
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Hôm nay</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Hôm nay</div>
         </Card>
 
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
             <Star className="w-4 h-4 text-amber-500 fill-current" />
             <span>Năng suất TB</span>
           </div>
-          <div className="text-lg sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2] flex items-baseline space-x-1">
+          <div className="text-lg sm:text-2xl font-black text-[var(--text-ink)] flex items-baseline space-x-1">
             <span>{avgProductivity}</span>
-            <span className="text-xs text-[#73927d] font-normal">/ 5.0</span>
+            <span className="text-xs text-[var(--text-muted)] font-normal">/ 5.0</span>
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Đánh giá trung bình</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Đánh giá trung bình</div>
         </Card>
 
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
             <Flame className="w-4 h-4 text-rose-500" />
             <span>Pomodoro Chu kỳ</span>
           </div>
-          <div className="text-lg sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="text-lg sm:text-2xl font-black text-[var(--text-ink)]">
             {activeSubject && mode === "POMODORO" ? `${pomodoroCycle} chu kỳ` : "Sẵn sàng"}
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Tiến độ vòng lặp</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Tiến độ vòng lặp</div>
         </Card>
       </div>
 
       {/* Interactive Timer Hub Card */}
-      <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-sm">
+      <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-sm">
         {activeSubject ? (
           /* Live Active Session Panel */
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#dbe7dd] dark:border-[#263d2e]">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[var(--border)]">
               <div className="flex items-center space-x-3">
                 <span
                   className="w-4 h-4 rounded-full shrink-0 shadow-sm"
@@ -238,13 +238,13 @@ export default function StudySessionsPage() {
                 />
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    <h2 className="text-lg font-bold text-[var(--text-ink)]">
                       {activeSubject.code ? `[${activeSubject.code}] ` : ""}
                       {activeSubject.name}
                     </h2>
                     {mode === "POMODORO" ? (
                       pomodoroPhase === "WORK" ? (
-                        <Badge className="bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1e3827] dark:text-[#86e2a8] text-xs">
+                        <Badge className="bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1e3827] dark:text-[#86e2a8] text-xs">
                           🍅 Pomodoro Focus
                         </Badge>
                       ) : (
@@ -257,10 +257,10 @@ export default function StudySessionsPage() {
                         ⏱️ Đếm ngược
                       </Badge>
                     ) : (
-                      <Badge className="bg-[#d8ebe0] text-[#1b4332] text-xs">⚡ Bấm giờ tự do</Badge>
+                      <Badge className="bg-[var(--mint-bg)] text-[var(--mint-dark)] text-xs">⚡ Bấm giờ tự do</Badge>
                     )}
                   </div>
-                  <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                  <p className="text-xs text-[var(--text-subtle)] mt-0.5">
                     {isRunning && !isPaused ? "Đang đếm thời gian thực tế..." : "Đang tạm dừng"}
                   </p>
                 </div>
@@ -271,7 +271,7 @@ export default function StudySessionsPage() {
                   size="sm"
                   variant="outline"
                   onClick={requestDocumentPip}
-                  className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs font-semibold space-x-1.5"
+                  className="rounded-2xl border-[var(--border)] text-[var(--mint-dark)] text-xs font-semibold space-x-1.5"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>Mở PIP Ngoài Desktop</span>
@@ -280,11 +280,11 @@ export default function StudySessionsPage() {
             </div>
 
             {/* Giant Monospace Timer Display */}
-            <div className="text-center py-6 bg-[#f8fbf8] dark:bg-[#132217] rounded-[24px] border border-[#dbe7dd] dark:border-[#223829]">
-              <div className="font-mono text-5xl sm:text-6xl font-black tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="text-center py-6 bg-[var(--bg-muted)] rounded-[24px] border border-[var(--border)] dark:border-[#223829]">
+              <div className="font-mono text-5xl sm:text-6xl font-black tracking-tight text-[var(--text-ink)]">
                 {mode === "STOPWATCH" ? formatTime(secondsElapsed) : formatTime(remainingSeconds)}
               </div>
-              <div className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mt-2">
+              <div className="text-xs font-semibold text-[var(--text-subtle)] mt-2">
                 {mode === "POMODORO"
                   ? `Chu kỳ hiện tại: #${pomodoroCycle + 1} • ${pomodoroPhase === "WORK" ? "25 phút tập trung" : "5 phút giải lao"}`
                   : mode === "CUSTOM_COUNTDOWN"
@@ -305,7 +305,7 @@ export default function StudySessionsPage() {
                 ) : (
                   <Button
                     onClick={resumeTimer}
-                    className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-bold text-xs px-5 h-10 space-x-1.5 cursor-pointer shadow-2xs"
+                    className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-bold text-xs px-5 h-10 space-x-1.5 cursor-pointer shadow-2xs"
                   >
                     <Play className="w-4 h-4 fill-current" />
                     <span>Tiếp tục học</span>
@@ -316,7 +316,7 @@ export default function StudySessionsPage() {
                   <Button
                     variant="outline"
                     onClick={() => switchPhase()}
-                    className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs font-semibold px-4 h-10 space-x-1.5 cursor-pointer"
+                    className="rounded-2xl border-[var(--border)] text-[var(--mint-dark)] text-xs font-semibold px-4 h-10 space-x-1.5 cursor-pointer"
                   >
                     <SkipForward className="w-4 h-4" />
                     <span>Chuyển pha</span>
@@ -336,7 +336,7 @@ export default function StudySessionsPage() {
         ) : (
           /* Launcher Setup Panel */
           <div className="space-y-6">
-            <div className="flex items-center space-x-2 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+            <div className="flex items-center space-x-2 text-xs font-bold text-[var(--mint-dark)]">
               <Sparkles className="w-4 h-4" />
               <span>CẤU HÌNH PHIÊN HỌC MỚI</span>
             </div>
@@ -344,11 +344,11 @@ export default function StudySessionsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Step 1: Select Subject */}
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="block text-xs font-bold text-[var(--text-ink)]">
                   1. Chọn môn học
                 </label>
                 {subjects.length === 0 ? (
-                  <div className="text-xs text-[#526b5c] p-3 rounded-2xl border border-dashed border-[#dbe7dd]">
+                  <div className="text-xs text-[var(--text-subtle)] p-3 rounded-2xl border border-dashed border-[var(--border)]">
                     Chưa có môn học nào. Hãy tạo môn học trong mục Subjects.
                   </div>
                 ) : (
@@ -360,8 +360,8 @@ export default function StudySessionsPage() {
                         onClick={() => setSelectedSubjectId(sub.id)}
                         className={`w-full flex items-center space-x-2.5 p-2.5 rounded-2xl border text-left transition-all cursor-pointer ${
                           selectedSubjectId === sub.id
-                            ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] font-bold text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-                            : "border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#f8fbf8] dark:hover:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9]"
+                            ? "border-[var(--mint)] bg-[var(--mint-bg)] font-bold text-[var(--text-ink)] shadow-2xs"
+                            : "border-[var(--border)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318] text-[var(--text-subtle)]"
                         }`}
                       >
                         <span
@@ -380,7 +380,7 @@ export default function StudySessionsPage() {
 
               {/* Step 2: Choose Mode */}
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="block text-xs font-bold text-[var(--text-ink)]">
                   2. Chế độ đếm giờ
                 </label>
                 <div className="space-y-2">
@@ -389,14 +389,14 @@ export default function StudySessionsPage() {
                     onClick={() => setLauncherMode("POMODORO")}
                     className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       launcherMode === "POMODORO"
-                        ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] shadow-2xs"
-                        : "border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#f8fbf8] dark:hover:bg-[#142318]"
+                        ? "border-[var(--mint)] bg-[var(--mint-bg)] shadow-2xs"
+                        : "border-[var(--border)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318]"
                     }`}
                   >
-                    <div className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+                    <div className="font-bold text-xs text-[var(--text-ink)] flex items-center space-x-1.5">
                       <span>🍅 Pomodoro (Tập trung & Nghỉ)</span>
                     </div>
-                    <div className="text-[11px] text-[#73927d] mt-1">
+                    <div className="text-[11px] text-[var(--text-muted)] mt-1">
                       Chu kỳ học 25m / nghỉ 5m khoa học giúp duy trì sự tỉnh táo.
                     </div>
                   </button>
@@ -406,14 +406,14 @@ export default function StudySessionsPage() {
                     onClick={() => setLauncherMode("CUSTOM_COUNTDOWN")}
                     className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       launcherMode === "CUSTOM_COUNTDOWN"
-                        ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] shadow-2xs"
-                        : "border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#f8fbf8] dark:hover:bg-[#142318]"
+                        ? "border-[var(--mint)] bg-[var(--mint-bg)] shadow-2xs"
+                        : "border-[var(--border)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318]"
                     }`}
                   >
-                    <div className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+                    <div className="font-bold text-xs text-[var(--text-ink)] flex items-center space-x-1.5">
                       <span>⏱️ Hẹn giờ đếm ngược (Countdown)</span>
                     </div>
-                    <div className="text-[11px] text-[#73927d] mt-1">
+                    <div className="text-[11px] text-[var(--text-muted)] mt-1">
                       Đặt thời lượng cụ thể (30m, 45m, 60m, 90m).
                     </div>
                   </button>
@@ -423,14 +423,14 @@ export default function StudySessionsPage() {
                     onClick={() => setLauncherMode("STOPWATCH")}
                     className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       launcherMode === "STOPWATCH"
-                        ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] shadow-2xs"
-                        : "border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#f8fbf8] dark:hover:bg-[#142318]"
+                        ? "border-[var(--mint)] bg-[var(--mint-bg)] shadow-2xs"
+                        : "border-[var(--border)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318]"
                     }`}
                   >
-                    <div className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
+                    <div className="font-bold text-xs text-[var(--text-ink)] flex items-center space-x-1.5">
                       <span>⚡ Bấm giờ tự do (Stopwatch)</span>
                     </div>
-                    <div className="text-[11px] text-[#73927d] mt-1">
+                    <div className="text-[11px] text-[var(--text-muted)] mt-1">
                       Đếm tăng từ 00:00 cho đến khi bạn bấm dừng.
                     </div>
                   </button>
@@ -439,13 +439,13 @@ export default function StudySessionsPage() {
 
               {/* Step 3: Presets & Start Button */}
               <div className="space-y-4">
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="block text-xs font-bold text-[var(--text-ink)]">
                   3. Tùy chỉnh & Bắt đầu
                 </label>
 
                 {launcherMode === "POMODORO" && (
                   <div className="space-y-2">
-                    <span className="text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9]">
+                    <span className="text-[11px] font-semibold text-[var(--text-subtle)]">
                       Chọn quy chuẩn Pomodoro:
                     </span>
                     <div className="grid grid-cols-2 gap-2">
@@ -454,8 +454,8 @@ export default function StudySessionsPage() {
                         onClick={() => setPomodoroPreset("25_5")}
                         className={`p-2.5 rounded-xl border text-xs font-bold text-center cursor-pointer transition-all ${
                           pomodoroPreset === "25_5"
-                            ? "border-[#2d6a4f] bg-[#2d6a4f] text-white shadow-2xs"
-                            : "border-[#dbe7dd] text-[#526b5c] hover:bg-[#f8fbf8]"
+                            ? "border-[var(--mint)] bg-[var(--mint)] text-white shadow-2xs"
+                            : "border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--bg-muted)]"
                         }`}
                       >
                         25m học / 5m nghỉ
@@ -465,8 +465,8 @@ export default function StudySessionsPage() {
                         onClick={() => setPomodoroPreset("50_10")}
                         className={`p-2.5 rounded-xl border text-xs font-bold text-center cursor-pointer transition-all ${
                           pomodoroPreset === "50_10"
-                            ? "border-[#2d6a4f] bg-[#2d6a4f] text-white shadow-2xs"
-                            : "border-[#dbe7dd] text-[#526b5c] hover:bg-[#f8fbf8]"
+                            ? "border-[var(--mint)] bg-[var(--mint)] text-white shadow-2xs"
+                            : "border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--bg-muted)]"
                         }`}
                       >
                         50m học / 10m nghỉ
@@ -477,7 +477,7 @@ export default function StudySessionsPage() {
 
                 {launcherMode === "CUSTOM_COUNTDOWN" && (
                   <div className="space-y-2">
-                    <span className="text-[11px] font-semibold text-[#526b5c] dark:text-[#a3bda9]">
+                    <span className="text-[11px] font-semibold text-[var(--text-subtle)]">
                       Chọn thời lượng:
                     </span>
                     <div className="grid grid-cols-4 gap-1.5">
@@ -488,8 +488,8 @@ export default function StudySessionsPage() {
                           onClick={() => setCountdownMinutes(mins)}
                           className={`p-2 rounded-xl border text-xs font-bold text-center cursor-pointer transition-all ${
                             countdownMinutes === mins
-                              ? "border-[#2d6a4f] bg-[#2d6a4f] text-white shadow-2xs"
-                              : "border-[#dbe7dd] text-[#526b5c] hover:bg-[#f8fbf8]"
+                              ? "border-[var(--mint)] bg-[var(--mint)] text-white shadow-2xs"
+                              : "border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--bg-muted)]"
                           }`}
                         >
                           {mins}m
@@ -500,7 +500,7 @@ export default function StudySessionsPage() {
                 )}
 
                 {launcherMode === "STOPWATCH" && (
-                  <div className="p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#223829] text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                  <div className="p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] dark:border-[#223829] text-[11px] text-[var(--text-subtle)]">
                     Phiên học tự do sẽ bắt đầu đếm giờ và lưu lại chính xác số giây bạn tập trung.
                   </div>
                 )}
@@ -508,7 +508,7 @@ export default function StudySessionsPage() {
                 <Button
                   onClick={handleStartLauncher}
                   disabled={!selectedSubjectId}
-                  className="w-full h-11 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-bold text-sm space-x-2 shadow-sm cursor-pointer"
+                  className="w-full h-11 rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-bold text-sm space-x-2 shadow-sm cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Bắt đầu phiên học ngay</span>
@@ -520,21 +520,21 @@ export default function StudySessionsPage() {
       </Card>
 
       {/* History Log Header & Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-[#dbe7dd] dark:border-[#263d2e]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-[var(--border)]">
         <div className="flex items-center space-x-2">
-          <History className="w-5 h-5 text-[#2d6a4f] dark:text-[#52b788]" />
-          <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <History className="w-5 h-5 text-[var(--mint-dark)]" />
+          <h2 className="text-lg font-bold text-[var(--text-ink)]">
             Lịch sử các phiên học đã ghi nhận ({filteredSessions.length})
           </h2>
         </div>
 
         {/* Filter by subject */}
         <div className="flex items-center space-x-2">
-          <Filter className="w-3.5 h-3.5 text-[#526b5c]" />
+          <Filter className="w-3.5 h-3.5 text-[var(--text-subtle)]" />
           <select
             value={filterSubjectId}
             onChange={(e) => setFilterSubjectId(e.target.value)}
-            className="rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 py-1.5 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none"
+            className="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text-ink)] focus:outline-none"
           >
             <option value="ALL">Tất cả môn học</option>
             {subjects.map((sub) => (
@@ -554,14 +554,14 @@ export default function StudySessionsPage() {
           ))}
         </div>
       ) : filteredSessions.length === 0 ? (
-        <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-12 text-center shadow-2xs">
-          <div className="w-14 h-14 rounded-3xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] flex items-center justify-center mx-auto mb-3">
+        <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center shadow-2xs">
+          <div className="w-14 h-14 rounded-3xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center mx-auto mb-3">
             <Clock className="w-7 h-7" />
           </div>
-          <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-base font-bold text-[var(--text-ink)]">
             Chưa có phiên học nào được lưu
           </h3>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] max-w-sm mx-auto mt-1 leading-relaxed">
+          <p className="text-xs text-[var(--text-subtle)] max-w-sm mx-auto mt-1 leading-relaxed">
             Hãy bắt đầu một phiên học ở trên hoặc mở widget Timer để ghi nhận thời gian thực tế.
           </p>
         </Card>
@@ -570,7 +570,7 @@ export default function StudySessionsPage() {
           {filteredSessions.map((s) => (
             <Card
               key={s.id}
-              className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 soft-card-hover flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
+              className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 soft-card-hover flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
             >
               <div className="flex items-center space-x-3.5">
                 <div
@@ -581,38 +581,38 @@ export default function StudySessionsPage() {
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    <h3 className="text-sm font-bold text-[var(--text-ink)]">
                       {s.subject?.name || "Phiên học tự do"}
                     </h3>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#9cd1b1]">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1d3827] dark:text-[#9cd1b1]">
                       {s.status === "COMPLETED" ? "Đã hoàn thành" : s.status}
                     </span>
                     {s.source && (
-                      <span className="text-[10px] font-medium text-[#73927d]">
+                      <span className="text-[10px] font-medium text-[var(--text-muted)]">
                         • {s.source}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center space-x-3 text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                  <div className="flex items-center space-x-3 text-[11px] text-[var(--text-subtle)] mt-0.5">
                     <span className="flex items-center space-x-1">
                       <Calendar className="w-3 h-3" />
                       <span>{new Date(s.actualStart).toLocaleString("vi-VN")}</span>
                     </span>
-                    {s.notes && <span className="truncate max-w-xs italic text-[#73927d]">"{s.notes}"</span>}
+                    {s.notes && <span className="truncate max-w-xs italic text-[var(--text-muted)]">"{s.notes}"</span>}
                   </div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-4 self-end sm:self-center shrink-0">
                 <div className="text-right">
-                  <div className="text-sm font-black text-[#192e22] dark:text-[#f0f7f2]">
+                  <div className="text-sm font-black text-[var(--text-ink)]">
                     {formatSeconds(s.actualDurationSeconds)}
                   </div>
-                  <div className="text-[10px] text-[#73927d]">Thời gian thực tế</div>
+                  <div className="text-[10px] text-[var(--text-muted)]">Thời gian thực tế</div>
                 </div>
 
                 {s.productivityScore && (
-                  <div className="flex items-center text-amber-500 text-xs font-bold pl-2 border-l border-[#dbe7dd] dark:border-[#263d2e]">
+                  <div className="flex items-center text-amber-500 text-xs font-bold pl-2 border-l border-[var(--border)]">
                     <Star className="w-3.5 h-3.5 fill-current mr-0.5" />
                     <span>{s.productivityScore}/5</span>
                   </div>

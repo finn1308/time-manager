@@ -102,8 +102,8 @@ export function TimerCompleteModal({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent onClose={onClose} className="max-w-md">
         <DialogHeader>
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#d8ebe0] text-[#1b4332] text-xs font-bold w-fit mb-2">
-            <CheckCircle className="w-3.5 h-3.5 text-[#2d6a4f]" />
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] text-xs font-bold w-fit mb-2">
+            <CheckCircle className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
             <span>HOÀN THÀNH PHIÊN HỌC</span>
           </div>
           <DialogTitle>Ghi nhận thời gian: {subject.name}</DialogTitle>
@@ -114,19 +114,19 @@ export function TimerCompleteModal({
 
         <div className="space-y-4 py-2">
           {/* Duration Summary */}
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-[#eef5f0] dark:bg-[#1d3024] border border-[#dbe7dd] dark:border-[#263d2e]">
-            <div className="flex items-center space-x-2.5 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9]">
-              <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-[var(--mint-bg)] border border-[var(--border)]">
+            <div className="flex items-center space-x-2.5 text-xs font-semibold text-[var(--text-subtle)]">
+              <Clock className="w-4 h-4 text-[var(--mint-dark)]" />
               <span>Thời gian thực tế (Actual):</span>
             </div>
-            <div className="font-mono text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="font-mono text-base font-black text-[var(--text-ink)]">
               {minutes > 0 ? `${minutes} phút ` : ""}{remainderSeconds}s
             </div>
           </div>
 
           {/* Productivity Rating */}
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-2">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-2">
               Đánh giá năng suất (1 - 5 sao):
             </label>
             <div className="flex items-center space-x-2">
@@ -142,7 +142,7 @@ export function TimerCompleteModal({
                   <Star className="w-6 h-6 fill-current" />
                 </button>
               ))}
-              <span className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] ml-2">
+              <span className="text-xs font-semibold text-[var(--text-subtle)] ml-2">
                 {productivityScore === 5
                   ? "Rất tập trung 🔥"
                   : productivityScore >= 3
@@ -154,7 +154,7 @@ export function TimerCompleteModal({
 
           {/* Notes */}
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
               Ghi chú phiên học:
             </label>
             <textarea
@@ -162,7 +162,7 @@ export function TimerCompleteModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="VD: Đã làm xong bài tập, hiểu rõ cấu trúc bài..."
-              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2]"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs placeholder:text-[#8ba393] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#52b788] text-[var(--text-ink)]"
             />
           </div>
         </div>
@@ -175,7 +175,7 @@ export function TimerCompleteModal({
             variant="default"
             onClick={handleSave}
             disabled={isSubmitting}
-            className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl"
+            className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl"
           >
             {isSubmitting ? "Đang lưu..." : "Lưu vào cơ sở dữ liệu"}
           </Button>

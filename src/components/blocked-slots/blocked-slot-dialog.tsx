@@ -87,7 +87,7 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
               Mục đích / Tên khung giờ *
             </label>
             <Input
@@ -100,7 +100,7 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                 Bắt đầu *
               </label>
               <Input
@@ -111,7 +111,7 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
                 Kết thúc *
               </label>
               <Input
@@ -124,13 +124,13 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1">
               Lặp lại vào thứ:
             </label>
             <select
               value={dayOfWeek}
               onChange={(e) => setDayOfWeek(e.target.value)}
-              className="w-full h-11 rounded-[16px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 py-1 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+              className="w-full h-11 rounded-[16px] border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1 text-xs text-[var(--text-ink)]"
             >
               <option value="ALL">Tất cả các ngày trong tuần (Hằng ngày)</option>
               <option value="1">Thứ Hai</option>
@@ -143,15 +143,15 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
             </select>
           </div>
 
-          <div className="flex items-center space-x-2.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
+          <div className="flex items-center space-x-2.5 p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)]">
             <input
               type="checkbox"
               id="isLockedCheck"
               checked={isLocked}
               onChange={(e) => setIsLocked(e.target.checked)}
-              className="rounded text-[#2d6a4f] focus:ring-[#52b788] w-4 h-4 cursor-pointer"
+              className="rounded text-[var(--mint-dark)] focus:ring-[#52b788] w-4 h-4 cursor-pointer"
             />
-            <label htmlFor="isLockedCheck" className="text-xs text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5 cursor-pointer select-none">
+            <label htmlFor="isLockedCheck" className="text-xs text-[var(--text-ink)] flex items-center space-x-1.5 cursor-pointer select-none">
               <Lock className="w-3.5 h-3.5 text-[#a3a86c]" />
               <span className="font-semibold">Khóa cứng (Bắt buộc AI né 100%, không được phép gợi ý đè)</span>
             </label>
@@ -165,7 +165,7 @@ export function BlockedSlotDialog({ open, onClose, editingSlot }: BlockedSlotDia
               type="submit"
               variant="default"
               disabled={isSubmitting}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-semibold"
+              className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl font-semibold"
             >
               {isSubmitting ? "Đang lưu..." : editingSlot ? "Cập nhật" : "Khóa giờ bận"}
             </Button>

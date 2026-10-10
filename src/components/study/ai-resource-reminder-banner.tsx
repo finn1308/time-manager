@@ -52,22 +52,22 @@ export function AiResourceReminderBanner({
     <div className="mb-4 rounded-2xl bg-linear-to-r from-[#edf7f0] to-[#f4faf6] dark:from-[#13271a] dark:to-[#182e20] border border-[#b7d8c3] dark:border-[#284832] p-3 sm:p-4 shadow-xs transition-all animate-in fade-in slide-in-from-top-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-start space-x-3">
-          <div className="p-2 rounded-xl bg-[#2d6a4f] text-white shrink-0 mt-0.5">
+          <div className="p-2 rounded-xl bg-[var(--mint)] text-white shrink-0 mt-0.5">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#2d6a4f] dark:text-[#74c69d]">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--mint-dark)] dark:text-[#74c69d]">
                 Nhắc nhở học tập AI
               </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1f3827] dark:text-[#a3bda9] font-medium">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1f3827] dark:text-[#a3bda9] font-medium">
                 {current.subjectName}
               </span>
             </div>
-            <p className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mt-0.5">
+            <p className="text-xs font-semibold text-[var(--text-ink)] mt-0.5">
               {current.message}
             </p>
-            <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5 font-mono">
+            <p className="text-[11px] text-[var(--text-subtle)] mt-0.5 font-mono">
               Thời gian: {current.dateFormatted} ({current.timeFormatted})
             </p>
           </div>
@@ -77,7 +77,7 @@ export function AiResourceReminderBanner({
           <Button
             size="sm"
             onClick={() => onOpenResourceManager(current.calendarEventId, current.title, current.subjectName)}
-            className="h-8 rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold px-3 shadow-2xs"
+            className="h-8 rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-semibold px-3 shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5 mr-1" />
             <span>Thêm tài liệu / link</span>

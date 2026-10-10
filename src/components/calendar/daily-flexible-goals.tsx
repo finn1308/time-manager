@@ -226,7 +226,7 @@ export function DailyFlexibleGoals({
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-2xl bg-[#eef5f0] dark:bg-[#1b3426] flex items-center justify-center text-[var(--mint-dark)]">
+          <div className="w-8 h-8 rounded-2xl bg-[var(--mint-bg)] dark:bg-[#1b3426] flex items-center justify-center text-[var(--mint-dark)]">
             <Target className="w-4 h-4" />
           </div>
           <div>
@@ -234,7 +234,7 @@ export function DailyFlexibleGoals({
               <h3 className="font-bold text-sm sm:text-[var(--text-subtle)]ase text-[var(--text-ink)]">
                 Mục tiêu hôm nay
               </h3>
-              <Badge className="bg-[#eef5f0] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#52b788] border-none text-[10px] font-bold">
+              <Badge className="bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#52b788] border-none text-[10px] font-bold">
                 {completedCount}/{activeTodayGoals.length} hoàn thành
               </Badge>
             </div>
@@ -273,7 +273,7 @@ export function DailyFlexibleGoals({
               variant="outline"
               size="sm"
               onClick={onOpenCreateModal}
-              className="mt-2 rounded-xl border-[var(--mint)] text-[var(--mint-dark)] hover:bg-[#eef5f0] text-xs font-semibold cursor-pointer"
+              className="mt-2 rounded-xl border-[var(--mint)] text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] text-xs font-semibold cursor-pointer"
             >
               + Đặt mục tiêu học hôm nay
             </Button>
@@ -295,7 +295,7 @@ export function DailyFlexibleGoals({
                   goal.isCompleted
                     ? "bg-[#f4faf5] dark:bg-[#15271a] border-[#b7d8c3] dark:border-[#263d2e]"
                     : isGoalActiveInTimer
-                    ? "bg-[#eef5f0] dark:bg-[#1b3426] border-[var(--mint)] ring-2 ring-[#2d6a4f]/25"
+                    ? "bg-[var(--mint-bg)] dark:bg-[#1b3426] border-[var(--mint)] ring-2 ring-[#2d6a4f]/25"
                     : "bg-[#fbfdfb] dark:bg-[#142318] border-[var(--border)] hover:border-[#b7d8c3]"
                 }`}
               >
@@ -399,7 +399,7 @@ export function DailyFlexibleGoals({
                       isGoalActiveInTimer
                         ? "bg-amber-600 hover:bg-amber-700 text-white animate-pulse"
                         : goal.isCompleted
-                        ? "bg-white dark:bg-[#1b2b20] border border-[var(--mint)] text-[var(--mint-dark)] hover:bg-[#eef5f0]"
+                        ? "bg-white dark:bg-[#1b2b20] border border-[var(--mint)] text-[var(--mint-dark)] hover:bg-[var(--mint-bg)]"
                         : "bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white"
                     }`}
                   >
@@ -420,7 +420,7 @@ export function DailyFlexibleGoals({
                     variant="ghost"
                     size="sm"
                     onClick={() => handleOpenScheduleModal(goal)}
-                    className="h-8 px-2.5 text-[11px] font-semibold text-[var(--text-subtle)] hover:text-[var(--mint-dark)] hover:bg-[#eef5f0] rounded-xl cursor-pointer"
+                    className="h-8 px-2.5 text-[11px] font-semibold text-[var(--text-subtle)] hover:text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] rounded-xl cursor-pointer"
                     title="Xếp vào một khung giờ cụ thể trên lịch"
                   >
                     <CalendarPlus className="w-3.5 h-3.5 mr-1 text-[#52b788]" />

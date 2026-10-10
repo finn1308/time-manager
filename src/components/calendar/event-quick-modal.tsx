@@ -330,7 +330,7 @@ export function EventQuickModal({
             </button>
 
             {isCompleted && (
-              <span className="text-[11px] text-[#73927d]">
+              <span className="text-[11px] text-[var(--text-muted)]">
                 Đã ghi nhận: <strong>{formatMinutesVN(actualMins)}</strong>
               </span>
             )}
@@ -399,7 +399,7 @@ export function EventQuickModal({
               variant="outline"
               size="sm"
               onClick={handleStartTimer}
-              className="rounded-xl border-[var(--border)] text-[var(--mint-dark)] hover:bg-[#eef5f0] space-x-1 font-bold text-xs h-9"
+              className="rounded-xl border-[var(--border)] text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] space-x-1 font-bold text-xs h-9"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
               <span>Bắt đầu Timer</span>

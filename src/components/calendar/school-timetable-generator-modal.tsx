@@ -185,7 +185,7 @@ export function SchoolTimetableGeneratorModal({
       <DialogContent onClose={onClose} className="max-w-3xl rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center space-x-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#1b3426] flex items-center justify-center text-[var(--mint-dark)]">
+            <div className="w-10 h-10 rounded-2xl bg-[var(--mint-bg)] dark:bg-[#1b3426] flex items-center justify-center text-[var(--mint-dark)]">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
@@ -274,7 +274,7 @@ export function SchoolTimetableGeneratorModal({
                 className="p-3.5 rounded-2xl border border-[var(--border)] bg-white dark:bg-[#15251b] space-y-3 relative group"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-[#eef5f0] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#74c69d]">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#74c69d]">
                     Môn #{index + 1}
                   </span>
                   <button

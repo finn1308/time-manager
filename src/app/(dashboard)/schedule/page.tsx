@@ -45,8 +45,8 @@ export default function ScheduleHubPage() {
           <Calendar className="w-6 h-6 text-amber-600 dark:text-amber-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">Lập lịch (Schedule)</h1>
-          <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
+          <h1 className="text-2xl font-bold text-[var(--text-ink)]">Lập lịch (Schedule)</h1>
+          <p className="text-sm text-[var(--text-subtle)]">
             Quản lý thời gian, nhiệm vụ và sự kiện học tập
           </p>
         </div>
@@ -57,13 +57,13 @@ export default function ScheduleHubPage() {
           const Icon = module.icon;
           return (
             <Link key={index} href={module.href}>
-              <div className={`p-5 rounded-3xl bg-white dark:bg-[#17261c] border ${module.border} dark:border-[#263d2e] hover:shadow-md transition-all cursor-pointer flex items-start space-x-4 h-full`}>
+              <div className={`p-5 rounded-3xl bg-[var(--bg-surface)] border ${module.border} dark:border-[#263d2e] hover:shadow-md transition-all cursor-pointer flex items-start space-x-4 h-full`}>
                 <div className={`p-3 rounded-xl ${module.color} shrink-0`}>
                   <Icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">{module.title}</h3>
-                  <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">{module.description}</p>
+                  <h3 className="text-base font-bold text-[var(--text-ink)] mb-1">{module.title}</h3>
+                  <p className="text-xs text-[var(--text-subtle)]">{module.description}</p>
                 </div>
               </div>
             </Link>

@@ -222,7 +222,7 @@ export function AgendaView({
       {/* Agenda Event Groups */}
       {groupedEvents.length === 0 ? (
         <div className="p-12 text-[var(--text-subtle)]enter bg-[var(--bg-surface)] rounded-[28px] border border-[var(--border)]">
-          <CalendarIcon className="w-10 h-10 text-[#73927d] mx-auto mb-3 opacity-60" />
+          <CalendarIcon className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-3 opacity-60" />
           <h3 className="text-sm font-bold text-[var(--text-ink)]">
             Không có lịch trình nào trong khoảng thời gian này
           </h3>
@@ -378,7 +378,7 @@ export function AgendaView({
                           type="button"
                           onClick={(e) => handleQuickResize(e, ev, -15)}
                           title="Giảm 15 phút"
-                          className="px-2 py-1 rounded-lg border border-[var(--border)] text-[10px] font-bold text-[#526b5c] hover:bg-[#eef5f0] transition-colors cursor-pointer"
+                          className="px-2 py-1 rounded-lg border border-[var(--border)] text-[10px] font-bold text-[var(--text-subtle)] hover:bg-[var(--mint-bg)] transition-colors cursor-pointer"
                         >
                           -15m
                         </button>
@@ -386,7 +386,7 @@ export function AgendaView({
                           type="button"
                           onClick={(e) => handleQuickResize(e, ev, 15)}
                           title="Tăng 15 phút"
-                          className="px-2 py-1 rounded-lg border border-[var(--border)] text-[10px] font-bold text-[var(--mint-dark)] hover:bg-[#eef5f0] transition-colors cursor-pointer"
+                          className="px-2 py-1 rounded-lg border border-[var(--border)] text-[10px] font-bold text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] transition-colors cursor-pointer"
                         >
                           +15m
                         </button>

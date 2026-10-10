@@ -135,7 +135,7 @@ export default function ExamModePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <Link href="/learn">
-            <Button variant="ghost" size="icon" className="rounded-xl text-[#526b5c]">
+            <Button variant="ghost" size="icon" className="rounded-xl text-[var(--text-subtle)]">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
@@ -143,10 +143,10 @@ export default function ExamModePage() {
             <Target className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h1 className="text-2xl font-bold text-[var(--text-ink)]">
               Chế độ Luyện thi (Dedicated Exam Mode)
             </h1>
-            <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-sm text-[var(--text-subtle)]">
               Chiến lược ôn thi 5 giai đoạn: Nền tảng → Lấp lỗ hổng → Luyện đề → Thi thử → Tổng duyệt
             </p>
           </div>
@@ -167,12 +167,12 @@ export default function ExamModePage() {
           <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : exams.length === 0 ? (
-        <Card className="text-center py-16 rounded-3xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] p-8">
+        <Card className="text-center py-16 rounded-3xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] p-8">
           <Target className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-lg font-bold text-[var(--text-ink)]">
             Chưa có kế hoạch luyện thi nào!
           </h3>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1 max-w-sm mx-auto mb-5">
+          <p className="text-xs text-[var(--text-subtle)] mt-1 max-w-sm mx-auto mb-5">
             Tạo kế hoạch ôn thi giữa kỳ hoặc cuối kỳ để AI xây dựng lộ trình 5 giai đoạn và tính toán chỉ số sẵn sàng.
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl">
@@ -190,7 +190,7 @@ export default function ExamModePage() {
             return (
               <Card
                 key={exam.id}
-                className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#17261c] border border-emerald-100 dark:border-[#263d2e] shadow-sm space-y-6"
+                className="p-6 sm:p-7 rounded-3xl bg-[var(--bg-surface)] border border-emerald-100 dark:border-[#263d2e] shadow-sm space-y-6"
               >
                 {/* Header row */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -206,14 +206,14 @@ export default function ExamModePage() {
                       )}
                       {riskBadge(strategy?.riskLevel || "LOW")}
                     </div>
-                    <h2 className="text-xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    <h2 className="text-xl font-bold text-[var(--text-ink)]">
                       {exam.title}
                     </h2>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block">Thời gian còn lại</span>
+                      <span className="text-xs text-[var(--text-subtle)] block">Thời gian còn lại</span>
                       <span className="text-xl font-bold text-amber-600 dark:text-amber-400">
                         {daysLeft === 0 ? "Hôm nay!" : `Còn ${daysLeft} ngày`}
                       </span>
@@ -231,21 +231,21 @@ export default function ExamModePage() {
                     <div className="w-full bg-emerald-100 dark:bg-emerald-900/40 h-2 rounded-full overflow-hidden">
                       <div className="bg-emerald-600 h-full rounded-full transition-all" style={{ width: `${readiness}%` }} />
                     </div>
-                    <span className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] block mt-1.5">
+                    <span className="text-[10px] text-[var(--text-subtle)] block mt-1.5">
                       Dựa trên tỷ lệ câu hỏi đã giải quyết trong Mistake Bank
                     </span>
                   </div>
 
                   <div className="p-4 bg-blue-50/50 dark:bg-blue-950/20 rounded-2xl border border-blue-100 dark:border-blue-900/30 flex items-center justify-between">
                     <div>
-                      <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block">Mục tiêu điểm số</span>
+                      <span className="text-xs text-[var(--text-subtle)] block">Mục tiêu điểm số</span>
                       <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
                         {exam.targetScore} / 10
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block">Dự báo hiện tại</span>
-                      <span className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                      <span className="text-xs text-[var(--text-subtle)] block">Dự báo hiện tại</span>
+                      <span className="text-sm font-bold text-[var(--text-ink)]">
                         ~{strategy?.estimatedScore ?? exam.currentScore}
                       </span>
                     </div>
@@ -256,7 +256,7 @@ export default function ExamModePage() {
                     <span className="text-xl font-bold text-purple-800 dark:text-purple-200">
                       {strategy?.recommendedDailyMinutes ?? 60} phút/ngày
                     </span>
-                    <span className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] block mt-1">
+                    <span className="text-[10px] text-[var(--text-subtle)] block mt-1">
                       Tổng số giờ dự kiến: {exam.availableStudyHours}h
                     </span>
                   </div>
@@ -264,7 +264,7 @@ export default function ExamModePage() {
 
                 {/* 5-Phase Progression Strategy */}
                 <div className="space-y-3">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9] block">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-subtle)] block">
                     Tiến độ chiến lược 5 giai đoạn
                   </span>
 
@@ -278,7 +278,7 @@ export default function ExamModePage() {
                             ? "bg-amber-500 text-white border-amber-600 shadow-md ring-2 ring-amber-400/40"
                             : phase.isCompleted
                             ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 text-emerald-800 dark:text-emerald-300"
-                            : "bg-gray-50 dark:bg-[#1a2f22] border-gray-200 dark:border-[#263d2e] text-[#526b5c] opacity-70"
+                            : "bg-gray-50 dark:bg-[#1a2f22] border-gray-200 dark:border-[#263d2e] text-[var(--text-subtle)] opacity-70"
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
@@ -326,12 +326,12 @@ export default function ExamModePage() {
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
         <DialogContent className="max-w-lg">
           <form onSubmit={handleCreateExam} className="space-y-4">
-            <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-lg font-bold text-[var(--text-ink)]">
               Thiết lập kế hoạch luyện thi 5 giai đoạn
             </h2>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Tên kỳ thi / Học phần *</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Tên kỳ thi / Học phần *</label>
               <Input
                 required
                 value={title}
@@ -343,11 +343,11 @@ export default function ExamModePage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Môn học</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Môn học</label>
                 <select
                   value={subjectId}
                   onChange={(e) => setSubjectId(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-[var(--bg-surface)]"
                 >
                   <option value="">-- Chọn môn học --</option>
                   {subjects.map((s) => (
@@ -359,7 +359,7 @@ export default function ExamModePage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Ngày thi chính thức *</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Ngày thi chính thức *</label>
                 <Input
                   required
                   type="date"
@@ -372,7 +372,7 @@ export default function ExamModePage() {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Điểm hiện tại</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Điểm hiện tại</label>
                 <Input
                   type="number"
                   step="0.1"
@@ -396,7 +396,7 @@ export default function ExamModePage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Quỹ giờ học (h)</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Quỹ giờ học (h)</label>
                 <Input
                   type="number"
                   min="5"

@@ -332,23 +332,23 @@ export default function SettingsPage() {
     <div className="space-y-6 max-w-4xl mx-auto pb-16">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2.5">
-          <Sliders className="w-6 h-6 text-[#2d6a4f] dark:text-[#52b788]" />
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--text-ink)] flex items-center space-x-2.5">
+          <Sliders className="w-6 h-6 text-[var(--mint-dark)]" />
           <span>Cài đặt hệ thống & Tùy chọn cá nhân</span>
         </h1>
-        <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+        <p className="text-xs text-[var(--text-subtle)] mt-1">
           Quản lý khóa AI BYOK, giới hạn và sở thích học tập cá nhân, ngân sách tuần và múi giờ.
         </p>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center space-x-1 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs font-bold shadow-2xs overflow-x-auto max-w-full pb-1 scrollbar-none">
+      <div className="flex items-center space-x-1 p-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl text-xs font-bold shadow-2xs overflow-x-auto max-w-full pb-1 scrollbar-none">
         <button
           onClick={() => setActiveTab("AI_KEYS")}
           className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "AI_KEYS"
-              ? "bg-[#2d6a4f] text-white shadow-2xs"
-              : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+              ? "bg-[var(--mint)] text-white shadow-2xs"
+              : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
           }`}
         >
           <Key className="w-3.5 h-3.5 shrink-0" />
@@ -360,8 +360,8 @@ export default function SettingsPage() {
           onClick={() => setActiveTab("STUDY_PREFS")}
           className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "STUDY_PREFS"
-              ? "bg-[#2d6a4f] text-white shadow-2xs"
-              : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+              ? "bg-[var(--mint)] text-white shadow-2xs"
+              : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
           }`}
         >
           <Clock className="w-3.5 h-3.5 shrink-0" />
@@ -373,8 +373,8 @@ export default function SettingsPage() {
           onClick={() => setActiveTab("SYSTEM")}
           className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "SYSTEM"
-              ? "bg-[#2d6a4f] text-white shadow-2xs"
-              : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+              ? "bg-[var(--mint)] text-white shadow-2xs"
+              : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
           }`}
         >
           <Globe className="w-3.5 h-3.5 shrink-0" />
@@ -386,8 +386,8 @@ export default function SettingsPage() {
           onClick={() => setActiveTab("BACKUP")}
           className={`px-3 sm:px-4 py-2 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
             activeTab === "BACKUP"
-              ? "bg-[#2d6a4f] text-white shadow-2xs"
-              : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+              ? "bg-[var(--mint)] text-white shadow-2xs"
+              : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
           }`}
         >
           <Database className="w-3.5 h-3.5 shrink-0" />
@@ -401,11 +401,11 @@ export default function SettingsPage() {
         <div
           className={`p-3.5 rounded-2xl text-xs flex items-center space-x-2.5 font-medium transition-all ${
             message.type === "success"
-              ? "bg-[#d8ebe0] text-[#1b4332] border border-[#b7d8c3]"
+              ? "bg-[var(--mint-bg)] text-[var(--mint-dark)] border border-[#b7d8c3]"
               : "bg-[#f7ebeb] text-[#8a3c3c] border border-[#e8c6c6]"
           }`}
         >
-          {message.type === "success" ? <Check className="w-4 h-4 text-[#2d6a4f] shrink-0" /> : <AlertCircle className="w-4 h-4 text-[#b87474] shrink-0" />}
+          {message.type === "success" ? <Check className="w-4 h-4 text-[var(--mint-dark)] shrink-0" /> : <AlertCircle className="w-4 h-4 text-[#b87474] shrink-0" />}
           <span>{message.text}</span>
         </div>
       )}
@@ -415,24 +415,24 @@ export default function SettingsPage() {
       {/* ========================================================================= */}
       {activeTab === "AI_KEYS" && (
         <div className="space-y-6">
-          <div className="p-4 rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#eef5f0] dark:bg-[#1d3024] text-xs text-[#192e22] dark:text-[#d8ebe0] flex items-start space-x-3.5">
-            <ShieldCheck className="w-5 h-5 text-[#2d6a4f] dark:text-[#52b788] shrink-0 mt-0.5" />
+          <div className="p-4 rounded-[22px] border border-[var(--border)] bg-[var(--mint-bg)] text-xs text-[var(--text-ink)] dark:text-[#d8ebe0] flex items-start space-x-3.5">
+            <ShieldCheck className="w-5 h-5 text-[var(--mint-dark)] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <p className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">Kiến trúc Bring-Your-Own-Key (BYOK):</p>
-              <p className="text-[#526b5c] dark:text-[#a3bda9] leading-relaxed">
+              <p className="font-bold text-sm text-[var(--text-ink)]">Kiến trúc Bring-Your-Own-Key (BYOK):</p>
+              <p className="text-[var(--text-subtle)] leading-relaxed">
                 Khóa API được mã hóa AES-256-GCM với IV và AuthTag bảo mật trước khi lưu database. Khóa không bao giờ bị trả về trình duyệt hoặc lộ trong console.
               </p>
             </div>
           </div>
 
           {/* Key Form */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <Key className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <Key className="w-4 h-4 text-[var(--mint-dark)]" />
                 <span>Nhập API Key cá nhân</span>
               </CardTitle>
-              <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+              <CardDescription className="text-[var(--text-subtle)]">
                 Chọn AI provider bạn muốn sử dụng (Google Gemini, OpenAI, Anthropic).
               </CardDescription>
             </CardHeader>
@@ -451,12 +451,12 @@ export default function SettingsPage() {
                         onClick={() => setProvider(prov)}
                         className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all ${
                           isSelected
-                            ? "border-[#2d6a4f] bg-[#d8ebe0]/30 dark:bg-[#1d3827]/40 shadow-2xs"
-                            : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                            ? "border-[var(--mint)] bg-[var(--mint-bg)]/30 dark:bg-[#1d3827]/40 shadow-2xs"
+                            : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[var(--mint-soft)]"
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                          <span className="font-bold text-xs text-[var(--text-ink)]">
                             {prov === "GEMINI" ? "Google Gemini" : prov === "OPENAI" ? "OpenAI" : "Anthropic Claude"}
                           </span>
                           <span
@@ -484,7 +484,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                     Nhập {provider} API Key:
                   </label>
                   <Input
@@ -495,7 +495,7 @@ export default function SettingsPage() {
                       provider === "GEMINI" ? "AIzaSy..." : provider === "OPENAI" ? "sk-proj-..." : "sk-ant-..."
                     }
                     required
-                    className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                    className="rounded-2xl border-[var(--border)] h-10 text-xs"
                   />
                 </div>
 
@@ -503,7 +503,7 @@ export default function SettingsPage() {
                   type="submit"
                   variant="default"
                   disabled={loading}
-                  className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs space-x-1.5 rounded-2xl h-10 px-5"
+                  className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs space-x-1.5 rounded-2xl h-10 px-5"
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>{loading ? "Đang mã hóa & lưu..." : `Mã hóa & Lưu ${provider} Key`}</span>
@@ -513,10 +513,10 @@ export default function SettingsPage() {
           </Card>
 
           {/* Active Keys List */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <Cpu className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <Cpu className="w-4 h-4 text-[var(--mint-dark)]" />
                 <span>Trạng thái kết nối các nhà cung cấp AI</span>
               </CardTitle>
             </CardHeader>
@@ -528,7 +528,7 @@ export default function SettingsPage() {
                 return (
                   <div
                     key={prov}
-                    className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs"
+                    className="flex items-center justify-between p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)] text-xs"
                   >
                     <div className="flex items-center space-x-3">
                       <div
@@ -541,10 +541,10 @@ export default function SettingsPage() {
                         }`}
                       />
                       <div>
-                        <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                        <div className="font-bold text-sm text-[var(--text-ink)]">
                           {prov === "GEMINI" ? "Google Gemini" : prov === "OPENAI" ? "OpenAI" : "Anthropic Claude"}
                         </div>
-                        <div className="text-[10px] text-[#73927d]">
+                        <div className="text-[10px] text-[var(--text-muted)]">
                           {isConfigured ? "Mã hóa AES-256-GCM trong Database" : "Chưa cấu hình khóa"}
                         </div>
                       </div>
@@ -560,13 +560,13 @@ export default function SettingsPage() {
                             disabled={testing === prov}
                             className="text-xs space-x-1.5 h-8 px-3"
                           >
-                            <Zap className="w-3 h-3 text-[#2d6a4f]" />
+                            <Zap className="w-3 h-3 text-[var(--mint-dark)]" />
                             <span>{testing === prov ? "Đang thử..." : "Kiểm tra kết nối"}</span>
                           </Button>
 
                           <button
                             onClick={() => handleDeleteKey(prov)}
-                            className="p-2 rounded-full hover:bg-[#f7ebeb] text-[#73927d] hover:text-[#b87474] transition-colors cursor-pointer"
+                            className="p-2 rounded-full hover:bg-[#f7ebeb] text-[var(--text-muted)] hover:text-[#b87474] transition-colors cursor-pointer"
                             title="Xóa khóa này"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -587,13 +587,13 @@ export default function SettingsPage() {
       {/* ========================================================================= */}
       {activeTab === "STUDY_PREFS" && (
         <form onSubmit={handleSaveStudyPreferences} className="space-y-6">
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <Clock className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <Clock className="w-4 h-4 text-[var(--mint-dark)]" />
                 <span>Thời lượng học & Giờ nghỉ (Session & Breaks)</span>
               </CardTitle>
-              <CardDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <CardDescription className="text-xs text-[var(--text-subtle)]">
                 AI Scheduler đọc các thông số này để phân bổ độ dài buổi học và thời gian nghỉ đệm.
               </CardDescription>
             </CardHeader>
@@ -601,7 +601,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4 p-6 pt-0 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1">
                     Thời gian học tối đa mỗi phiên (phút)
                   </label>
                   <Input
@@ -613,14 +613,14 @@ export default function SettingsPage() {
                     onChange={(e) =>
                       setStudyPrefs({ ...studyPrefs, maxSessionDurationMins: parseInt(e.target.value, 10) })
                     }
-                    className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                    className="rounded-2xl border-[var(--border)] h-10 text-xs"
                     required
                   />
-                  <p className="text-[10px] text-[#73927d] mt-1">Khuyên dùng 60 - 90 phút để duy trì tập trung.</p>
+                  <p className="text-[10px] text-[var(--text-muted)] mt-1">Khuyên dùng 60 - 90 phút để duy trì tập trung.</p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1">
                     Thời gian nghỉ tối thiểu giữa 2 phiên (phút)
                   </label>
                   <Input
@@ -632,14 +632,14 @@ export default function SettingsPage() {
                     onChange={(e) =>
                       setStudyPrefs({ ...studyPrefs, minBreakBetweenSessions: parseInt(e.target.value, 10) })
                     }
-                    className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                    className="rounded-2xl border-[var(--border)] h-10 text-xs"
                     required
                   />
-                  <p className="text-[10px] text-[#73927d] mt-1">AI không xếp 2 buổi học cách nhau dưới khoảng này.</p>
+                  <p className="text-[10px] text-[var(--text-muted)] mt-1">AI không xếp 2 buổi học cách nhau dưới khoảng này.</p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1">
                     Thời lượng Pomodoro chuẩn (phút)
                   </label>
                   <Input
@@ -651,13 +651,13 @@ export default function SettingsPage() {
                     onChange={(e) =>
                       setStudyPrefs({ ...studyPrefs, pomodoroDurationMins: parseInt(e.target.value, 10) })
                     }
-                    className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                    className="rounded-2xl border-[var(--border)] h-10 text-xs"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1">
                     Thời lượng nghỉ ngắn Pomodoro (phút)
                   </label>
                   <Input
@@ -669,7 +669,7 @@ export default function SettingsPage() {
                     onChange={(e) =>
                       setStudyPrefs({ ...studyPrefs, pomodoroBreakMins: parseInt(e.target.value, 10) })
                     }
-                    className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                    className="rounded-2xl border-[var(--border)] h-10 text-xs"
                     required
                   />
                 </div>
@@ -678,10 +678,10 @@ export default function SettingsPage() {
           </Card>
 
           {/* Daily Limits & Rest Days */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <BatteryCharging className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <BatteryCharging className="w-4 h-4 text-[var(--mint-dark)]" />
                 <span>Giới hạn ngày & Ngày nghỉ (Daily Limits & Rest Days)</span>
               </CardTitle>
             </CardHeader>
@@ -689,7 +689,7 @@ export default function SettingsPage() {
             <CardContent className="space-y-4 p-6 pt-0 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1">
                     Số giờ học tối đa / ngày (giờ)
                   </label>
                   <Input
@@ -701,14 +701,14 @@ export default function SettingsPage() {
                     onChange={(e) =>
                       setStudyPrefs({ ...studyPrefs, maxDailyStudyHours: parseFloat(e.target.value) })
                     }
-                    className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                    className="rounded-2xl border-[var(--border)] h-10 text-xs"
                     required
                   />
-                  <p className="text-[10px] text-[#73927d] mt-1">Tránh tình trạng kiệt sức và nhồi nhét quá tải.</p>
+                  <p className="text-[10px] text-[var(--text-muted)] mt-1">Tránh tình trạng kiệt sức và nhồi nhét quá tải.</p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1">
                     Số phiên học tối đa / ngày
                   </label>
                   <Input
@@ -720,7 +720,7 @@ export default function SettingsPage() {
                     onChange={(e) =>
                       setStudyPrefs({ ...studyPrefs, maxDailySessions: parseInt(e.target.value, 10) })
                     }
-                    className="rounded-2xl border-[#dbe7dd] h-10 text-xs"
+                    className="rounded-2xl border-[var(--border)] h-10 text-xs"
                     required
                   />
                 </div>
@@ -728,7 +728,7 @@ export default function SettingsPage() {
 
               {/* Rest days selector */}
               <div>
-                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                   Ngày nghỉ trong tuần (AI không tự động xếp lịch vào các ngày này):
                 </label>
                 <div className="flex items-center space-x-2">
@@ -741,8 +741,8 @@ export default function SettingsPage() {
                         onClick={() => toggleRestDay(item.day)}
                         className={`w-10 h-10 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                           isRest
-                            ? "bg-[#2d6a4f] text-white shadow-2xs"
-                            : "bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c] border border-[#dbe7dd] dark:border-[#263d2e]"
+                            ? "bg-[var(--mint)] text-white shadow-2xs"
+                            : "bg-[var(--bg-muted)] text-[var(--text-subtle)] border border-[var(--border)]"
                         }`}
                       >
                         {item.label}
@@ -754,7 +754,7 @@ export default function SettingsPage() {
 
               {/* Time of day preference */}
               <div className="pt-2">
-                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                   Ưu tiên khung thời gian học:
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -770,12 +770,12 @@ export default function SettingsPage() {
                       onClick={() => setStudyPrefs({ ...studyPrefs, timePreference: p.id })}
                       className={`p-3 rounded-2xl border text-left cursor-pointer transition-all ${
                         studyPrefs.timePreference === p.id
-                          ? "border-[#2d6a4f] bg-[#d8ebe0]/30 text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c]"
+                          ? "border-[var(--mint)] bg-[var(--mint-bg)]/30 text-[var(--text-ink)] shadow-2xs"
+                          : "border-[var(--border)] bg-[var(--bg-muted)] text-[var(--text-subtle)]"
                       }`}
                     >
                       <div className="font-bold text-xs">{p.label}</div>
-                      <div className="text-[10px] text-[#73927d] mt-0.5">{p.desc}</div>
+                      <div className="text-[10px] text-[var(--text-muted)] mt-0.5">{p.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -783,7 +783,7 @@ export default function SettingsPage() {
 
               {/* Flexibility */}
               <div className="pt-2">
-                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                   Mức độ linh hoạt của lịch (Schedule Flexibility):
                 </label>
                 <div className="grid grid-cols-3 gap-2.5">
@@ -798,12 +798,12 @@ export default function SettingsPage() {
                       onClick={() => setStudyPrefs({ ...studyPrefs, scheduleFlexibility: f.id })}
                       className={`p-3 rounded-2xl border text-left cursor-pointer transition-all ${
                         studyPrefs.scheduleFlexibility === f.id
-                          ? "border-[#2d6a4f] bg-[#d8ebe0]/30 text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-                          : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c]"
+                          ? "border-[var(--mint)] bg-[var(--mint-bg)]/30 text-[var(--text-ink)] shadow-2xs"
+                          : "border-[var(--border)] bg-[var(--bg-muted)] text-[var(--text-subtle)]"
                       }`}
                     >
                       <div className="font-bold text-xs">{f.label}</div>
-                      <div className="text-[10px] text-[#73927d] mt-0.5">{f.desc}</div>
+                      <div className="text-[10px] text-[var(--text-muted)] mt-0.5">{f.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -814,7 +814,7 @@ export default function SettingsPage() {
           <Button
             type="submit"
             disabled={savingPrefs}
-            className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs rounded-2xl h-10 px-6 shadow-sm"
+            className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs rounded-2xl h-10 px-6 shadow-sm"
           >
             {savingPrefs ? "Đang lưu..." : "Lưu Sở thích & Giới hạn học tập"}
           </Button>
@@ -826,17 +826,17 @@ export default function SettingsPage() {
       {/* ========================================================================= */}
       {activeTab === "SYSTEM" && (
         <div className="space-y-6">
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <Zap className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <Zap className="w-4 h-4 text-[var(--mint-dark)]" />
                 <span>Ngân sách học tập hàng tuần & Chế độ ôn thi</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-xs p-6 pt-0">
               <form onSubmit={handleSaveUserSettings} className="space-y-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                  <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                     Ngân sách học tập hàng tuần (Giờ / tuần)
                   </label>
                   <Input
@@ -846,7 +846,7 @@ export default function SettingsPage() {
                     max="100"
                     value={budgetInput}
                     onChange={(e) => setBudgetInput(e.target.value)}
-                    className="max-w-xs rounded-2xl border-[#dbe7dd] text-xs h-10"
+                    className="max-w-xs rounded-2xl border-[var(--border)] text-xs h-10"
                     required
                   />
                 </div>
@@ -857,9 +857,9 @@ export default function SettingsPage() {
                     id="examMode"
                     checked={examMode}
                     onChange={(e) => setExamMode(e.target.checked)}
-                    className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
+                    className="rounded border-[var(--border)] text-[var(--mint-dark)] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
                   />
-                  <label htmlFor="examMode" className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer">
+                  <label htmlFor="examMode" className="text-xs font-semibold text-[var(--text-ink)] cursor-pointer">
                     Kích hoạt chế độ ôn thi (Exam Mode) - Tối đa hóa ôn tập và ưu tiên các môn gần deadline
                   </label>
                 </div>
@@ -870,28 +870,28 @@ export default function SettingsPage() {
                     id="notifications"
                     checked={notifications}
                     onChange={(e) => setNotifications(e.target.checked)}
-                    className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
+                    className="rounded border-[var(--border)] text-[var(--mint-dark)] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
                   />
-                  <label htmlFor="notifications" className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer">
+                  <label htmlFor="notifications" className="text-xs font-semibold text-[var(--text-ink)] cursor-pointer">
                     Bật nhắc nhở trước giờ học 15 phút (Browser Notifications)
                   </label>
                 </div>
 
                 {/* Auto Day Closure & Auto Rollover Settings (Smart Daily To-Do) */}
-                <div className="pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] space-y-3">
+                <div className="pt-2 border-t border-[var(--border)] space-y-3">
                   <div className="flex items-center space-x-3">
                     <input
                       type="checkbox"
                       id="autoDayClosure"
                       checked={autoDayClosure}
                       onChange={(e) => setAutoDayClosure(e.target.checked)}
-                      className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
+                      className="rounded border-[var(--border)] text-[var(--mint-dark)] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer"
                     />
                     <div>
-                      <label htmlFor="autoDayClosure" className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer block">
+                      <label htmlFor="autoDayClosure" className="text-xs font-semibold text-[var(--text-ink)] cursor-pointer block">
                         Tự động chốt ngày cuối ngày (Auto Daily Closure)
                       </label>
-                      <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                      <p className="text-[11px] text-[var(--text-muted)]">
                         Khi qua nửa đêm theo múi giờ Việt Nam, hệ thống tự động tổng kết và đóng băng snapshot kết quả kỷ luật của ngày hôm trước.
                       </p>
                     </div>
@@ -904,13 +904,13 @@ export default function SettingsPage() {
                       checked={autoRollover}
                       onChange={(e) => setAutoRollover(e.target.checked)}
                       disabled={!autoDayClosure}
-                      className="rounded border-[#dbe7dd] text-[#2d6a4f] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer disabled:opacity-50"
+                      className="rounded border-[var(--border)] text-[var(--mint-dark)] focus:ring-[#2d6a4f] w-4 h-4 cursor-pointer disabled:opacity-50"
                     />
                     <div>
-                      <label htmlFor="autoRollover" className={`text-xs font-semibold cursor-pointer block ${!autoDayClosure ? "text-[#73927d]" : "text-[#192e22] dark:text-[#f0f7f2]"}`}>
+                      <label htmlFor="autoRollover" className={`text-xs font-semibold cursor-pointer block ${!autoDayClosure ? "text-[var(--text-muted)]" : "text-[var(--text-ink)]"}`}>
                         Tự động chuyển tiếp nhiệm vụ chưa xong sang ngày hôm sau
                       </label>
-                      <p className="text-[11px] text-[#73927d] dark:text-[#8ba393]">
+                      <p className="text-[11px] text-[var(--text-muted)]">
                         Tự động dời nhiệm vụ chưa hoàn thành sang ngày mới mà không cần xác nhận thủ công. (Mặc định: tắt để người dùng chủ động chọn).
                       </p>
                     </div>
@@ -920,7 +920,7 @@ export default function SettingsPage() {
                 <Button
                   type="submit"
                   disabled={savingBudget}
-                  className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold text-xs rounded-2xl h-10 px-5 mt-2"
+                  className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold text-xs rounded-2xl h-10 px-5 mt-2"
                 >
                   {savingBudget ? "Đang lưu..." : "Lưu tùy chọn hệ thống"}
                 </Button>
@@ -929,26 +929,26 @@ export default function SettingsPage() {
           </Card>
 
           {/* Timezone Information Card */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <Globe className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <Globe className="w-4 h-4 text-[var(--mint-dark)]" />
                 <span>Múi giờ & Ngôn ngữ hệ thống</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-xs p-6 pt-0">
-              <div className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318]">
+              <div className="flex items-center justify-between p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)]">
                 <div>
-                  <p className="font-bold text-[#192e22] dark:text-[#f0f7f2]">Múi giờ chuẩn</p>
-                  <p className="text-[#526b5c] dark:text-[#a3bda9]">Asia/Ho_Chi_Minh (UTC+07:00 - Giờ Việt Nam)</p>
+                  <p className="font-bold text-[var(--text-ink)]">Múi giờ chuẩn</p>
+                  <p className="text-[var(--text-subtle)]">Asia/Ho_Chi_Minh (UTC+07:00 - Giờ Việt Nam)</p>
                 </div>
                 <Badge variant="green">Chuẩn hệ thống</Badge>
               </div>
 
-              <div className="flex items-center justify-between p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318]">
+              <div className="flex items-center justify-between p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)]">
                 <div>
-                  <p className="font-bold text-[#192e22] dark:text-[#f0f7f2]">Ngôn ngữ giao diện</p>
-                  <p className="text-[#526b5c] dark:text-[#a3bda9]">Tiếng Việt (vi-VN)</p>
+                  <p className="font-bold text-[var(--text-ink)]">Ngôn ngữ giao diện</p>
+                  <p className="text-[var(--text-subtle)]">Tiếng Việt (vi-VN)</p>
                 </div>
                 <Badge variant="outline">Mặc định</Badge>
               </div>
@@ -964,12 +964,12 @@ export default function SettingsPage() {
             <div
               className={`p-4 rounded-2xl text-xs flex items-center space-x-2.5 font-medium transition-all ${
                 restoreMessage.type === "success"
-                  ? "bg-[#d8ebe0] text-[#1b4332] border border-[#b7d8c3]"
+                  ? "bg-[var(--mint-bg)] text-[var(--mint-dark)] border border-[#b7d8c3]"
                   : "bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300"
               }`}
             >
               {restoreMessage.type === "success" ? (
-                <CheckCircle2 className="w-4 h-4 text-[#2d6a4f] shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[var(--mint-dark)] shrink-0" />
               ) : (
                 <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               )}
@@ -978,29 +978,29 @@ export default function SettingsPage() {
           )}
 
           {/* Full JSON Export Card */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] shadow-2xs">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] shadow-2xs">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <Database className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <Database className="w-4 h-4 text-[var(--mint-dark)]" />
                 <span>Sao lưu toàn bộ dữ liệu (Full JSON Backup)</span>
               </CardTitle>
-              <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+              <CardDescription className="text-[var(--text-subtle)]">
                 Tải về toàn bộ Môn học, Mục tiêu, Nhiệm vụ, Lịch học, Phiên học, Ghi chú và Thói quen thành một tệp JSON duy nhất.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 p-6 pt-0">
-              <div className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                  <p className="font-bold text-xs text-[var(--text-ink)]">
                     Bản sao lưu chuẩn ChronoMind (.json)
                   </p>
-                  <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                  <p className="text-[11px] text-[var(--text-subtle)]">
                     Phù hợp để lưu trữ ngoại tuyến, chuyển đổi máy tính hoặc khôi phục khi cần.
                   </p>
                 </div>
 
                 <a href="/api/export?format=json" download>
-                  <Button className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 shadow-2xs shrink-0 cursor-pointer">
+                  <Button className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold space-x-1.5 shadow-2xs shrink-0 cursor-pointer">
                     <Download className="w-3.5 h-3.5" />
                     <span>Tải bản sao lưu JSON</span>
                   </Button>
@@ -1010,23 +1010,23 @@ export default function SettingsPage() {
           </Card>
 
           {/* CSV Export Card */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] shadow-2xs">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] shadow-2xs">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
                 <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Xuất dữ liệu bảng tính (Excel / Google Sheets CSV)</span>
               </CardTitle>
-              <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+              <CardDescription className="text-[var(--text-subtle)]">
                 Xuất từng phần dữ liệu độc lập sang định dạng CSV để phân tích dữ liệu bằng Excel hoặc Google Sheets.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 pt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Events CSV */}
-                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Lịch học (Calendar)</p>
-                    <p className="text-[10px] text-[#73927d]">Tiêu đề, Bắt đầu, Kết thúc, Môn</p>
+                    <p className="font-bold text-xs text-[var(--text-ink)]">Lịch học (Calendar)</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">Tiêu đề, Bắt đầu, Kết thúc, Môn</p>
                   </div>
                   <a href="/api/export?format=csv&entity=events" download>
                     <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
@@ -1037,10 +1037,10 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Sessions CSV */}
-                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Phiên học (Sessions)</p>
-                    <p className="text-[10px] text-[#73927d]">Môn, Thời lượng, Điểm năng suất</p>
+                    <p className="font-bold text-xs text-[var(--text-ink)]">Phiên học (Sessions)</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">Môn, Thời lượng, Điểm năng suất</p>
                   </div>
                   <a href="/api/export?format=csv&entity=sessions" download>
                     <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
@@ -1051,10 +1051,10 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Tasks CSV */}
-                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Nhiệm vụ (Tasks)</p>
-                    <p className="text-[10px] text-[#73927d]">Trạng thái, Ưu tiên, Hạn chót</p>
+                    <p className="font-bold text-xs text-[var(--text-ink)]">Nhiệm vụ (Tasks)</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">Trạng thái, Ưu tiên, Hạn chót</p>
                   </div>
                   <a href="/api/export?format=csv&entity=tasks" download>
                     <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
@@ -1065,10 +1065,10 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Notes CSV */}
-                <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">Ghi chú (Notes)</p>
-                    <p className="text-[10px] text-[#73927d]">Tiêu đề, Môn học, Ngày tạo</p>
+                    <p className="font-bold text-xs text-[var(--text-ink)]">Ghi chú (Notes)</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">Tiêu đề, Môn học, Ngày tạo</p>
                   </div>
                   <a href="/api/export?format=csv&entity=notes" download>
                     <Button variant="outline" size="sm" className="rounded-xl text-xs space-x-1 cursor-pointer">
@@ -1082,32 +1082,32 @@ export default function SettingsPage() {
           </Card>
 
           {/* Restore / Import Card */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] shadow-2xs">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] shadow-2xs">
             <CardHeader>
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
                 <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 <span>Khôi phục dữ liệu từ bản sao lưu JSON</span>
               </CardTitle>
-              <CardDescription className="text-[#526b5c] dark:text-[#a3bda9]">
+              <CardDescription className="text-[var(--text-subtle)]">
                 Tải lên tệp sao lưu `.json` đã xuất trước đó để khôi phục lại các môn học, nhiệm vụ, lịch và thói quen.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 p-6 pt-0">
-              <div className="p-6 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border-2 border-dashed border-[#dbe7dd] dark:border-[#263d2e] text-center space-y-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] flex items-center justify-center mx-auto">
+              <div className="p-6 rounded-2xl bg-[var(--bg-muted)] border-2 border-dashed border-[var(--border)] text-center space-y-3">
+                <div className="w-10 h-10 rounded-2xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center mx-auto">
                   <Upload className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  <p className="text-xs font-bold text-[var(--text-ink)]">
                     Chọn file sao lưu ChronoMind (.json)
                   </p>
-                  <p className="text-[11px] text-[#73927d] mt-0.5">
+                  <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                     Hệ thống sẽ tự động ghép nối và nhập dữ liệu vào tài khoản của bạn.
                   </p>
                 </div>
 
                 <div className="flex justify-center pt-1">
-                  <label className="inline-flex items-center space-x-2 px-4 py-2 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold cursor-pointer transition-colors shadow-2xs">
+                  <label className="inline-flex items-center space-x-2 px-4 py-2 rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold cursor-pointer transition-colors shadow-2xs">
                     <Upload className="w-3.5 h-3.5" />
                     <span>{restoring ? "Đang khôi phục..." : "Chọn file và Khôi phục ngay"}</span>
                     <input

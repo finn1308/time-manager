@@ -80,12 +80,12 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
             {editingGoal ? "Chỉnh sửa mục tiêu học tập" : "Thêm mục tiêu học tập mới"}
           </DialogTitle>
-          <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+          <DialogDescription className="text-xs text-[var(--text-subtle)]">
             Đặt chỉ tiêu số giờ hoàn thành và thời hạn deadline để AI lập lịch khoa học.
           </DialogDescription>
         </DialogHeader>
@@ -98,7 +98,7 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
               Tiêu đề mục tiêu *
             </label>
             <Input
@@ -107,19 +107,19 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              className="rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
+              className="rounded-2xl border-[var(--border)] focus:ring-[#2d6a4f] text-xs h-10"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                 Môn học gắn kèm
               </label>
               <select
                 value={subjectId}
                 onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full h-10 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
+                className="w-full h-10 rounded-2xl border border-[var(--border)] bg-[#fcfdfc] dark:bg-[#142318] px-3 text-xs text-[var(--text-ink)] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
               >
                 <option value="">(Không gắn môn cụ thể)</option>
                 {subjects.map((sub) => (
@@ -132,7 +132,7 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
                 Số giờ mục tiêu *
               </label>
               <Input
@@ -143,25 +143,25 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
                 value={targetHours}
                 onChange={(e) => setTargetHours(e.target.value)}
                 required
-                className="rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
+                className="rounded-2xl border-[var(--border)] focus:ring-[#2d6a4f] text-xs h-10"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
               Thời hạn hoàn thành (Deadline)
             </label>
             <Input
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="rounded-2xl border-[#dbe7dd] focus:ring-[#2d6a4f] text-xs h-10"
+              className="rounded-2xl border-[var(--border)] focus:ring-[#2d6a4f] text-xs h-10"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+            <label className="block text-xs font-semibold text-[var(--text-ink)] mb-1.5">
               Ghi chú chi tiết
             </label>
             <textarea
@@ -169,7 +169,7 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="VD: Tập trung vào giải đề Cambridge và ôn từ vựng band 7.0+..."
-              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#142318] p-3 text-xs text-[#192e22] dark:text-[#f0f7f2] placeholder:text-[#8ba393] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[#fcfdfc] dark:bg-[#142318] p-3 text-xs text-[var(--text-ink)] placeholder:text-[#8ba393] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f]"
             />
           </div>
 
@@ -179,7 +179,7 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
               variant="outline"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-2xl border-[#dbe7dd] text-[#526b5c]"
+              className="rounded-2xl border-[var(--border)] text-[var(--text-subtle)]"
             >
               Hủy
             </Button>
@@ -187,7 +187,7 @@ export function GoalDialog({ open, onClose, subjects, editingGoal }: GoalDialogP
               type="submit"
               variant="default"
               disabled={isSubmitting}
-              className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold"
+              className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold"
             >
               {isSubmitting ? "Đang lưu..." : editingGoal ? "Cập nhật" : "Lưu mục tiêu"}
             </Button>

@@ -37,7 +37,7 @@ export function PracticeQuickTimer({ subject }: PracticeQuickTimerProps) {
       className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center space-x-2 cursor-pointer active:scale-95 ${
         isCurrentRunning
           ? "bg-amber-500 hover:bg-amber-600 text-white animate-pulse"
-          : "bg-[#2d6a4f] hover:bg-[#1b4332] text-white"
+          : "bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white"
       }`}
       title={isCurrentRunning ? "Tạm dừng Study Timer" : `Bắt đầu bấm giờ học môn ${subject.name}`}
     >

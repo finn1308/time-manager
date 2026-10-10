@@ -144,7 +144,7 @@ export default function PracticeGamePlayerPage(props: {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <Loader2 className="w-10 h-10 text-emerald-600 animate-spin" />
-        <p className="text-sm font-medium text-[#526b5c] dark:text-[#a3bda9]">
+        <p className="text-sm font-medium text-[var(--text-subtle)]">
           Đang tải dữ liệu trò chơi luyện tập...
         </p>
       </div>
@@ -192,13 +192,13 @@ export default function PracticeGamePlayerPage(props: {
       )}
 
       {!["com-tam", "monkey-rescue", "flappy-bird", "sentence-craft"].includes(gameId) && (
-        <div className="p-12 text-center rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] space-y-4">
+        <div className="p-12 text-center rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] space-y-4">
           <Gamepad2 className="w-12 h-12 text-gray-400 mx-auto" />
-          <h2 className="text-xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h2 className="text-xl font-bold text-[var(--text-ink)]">
             Không tìm thấy trò chơi
           </h2>
           <Link href="/practice/games">
-            <Button className="bg-[#2d6a4f] text-white rounded-xl">Quay lại danh sách</Button>
+            <Button className="bg-[var(--mint)] text-white rounded-xl">Quay lại danh sách</Button>
           </Link>
         </div>
       )}

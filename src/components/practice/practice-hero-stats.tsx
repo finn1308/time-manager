@@ -63,11 +63,11 @@ export function PracticeHeroStats({
       {/* Middle: 2 Metric Cards (3 cols) */}
       <div className="lg:col-span-3 grid grid-cols-2 gap-3 sm:gap-4">
         {/* Completion % Box */}
-        <div className="p-5 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-xs flex flex-col items-center justify-center text-center">
-          <span className="text-3xl sm:text-4xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+        <div className="p-5 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col items-center justify-center text-center">
+          <span className="text-3xl sm:text-4xl font-black text-[var(--text-ink)]">
             {stats.completionRate}%
           </span>
-          <span className="text-xs font-bold text-[#526b5c] dark:text-[#a3bda9] mt-2">
+          <span className="text-xs font-bold text-[var(--text-subtle)] mt-2">
             Tiến độ
           </span>
           <div className="w-full bg-gray-100 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden mt-3">
@@ -79,11 +79,11 @@ export function PracticeHeroStats({
         </div>
 
         {/* Mastered / Resolved Box */}
-        <div className="p-5 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-xs flex flex-col items-center justify-center text-center">
+        <div className="p-5 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col items-center justify-center text-center">
           <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400">
             {stats.resolvedCount}
           </span>
-          <span className="text-xs font-bold text-[#526b5c] dark:text-[#a3bda9] mt-2">
+          <span className="text-xs font-bold text-[var(--text-subtle)] mt-2">
             Đã thuộc
           </span>
           <span className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">
@@ -93,7 +93,7 @@ export function PracticeHeroStats({
       </div>
 
       {/* Right: Streak Card with 7-day indicators (3 cols) */}
-      <div className="lg:col-span-3 p-5 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-xs flex flex-col justify-between">
+      <div className="lg:col-span-3 p-5 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-xs flex flex-col justify-between">
         {/* Streak Header Banner */}
         <div className="p-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white flex items-center justify-between shadow-xs">
           <div className="flex items-center space-x-2">

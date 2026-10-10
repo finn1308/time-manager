@@ -41,17 +41,17 @@ export function PracticeGamesGrid() {
   ];
 
   return (
-    <div className="p-6 sm:p-7 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs space-y-4">
+    <div className="p-6 sm:p-7 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="p-2.5 rounded-2xl bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 shadow-2xs">
             <Gamepad2 className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-[#192e22] dark:text-[#f0f7f2]">
+            <h3 className="text-base font-extrabold text-[var(--text-ink)]">
               Mini-games Luyện Tập Tương Tác
             </h3>
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-xs text-[var(--text-subtle)]">
               Vừa học vừa chơi, tăng tốc phản xạ ghi nhớ và nhận xu thưởng
             </p>
           </div>
@@ -85,7 +85,7 @@ export function PracticeGamesGrid() {
                   {g.badge}
                 </span>
               </div>
-              <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] line-clamp-2 leading-relaxed">
+              <p className="text-[11px] text-[var(--text-subtle)] line-clamp-2 leading-relaxed">
                 {g.desc}
               </p>
             </div>

@@ -163,14 +163,14 @@ export default function FlashcardsIndexPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#86e2a8] text-xs font-bold mb-2">
-            <Brain className="w-3.5 h-3.5 text-[#2d6a4f] dark:text-[#52b788]" />
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] text-xs font-bold mb-2">
+            <Brain className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
             <span>ANKI SPACED REPETITION (SM-2)</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-ink)]">
             Flashcard & Trí nhớ dài hạn
           </h1>
-          <p className="text-xs sm:text-sm text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+          <p className="text-xs sm:text-sm text-[var(--text-subtle)] mt-0.5">
             Ghi nhớ kiến thức bền vững theo thuật toán SuperMemo SM-2 chuẩn Anki, tự động tính toán chu kỳ ôn tập.
           </p>
         </div>
@@ -179,7 +179,7 @@ export default function FlashcardsIndexPage() {
           <Button
             onClick={() => setIsAiGenOpen(true)}
             variant="outline"
-            className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-[#2d6a4f] dark:text-[#52b788] text-xs font-bold space-x-1.5 h-9"
+            className="rounded-2xl border-[var(--border)] text-[var(--mint-dark)] text-xs font-bold space-x-1.5 h-9"
           >
             <Sparkles className="w-4 h-4 text-emerald-600" />
             <span>AI Tạo Flashcard</span>
@@ -187,7 +187,7 @@ export default function FlashcardsIndexPage() {
 
           <Button
             onClick={() => setIsNewDeckOpen(true)}
-            className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 h-9"
+            className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold space-x-1.5 h-9"
           >
             <Plus className="w-4 h-4" />
             <span>Tạo bộ thẻ mới</span>
@@ -197,48 +197,48 @@ export default function FlashcardsIndexPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
             <Flame className="w-4 h-4 text-rose-500" />
             <span>Cần ôn hôm nay</span>
           </div>
-          <div className={`text-xl sm:text-2xl font-black ${totalDue > 0 ? "text-rose-600" : "text-[#192e22] dark:text-[#f0f7f2]"}`}>
+          <div className={`text-xl sm:text-2xl font-black ${totalDue > 0 ? "text-rose-600" : "text-[var(--text-ink)]"}`}>
             {totalDue} thẻ
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Chu kỳ lặp lại đến hạn</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Chu kỳ lặp lại đến hạn</div>
         </Card>
 
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
-            <Layers className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
+            <Layers className="w-4 h-4 text-[var(--mint-dark)]" />
             <span>Tổng số thẻ</span>
           </div>
-          <div className="text-xl sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="text-xl sm:text-2xl font-black text-[var(--text-ink)]">
             {totalCards} thẻ
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Trong {decks.length} bộ thẻ</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Trong {decks.length} bộ thẻ</div>
         </Card>
 
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>Đã thuần thục (Mastered)</span>
           </div>
-          <div className="text-xl sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="text-xl sm:text-2xl font-black text-[var(--text-ink)]">
             {totalMastered} thẻ
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Khoảng cách lặp {">"} 30 ngày</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Khoảng cách lặp {">"} 30 ngày</div>
         </Card>
 
-        <Card className="rounded-[22px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+        <Card className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+          <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
             <RotateCcw className="w-4 h-4 text-blue-600" />
             <span>Tỷ lệ nhớ bền vững</span>
           </div>
-          <div className="text-xl sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="text-xl sm:text-2xl font-black text-[var(--text-ink)]">
             {masteredPercentage}%
           </div>
-          <div className="text-[11px] text-[#73927d] mt-0.5">Độ bao phủ bộ nhớ</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Độ bao phủ bộ nhớ</div>
         </Card>
       </div>
 
@@ -250,20 +250,20 @@ export default function FlashcardsIndexPage() {
           ))}
         </div>
       ) : decks.length === 0 ? (
-        <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-12 text-center">
-          <div className="w-16 h-16 rounded-3xl bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] flex items-center justify-center mx-auto mb-4">
+        <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
+          <div className="w-16 h-16 rounded-3xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center mx-auto mb-4">
             <Layers className="w-8 h-8" />
           </div>
-          <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-base font-bold text-[var(--text-ink)]">
             Chưa có bộ thẻ Flashcard nào
           </h3>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] max-w-md mx-auto mt-2 leading-relaxed">
+          <p className="text-xs text-[var(--text-subtle)] max-w-md mx-auto mt-2 leading-relaxed">
             Tạo bộ thẻ thủ công hoặc dùng tính năng AI Tạo Flashcard để biến tài liệu PDF thành các câu hỏi Active Recall chất lượng cao.
           </p>
           <div className="flex items-center justify-center space-x-3 mt-6">
             <Button
               onClick={() => setIsAiGenOpen(true)}
-              className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 h-10 px-5"
+              className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold space-x-1.5 h-10 px-5"
             >
               <Sparkles className="w-4 h-4" />
               <span>AI Tạo Flashcard từ tài liệu</span>
@@ -273,10 +273,10 @@ export default function FlashcardsIndexPage() {
       ) : (
         <div className="space-y-4">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-base font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-base font-black text-[var(--text-ink)]">
               Các bộ từ vựng & Thẻ học ({decks.length})
             </h2>
-            <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+            <span className="text-xs font-bold text-[var(--mint-dark)]">
               Tự động cá nhân hóa
             </span>
           </div>
@@ -293,8 +293,8 @@ export default function FlashcardsIndexPage() {
                   onClick={() => router.push(`/flashcards/${deck.id}`)}
                   className={`p-5 rounded-[28px] border-2 transition-all duration-200 cursor-pointer group flex items-center justify-between gap-4 shadow-2xs hover:shadow-md ${
                     isFinished
-                      ? "bg-[#f8fdf9] dark:bg-[#14281b] border-[#c2e2cc] hover:border-[#2d6a4f]"
-                      : "bg-white dark:bg-[#17261c] border-dashed border-[#d5e5da] dark:border-[#263d2e] hover:border-[#2d6a4f]"
+                      ? "bg-[#f8fdf9] dark:bg-[#14281b] border-[#c2e2cc] hover:border-[var(--mint)]"
+                      : "bg-[var(--bg-surface)] border-dashed border-[#d5e5da] dark:border-[#263d2e] hover:border-[var(--mint)]"
                   }`}
                 >
                   {/* Left: Trophy or Number Icon */}
@@ -314,7 +314,7 @@ export default function FlashcardsIndexPage() {
                   {/* Middle: Title, Stats & Progress */}
                   <div className="flex-1 min-w-0 space-y-2">
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-extrabold text-sm sm:text-base text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] dark:group-hover:text-[#52b788] transition-colors truncate">
+                      <h3 className="font-extrabold text-sm sm:text-base text-[var(--text-ink)] group-hover:text-[var(--mint-dark)] dark:group-hover:text-[#52b788] transition-colors truncate">
                         {deck.title}
                       </h3>
                       {isFinished && (
@@ -322,7 +322,7 @@ export default function FlashcardsIndexPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center space-x-3 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9]">
+                    <div className="flex items-center space-x-3 text-xs font-semibold text-[var(--text-subtle)]">
                       <span>{deck.cardCount} từ vựng</span>
                       <span>•</span>
                       <span className={isFinished ? "text-emerald-600 font-bold" : ""}>
@@ -337,9 +337,9 @@ export default function FlashcardsIndexPage() {
                     </div>
 
                     {/* Green progress bar */}
-                    <div className="w-full bg-[#eef5f0] dark:bg-[#1d3024] rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-[var(--mint-bg)] rounded-full h-1.5 overflow-hidden">
                       <div
-                        className="bg-[#2d6a4f] dark:bg-[#52b788] h-1.5 rounded-full transition-all duration-300"
+                        className="bg-[var(--mint)] h-1.5 rounded-full transition-all duration-300"
                         style={{ width: `${masteredPct}%` }}
                       />
                     </div>
@@ -358,7 +358,7 @@ export default function FlashcardsIndexPage() {
                       <Trash2 className="w-4 h-4" />
                     </button>
 
-                    <div className="w-10 h-10 rounded-full bg-[#f0f7f2] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] group-hover:bg-[#2d6a4f] group-hover:text-white flex items-center justify-center transition-all shadow-2xs">
+                    <div className="w-10 h-10 rounded-full bg-[#f0f7f2] dark:bg-[#1d3024] text-[var(--mint-dark)] group-hover:bg-[var(--mint)] group-hover:text-white flex items-center justify-center transition-all shadow-2xs">
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </div>
@@ -371,19 +371,19 @@ export default function FlashcardsIndexPage() {
 
       {/* Modal: Create Deck */}
       <Dialog open={isNewDeckOpen} onOpenChange={setIsNewDeckOpen}>
-        <DialogContent onClose={() => setIsNewDeckOpen(false)} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+        <DialogContent onClose={() => setIsNewDeckOpen(false)} className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
           <form onSubmit={handleCreateDeck} className="space-y-4">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
                 Tạo bộ thẻ Flashcard mới
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Tổ chức thẻ ghi nhớ theo môn học hoặc chủ đề ôn tập riêng biệt.
               </DialogDescription>
             </DialogHeader>
 
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Tên bộ thẻ *
               </label>
               <Input
@@ -391,12 +391,12 @@ export default function FlashcardsIndexPage() {
                 placeholder="VD: Từ vựng IELTS Writing Task 2, Công thức Vật lý 12..."
                 value={deckTitle}
                 onChange={(e) => setDeckTitle(e.target.value)}
-                className="rounded-2xl border-[#dbe7dd] text-xs"
+                className="rounded-2xl border-[var(--border)] text-xs"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Mô tả
               </label>
               <textarea
@@ -404,18 +404,18 @@ export default function FlashcardsIndexPage() {
                 placeholder="Mục tiêu ghi nhớ, phạm vi kiến thức..."
                 value={deckDescription}
                 onChange={(e) => setDeckDescription(e.target.value)}
-                className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Môn học liên quan
               </label>
               <select
                 value={deckSubjectId}
                 onChange={(e) => setDeckSubjectId(e.target.value)}
-                className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 text-xs text-[var(--text-ink)]"
               >
                 <option value="">(Không gắn môn)</option>
                 {subjects.map((s) => (
@@ -438,7 +438,7 @@ export default function FlashcardsIndexPage() {
               <Button
                 type="submit"
                 disabled={isSubmittingDeck}
-                className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold"
+                className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold"
               >
                 {isSubmittingDeck ? "Đang tạo..." : "Tạo bộ thẻ"}
               </Button>
@@ -449,30 +449,30 @@ export default function FlashcardsIndexPage() {
 
       {/* Modal: AI Flashcard Generator */}
       <Dialog open={isAiGenOpen} onOpenChange={setIsAiGenOpen}>
-        <DialogContent onClose={() => setIsAiGenOpen(false)} className="max-w-lg rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+        <DialogContent onClose={() => setIsAiGenOpen(false)} className="max-w-lg rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
           <form onSubmit={handleGenerateAiCards} className="space-y-4">
             <DialogHeader>
-              <div className="flex items-center space-x-2 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] mb-1">
+              <div className="flex items-center space-x-2 text-xs font-bold text-[var(--mint-dark)] mb-1">
                 <Sparkles className="w-4 h-4" />
                 <span>AI FLASHCARD ENGINE</span>
               </div>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
                 Trích xuất Flashcard tự động bằng AI
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 AI đọc tài liệu, xác định các định nghĩa, thuật ngữ trọng tâm và tự động tạo thẻ Spaced Repetition.
               </DialogDescription>
             </DialogHeader>
 
             {/* Source Type Toggle */}
-            <div className="flex items-center space-x-2 p-1 bg-[#f4f8f5] dark:bg-[#101c14] rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e]">
+            <div className="flex items-center space-x-2 p-1 bg-[var(--mint-bg)] dark:bg-[#101c14] rounded-2xl border border-[var(--border)]">
               <button
                 type="button"
                 onClick={() => setAiSourceType("DOCUMENT")}
                 className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   aiSourceType === "DOCUMENT"
-                    ? "bg-[#2d6a4f] text-white shadow-2xs"
-                    : "text-[#526b5c]"
+                    ? "bg-[var(--mint)] text-white shadow-2xs"
+                    : "text-[var(--text-subtle)]"
                 }`}
               >
                 Từ tài liệu đã tải lên
@@ -482,8 +482,8 @@ export default function FlashcardsIndexPage() {
                 onClick={() => setAiSourceType("TEXT")}
                 className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   aiSourceType === "TEXT"
-                    ? "bg-[#2d6a4f] text-white shadow-2xs"
-                    : "text-[#526b5c]"
+                    ? "bg-[var(--mint)] text-white shadow-2xs"
+                    : "text-[var(--text-subtle)]"
                 }`}
               >
                 Dán văn bản / Chủ đề
@@ -492,13 +492,13 @@ export default function FlashcardsIndexPage() {
 
             {aiSourceType === "DOCUMENT" ? (
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Chọn tài liệu
                 </label>
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
-                  className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 text-xs text-[var(--text-ink)]"
                 >
                   <option value="">-- Chọn tài liệu đã tải lên trong Quest/Roadmap --</option>
                   {documents.map((d) => (
@@ -508,14 +508,14 @@ export default function FlashcardsIndexPage() {
                   ))}
                 </select>
                 {documents.length === 0 && (
-                  <p className="text-[11px] text-[#73927d] mt-1">
+                  <p className="text-[11px] text-[var(--text-muted)] mt-1">
                     Chưa có tài liệu tải lên. Bạn có thể chuyển sang tab "Dán văn bản / Chủ đề".
                   </p>
                 )}
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Nội dung kiến thức cần tạo thẻ
                 </label>
                 <textarea
@@ -524,7 +524,7 @@ export default function FlashcardsIndexPage() {
                   placeholder="Dán đoạn văn bản bài học, các công thức, thuật ngữ cần ghi nhớ..."
                   value={aiPromptText}
                   onChange={(e) => setAiPromptText(e.target.value)}
-                  className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                 />
               </div>
             )}
@@ -532,13 +532,13 @@ export default function FlashcardsIndexPage() {
             {/* Subject Link & Card Count */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Gắn với môn học
                 </label>
                 <select
                   value={aiSubjectId}
                   onChange={(e) => setAiSubjectId(e.target.value)}
-                  className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 text-xs text-[var(--text-ink)]"
                 >
                   <option value="">(Tự động xác định)</option>
                   {subjects.map((s) => (
@@ -550,13 +550,13 @@ export default function FlashcardsIndexPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+                <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                   Số lượng thẻ cần tạo
                 </label>
                 <select
                   value={aiCardCount}
                   onChange={(e) => setAiCardCount(parseInt(e.target.value, 10))}
-                  className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 text-xs text-[var(--text-ink)]"
                 >
                   <option value={5}>5 thẻ (Nhanh)</option>
                   <option value={10}>10 thẻ (Khuyến nghị)</option>
@@ -577,7 +577,7 @@ export default function FlashcardsIndexPage() {
               <Button
                 type="submit"
                 disabled={isGeneratingAi}
-                className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5"
+                className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold space-x-1.5"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>{isGeneratingAi ? "AI đang phân tích & tạo thẻ..." : "Bắt đầu tạo"}</span>

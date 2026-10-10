@@ -40,7 +40,7 @@ export function PracticeFilterBar({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Tìm kiếm chế độ, môn học hoặc câu hỏi luyện tập..."
-          className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-sm text-[#192e22] dark:text-[#f0f7f2] placeholder-[#73927d] dark:placeholder-[#526b5c] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all shadow-2xs"
+          className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] text-sm text-[var(--text-ink)] placeholder-[#73927d] dark:placeholder-[#526b5c] focus:outline-none focus:ring-2 focus:ring-[#2d6a4f] focus:border-transparent transition-all shadow-2xs"
         />
         {searchQuery && (
           <button
@@ -62,8 +62,8 @@ export function PracticeFilterBar({
               onClick={() => onFilterChange(tab.id)}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer shadow-2xs active:scale-95 ${
                 isActive
-                  ? "bg-[#2d6a4f] text-white shadow-sm font-extrabold"
-                  : "bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] hover:text-[#192e22] dark:hover:text-white"
+                  ? "bg-[var(--mint)] text-white shadow-sm font-extrabold"
+                  : "bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-bg)] dark:hover:bg-[#1d3024] hover:text-[var(--text-ink)] dark:hover:text-white"
               }`}
             >
               {tab.label}
@@ -81,8 +81,8 @@ export function PracticeFilterBar({
               onClick={() => onFilterChange(filterId)}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center space-x-1.5 ${
                 isActive
-                  ? "bg-[#2d6a4f] text-white shadow-sm font-extrabold"
-                  : "bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024]"
+                  ? "bg-[var(--mint)] text-white shadow-sm font-extrabold"
+                  : "bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-bg)] dark:hover:bg-[#1d3024]"
               }`}
             >
               <span

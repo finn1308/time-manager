@@ -154,7 +154,7 @@ export default function AssignmentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <Link href="/academic">
-            <Button variant="ghost" size="icon" className="rounded-xl text-[#526b5c]">
+            <Button variant="ghost" size="icon" className="rounded-xl text-[var(--text-subtle)]">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
@@ -162,10 +162,10 @@ export default function AssignmentsPage() {
             <FileCheck className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h1 className="text-2xl font-bold text-[var(--text-ink)]">
               Bài tập lớn & Đồ án (Assignments)
             </h1>
-            <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-sm text-[var(--text-subtle)]">
               Quản lý tiến độ đồ án, tiểu luận và phân rã thành các nhiệm vụ chi tiết bằng AI
             </p>
           </div>
@@ -181,7 +181,7 @@ export default function AssignmentsPage() {
       </div>
 
       {/* Filter Toolbar */}
-      <Card className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] flex flex-wrap items-center gap-2">
+      <Card className="p-4 rounded-2xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] flex flex-wrap items-center gap-2">
         <Button
           size="sm"
           variant={selectedStatus === "ALL" ? "default" : "outline"}
@@ -207,7 +207,7 @@ export default function AssignmentsPage() {
         <select
           value={selectedSubject}
           onChange={(e) => setSelectedSubject(e.target.value)}
-          className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-100 dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] ml-auto"
+          className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-100 dark:border-[#263d2e] text-[var(--text-ink)] ml-auto"
         >
           <option value="ALL">Tất cả môn học</option>
           {subjects.map((s) => (
@@ -224,12 +224,12 @@ export default function AssignmentsPage() {
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : assignments.length === 0 ? (
-        <Card className="text-center py-16 rounded-3xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] p-8">
+        <Card className="text-center py-16 rounded-3xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] p-8">
           <FileCheck className="w-12 h-12 text-blue-500 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-lg font-bold text-[var(--text-ink)]">
             Chưa có bài tập nào!
           </h3>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1 max-w-sm mx-auto mb-5">
+          <p className="text-xs text-[var(--text-subtle)] mt-1 max-w-sm mx-auto mb-5">
             Thêm đồ án hoặc tiểu luận học kỳ để AI tự động chia nhỏ thành các chặng hoàn thành đúng hạn.
           </p>
           <Button onClick={() => setShowCreateModal(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl">
@@ -244,7 +244,7 @@ export default function AssignmentsPage() {
             return (
               <Card
                 key={item.id}
-                className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#17261c] border border-emerald-100 dark:border-[#263d2e] shadow-sm space-y-4"
+                className="p-5 sm:p-6 rounded-3xl bg-[var(--bg-surface)] border border-emerald-100 dark:border-[#263d2e] shadow-sm space-y-4"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="space-y-1">
@@ -270,7 +270,7 @@ export default function AssignmentsPage() {
                       </Badge>
                     </div>
 
-                    <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    <h3 className="text-lg font-bold text-[var(--text-ink)]">
                       {item.title}
                     </h3>
                   </div>
@@ -291,7 +291,7 @@ export default function AssignmentsPage() {
                     <select
                       value={item.status}
                       onChange={(e) => handleUpdateStatus(item.id, e.target.value)}
-                      className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-200 dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] font-semibold"
+                      className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-200 dark:border-[#263d2e] text-[var(--text-ink)] font-semibold"
                     >
                       {Object.entries(statusLabels).map(([k, v]) => (
                         <option key={k} value={k}>
@@ -303,12 +303,12 @@ export default function AssignmentsPage() {
                 </div>
 
                 {item.description && (
-                  <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                  <p className="text-xs text-[var(--text-subtle)]">
                     {item.description}
                   </p>
                 )}
 
-                <div className="flex items-center justify-between text-xs text-[#526b5c] dark:text-[#a3bda9] pt-2 border-t border-emerald-50 dark:border-[#263d2e]">
+                <div className="flex items-center justify-between text-xs text-[var(--text-subtle)] pt-2 border-t border-emerald-50 dark:border-[#263d2e]">
                   <span>Ước lượng thời lượng: {Math.round(item.estimatedWorkloadMinutes / 60)} giờ</span>
                   {item.grade !== null && item.grade !== undefined && (
                     <span className="font-bold text-emerald-600">Điểm đạt được: {item.grade}/10</span>
@@ -324,12 +324,12 @@ export default function AssignmentsPage() {
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
         <DialogContent className="max-w-lg">
           <form onSubmit={handleCreateAssignment} className="space-y-4">
-            <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-lg font-bold text-[var(--text-ink)]">
               Thêm bài tập lớn / đồ án mới
             </h2>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Tên đồ án / bài tập *</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Tên đồ án / bài tập *</label>
               <Input
                 required
                 value={title}
@@ -341,11 +341,11 @@ export default function AssignmentsPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Môn học</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Môn học</label>
                 <select
                   value={subjectId}
                   onChange={(e) => setSubjectId(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-[var(--bg-surface)]"
                 >
                   <option value="">-- Chọn môn học --</option>
                   {subjects.map((s) => (
@@ -357,7 +357,7 @@ export default function AssignmentsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Hạn nộp bài *</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Hạn nộp bài *</label>
                 <Input
                   required
                   type="date"
@@ -370,11 +370,11 @@ export default function AssignmentsPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Độ ưu tiên</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Độ ưu tiên</label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-[var(--bg-surface)]"
                 >
                   <option value="LOW">Thấp (Low)</option>
                   <option value="MEDIUM">Trung bình (Medium)</option>
@@ -384,7 +384,7 @@ export default function AssignmentsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Ước tính thời gian (phút)</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Ước tính thời gian (phút)</label>
                 <Input
                   type="number"
                   min="30"
@@ -397,7 +397,7 @@ export default function AssignmentsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Mô tả yêu cầu</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Mô tả yêu cầu</label>
               <Input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

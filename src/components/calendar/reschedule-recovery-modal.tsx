@@ -203,7 +203,7 @@ export function RescheduleRecoveryModal({
           </div>
 
           {loading ? (
-            <div className="py-8 text-[var(--text-subtle)]enter text-xs text-[#526b5c] animate-pulse">
+            <div className="py-8 text-[var(--text-subtle)]enter text-xs text-[var(--text-subtle)] animate-pulse">
               Đang phân tích các phiên học bị lỡ và tìm slot trống...
             </div>
           ) : missedCount === 0 ? (
@@ -223,7 +223,7 @@ export function RescheduleRecoveryModal({
                         <Zap className="w-4 h-4" />
                         <span>{optionA.title}</span>
                       </div>
-                      <p className="text-[11px] text-[#73927d] dark:text-[#a3bda9] mt-1 leading-relaxed">
+                      <p className="text-[11px] text-[var(--text-muted)] dark:text-[#a3bda9] mt-1 leading-relaxed">
                         {optionA.subtitle}
                       </p>
 
@@ -268,7 +268,7 @@ export function RescheduleRecoveryModal({
                         <Leaf className="w-4 h-4" />
                         <span>{optionB.title}</span>
                       </div>
-                      <p className="text-[11px] text-[#73927d] dark:text-[#a3bda9] mt-1 leading-relaxed">
+                      <p className="text-[11px] text-[var(--text-muted)] dark:text-[#a3bda9] mt-1 leading-relaxed">
                         {optionB.subtitle}
                       </p>
 

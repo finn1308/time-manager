@@ -226,10 +226,10 @@ export function CreateQuestWizard({
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs transition-colors ${
                 step === s.num
-                  ? "bg-[#2d6a4f] text-white shadow-xs"
+                  ? "bg-[var(--mint)] text-white shadow-xs"
                   : step > s.num
-                  ? "bg-[#d8ebe0] text-[#1b4332]"
-                  : "bg-[#e5ede7] text-[#73927d]"
+                  ? "bg-[var(--mint-bg)] text-[var(--mint-dark)]"
+                  : "bg-[#e5ede7] text-[var(--text-muted)]"
               }`}
             >
               {step > s.num ? <CheckCircle2 className="w-4 h-4" /> : s.num}
@@ -237,8 +237,8 @@ export function CreateQuestWizard({
             <span
               className={`text-xs font-semibold hidden sm:inline ${
                 step === s.num
-                  ? "text-[#192e22] dark:text-[#f0f7f2]"
-                  : "text-[#73927d] dark:text-[#8aa693]"
+                  ? "text-[var(--text-ink)]"
+                  : "text-[var(--text-muted)] dark:text-[#8aa693]"
               }`}
             >
               {s.title}
@@ -256,18 +256,18 @@ export function CreateQuestWizard({
 
       {/* ================= STEP 1: IMPORT MATERIAL ================= */}
       {step === 1 && (
-        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
           <StudyBunnyMascot message="Chào bạn! Hãy nạp tài liệu học tập (PDF bài giảng, đề cương hoặc giáo trình) để AI phân tích cấu trúc toàn diện và loại bỏ hoàn toàn các thông tin hành chính không liên quan nhé!" />
 
           {/* Import Type Tabs */}
-          <div className="flex rounded-2xl bg-[#eef5f0] dark:bg-[#142318] p-1 border border-[#dbe7dd] dark:border-[#263d2e]">
+          <div className="flex rounded-2xl bg-[var(--mint-bg)] dark:bg-[#142318] p-1 border border-[var(--border)]">
             <button
               type="button"
               onClick={() => setImportType("PDF")}
               className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 importType === "PDF"
-                  ? "bg-white dark:bg-[#203627] text-[#1b4332] dark:text-[#d8ebe0] shadow-xs"
-                  : "text-[#526b5c] dark:text-[#8aa693]"
+                  ? "bg-white dark:bg-[#203627] text-[var(--mint-dark)] dark:text-[#d8ebe0] shadow-xs"
+                  : "text-[var(--text-subtle)] dark:text-[#8aa693]"
               }`}
             >
               📄 Tải lên file PDF
@@ -277,8 +277,8 @@ export function CreateQuestWizard({
               onClick={() => setImportType("TEXT")}
               className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 importType === "TEXT"
-                  ? "bg-white dark:bg-[#203627] text-[#1b4332] dark:text-[#d8ebe0] shadow-xs"
-                  : "text-[#526b5c] dark:text-[#8aa693]"
+                  ? "bg-white dark:bg-[#203627] text-[var(--mint-dark)] dark:text-[#d8ebe0] shadow-xs"
+                  : "text-[var(--text-subtle)] dark:text-[#8aa693]"
               }`}
             >
               ✍️ Dán văn bản / Ghi chú
@@ -288,13 +288,13 @@ export function CreateQuestWizard({
           {/* Subject Selector (Optional) */}
           {subjects.length > 0 && (
             <div>
-              <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+              <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                 Liên kết với Môn học hiện có (tùy chọn):
               </label>
               <select
                 value={selectedSubjectId}
                 onChange={(e) => setSelectedSubjectId(e.target.value)}
-                className="w-full text-xs p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full text-xs p-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)] text-[var(--text-ink)]"
               >
                 <option value="">-- Không liên kết môn (Tạo mới tự động) --</option>
                 {subjects.map((sub) => (
@@ -311,15 +311,15 @@ export function CreateQuestWizard({
             <div className="space-y-3">
               <label
                 htmlFor="pdf-upload"
-                className="border-2 border-dashed border-[#b7d8c3] dark:border-[#2d6a4f] rounded-[26px] p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-[#eef5f0]/50 dark:hover:bg-[#1c3022]/40 transition-colors"
+                className="border-2 border-dashed border-[#b7d8c3] dark:border-[var(--mint)] rounded-[26px] p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-[var(--mint-bg)]/50 dark:hover:bg-[#1c3022]/40 transition-colors"
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#d8ebe0] dark:bg-[#1e3827] flex items-center justify-center text-[#2d6a4f] dark:text-[#52b788] mb-3 shadow-xs">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--mint-bg)] dark:bg-[#1e3827] flex items-center justify-center text-[var(--mint-dark)] mb-3 shadow-xs">
                   <UploadCloud className="w-7 h-7" />
                 </div>
-                <p className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                <p className="font-bold text-sm text-[var(--text-ink)]">
                   {file ? file.name : "Kéo & Thả file PDF bài học vào đây"}
                 </p>
-                <p className="text-xs text-[#73927d] mt-1">
+                <p className="text-xs text-[var(--text-muted)] mt-1">
                   {file
                     ? `${(file.size / (1024 * 1024)).toFixed(2)} MB • Nhấp để chọn file khác`
                     : "Hỗ trợ giáo trình, tài liệu học tập, slide bài giảng (tất cả các trang đều được đọc)"}
@@ -340,7 +340,7 @@ export function CreateQuestWizard({
           ) : (
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                   Tiêu đề tài liệu:
                 </label>
                 <Input
@@ -351,7 +351,7 @@ export function CreateQuestWizard({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#192e22] dark:text-[#d8ebe0] mb-1.5">
+                <label className="block text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0] mb-1.5">
                   Nội dung bài học hoặc đề cương:
                 </label>
                 <textarea
@@ -359,7 +359,7 @@ export function CreateQuestWizard({
                   placeholder="Dán nội dung giáo trình, chương mục hoặc các định nghĩa chuyên môn vào đây..."
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
-                  className="w-full text-xs p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#192e22] dark:text-[#f0f7f2] focus:outline-hidden"
+                  className="w-full text-xs p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)] text-[var(--text-ink)] focus:outline-hidden"
                 />
               </div>
             </div>
@@ -375,7 +375,7 @@ export function CreateQuestWizard({
               type="button"
               disabled={loading || (importType === "PDF" ? !file : textInput.length < 20)}
               onClick={handleUploadAndAnalyze}
-              className="ml-auto bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
+              className="ml-auto bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
             >
               <span>{loading ? "Đang phân tích tài liệu..." : "Phân tích tài liệu toàn diện"}</span>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
@@ -386,61 +386,61 @@ export function CreateQuestWizard({
 
       {/* ================= STEP 2: DOCUMENT ANALYSIS REPORT (Step 19) ================= */}
       {step === 2 && analysisReport && (
-        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
           {/* Header Card */}
-          <div className="border-b border-[#dbe7dd] dark:border-[#263d2e] pb-4">
-            <span className="text-[11px] font-black uppercase tracking-wider text-[#2d6a4f] dark:text-[#52b788] bg-[#d8ebe0] dark:bg-[#1e3b28] px-3 py-1 rounded-full">
+          <div className="border-b border-[var(--border)] pb-4">
+            <span className="text-[11px] font-black uppercase tracking-wider text-[var(--mint-dark)] bg-[var(--mint-bg)] dark:bg-[#1e3b28] px-3 py-1 rounded-full">
               DOCUMENT ANALYSIS
             </span>
-            <h2 className="text-xl font-black text-[#192e22] dark:text-[#f0f7f2] mt-2">
+            <h2 className="text-xl font-black text-[var(--text-ink)] mt-2">
               {analysisReport.documentTitle}
             </h2>
-            <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-1">
+            <p className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693] mt-1">
               Tổng số trang phân tích: <strong>{analysisReport.totalPages} trang</strong>
             </p>
           </div>
 
           {/* Stats Metrics (Step 19 Spec) */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[#2d6a4f]">
-              <span className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#7fc498] block">Phát hiện cấu trúc</span>
-              <span className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[var(--mint)]">
+              <span className="text-[11px] font-bold text-[var(--mint-dark)] dark:text-[#7fc498] block">Phát hiện cấu trúc</span>
+              <span className="text-lg font-black text-[var(--text-ink)]">
                 {analysisReport.detectedStats.chaptersCount} Chương
               </span>
-              <span className="text-[10px] text-[#526b5c] dark:text-[#8aa693] block mt-0.5">
+              <span className="text-[10px] text-[var(--text-subtle)] dark:text-[#8aa693] block mt-0.5">
                 {analysisReport.detectedStats.topicsCount} chuyên đề chi tiết
               </span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[#2d6a4f]">
-              <span className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#7fc498] block">Kiến thức cốt lõi</span>
-              <span className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[var(--mint)]">
+              <span className="text-[11px] font-bold text-[var(--mint-dark)] dark:text-[#7fc498] block">Kiến thức cốt lõi</span>
+              <span className="text-lg font-black text-[var(--text-ink)]">
                 {analysisReport.detectedStats.conceptsCount} Khái niệm
               </span>
-              <span className="text-[10px] text-[#526b5c] dark:text-[#8aa693] block mt-0.5">
+              <span className="text-[10px] text-[var(--text-subtle)] dark:text-[#8aa693] block mt-0.5">
                 {analysisReport.detectedStats.rulesCount} quy định / điều kiện
               </span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-[#fbfdfb] dark:bg-[#182b1e] border border-[#dbe7dd] dark:border-[#263d2e] col-span-2 sm:col-span-1">
-              <span className="text-[11px] font-bold text-[#526b5c] dark:text-[#8aa693] block">Tình huống thực tế</span>
-              <span className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="p-3.5 rounded-2xl bg-[#fbfdfb] dark:bg-[#182b1e] border border-[var(--border)] col-span-2 sm:col-span-1">
+              <span className="text-[11px] font-bold text-[var(--text-subtle)] dark:text-[#8aa693] block">Tình huống thực tế</span>
+              <span className="text-lg font-black text-[var(--text-ink)]">
                 {analysisReport.detectedStats.casesCount} Ca vận dụng
               </span>
-              <span className="text-[10px] text-[#526b5c] dark:text-[#8aa693] block mt-0.5">
+              <span className="text-[10px] text-[var(--text-subtle)] dark:text-[#8aa693] block mt-0.5">
                 Hỗ trợ trắc nghiệm Scenario
               </span>
             </div>
           </div>
 
           {/* Ignored Metadata Protection Banner (Step 19 Spec) */}
-          <div className="p-3.5 rounded-2xl bg-[#f4f7f5] dark:bg-[#15241a] border border-[#dbe7dd] dark:border-[#263d2e] flex items-start space-x-3 text-xs">
-            <ShieldCheck className="w-5 h-5 text-[#2d6a4f] dark:text-[#52b788] shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#f4f7f5] dark:bg-[#15241a] border border-[var(--border)] flex items-start space-x-3 text-xs">
+            <ShieldCheck className="w-5 h-5 text-[var(--mint-dark)] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <span className="font-bold text-[var(--text-ink)]">
                 Đã loại bỏ thông tin hành chính (Metadata Protection):
               </span>
-              <p className="text-[#526b5c] dark:text-[#8aa693] text-[11px] leading-relaxed">
+              <p className="text-[var(--text-subtle)] dark:text-[#8aa693] text-[11px] leading-relaxed">
                 Đã tự động loại bỏ <strong>{analysisReport.detectedStats.ignoredPagesCount} trang</strong> (trang bìa, tên trường/học viện, thông tin sinh viên, giảng viên hướng dẫn, lời cảm ơn, tài liệu tham khảo). AI cam kết 100% câu hỏi chỉ tập trung vào kiến thức môn học thực thụ.
               </p>
             </div>
@@ -448,25 +448,25 @@ export function CreateQuestWizard({
 
           {/* Chapters Outline */}
           <div className="space-y-2.5">
-            <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
-              <BookOpen className="w-4 h-4 text-[#2d6a4f]" />
+            <h4 className="text-xs font-bold text-[var(--text-ink)] flex items-center space-x-1.5">
+              <BookOpen className="w-4 h-4 text-[var(--mint-dark)]" />
               <span>Cấu trúc các chương được phát hiện:</span>
             </h4>
             <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
               {analysisReport.chapters.map((ch, idx) => (
                 <div
                   key={idx}
-                  className="p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-xs flex items-center justify-between"
+                  className="p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] text-xs flex items-center justify-between"
                 >
                   <div className="space-y-0.5">
-                    <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    <span className="font-bold text-[var(--text-ink)]">
                       {ch.title}
                     </span>
-                    <p className="text-[11px] text-[#73927d] line-clamp-1">
+                    <p className="text-[11px] text-[var(--text-muted)] line-clamp-1">
                       {ch.coreConcepts.slice(0, 2).join(", ") || "Khái niệm và quy định cốt lõi"}
                     </p>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-[#d8ebe0] dark:bg-[#1e3b28] text-[10px] font-bold text-[#1b4332] dark:text-[#7fc498] shrink-0">
+                  <span className="px-2.5 py-1 rounded-full bg-[var(--mint-bg)] dark:bg-[#1e3b28] text-[10px] font-bold text-[var(--mint-dark)] dark:text-[#7fc498] shrink-0">
                     Trang {ch.startPage} - {ch.endPage}
                   </span>
                 </div>
@@ -487,7 +487,7 @@ export function CreateQuestWizard({
             <Button
               type="button"
               onClick={() => setStep(3)}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
+              className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
             >
               <span>Tiếp tục: Cấu hình mục tiêu</span>
               <ArrowRight className="w-4 h-4" />
@@ -498,19 +498,19 @@ export function CreateQuestWizard({
 
       {/* ================= STEP 3: CHOOSE DURATION & TARGET GRADE ================= */}
       {step === 3 && (
-        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
           <div className="text-center space-y-1">
-            <h2 className="text-xl font-extrabold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-xl font-extrabold tracking-tight text-[var(--text-ink)]">
               🐰 Thiết lập Thời gian & Định hướng Học tập
             </h2>
-            <p className="text-xs text-[#526b5c] dark:text-[#8aa693]">
+            <p className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693]">
               Lộ trình sẽ phân bổ đều đặn toàn bộ các chương đã phát hiện trong tài liệu.
             </p>
           </div>
 
           {/* Lựa chọn Mục đích học: Tự học đam mê vs Ôn thi */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <label className="block text-xs font-bold text-[var(--text-ink)]">
               Mục đích học tập của bạn:
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -522,17 +522,17 @@ export function CreateQuestWizard({
                 }}
                 className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all ${
                   studyPurpose === "PASSION"
-                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
-                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                    ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[var(--mint-soft)]"
                 }`}
               >
                 <div className="flex items-center space-x-2">
                   <span className="text-base">🌱</span>
-                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  <span className="text-xs font-bold text-[var(--text-ink)]">
                     Chỉ thích học (Không thi)
                   </span>
                 </div>
-                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 font-medium">
+                <p className="text-[11px] text-[var(--text-subtle)] dark:text-[#8aa693] mt-1 font-medium">
                   Học vì đam mê, nâng cao chuyên môn, không áp lực thi cử hay ngày hạn
                 </p>
               </button>
@@ -545,17 +545,17 @@ export function CreateQuestWizard({
                 }}
                 className={`p-3.5 rounded-2xl border text-left cursor-pointer transition-all ${
                   studyPurpose === "EXAM"
-                    ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
-                    : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                    ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f] shadow-xs"
+                    : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[var(--mint-soft)]"
                 }`}
               >
                 <div className="flex items-center space-x-2">
                   <span className="text-base">🎯</span>
-                  <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  <span className="text-xs font-bold text-[var(--text-ink)]">
                     Có kỳ thi / Mục tiêu điểm số
                   </span>
                 </div>
-                <p className="text-[11px] text-[#526b5c] dark:text-[#8aa693] mt-1 font-medium">
+                <p className="text-[11px] text-[var(--text-subtle)] dark:text-[#8aa693] mt-1 font-medium">
                   Chuẩn bị thi chứng chỉ, kiểm tra học kỳ hoặc thi tuyển
                 </p>
               </button>
@@ -564,7 +564,7 @@ export function CreateQuestWizard({
 
           {/* Preset Days Grid */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <label className="block text-xs font-bold text-[var(--text-ink)]">
               Thời lượng lộ trình:
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -580,19 +580,19 @@ export function CreateQuestWizard({
                     }}
                     className={`p-4 rounded-[22px] border text-left cursor-pointer transition-all ${
                       isSelected
-                        ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] shadow-xs ring-1 ring-[#2d6a4f]"
-                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                        ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1c3324] shadow-xs ring-1 ring-[#2d6a4f]"
+                        : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[var(--mint-soft)]"
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-extrabold text-base text-[#192e22] dark:text-[#f0f7f2]">
+                      <span className="font-extrabold text-base text-[var(--text-ink)]">
                         {p.label}
                       </span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#d8ebe0] dark:bg-[#203b29] text-[#1b4332] dark:text-[#7fc498] font-bold">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--mint-bg)] dark:bg-[#203b29] text-[var(--mint-dark)] dark:text-[#7fc498] font-bold">
                         {p.workload}
                       </span>
                     </div>
-                    <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-1 font-medium">
+                    <p className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693] mt-1 font-medium">
                       {p.note}
                     </p>
                   </button>
@@ -606,12 +606,12 @@ export function CreateQuestWizard({
             onClick={() => setIsCustomDays(true)}
             className={`p-4 rounded-[22px] border transition-all cursor-pointer ${
               isCustomDays
-                ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f]"
-                : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318]"
+                ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1c3324] ring-1 ring-[#2d6a4f]"
+                : "border-[var(--border)] bg-[var(--bg-muted)]"
             }`}
           >
-            <div className="flex items-center space-x-2 text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-2">
-              <Calendar className="w-4 h-4 text-[#2d6a4f]" />
+            <div className="flex items-center space-x-2 text-xs font-bold text-[var(--text-ink)] mb-2">
+              <Calendar className="w-4 h-4 text-[var(--mint-dark)]" />
               <span>✨ Tự nhập số ngày học mong muốn:</span>
             </div>
             <div className="flex items-center space-x-3">
@@ -626,17 +626,17 @@ export function CreateQuestWizard({
                 }}
                 className="max-w-[120px] rounded-xl text-center font-bold text-sm"
               />
-              <span className="text-xs text-[#526b5c] dark:text-[#8aa693]">
+              <span className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693]">
                 ngày (phân bổ dàn đều qua các chương)
               </span>
             </div>
           </div>
 
           {/* Target Grade / Goal Selector */}
-          <div className="space-y-2 pt-2 border-t border-[#dbe7dd] dark:border-[#263d2e]">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-[#73927d] px-1">
+          <div className="space-y-2 pt-2 border-t border-[var(--border)]">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--text-muted)] px-1">
               <span>{studyPurpose === "PASSION" ? "Mục tiêu nắm bắt kiến thức:" : "Mục tiêu điểm số:"}</span>
-              <span className="text-[#2d6a4f] font-bold">{targetGrade}</span>
+              <span className="text-[var(--mint-dark)] font-bold">{targetGrade}</span>
             </div>
 
             {studyPurpose === "PASSION" ? (
@@ -650,12 +650,12 @@ export function CreateQuestWizard({
                       onClick={() => setTargetGrade(g.id)}
                       className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
                         isSelected
-                          ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-md scale-102"
-                          : "bg-[#f8fbf8] dark:bg-[#142318] border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] hover:border-[#74a882]"
+                          ? "bg-[var(--mint)] text-white border-[var(--mint)] shadow-md scale-102"
+                          : "bg-[var(--bg-muted)] border-[var(--border)] text-[var(--text-ink)] hover:border-[var(--mint-soft)]"
                       }`}
                     >
                       <div className="font-extrabold text-xs">{g.label}</div>
-                      <div className={`text-[10px] mt-1 ${isSelected ? "text-[#d8ebe0]" : "text-[#526b5c] dark:text-[#8aa693]"}`}>
+                      <div className={`text-[10px] mt-1 ${isSelected ? "text-[#d8ebe0]" : "text-[var(--text-subtle)] dark:text-[#8aa693]"}`}>
                         {g.desc}
                       </div>
                     </button>
@@ -673,8 +673,8 @@ export function CreateQuestWizard({
                       onClick={() => setTargetGrade(g.id)}
                       className={`p-3 rounded-2xl border text-center font-extrabold text-sm transition-all cursor-pointer ${
                         isSelected
-                          ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-md scale-105"
-                          : "bg-[#f8fbf8] dark:bg-[#142318] border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] hover:border-[#74a882]"
+                          ? "bg-[var(--mint)] text-white border-[var(--mint)] shadow-md scale-105"
+                          : "bg-[var(--bg-muted)] border-[var(--border)] text-[var(--text-ink)] hover:border-[var(--mint-soft)]"
                       }`}
                     >
                       {g.label}
@@ -698,7 +698,7 @@ export function CreateQuestWizard({
             <Button
               type="button"
               onClick={() => setStep(4)}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
+              className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer"
             >
               <span>Review Lộ trình học</span>
               <ArrowRight className="w-4 h-4" />
@@ -709,16 +709,16 @@ export function CreateQuestWizard({
 
       {/* ================= STEP 4: REVIEW LEARNING ROADMAP (Step 19 Review & Step 20 Never Generate Immediately) ================= */}
       {step === 4 && (
-        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
-          <div className="flex items-center justify-between border-b border-[#dbe7dd] dark:border-[#263d2e] pb-4">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-6 sm:p-8 space-y-6 shadow-xs">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
             <div>
-              <span className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#52b788] uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-[var(--mint-dark)] uppercase tracking-wider">
                 XEM TRƯỚC LỘ TRÌNH (PREVIEW)
               </span>
-              <h3 className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2] mt-0.5">
+              <h3 className="text-lg font-black text-[var(--text-ink)] mt-0.5">
                 Lộ trình {daysToSend} ngày • Mục tiêu {targetGrade}
               </h3>
-              <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-0.5">
+              <p className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693] mt-0.5">
                 Kiểm tra cấu trúc phân bổ trước khi khởi tạo dữ liệu chính thức.
               </p>
             </div>
@@ -730,7 +730,7 @@ export function CreateQuestWizard({
               className="rounded-full text-xs space-x-1 border-[#b7d8c3]"
               title="Thay đổi số ngày hoặc mục tiêu điểm"
             >
-              <RotateCcw className="w-3.5 h-3.5 text-[#2d6a4f]" />
+              <RotateCcw className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
               <span>Điều chỉnh</span>
             </Button>
           </div>
@@ -740,13 +740,13 @@ export function CreateQuestWizard({
             {previewStages.map((stg) => (
               <div
                 key={stg.dayNumber}
-                className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2 text-xs"
+                className="p-4 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] space-y-2 text-xs"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-[#2d6a4f] dark:text-[#7fc498]">
+                  <span className="font-extrabold text-[var(--mint-dark)] dark:text-[#7fc498]">
                     {stg.title}
                   </span>
-                  <span className="text-[10px] text-[#73927d] bg-[#eef5f0] dark:bg-[#1e3b28] px-2 py-0.5 rounded-full font-semibold">
+                  <span className="text-[10px] text-[var(--text-muted)] bg-[var(--mint-bg)] dark:bg-[#1e3b28] px-2 py-0.5 rounded-full font-semibold">
                     {stg.pageRange}
                   </span>
                 </div>
@@ -755,28 +755,28 @@ export function CreateQuestWizard({
                   {stg.concepts.map((c, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded-full bg-[#eef5f0] dark:bg-[#1c3324] text-[10px] font-medium text-[#1b4332] dark:text-[#8aa693]"
+                      className="px-2 py-0.5 rounded-full bg-[var(--mint-bg)] dark:bg-[#1c3324] text-[10px] font-medium text-[var(--mint-dark)] dark:text-[#8aa693]"
                     >
                       • {c}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-[#526b5c] pt-1">
+                <div className="flex items-center justify-between text-[11px] text-[var(--text-subtle)] pt-1">
                   <span>Khoảng 20 phút/ngày</span>
-                  <span className="font-bold text-[#2d6a4f]">+{stg.xpReward} XP</span>
+                  <span className="font-bold text-[var(--mint-dark)]">+{stg.xpReward} XP</span>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Confirmation Notice (Step 20) */}
-          <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[#2d6a4f] text-xs space-y-1">
-            <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1.5">
-              <Sparkles className="w-4 h-4 text-[#2d6a4f]" />
+          <div className="p-3.5 rounded-2xl bg-[#eef7ee] dark:bg-[#1a3322] border border-[#b7d8c3] dark:border-[var(--mint)] text-xs space-y-1">
+            <span className="font-bold text-[var(--text-ink)] flex items-center space-x-1.5">
+              <Sparkles className="w-4 h-4 text-[var(--mint-dark)]" />
               <span>Xác nhận khởi tạo Lộ trình chính thức</span>
             </span>
-            <p className="text-[#526b5c] dark:text-[#8aa693] text-[11px]">
+            <p className="text-[var(--text-subtle)] dark:text-[#8aa693] text-[11px]">
               Khi nhấn nút dưới đây, hệ thống sẽ chính thức lưu trữ Lộ trình {daysToSend} ngày, bộ bài giảng Markdown và toàn bộ câu hỏi trắc nghiệm chất lượng cao vào cơ sở dữ liệu.
             </p>
           </div>
@@ -795,7 +795,7 @@ export function CreateQuestWizard({
               type="button"
               disabled={loading}
               onClick={handleConfirmAndSaveRoadmap}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer shadow-sm"
+              className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl px-6 space-x-2 font-bold cursor-pointer shadow-sm"
             >
               <span>{loading ? "Đang tạo lộ trình..." : "Tạo Lộ trình Học tập (Confirm)"}</span>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
@@ -806,35 +806,35 @@ export function CreateQuestWizard({
 
       {/* ================= STEP 5: PROCESSING & SAVING ================= */}
       {step === 5 && (
-        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-8 text-center space-y-6 shadow-xs">
-          <div className="w-16 h-16 rounded-full bg-[#d8ebe0] dark:bg-[#1f3b29] text-[#2d6a4f] dark:text-[#52b788] mx-auto flex items-center justify-center shadow-xs">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-8 text-center space-y-6 shadow-xs">
+          <div className="w-16 h-16 rounded-full bg-[var(--mint-bg)] dark:bg-[#1f3b29] text-[var(--mint-dark)] mx-auto flex items-center justify-center shadow-xs">
             <Loader2 className="w-8 h-8 animate-spin" />
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h3 className="text-lg font-bold text-[var(--text-ink)]">
               Đang hoàn thiện Lộ trình Chinh phục...
             </h3>
-            <p className="text-xs text-[#73927d]">
+            <p className="text-xs text-[var(--text-muted)]">
               Hệ thống đang lưu trữ các chặng học, bài giảng Markdown và bộ Quiz trắc nghiệm vào cơ sở dữ liệu.
             </p>
           </div>
 
           {/* Pipeline Checklist */}
           <div className="max-w-xs mx-auto text-left space-y-2 text-xs font-medium">
-            <div className="flex items-center space-x-2 text-[#2d6a4f]">
+            <div className="flex items-center space-x-2 text-[var(--mint-dark)]">
               <CheckCircle2 className="w-4 h-4" />
               <span>Bản đồ học thuật đã phân tích hoàn tất</span>
             </div>
-            <div className="flex items-center space-x-2 text-[#2d6a4f]">
+            <div className="flex items-center space-x-2 text-[var(--mint-dark)]">
               <CheckCircle2 className="w-4 h-4" />
               <span>Đã loại bỏ hoàn toàn metadata hành chính</span>
             </div>
-            <div className="flex items-center space-x-2 text-[#2d6a4f]">
+            <div className="flex items-center space-x-2 text-[var(--mint-dark)]">
               <CheckCircle2 className="w-4 h-4" />
               <span>Biên soạn bộ câu hỏi tình huống & bài giảng</span>
             </div>
-            <div className="flex items-center space-x-2 text-[#2d6a4f]">
+            <div className="flex items-center space-x-2 text-[var(--mint-dark)]">
               <CheckCircle2 className="w-4 h-4" />
               <span>Đang lưu trữ nguyên tử vào Supabase Database</span>
             </div>

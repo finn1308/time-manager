@@ -109,14 +109,14 @@ export function SubjectAiTutorModal({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <h3 className="text-sm font-bold text-[var(--text-ink)]">
                   Gia sư AI: {subjectName}
                 </h3>
                 <Badge className="bg-emerald-100 text-emerald-700 text-[10px] py-0 px-1.5">
                   Đã kết nối ngữ cảnh
                 </Badge>
               </div>
-              <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+              <p className="text-[10px] text-[var(--text-subtle)]">
                 Đồng bộ tài liệu, ghi chú và lỗi sai thực tế
               </p>
             </div>
@@ -143,7 +143,7 @@ export function SubjectAiTutorModal({
                 className={`p-3.5 rounded-2xl text-xs max-w-[85%] whitespace-pre-wrap leading-relaxed ${
                   m.role === "user"
                     ? "bg-[#408257] text-white rounded-tr-none"
-                    : "bg-gray-100 dark:bg-[#1a2f22] text-[#192e22] dark:text-[#f0f7f2] rounded-tl-none border border-emerald-50 dark:border-[#263d2e]"
+                    : "bg-gray-100 dark:bg-[#1a2f22] text-[var(--text-ink)] rounded-tl-none border border-emerald-50 dark:border-[#263d2e]"
                 }`}
               >
                 {m.text}
@@ -152,7 +152,7 @@ export function SubjectAiTutorModal({
             </div>
           ))}
           {loading && (
-            <div className="flex items-center gap-2 text-xs text-[#526b5c] dark:text-[#a3bda9] pl-9">
+            <div className="flex items-center gap-2 text-xs text-[var(--text-subtle)] pl-9">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" />
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce delay-100" />
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce delay-200" />
@@ -183,7 +183,7 @@ export function SubjectAiTutorModal({
         </div>
 
         {/* Input Bar */}
-        <form onSubmit={handleSend} className="p-3 border-t border-emerald-100 dark:border-[#263d2e] flex items-center gap-2 bg-white dark:bg-[#17261c]">
+        <form onSubmit={handleSend} className="p-3 border-t border-emerald-100 dark:border-[#263d2e] flex items-center gap-2 bg-[var(--bg-surface)]">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}

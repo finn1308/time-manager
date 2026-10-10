@@ -77,7 +77,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
     <div className="space-y-4">
       {/* Top Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="text-xs text-[#526b5c] dark:text-[#a3bda9] font-medium">
+        <div className="text-xs text-[var(--text-subtle)] font-medium">
           Danh sách {subjects.length} môn học & tiến độ hoàn thành chỉ tiêu
         </div>
         <div className="flex items-center space-x-2.5">
@@ -88,7 +88,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
               setEditingSubject(null);
               setIsSubjectModalOpen(true);
             }}
-            className="space-x-1.5 text-xs font-semibold bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl shadow-2xs"
+            className="space-x-1.5 text-xs font-semibold bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Thêm môn học</span>
@@ -97,10 +97,10 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
       </div>
 
       {/* Modern Rounded Table Container */}
-      <div className="overflow-x-auto rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+      <div className="overflow-x-auto rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] soft-card-shadow">
         <table className="w-full min-w-[800px] text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[#dbe7dd]/80 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9] font-bold uppercase tracking-wider">
+            <tr className="border-b border-[var(--border)] bg-[var(--bg-muted)] text-[var(--text-subtle)] font-bold uppercase tracking-wider">
               <th className="py-3.5 px-5">Môn học</th>
               <th className="py-3.5 px-4 text-center">Mục tiêu</th>
               <th className="py-3.5 px-4 text-right">Chỉ tiêu</th>
@@ -123,7 +123,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
               return (
                 <tr
                   key={sub.id}
-                  className="hover:bg-[#f8fbf8] dark:hover:bg-[#142318] transition-colors"
+                  className="hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318] transition-colors"
                 >
                   {/* Subject Name & Details */}
                   <td className="py-4 px-5">
@@ -133,7 +133,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                         style={{ backgroundColor: sub.color || "#2d6a4f" }}
                       />
                       <div>
-                        <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
+                        <div className="font-bold text-sm text-[var(--text-ink)] flex items-center space-x-2">
                           <span>{sub.name}</span>
                           {sub.code && (
                             <Badge variant="secondary" className="font-mono text-[10px]">
@@ -141,13 +141,13 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                             </Badge>
                           )}
                           {sub.difficulty && (
-                            <span className="text-[10px] text-[#73927d] dark:text-[#8ba393]">
+                            <span className="text-[10px] text-[var(--text-muted)]">
                               • {sub.difficulty === "HARD" ? "Khó" : sub.difficulty === "EASY" ? "Dễ" : "Vừa"}
                             </span>
                           )}
                         </div>
                         {sub.description && (
-                          <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] truncate max-w-xs mt-0.5">
+                          <p className="text-[11px] text-[var(--text-subtle)] truncate max-w-xs mt-0.5">
                             {sub.description}
                           </p>
                         )}
@@ -157,7 +157,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                             <span>Thi: {formatVN(new Date(sub.deadline), "dd/MM/yyyy")}</span>
                           </div>
                         ) : (
-                          <div className="flex items-center space-x-1 text-[10px] text-[#2d6a4f] dark:text-[#7fc498] mt-1 font-medium">
+                          <div className="flex items-center space-x-1 text-[10px] text-[var(--mint-dark)] dark:text-[#7fc498] mt-1 font-medium">
                             <span>🌱 Tự học (Không thi)</span>
                           </div>
                         )}
@@ -168,7 +168,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                   {/* Target Score */}
                   <td className="py-4 px-4 text-center">
                     {sub.targetScore ? (
-                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#9cd1b1] text-[10px] font-bold">
+                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1d3827] dark:text-[#9cd1b1] text-[10px] font-bold">
                         <Award className="w-3 h-3" />
                         <span>{sub.targetScore}</span>
                       </span>
@@ -178,12 +178,12 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                   </td>
 
                   {/* Target Hours */}
-                  <td className="py-4 px-4 text-right font-mono font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                  <td className="py-4 px-4 text-right font-mono font-semibold text-[var(--text-ink)]">
                     {target ? `${target}h` : <span className="text-[#8ba393] italic text-[11px]">—</span>}
                   </td>
 
                   {/* Logged Hours */}
-                  <td className="py-4 px-4 text-right font-mono font-black text-[#2d6a4f] dark:text-[#52b788]">
+                  <td className="py-4 px-4 text-right font-mono font-black text-[var(--mint-dark)]">
                     {loggedHours}h
                   </td>
 
@@ -191,7 +191,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                   <td className="py-4 px-4">
                     {target ? (
                       <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-[10px] text-[#526b5c] dark:text-[#a3bda9] font-semibold">
+                        <div className="flex items-center justify-between text-[10px] text-[var(--text-subtle)] font-semibold">
                           <span>{percent}%</span>
                           <span>còn {Math.max(0, target - loggedHours).toFixed(1)}h</span>
                         </div>
@@ -238,7 +238,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                           })
                         }
                         title="Vào học ngay (Bật Timer)"
-                        className="p-2 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] hover:bg-[#b7d8c3] text-[#1b4332] dark:text-[#9cd1b1] transition-all cursor-pointer shadow-2xs active:scale-95"
+                        className="p-2 rounded-full bg-[var(--mint-bg)] hover:bg-[#b7d8c3] text-[var(--mint-dark)] dark:text-[#9cd1b1] transition-all cursor-pointer shadow-2xs active:scale-95"
                       >
                         <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                       </button>
@@ -254,7 +254,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                       <button
                         onClick={() => setSelectedResourceSubject(sub)}
                         title="Tài liệu & Link môn học"
-                        className="p-2 rounded-full hover:bg-[#d8ebe0] text-[#73927d] hover:text-[#1b4332] transition-colors cursor-pointer"
+                        className="p-2 rounded-full hover:bg-[var(--mint-bg)] text-[var(--text-muted)] hover:text-[var(--mint-dark)] transition-colors cursor-pointer"
                       >
                         <FolderOpen className="w-3.5 h-3.5" />
                       </button>
@@ -265,7 +265,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                           setIsSubjectModalOpen(true);
                         }}
                         title="Sửa môn học"
-                        className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#73927d] hover:text-[#192e22] transition-colors cursor-pointer"
+                        className="p-2 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-muted)] hover:text-[var(--text-ink)] transition-colors cursor-pointer"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -273,7 +273,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
                       <button
                         onClick={() => handleDeleteSubject(sub.id, sub.name)}
                         title="Xóa môn học"
-                        className="p-2 rounded-full hover:bg-[#f7ebeb] text-[#73927d] hover:text-[#b87474] transition-colors cursor-pointer"
+                        className="p-2 rounded-full hover:bg-[#f7ebeb] text-[var(--text-muted)] hover:text-[#b87474] transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -285,7 +285,7 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
             {subjects.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-14 text-center text-sm text-[#526b5c] dark:text-[#a3bda9]">
+                <td colSpan={7} className="py-14 text-center text-sm text-[var(--text-subtle)]">
                   Chưa có môn học nào. Hãy bấm "Thêm môn học" để bắt đầu lập kế hoạch!
                 </td>
               </tr>
@@ -309,13 +309,13 @@ export function SubjectTable({ subjects }: SubjectTableProps) {
 
       {selectedResourceSubject && (
         <Dialog open={!!selectedResourceSubject} onOpenChange={(open) => !open && setSelectedResourceSubject(null)}>
-          <DialogContent onClose={() => setSelectedResourceSubject(null)} className="max-w-xl rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+          <DialogContent onClose={() => setSelectedResourceSubject(null)} className="max-w-xl rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
-                <FolderOpen className="w-5 h-5 text-[#2d6a4f]" />
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)] flex items-center space-x-2">
+                <FolderOpen className="w-5 h-5 text-[var(--mint-dark)]" />
                 <span>Tài liệu & Link môn học: {selectedResourceSubject.name}</span>
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Tự động tổ chức trong Google Drive: Study Manager / {selectedResourceSubject.name} / Chung
               </DialogDescription>
             </DialogHeader>

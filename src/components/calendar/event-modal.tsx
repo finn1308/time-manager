@@ -690,7 +690,7 @@ export function EventModal({
                 onClick={() => setDeleteModeChoice("SINGLE")}
                 className={`flex items-start space-x-3 p-3 rounded-2xl border cursor-pointer transition-all ${
                   deleteModeChoice === "SINGLE"
-                    ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] ring-1 ring-[#2d6a4f]"
+                    ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1b3426] ring-1 ring-[#2d6a4f]"
                     : "border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-muted)]"
                 }`}
               >
@@ -821,7 +821,7 @@ export function EventModal({
                 </DialogTitle>
 
                 {countdownText && (
-                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#eef5f0] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#74c69d] flex items-center space-x-1">
+                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1b3426] dark:text-[#74c69d] flex items-center space-x-1">
                     <Clock className="w-3 h-3" />
                     <span>{countdownText}</span>
                   </span>
@@ -954,12 +954,12 @@ export function EventModal({
                       onClick={() => setSchedulingMode("FIXED")}
                       className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative ${
                         schedulingMode === "FIXED"
-                          ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
+                          ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
                           : "border-[var(--border)] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
                       }`}
                     >
                       <div className="flex items-center space-x-2">
-                        <CalendarClock className={`w-4 h-4 ${schedulingMode === "FIXED" ? "text-[var(--mint-dark)]" : "text-[#526b5c]"}`} />
+                        <CalendarClock className={`w-4 h-4 ${schedulingMode === "FIXED" ? "text-[var(--mint-dark)]" : "text-[var(--text-subtle)]"}`} />
                         <span className="text-xs font-bold text-[var(--text-ink)]">
                           Lịch cố định
                         </span>
@@ -975,12 +975,12 @@ export function EventModal({
                       onClick={() => setSchedulingMode("FLEXIBLE")}
                       className={`p-3 rounded-2xl border text-left transition-all cursor-pointer relative ${
                         schedulingMode === "FLEXIBLE"
-                          ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
+                          ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1b3426] ring-2 ring-[#2d6a4f]/25 shadow-xs"
                           : "border-[var(--border)] bg-[#fbfdfb] dark:bg-[#142318] hover:bg-white opacity-80 hover:opacity-100"
                       }`}
                     >
                       <div className="flex items-center space-x-2">
-                        <Sparkles className={`w-4 h-4 ${schedulingMode === "FLEXIBLE" ? "text-[var(--mint-dark)]" : "text-[#526b5c]"}`} />
+                        <Sparkles className={`w-4 h-4 ${schedulingMode === "FLEXIBLE" ? "text-[var(--mint-dark)]" : "text-[var(--text-subtle)]"}`} />
                         <span className="text-xs font-bold text-[var(--text-ink)]">
                           Mục tiêu học linh hoạt
                         </span>
@@ -1000,7 +1000,7 @@ export function EventModal({
                         <label className="text-xs font-semibold text-[var(--text-ink)] dark:text-[#d8ebe0]">
                           Môn học hoặc Kỹ năng <span className="text-rose-500">*</span>
                         </label>
-                        <div className="flex rounded-xl bg-[#eef5f0] dark:bg-[#15251b] p-0.5 border border-[var(--border)] text-[11px]">
+                        <div className="flex rounded-xl bg-[var(--mint-bg)] dark:bg-[#15251b] p-0.5 border border-[var(--border)] text-[11px]">
                           <button
                             type="button"
                             onClick={() => setTargetType("SUBJECT")}
@@ -1099,7 +1099,7 @@ export function EventModal({
                             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                               flexibleTargetMinutes === mins
                                 ? "bg-[var(--mint)] text-white shadow-2xs"
-                                : "bg-white dark:bg-[#1b2b20] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[#eef5f0]"
+                                : "bg-white dark:bg-[#1b2b20] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                             }`}
                           >
                             {mins} phút
@@ -1117,7 +1117,7 @@ export function EventModal({
                           onChange={(e) => setFlexibleTargetMinutes(Math.max(5, parseInt(e.target.value, 10) || 5))}
                           className="w-24 h-8 text-xs font-mono rounded-xl"
                         />
-                        <span className="text-xs text-[#526b5c]">phút</span>
+                        <span className="text-xs text-[var(--text-subtle)]">phút</span>
                       </div>
                     </div>
 
@@ -1163,7 +1163,7 @@ export function EventModal({
                           >
                             Cả tuần
                           </button>
-                          <span className="text-[#526b5c] text-[10px]">•</span>
+                          <span className="text-[var(--text-subtle)] text-[10px]">•</span>
                           <button
                             type="button"
                             onClick={() => setFlexibleActiveDays([1, 2, 3, 4, 5])}
@@ -1203,7 +1203,7 @@ export function EventModal({
                               className={`flex-1 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                                 isSelected
                                   ? "bg-[var(--mint)] text-white shadow-2xs"
-                                  : "bg-white dark:bg-[#1b2b20] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[#eef5f0]"
+                                  : "bg-white dark:bg-[#1b2b20] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                               }`}
                             >
                               {d.label}
@@ -1235,7 +1235,7 @@ export function EventModal({
                               onClick={() => setPreferredPeriod(p.id as any)}
                               className={`p-2.5 rounded-2xl border text-xs font-semibold transition-all cursor-pointer flex flex-col items-center justify-center space-y-1 text-[var(--text-subtle)]enter ${
                                 isSelected
-                                  ? "border-[var(--mint)] bg-[#eef5f0] dark:bg-[#1b3426] text-[var(--mint-dark)] ring-1 ring-[#2d6a4f]"
+                                  ? "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1b3426] text-[var(--mint-dark)] ring-1 ring-[#2d6a4f]"
                                   : "border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-subtle)] hover:bg-[var(--bg-muted)]"
                               }`}
                             >
@@ -1627,7 +1627,7 @@ export function EventModal({
                                   variant="ghost" 
                                   size="sm" 
                                   onClick={() => applySlotToAllSelectedDays(activeMultiSlotDay)}
-                                  className="h-6 text-[10px] px-2 text-[var(--mint-dark)] hover:bg-[#eef5f0]"
+                                  className="h-6 text-[10px] px-2 text-[var(--mint-dark)] hover:bg-[var(--mint-bg)]"
                                 >
                                   Copy cho ngày khác
                                 </Button>

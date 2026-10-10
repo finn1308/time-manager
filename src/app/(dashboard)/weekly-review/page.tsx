@@ -163,34 +163,34 @@ export default function WeeklyReviewPage() {
       {/* Header & Week Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] uppercase tracking-wider mb-1">
+          <div className="flex items-center space-x-2 text-xs font-bold text-[var(--mint-dark)] uppercase tracking-wider mb-1">
             <Sparkles className="w-3.5 h-3.5 fill-current" />
             <span>AI WEEKLY REVIEW & PROGRESS FORECAST</span>
           </div>
-          <h1 className="text-2xl font-black text-[#192e22] dark:text-[#f0f7f2] tracking-tight">
+          <h1 className="text-2xl font-black text-[var(--text-ink)] tracking-tight">
             Đánh giá tuần & Dự báo mục tiêu
           </h1>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+          <p className="text-xs text-[var(--text-subtle)]">
             Phản tỉnh hiệu suất học tập, phân tích tính kỷ luật và dự báo rủi ro deadline.
           </p>
         </div>
 
         {/* Week Navigator & Action */}
         <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl p-1 shadow-2xs">
+          <div className="flex items-center space-x-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-1 shadow-2xs">
             <button
               onClick={() => setWeekOffset((p) => p - 1)}
-              className="w-7 h-7 rounded-xl flex items-center justify-center hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer"
+              className="w-7 h-7 rounded-xl flex items-center justify-center hover:bg-[var(--mint-bg)] dark:hover:bg-[#1d3024] text-[var(--text-subtle)] cursor-pointer"
               title="Tuần trước"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-xs font-bold px-2 text-[#192e22] dark:text-[#f0f7f2]">
+            <span className="text-xs font-bold px-2 text-[var(--text-ink)]">
               {currentWeekBounds.label}
             </span>
             <button
               onClick={() => setWeekOffset((p) => p + 1)}
-              className="w-7 h-7 rounded-xl flex items-center justify-center hover:bg-[#f4f8f5] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer"
+              className="w-7 h-7 rounded-xl flex items-center justify-center hover:bg-[var(--mint-bg)] dark:hover:bg-[#1d3024] text-[var(--text-subtle)] cursor-pointer"
               title="Tuần sau"
             >
               <ChevronRight className="w-4 h-4" />
@@ -200,7 +200,7 @@ export default function WeeklyReviewPage() {
           <Button
             onClick={handleGenerate}
             disabled={generating}
-            className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 shadow-2xs"
+            className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold space-x-1.5 shadow-2xs"
           >
             {generating ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -215,27 +215,27 @@ export default function WeeklyReviewPage() {
       {/* 1. Scorecard Metrics Banner */}
       {review && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-5 rounded-[24px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-            <div className="flex items-center space-x-2 text-[11px] font-bold text-[#73927d] uppercase">
-              <Clock className="w-3.5 h-3.5 text-[#2d6a4f]" />
+          <div className="p-5 rounded-[24px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+            <div className="flex items-center space-x-2 text-[11px] font-bold text-[var(--text-muted)] uppercase">
+              <Clock className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
               <span>Thời gian thực học</span>
             </div>
             <div className="mt-2 flex items-baseline space-x-1.5">
-              <span className="text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+              <span className="text-2xl font-black text-[var(--text-ink)]">
                 {review.actualHours}h
               </span>
-              <span className="text-xs text-[#73927d]">/ {review.plannedHours}h kế hoạch</span>
+              <span className="text-xs text-[var(--text-muted)]">/ {review.plannedHours}h kế hoạch</span>
             </div>
-            <div className="mt-2 w-full h-1.5 bg-[#eef5f0] dark:bg-[#1d3024] rounded-full overflow-hidden">
+            <div className="mt-2 w-full h-1.5 bg-[var(--mint-bg)] rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#2d6a4f] rounded-full"
+                className="h-full bg-[var(--mint)] rounded-full"
                 style={{ width: `${Math.min(100, review.completionRate)}%` }}
               />
             </div>
           </div>
 
-          <div className="p-5 rounded-[24px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-            <div className="flex items-center space-x-2 text-[11px] font-bold text-[#73927d] uppercase">
+          <div className="p-5 rounded-[24px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+            <div className="flex items-center space-x-2 text-[11px] font-bold text-[var(--text-muted)] uppercase">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
               <span>Tỷ lệ hoàn thành</span>
             </div>
@@ -244,27 +244,27 @@ export default function WeeklyReviewPage() {
                 {review.completionRate}%
               </span>
             </div>
-            <p className="mt-2 text-[10px] text-[#73927d]">
+            <p className="mt-2 text-[10px] text-[var(--text-muted)]">
               {review.completionRate >= 80 ? "Xuất sắc! Đạt chuẩn kỷ luật cao" : "Cần bổ sung phiên học bù"}
             </p>
           </div>
 
-          <div className="p-5 rounded-[24px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-            <div className="flex items-center space-x-2 text-[11px] font-bold text-[#73927d] uppercase">
+          <div className="p-5 rounded-[24px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+            <div className="flex items-center space-x-2 text-[11px] font-bold text-[var(--text-muted)] uppercase">
               <Target className="w-3.5 h-3.5 text-blue-600" />
               <span>Mục tiêu tuần</span>
             </div>
             <div className="mt-2 flex items-baseline space-x-1">
-              <span className="text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+              <span className="text-2xl font-black text-[var(--text-ink)]">
                 {review.completedGoals}
               </span>
-              <span className="text-xs text-[#73927d]">/ {review.totalGoals} hoàn thành</span>
+              <span className="text-xs text-[var(--text-muted)]">/ {review.totalGoals} hoàn thành</span>
             </div>
-            <p className="mt-2 text-[10px] text-[#73927d]">Tiến độ học tập dài hạn</p>
+            <p className="mt-2 text-[10px] text-[var(--text-muted)]">Tiến độ học tập dài hạn</p>
           </div>
 
-          <div className="p-5 rounded-[24px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-            <div className="flex items-center space-x-2 text-[11px] font-bold text-[#73927d] uppercase">
+          <div className="p-5 rounded-[24px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+            <div className="flex items-center space-x-2 text-[11px] font-bold text-[var(--text-muted)] uppercase">
               <Flame className="w-3.5 h-3.5 text-rose-500" />
               <span>Deadline tuần tới</span>
             </div>
@@ -273,7 +273,7 @@ export default function WeeklyReviewPage() {
                 {review.upcomingDeadlines}
               </span>
             </div>
-            <p className="mt-2 text-[10px] text-[#73927d]">Cần chuẩn bị sắp xếp trước</p>
+            <p className="mt-2 text-[10px] text-[var(--text-muted)]">Cần chuẩn bị sắp xếp trước</p>
           </div>
         </div>
       )}
@@ -282,35 +282,35 @@ export default function WeeklyReviewPage() {
       {parsedAiInsights && (
         <div className="p-6 rounded-[28px] bg-gradient-to-br from-white via-[#fcfdfc] to-[#f4f8f5] dark:from-[#17261c] dark:via-[#142318] dark:to-[#101c14] border border-[#52b788]/60 shadow-md space-y-5">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#2d6a4f] text-white flex items-center justify-center shadow-2xs">
+            <div className="w-8 h-8 rounded-xl bg-[var(--mint)] text-white flex items-center justify-center shadow-2xs">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <h3 className="text-sm font-bold text-[var(--text-ink)]">
                 Phản tỉnh học tập từ AI Study Coach
               </h3>
-              <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+              <p className="text-[10px] text-[var(--text-subtle)]">
                 Được tổng hợp từ toàn bộ phiên học, deadline và thói quen của bạn trong tuần
               </p>
             </div>
           </div>
 
           {/* AI Summary */}
-          <div className="p-4 rounded-2xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#263d2e] text-xs font-medium text-[#192e22] dark:text-[#f0f7f2] leading-relaxed">
+          <div className="p-4 rounded-2xl bg-white dark:bg-[#1a2c20] border border-[var(--border)] text-xs font-medium text-[var(--text-ink)] leading-relaxed">
             {parsedAiInsights.summary}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Key Achievements */}
-            <div className="p-4 rounded-2xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#1a2c20] border border-[var(--border)] space-y-2">
               <h4 className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-1.5">
                 <Award className="w-3.5 h-3.5" />
                 <span>Thành tựu nổi bật</span>
               </h4>
               <ul className="space-y-1.5">
                 {parsedAiInsights.keyAchievements?.map((item: string, idx: number) => (
-                  <li key={idx} className="flex items-start space-x-2 text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2d6a4f] shrink-0 mt-0.5" />
+                  <li key={idx} className="flex items-start space-x-2 text-[11px] text-[var(--text-subtle)]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[var(--mint-dark)] shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -318,14 +318,14 @@ export default function WeeklyReviewPage() {
             </div>
 
             {/* Improvement Areas */}
-            <div className="p-4 rounded-2xl bg-white dark:bg-[#1a2c20] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#1a2c20] border border-[var(--border)] space-y-2">
               <h4 className="text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center space-x-1.5">
                 <AlertTriangle className="w-3.5 h-3.5" />
                 <span>Điểm cần tối ưu hóa</span>
               </h4>
               <ul className="space-y-1.5">
                 {parsedAiInsights.improvementAreas?.map((item: string, idx: number) => (
-                  <li key={idx} className="flex items-start space-x-2 text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                  <li key={idx} className="flex items-start space-x-2 text-[11px] text-[var(--text-subtle)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5" />
                     <span>{item}</span>
                   </li>
@@ -335,18 +335,18 @@ export default function WeeklyReviewPage() {
           </div>
 
           {/* Next Week Advice & CTA */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#d8ebe0]/50 dark:bg-[#1d3827]/40 border border-[#b7d8c3]/60 dark:border-[#263d2e]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[var(--mint-bg)]/50 dark:bg-[#1d3827]/40 border border-[#b7d8c3]/60 dark:border-[#263d2e]">
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-[#1b4332] dark:text-[#9cd1b1] uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-[var(--mint-dark)] dark:text-[#9cd1b1] uppercase tracking-wider">
                 Chiến lược tuần tới
               </span>
-              <p className="text-xs text-[#192e22] dark:text-[#f0f7f2] font-semibold">
+              <p className="text-xs text-[var(--text-ink)] font-semibold">
                 {parsedAiInsights.nextWeekAdvice}
               </p>
             </div>
 
             <Link href="/calendar">
-              <Button className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 shadow-2xs shrink-0">
+              <Button className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold space-x-1.5 shadow-2xs shrink-0">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Lập lịch tuần tới bằng AI</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -358,18 +358,18 @@ export default function WeeklyReviewPage() {
 
       {/* Empty State for Review */}
       {!review && !loading && (
-        <div className="py-12 text-center p-8 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs space-y-3">
-          <Sparkles className="w-8 h-8 text-[#2d6a4f] mx-auto opacity-40" />
-          <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+        <div className="py-12 text-center p-8 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs space-y-3">
+          <Sparkles className="w-8 h-8 text-[var(--mint-dark)] mx-auto opacity-40" />
+          <h3 className="text-sm font-bold text-[var(--text-ink)]">
             Chưa có bản đánh giá tuần này
           </h3>
-          <p className="text-xs text-[#73927d] max-w-sm mx-auto">
+          <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto">
             Nhấn nút bên dưới để AI tự động phân tích toàn bộ lịch học và tạo báo cáo phản tỉnh cho bạn.
           </p>
           <Button
             onClick={handleGenerate}
             disabled={generating}
-            className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold"
+            className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-semibold"
           >
             {generating ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin mr-1.5" />
@@ -383,12 +383,12 @@ export default function WeeklyReviewPage() {
 
       {/* 3. Subject Time Distribution */}
       {parsedSubjectStats.length > 0 && (
-        <div className="p-6 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs space-y-4">
+        <div className="p-6 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h3 className="text-sm font-bold text-[var(--text-ink)]">
               Phân bổ thời gian theo môn học (Thực tế vs Kế hoạch)
             </h3>
-            <span className="text-[10px] text-[#73927d]">Đơn vị: Giờ (h)</span>
+            <span className="text-[10px] text-[var(--text-muted)]">Đơn vị: Giờ (h)</span>
           </div>
 
           <div className="space-y-3">
@@ -397,18 +397,18 @@ export default function WeeklyReviewPage() {
               return (
                 <div key={idx} className="space-y-1">
                   <div className="flex items-center justify-between text-xs font-semibold">
-                    <span className="flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
+                    <span className="flex items-center space-x-2 text-[var(--text-ink)]">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: sub.color }} />
                       <span>{sub.name}</span>
                     </span>
-                    <span className="text-[11px] text-[#73927d]">
+                    <span className="text-[11px] text-[var(--text-muted)]">
                       {sub.actualHours}h thực tế / {sub.plannedHours}h kế hoạch
                     </span>
                   </div>
 
                   {/* Dual bar: Actual vs Planned */}
                   <div className="space-y-1">
-                    <div className="w-full h-2 bg-[#eef5f0] dark:bg-[#1d3024] rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-[var(--mint-bg)] rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all"
                         style={{
@@ -427,14 +427,14 @@ export default function WeeklyReviewPage() {
 
       {/* 4. Progress Forecast & Goal Risk Matrix (Section 33) */}
       {forecast && (
-        <div className="p-6 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs space-y-5">
+        <div className="p-6 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <div className="flex items-center space-x-1.5 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+              <div className="flex items-center space-x-1.5 text-xs font-bold text-[var(--mint-dark)]">
                 <Target className="w-4 h-4" />
                 <span>DỰ BÁO TIẾN ĐỘ HOÀN THÀNH MỤC TIÊU & DEADLINE</span>
               </div>
-              <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <p className="text-xs text-[var(--text-subtle)]">
                 Tính toán dựa trên vận tốc học thực tế ({forecast.averageDailyVelocityHours}h/ngày) trong 14 ngày qua.
               </p>
             </div>
@@ -465,7 +465,7 @@ export default function WeeklyReviewPage() {
               return (
                 <div
                   key={goal.id}
-                  className="p-4 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#132217] space-y-3"
+                  className="p-4 rounded-2xl border border-[var(--border)] bg-[#fcfdfc] dark:bg-[#132217] space-y-3"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -478,7 +478,7 @@ export default function WeeklyReviewPage() {
                       >
                         {goal.subjectName}
                       </span>
-                      <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mt-1">
+                      <h4 className="text-xs font-bold text-[var(--text-ink)] mt-1">
                         {goal.title}
                       </h4>
                     </div>
@@ -489,24 +489,24 @@ export default function WeeklyReviewPage() {
                   </div>
 
                   {/* Progress & Velocity Metrics */}
-                  <div className="grid grid-cols-3 gap-2 text-center text-[10px] bg-white dark:bg-[#17261c] p-2.5 rounded-xl border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+                  <div className="grid grid-cols-3 gap-2 text-center text-[10px] bg-[var(--bg-surface)] p-2.5 rounded-xl border border-[var(--border)]">
                     <div>
-                      <p className="text-[#73927d]">Còn lại</p>
-                      <p className="font-bold text-[#192e22] dark:text-[#f0f7f2]">{goal.remainingHours}h</p>
+                      <p className="text-[var(--text-muted)]">Còn lại</p>
+                      <p className="font-bold text-[var(--text-ink)]">{goal.remainingHours}h</p>
                     </div>
                     <div>
-                      <p className="text-[#73927d]">Thời gian còn</p>
-                      <p className="font-bold text-[#192e22] dark:text-[#f0f7f2]">{goal.daysRemaining} ngày</p>
+                      <p className="text-[var(--text-muted)]">Thời gian còn</p>
+                      <p className="font-bold text-[var(--text-ink)]">{goal.daysRemaining} ngày</p>
                     </div>
                     <div>
-                      <p className="text-[#73927d]">Tốc độ yêu cầu</p>
-                      <p className="font-bold text-[#192e22] dark:text-[#f0f7f2]">{goal.requiredVelocityHoursPerDay}h/ngày</p>
+                      <p className="text-[var(--text-muted)]">Tốc độ yêu cầu</p>
+                      <p className="font-bold text-[var(--text-ink)]">{goal.requiredVelocityHoursPerDay}h/ngày</p>
                     </div>
                   </div>
 
                   {/* Recommendation */}
-                  <div className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] bg-[#f4f8f5] dark:bg-[#1a2c20] p-2.5 rounded-xl border border-[#dbe7dd]/50 dark:border-[#263d2e]">
-                    <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">Gợi ý AI: </span>
+                  <div className="text-[11px] text-[var(--text-subtle)] bg-[var(--mint-bg)] dark:bg-[#1a2c20] p-2.5 rounded-xl border border-[var(--border)]/50 dark:border-[#263d2e]">
+                    <span className="font-semibold text-[var(--text-ink)]">Gợi ý AI: </span>
                     {goal.recommendation}
                   </div>
                 </div>
@@ -514,7 +514,7 @@ export default function WeeklyReviewPage() {
             })}
 
             {forecast.goals.length === 0 && (
-              <div className="col-span-2 py-8 text-center text-xs text-[#73927d]">
+              <div className="col-span-2 py-8 text-center text-xs text-[var(--text-muted)]">
                 Hiện tại không có mục tiêu nào đang hoạt động. Tạo mục tiêu mới trong trang Goals để theo dõi dự báo!
               </div>
             )}

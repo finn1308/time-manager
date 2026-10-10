@@ -305,7 +305,7 @@ export function DayView({
                 const prev = subDays(currentDateObj, 1);
                 setCurrentDateKey(getDateKeyVN(prev));
               }}
-              className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer transition-colors"
+              className="p-2 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-subtle)] cursor-pointer transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -314,7 +314,7 @@ export function DayView({
                 const next = addDays(currentDateObj, 1);
                 setCurrentDateKey(getDateKeyVN(next));
               }}
-              className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer transition-colors"
+              className="p-2 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-subtle)] cursor-pointer transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -365,7 +365,7 @@ export function DayView({
                   {formatMinutesVN(selfStudyActualMinutes)}
                 </strong>
                 {selfStudyPlannedMinutes > 0 && (
-                  <span className="text-xs text-[#73927d] ml-1">/ {formatMinutesVN(selfStudyPlannedMinutes)}</span>
+                  <span className="text-xs text-[var(--text-muted)] ml-1">/ {formatMinutesVN(selfStudyPlannedMinutes)}</span>
                 )}
               </div>
               <span className="text-[#dbe7dd] dark:text-[#263d2e]">|</span>
@@ -616,7 +616,7 @@ export function DayView({
                                   )
                                 }
                                 title="Bắt đầu tự học phiên này"
-                                className="p-1.5 rounded-full bg-[#d8ebe0] text-[#1b4332] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
+                                className="p-1.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
                               >
                                 <Play className="w-3 h-3 fill-current ml-0.2" />
                               </button>
@@ -735,19 +735,19 @@ export function DayView({
 
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e] text-[var(--text-subtle)]enter">
                   <div>
-                    <div className="text-[10px] text-[#73927d]">Kế hoạch (Planned)</div>
+                    <div className="text-[10px] text-[var(--text-muted)]">Kế hoạch (Planned)</div>
                     <div className="font-bold text-sm text-[var(--text-ink)]">
                       {formatMinutesVN(selectedSessionEvent.plannedMinutes)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#73927d]">Thực tế (Actual)</div>
+                    <div className="text-[10px] text-[var(--text-muted)]">Thực tế (Actual)</div>
                     <div className="font-bold text-sm text-[var(--mint-dark)]">
                       {formatMinutesVN(selectedSessionEvent.actualMinutes)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#73927d]">Còn lại (Remaining)</div>
+                    <div className="text-[10px] text-[var(--text-muted)]">Còn lại (Remaining)</div>
                     <div className="font-bold text-sm text-[#b87474] dark:text-[#f3a4a4]">
                       {formatMinutesVN(selectedSessionEvent.remainingMinutes)}
                     </div>
@@ -792,7 +792,7 @@ export function DayView({
                         Đang chạy: {formatTime(secondsElapsed)}
                       </Badge>
                     ) : (
-                      <span className="text-[11px] text-[#73927d]">Chưa kích hoạt</span>
+                      <span className="text-[11px] text-[var(--text-muted)]">Chưa kích hoạt</span>
                     )}
                   </div>
 
@@ -867,7 +867,7 @@ export function DayView({
                         setSelectedSessionEvent(null);
                       }}
                       title={`Chuyển sang Buổi ${p.label}`}
-                      className="px-2.5 py-1 rounded-xl border border-[var(--border)] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[11px] font-semibold text-[var(--text-ink)] cursor-pointer transition-colors"
+                      className="px-2.5 py-1 rounded-xl border border-[var(--border)] hover:bg-[var(--mint-soft)] text-[11px] font-semibold text-[var(--text-ink)] cursor-pointer transition-colors"
                     >
                       {p.emoji} {p.label}
                     </button>
@@ -886,7 +886,7 @@ export function DayView({
                   setSelectedSessionEvent(null);
                   setIsEventModalOpen(true);
                 }}
-                className="rounded-2xl border-[var(--border)] text-xs font-semibold text-[#526b5c]"
+                className="rounded-2xl border-[var(--border)] text-xs font-semibold text-[var(--text-subtle)]"
               >
                 Chỉnh sửa chi tiết
               </Button>

@@ -508,16 +508,16 @@ export function StudyModeSession({
   if (isCompleted) {
     return (
       <div className="max-w-3xl mx-auto space-y-6 py-8 px-4 animate-in fade-in duration-300">
-        <Card className="rounded-[32px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-8 sm:p-12 text-center shadow-lg relative overflow-hidden">
+        <Card className="rounded-[32px] border border-[var(--border)] bg-[var(--bg-surface)] p-8 sm:p-12 text-center shadow-lg relative overflow-hidden">
           {/* Top Celebration Icon */}
           <div className="w-20 h-20 rounded-3xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center text-4xl shadow-inner mb-4">
             🎉
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#192e22] dark:text-[#f0f7f2]">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-ink)]">
             Session Complete!
           </h1>
-          <p className="text-sm text-[#526b5c] dark:text-[#a3bda9] mt-1">
+          <p className="text-sm text-[var(--text-subtle)] mt-1">
             Bạn đã hoàn thành phiên học bộ thẻ <strong>{deckTitle}</strong>
           </p>
 
@@ -536,8 +536,8 @@ export function StudyModeSession({
           {/* Master Stats Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
             <div className="p-4 rounded-2xl bg-[#f8faf8] dark:bg-[#132217] border border-[#e5efe7] dark:border-[#1e3424]">
-              <div className="text-[11px] font-bold text-[#526b5c] dark:text-[#a3bda9]">Words Practiced</div>
-              <div className="text-2xl font-black text-[#192e22] dark:text-[#f0f7f2] mt-1">
+              <div className="text-[11px] font-bold text-[var(--text-subtle)]">Words Practiced</div>
+              <div className="text-2xl font-black text-[var(--text-ink)] mt-1">
                 {totalAnswered}
               </div>
             </div>
@@ -562,14 +562,14 @@ export function StudyModeSession({
             </div>
           </div>
 
-          <div className="mt-3 text-xs text-[#73927d] flex items-center justify-center space-x-1.5">
+          <div className="mt-3 text-xs text-[var(--text-muted)] flex items-center justify-center space-x-1.5">
             <Timer className="w-3.5 h-3.5" />
             <span>Thời gian hoàn thành: <strong>{formatTime(elapsedSeconds)}</strong></span>
           </div>
 
           {/* Skill Breakdown */}
-          <div className="mt-8 pt-6 border-t border-[#dbe7dd]/80 dark:border-[#263d2e] text-left">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9] mb-3">
+          <div className="mt-8 pt-6 border-t border-[var(--border)] text-left">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)] mb-3">
               Phân tích theo kỹ năng
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
@@ -613,7 +613,7 @@ export function StudyModeSession({
 
           {/* Section: Words You Need to Review */}
           {wrongCardsList.length > 0 && (
-            <div className="mt-8 pt-6 border-t border-[#dbe7dd]/80 dark:border-[#263d2e] text-left">
+            <div className="mt-8 pt-6 border-t border-[var(--border)] text-left">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-rose-600 flex items-center space-x-1.5">
                   <Flame className="w-3.5 h-3.5" />
@@ -638,14 +638,14 @@ export function StudyModeSession({
                   >
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="font-black text-[#192e22] dark:text-[#f0f7f2] text-sm">
+                        <span className="font-black text-[var(--text-ink)] text-sm">
                           {card!.word}
                         </span>
                         {card!.phonetic && (
-                          <span className="text-[11px] text-[#73927d]">{card!.phonetic}</span>
+                          <span className="text-[11px] text-[var(--text-muted)]">{card!.phonetic}</span>
                         )}
                       </div>
-                      <p className="text-[#526b5c] dark:text-[#a3bda9] mt-0.5 line-clamp-1">
+                      <p className="text-[var(--text-subtle)] mt-0.5 line-clamp-1">
                         {card!.meaning}
                       </p>
                     </div>
@@ -673,7 +673,7 @@ export function StudyModeSession({
             <Button
               variant="outline"
               onClick={onExit}
-              className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold h-11 px-6"
+              className="rounded-2xl border-[var(--border)] text-xs font-bold h-11 px-6"
             >
               Về chi tiết bộ thẻ
             </Button>
@@ -685,7 +685,7 @@ export function StudyModeSession({
                 setIsCompleted(false);
                 setSavedResult(null);
               }}
-              className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold h-11 px-6 space-x-1.5"
+              className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold h-11 px-6 space-x-1.5"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Học lại từ đầu</span>
@@ -702,39 +702,39 @@ export function StudyModeSession({
   return (
     <div className="max-w-2xl mx-auto space-y-4 py-4 px-3 sm:px-0">
       {/* Top Header Bar */}
-      <div className="flex items-center justify-between text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] px-1">
+      <div className="flex items-center justify-between text-xs font-semibold text-[var(--text-subtle)] px-1">
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowExitConfirm(true)}
-            className="rounded-xl text-[#526b5c] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] p-1.5 h-8"
+            className="rounded-xl text-[var(--text-subtle)] hover:bg-[var(--mint-soft)] p-1.5 h-8"
           >
             <X className="w-4 h-4" />
           </Button>
-          <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] truncate max-w-[200px] sm:max-w-xs">
+          <span className="font-bold text-[var(--text-ink)] truncate max-w-[200px] sm:max-w-xs">
             {deckTitle}
           </span>
         </div>
 
         <div className="flex items-center space-x-3">
-          <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <span className="font-bold text-[var(--text-ink)]">
             Question {currentIdx + 1} / {questions.length}
           </span>
-          <span className="text-[11px] text-[#73927d]">{formatTime(elapsedSeconds)}</span>
+          <span className="text-[11px] text-[var(--text-muted)]">{formatTime(elapsedSeconds)}</span>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-[#eef5f0] dark:bg-[#1d3024] rounded-full h-2 overflow-hidden shadow-2xs">
+      <div className="w-full bg-[var(--mint-bg)] rounded-full h-2 overflow-hidden shadow-2xs">
         <div
-          className="bg-[#2d6a4f] dark:bg-[#52b788] h-2 rounded-full transition-all duration-300"
+          className="bg-[var(--mint)] h-2 rounded-full transition-all duration-300"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
       {/* Focus Area Container */}
-      <Card className="rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 sm:p-8 shadow-sm flex flex-col justify-between min-h-[420px] relative">
+      <Card className="rounded-[30px] border border-[var(--border)] bg-[var(--bg-surface)] p-6 sm:p-8 shadow-sm flex flex-col justify-between min-h-[420px] relative">
         {/* Top Meta: Badge & Audio */}
         <div className="flex items-center justify-between mb-4">
           {renderTypeBadge(currentQ.type)}
@@ -744,14 +744,14 @@ export function StudyModeSession({
               <button
                 onClick={() => handlePlayAudio(1.0)}
                 title="Phát âm chuẩn (1.0x)"
-                className="p-1.5 rounded-xl bg-[#f0f7f2] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#d8ebe0] transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl bg-[#f0f7f2] dark:bg-[#1d3024] text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] transition-colors cursor-pointer"
               >
                 <Volume2 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handlePlayAudio(0.75)}
                 title="Phát âm chậm (0.75x)"
-                className="px-1.5 py-1 rounded-xl bg-[#f0f7f2] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#d8ebe0] text-[10px] font-bold cursor-pointer"
+                className="px-1.5 py-1 rounded-xl bg-[#f0f7f2] dark:bg-[#1d3024] text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] text-[10px] font-bold cursor-pointer"
               >
                 0.75x
               </button>
@@ -770,22 +770,22 @@ export function StudyModeSession({
                 onClick={() => setIsFlipped((prev) => !prev)}
                 className={`p-8 sm:p-10 rounded-[28px] border-2 cursor-pointer transition-all duration-300 select-none ${
                   isFlipped
-                    ? "bg-[#f4faf6] dark:bg-[#14281b] border-[#2d6a4f]/40 shadow-md"
-                    : "bg-[#fbfdfb] dark:bg-[#18281e] border-dashed border-[#c5dcd0] hover:border-[#2d6a4f] shadow-2xs"
+                    ? "bg-[#f4faf6] dark:bg-[#14281b] border-[var(--mint)]/40 shadow-md"
+                    : "bg-[#fbfdfb] dark:bg-[#18281e] border-dashed border-[#c5dcd0] hover:border-[var(--mint)] shadow-2xs"
                 }`}
               >
                 {!isFlipped ? (
                   /* Mặt trước */
                   <div className="space-y-3">
-                    <div className="text-3xl sm:text-4xl font-black text-[#192e22] dark:text-[#f0f7f2] tracking-tight">
+                    <div className="text-3xl sm:text-4xl font-black text-[var(--text-ink)] tracking-tight">
                       {currentQ.targetWord}
                     </div>
                     {currentQ.phonetic && (
-                      <div className="text-sm font-semibold text-[#526b5c] dark:text-[#a3bda9]">
+                      <div className="text-sm font-semibold text-[var(--text-subtle)]">
                         {currentQ.phonetic} {currentQ.partOfSpeech && `(${currentQ.partOfSpeech})`}
                       </div>
                     )}
-                    <div className="pt-4 text-xs font-bold text-[#73927d] flex items-center justify-center space-x-1.5">
+                    <div className="pt-4 text-xs font-bold text-[var(--text-muted)] flex items-center justify-center space-x-1.5">
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Bấm hoặc nhấn Space để lật mặt sau</span>
                     </div>
@@ -793,23 +793,23 @@ export function StudyModeSession({
                 ) : (
                   /* Mặt sau */
                   <div className="space-y-3 animate-in fade-in zoom-in-95 duration-200">
-                    <div className="text-2xl sm:text-3xl font-black text-[#2d6a4f] dark:text-[#52b788]">
+                    <div className="text-2xl sm:text-3xl font-black text-[var(--mint-dark)]">
                       {currentQ.correctAnswer}
                     </div>
                     {currentQ.contextSentence && (
-                      <div className="mt-4 p-3 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-left text-xs space-y-1">
-                        <div className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                      <div className="mt-4 p-3 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] text-left text-xs space-y-1">
+                        <div className="font-semibold text-[var(--text-ink)]">
                           "{currentQ.contextSentence}"
                         </div>
                         {currentQ.contextTranslation && (
-                          <div className="text-[#526b5c] dark:text-[#a3bda9]">
+                          <div className="text-[var(--text-subtle)]">
                             {currentQ.contextTranslation}
                           </div>
                         )}
                       </div>
                     )}
                     {currentQ.hint && (
-                      <p className="text-[11px] text-[#73927d] italic">Gợi ý: {currentQ.hint}</p>
+                      <p className="text-[11px] text-[var(--text-muted)] italic">Gợi ý: {currentQ.hint}</p>
                     )}
                   </div>
                 )}
@@ -828,7 +828,7 @@ export function StudyModeSession({
                   </Button>
                   <Button
                     onClick={() => handleFlashcardAnswer("KNOW")}
-                    className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold h-12 space-x-2"
+                    className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold h-12 space-x-2"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Biết (Phím 2)</span>
@@ -844,11 +844,11 @@ export function StudyModeSession({
           {(currentQ.type === "EN_TO_VI" || currentQ.type === "VI_TO_EN") && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
-                <h2 className="text-xl sm:text-2xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+                <h2 className="text-xl sm:text-2xl font-black text-[var(--text-ink)]">
                   {currentQ.prompt}
                 </h2>
                 {currentQ.phonetic && currentQ.type === "EN_TO_VI" && (
-                  <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">{currentQ.phonetic}</p>
+                  <p className="text-xs text-[var(--text-subtle)]">{currentQ.phonetic}</p>
                 )}
               </div>
 
@@ -862,9 +862,9 @@ export function StudyModeSession({
                   const isWrongSelected = isChecked && isSelected && !isCorrectAnswer;
 
                   let cardStyle =
-                    "border-[#dbe7dd] dark:border-[#263d2e] bg-[#fbfdfb] dark:bg-[#18281e] hover:border-[#2d6a4f]/60";
+                    "border-[var(--border)] bg-[#fbfdfb] dark:bg-[#18281e] hover:border-[var(--mint)]/60";
                   if (isSelected && !isChecked) {
-                    cardStyle = "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1b3524] shadow-xs";
+                    cardStyle = "border-[var(--mint)] bg-[var(--mint-bg)] dark:bg-[#1b3524] shadow-xs";
                   } else if (isCorrectAnswer) {
                     cardStyle = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900";
                   } else if (isWrongSelected) {
@@ -878,7 +878,7 @@ export function StudyModeSession({
                       onClick={() => setSelectedOption(opt)}
                       className={`p-4 rounded-2xl border-2 text-left transition-all flex items-center space-x-3 cursor-pointer ${cardStyle}`}
                     >
-                      <span className="w-7 h-7 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] flex items-center justify-center text-xs font-black shrink-0">
+                      <span className="w-7 h-7 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)] flex items-center justify-center text-xs font-black shrink-0">
                         {letter}
                       </span>
                       <span className="text-xs sm:text-sm font-bold flex-1 leading-snug">
@@ -897,18 +897,18 @@ export function StudyModeSession({
           {currentQ.type === "CONTEXT_IMAGE" && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
-                <h2 className="text-base sm:text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <h2 className="text-base sm:text-lg font-bold text-[var(--text-ink)]">
                   {currentQ.prompt}
                 </h2>
               </div>
 
               {/* Context box */}
-              <div className="p-5 rounded-2xl bg-[#f4faf6] dark:bg-[#14281b] border border-[#2d6a4f]/30 space-y-2 text-center">
-                <div className="text-lg sm:text-xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+              <div className="p-5 rounded-2xl bg-[#f4faf6] dark:bg-[#14281b] border border-[var(--mint)]/30 space-y-2 text-center">
+                <div className="text-lg sm:text-xl font-black text-[var(--text-ink)]">
                   "{currentQ.contextSentence}"
                 </div>
                 {currentQ.contextTranslation && (
-                  <div className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                  <div className="text-xs text-[var(--text-subtle)]">
                     ({currentQ.contextTranslation})
                   </div>
                 )}
@@ -922,8 +922,8 @@ export function StudyModeSession({
                     isChecked && normalizeString(opt) === normalizeString(currentQ.correctAnswer);
                   const isWrongSelected = isChecked && isSelected && !isCorrectAnswer;
 
-                  let style = "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]";
-                  if (isSelected && !isChecked) style = "border-[#2d6a4f] bg-[#eef5f0]";
+                  let style = "border-[var(--border)] bg-[var(--bg-surface)]";
+                  if (isSelected && !isChecked) style = "border-[var(--mint)] bg-[var(--mint-bg)]";
                   if (isCorrectAnswer) style = "border-emerald-500 bg-emerald-50 text-emerald-900";
                   if (isWrongSelected) style = "border-rose-500 bg-rose-50 text-rose-900";
 
@@ -948,10 +948,10 @@ export function StudyModeSession({
           {currentQ.type === "LISTENING_TYPING" && (
             <div className="space-y-6 text-center">
               <div>
-                <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <h2 className="text-lg font-bold text-[var(--text-ink)]">
                   Listen and type the word
                 </h2>
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                <p className="text-xs text-[var(--text-subtle)] mt-1">
                   Bấm vào loa để nghe phát âm, sau đó gõ lại từ vựng bạn nghe được
                 </p>
               </div>
@@ -960,14 +960,14 @@ export function StudyModeSession({
               <div className="flex items-center justify-center space-x-3 py-2">
                 <Button
                   onClick={() => handlePlayAudio(1.0)}
-                  className="w-16 h-16 rounded-3xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white shadow-md flex items-center justify-center p-0 cursor-pointer"
+                  className="w-16 h-16 rounded-3xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white shadow-md flex items-center justify-center p-0 cursor-pointer"
                 >
                   <Volume2 className="w-8 h-8" />
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => handlePlayAudio(0.75)}
-                  className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-xs font-bold h-10 px-3 space-x-1"
+                  className="rounded-2xl border-[var(--border)] text-xs font-bold h-10 px-3 space-x-1"
                 >
                   <Volume1 className="w-4 h-4" />
                   <span>Nghe chậm (0.75x)</span>
@@ -982,7 +982,7 @@ export function StudyModeSession({
                   value={userText}
                   onChange={(e) => setUserText(e.target.value)}
                   placeholder="Gõ từ tiếng Anh bạn nghe được..."
-                  className="rounded-2xl h-12 text-center text-base sm:text-lg font-bold border-2 border-[#dbe7dd] focus:border-[#2d6a4f]"
+                  className="rounded-2xl h-12 text-center text-base sm:text-lg font-bold border-2 border-[var(--border)] focus:border-[var(--mint)]"
                 />
               </div>
             </div>
@@ -994,14 +994,14 @@ export function StudyModeSession({
           {currentQ.type === "EN_TYPING_VI" && (
             <div className="space-y-6 text-center">
               <div className="space-y-2">
-                <span className="text-xs font-bold text-[#73927d] uppercase tracking-wider">
+                <span className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                   Type the Vietnamese meaning
                 </span>
-                <div className="text-3xl sm:text-4xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+                <div className="text-3xl sm:text-4xl font-black text-[var(--text-ink)]">
                   {currentQ.targetWord}
                 </div>
                 {currentQ.phonetic && (
-                  <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">{currentQ.phonetic}</p>
+                  <p className="text-xs text-[var(--text-subtle)]">{currentQ.phonetic}</p>
                 )}
               </div>
 
@@ -1013,10 +1013,10 @@ export function StudyModeSession({
                   value={userText}
                   onChange={(e) => setUserText(e.target.value)}
                   placeholder="Nhập nghĩa tiếng Việt (vd: cái bàn, bàn)..."
-                  className="rounded-2xl h-12 text-center text-base font-bold border-2 border-[#dbe7dd] focus:border-[#2d6a4f]"
+                  className="rounded-2xl h-12 text-center text-base font-bold border-2 border-[var(--border)] focus:border-[var(--mint)]"
                 />
                 {currentQ.hint && (
-                  <p className="text-[11px] text-[#73927d] italic">Gợi ý: {currentQ.hint}</p>
+                  <p className="text-[11px] text-[var(--text-muted)] italic">Gợi ý: {currentQ.hint}</p>
                 )}
               </div>
             </div>
@@ -1028,10 +1028,10 @@ export function StudyModeSession({
           {currentQ.type === "VI_TYPING_EN" && (
             <div className="space-y-6 text-center">
               <div className="space-y-2">
-                <span className="text-xs font-bold text-[#73927d] uppercase tracking-wider">
+                <span className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                   Translate and type the English word
                 </span>
-                <div className="text-3xl sm:text-4xl font-black text-[#2d6a4f] dark:text-[#52b788]">
+                <div className="text-3xl sm:text-4xl font-black text-[var(--mint-dark)]">
                   "{currentQ.prompt.replace(/Dịch và gõ từ tiếng Anh cho "/, "").replace(/":/, "")}"
                 </div>
               </div>
@@ -1044,10 +1044,10 @@ export function StudyModeSession({
                   value={userText}
                   onChange={(e) => setUserText(e.target.value)}
                   placeholder="Gõ từ vựng tiếng Anh tương ứng..."
-                  className="rounded-2xl h-12 text-center text-base font-bold border-2 border-[#dbe7dd] focus:border-[#2d6a4f]"
+                  className="rounded-2xl h-12 text-center text-base font-bold border-2 border-[var(--border)] focus:border-[var(--mint)]"
                 />
                 {currentQ.hint && (
-                  <p className="text-[11px] text-[#73927d] italic">Gợi ý: {currentQ.hint}</p>
+                  <p className="text-[11px] text-[var(--text-muted)] italic">Gợi ý: {currentQ.hint}</p>
                 )}
               </div>
             </div>
@@ -1059,10 +1059,10 @@ export function StudyModeSession({
           {currentQ.type === "MATCHING" && (
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-base sm:text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <h2 className="text-base sm:text-lg font-bold text-[var(--text-ink)]">
                   {currentQ.prompt}
                 </h2>
-                <p className="text-xs text-[#73927d] mt-1">
+                <p className="text-xs text-[var(--text-muted)] mt-1">
                   Chọn 1 từ tiếng Anh và 1 nghĩa tiếng Việt để ghép cặp
                 </p>
               </div>
@@ -1070,7 +1070,7 @@ export function StudyModeSession({
               <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm font-bold">
                 {/* Column EN */}
                 <div className="space-y-2">
-                  <div className="text-[11px] font-black uppercase text-[#73927d] px-1">
+                  <div className="text-[11px] font-black uppercase text-[var(--text-muted)] px-1">
                     English
                   </div>
                   {currentQ.matchingPairs?.map((pair) => {
@@ -1099,8 +1099,8 @@ export function StudyModeSession({
                           isMatched
                             ? "bg-emerald-100/60 border-emerald-400 text-emerald-800 line-through opacity-70"
                             : isSelected
-                            ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-xs"
-                            : "bg-white dark:bg-[#17261c] border-[#dbe7dd] hover:border-[#2d6a4f]"
+                            ? "bg-[var(--mint)] text-white border-[var(--mint)] shadow-xs"
+                            : "bg-[var(--bg-surface)] border-[var(--border)] hover:border-[var(--mint)]"
                         }`}
                       >
                         {pair.en}
@@ -1111,7 +1111,7 @@ export function StudyModeSession({
 
                 {/* Column VI */}
                 <div className="space-y-2">
-                  <div className="text-[11px] font-black uppercase text-[#73927d] px-1">
+                  <div className="text-[11px] font-black uppercase text-[var(--text-muted)] px-1">
                     Vietnamese
                   </div>
                   {currentQ.matchingPairs?.map((pair) => {
@@ -1140,8 +1140,8 @@ export function StudyModeSession({
                           isMatched
                             ? "bg-emerald-100/60 border-emerald-400 text-emerald-800 line-through opacity-70"
                             : isSelected
-                            ? "bg-[#2d6a4f] text-white border-[#2d6a4f] shadow-xs"
-                            : "bg-white dark:bg-[#17261c] border-[#dbe7dd] hover:border-[#2d6a4f]"
+                            ? "bg-[var(--mint)] text-white border-[var(--mint)] shadow-xs"
+                            : "bg-[var(--bg-surface)] border-[var(--border)] hover:border-[var(--mint)]"
                         }`}
                       >
                         {pair.vi}
@@ -1155,7 +1155,7 @@ export function StudyModeSession({
         </div>
 
         {/* Bottom Feedback & Navigation Controls */}
-        <div className="mt-6 pt-4 border-t border-[#dbe7dd]/80 dark:border-[#263d2e] space-y-3">
+        <div className="mt-6 pt-4 border-t border-[var(--border)] space-y-3">
           {/* Feedback bar if checked */}
           {isChecked && (
             <div
@@ -1192,7 +1192,7 @@ export function StudyModeSession({
               size="sm"
               onClick={handleSkipQuestion}
               disabled={isChecked}
-              className="rounded-xl text-[#73927d] hover:bg-[#eef5f0] text-xs font-semibold"
+              className="rounded-xl text-[var(--text-muted)] hover:bg-[var(--mint-bg)] text-xs font-semibold"
             >
               Bỏ qua (Skip)
             </Button>
@@ -1206,7 +1206,7 @@ export function StudyModeSession({
                     (currentQ.type === "MATCHING" &&
                       matchedPairIds.length !== (currentQ.matchingPairs?.length || 0))
                   }
-                  className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold h-11 px-8 space-x-1.5 cursor-pointer shadow-xs"
+                  className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold h-11 px-8 space-x-1.5 cursor-pointer shadow-xs"
                 >
                   <Check className="w-4 h-4" />
                   <span>Kiểm tra (Check)</span>
@@ -1215,7 +1215,7 @@ export function StudyModeSession({
             ) : (
               <Button
                 onClick={handleNextQuestion}
-                className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold h-11 px-8 space-x-1.5 cursor-pointer shadow-xs"
+                className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold h-11 px-8 space-x-1.5 cursor-pointer shadow-xs"
               >
                 <span>Tiếp theo (Next)</span>
                 <ChevronRight className="w-4 h-4" />
@@ -1228,14 +1228,14 @@ export function StudyModeSession({
       {/* Exit Confirmation Dialog */}
       {showExitConfirm && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <Card className="rounded-[28px] max-w-sm w-full p-6 bg-white dark:bg-[#17261c] border border-[#dbe7dd] space-y-4 shadow-xl text-center">
+          <Card className="rounded-[28px] max-w-sm w-full p-6 bg-[var(--bg-surface)] border border-[var(--border)] space-y-4 shadow-xl text-center">
             <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl">
               ⚠️
             </div>
-            <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h3 className="text-base font-bold text-[var(--text-ink)]">
               Dừng phiên học?
             </h3>
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-xs text-[var(--text-subtle)]">
               Bạn đang ở câu {currentIdx + 1} / {questions.length}. Bạn có chắc muốn thoát ra trang chi tiết bộ thẻ không?
             </p>
             <div className="grid grid-cols-2 gap-3 pt-2">

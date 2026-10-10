@@ -342,24 +342,24 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-lg rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-0 shadow-2xl overflow-hidden">
+      <DialogContent onClose={onClose} className="max-w-lg rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-0 shadow-2xl overflow-hidden">
         {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3 border-b border-[#dbe7dd]/80 dark:border-[#263d2e]">
-          <Search className="w-4 h-4 text-[#73927d] mr-3" />
+        <div className="flex items-center px-4 py-3 border-b border-[var(--border)]">
+          <Search className="w-4 h-4 text-[var(--text-muted)] mr-3" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tìm kiếm Task, Note, Môn học, Thẻ bài hoặc Gõ lệnh..."
-            className="flex-1 bg-transparent border-none text-xs text-[#192e22] dark:text-[#f0f7f2] placeholder:text-[#8ba393] focus:outline-none"
+            className="flex-1 bg-transparent border-none text-xs text-[var(--text-ink)] placeholder:text-[#8ba393] focus:outline-none"
             autoFocus
           />
           {isSearching && (
-            <span className="text-[10px] text-[#2d6a4f] dark:text-[#52b788] animate-pulse mr-2">
+            <span className="text-[10px] text-[var(--mint-dark)] animate-pulse mr-2">
               Đang tìm...
             </span>
           )}
-          <kbd className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#eef5f0] dark:bg-[#1d3024] text-[#526b5c] dark:text-[#a3bda9] border border-[#dbe7dd] dark:border-[#263d2e]">
+          <kbd className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[var(--mint-bg)] text-[var(--text-subtle)] border border-[var(--border)]">
             ESC
           </kbd>
         </div>
@@ -367,7 +367,7 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
         {/* Action & Result List */}
         <div className="p-2 max-h-84 overflow-y-auto space-y-1">
           {serverResults.length > 0 && (
-            <div className="px-3 pt-1.5 pb-1 text-[10px] font-bold text-[#2d6a4f] dark:text-[#52b788] uppercase tracking-wider">
+            <div className="px-3 pt-1.5 pb-1 text-[10px] font-bold text-[var(--mint-dark)] uppercase tracking-wider">
               Kết quả dữ liệu ({serverResults.length})
             </div>
           )}
@@ -381,15 +381,15 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
                 onClick={item.run}
                 onMouseEnter={() => setSelectedIndex(idx)}
                 className={`flex items-center justify-between px-3 py-2.5 rounded-2xl cursor-pointer text-xs transition-colors ${isSelected
-                  ? "bg-[#d8ebe0] dark:bg-[#1d3827] text-[#192e22] dark:text-[#f0f7f2]"
-                  : "text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f8fbf8] dark:hover:bg-[#142318]"
+                  ? "bg-[var(--mint-bg)] text-[var(--text-ink)]"
+                  : "text-[var(--text-subtle)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318]"
                   }`}
               >
                 <div className="flex items-center space-x-3 truncate">
                   <div
                     className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${isSelected
-                      ? "bg-[#2d6a4f] text-white"
-                      : "bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f]"
+                      ? "bg-[var(--mint)] text-white"
+                      : "bg-[var(--mint-bg)] text-[var(--mint-dark)]"
                       }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -397,7 +397,7 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
                   <div className="truncate">
                     <p className="font-semibold truncate">{item.title}</p>
                     {item.subtitle && (
-                      <p className="text-[10px] text-[#73927d] dark:text-[#8ba393] truncate">
+                      <p className="text-[10px] text-[var(--text-muted)] truncate">
                         {item.subtitle}
                       </p>
                     )}
@@ -406,7 +406,7 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
 
                 <div className="flex items-center space-x-2 shrink-0">
                   {item.badge && (
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#eef5f0] dark:bg-[#1d3024] text-[#73927d] dark:text-[#8ba393]">
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[var(--mint-bg)] text-[var(--text-muted)]">
                       {item.badge}
                     </span>
                   )}
@@ -417,14 +417,14 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
           })}
 
           {allItems.length === 0 && !isSearching && (
-            <div className="py-8 text-center text-xs text-[#73927d]">
+            <div className="py-8 text-center text-xs text-[var(--text-muted)]">
               Không tìm thấy lệnh hoặc dữ liệu phù hợp với "{query}".
             </div>
           )}
         </div>
 
         {/* Footer shortcuts */}
-        <div className="px-4 py-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] flex items-center justify-between text-[10px] text-[#73927d]">
+        <div className="px-4 py-2 border-t border-[var(--border)] bg-[var(--bg-muted)] flex items-center justify-between text-[10px] text-[var(--text-muted)]">
           <span>Dùng phím ↑ ↓ để di chuyển • Nhấn Enter để mở</span>
           <span className="font-mono">ChronoMind Global Search</span>
         </div>

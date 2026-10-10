@@ -46,11 +46,11 @@ export default async function SubjectsPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2.5">
-          <BookOpen className="w-6 h-6 text-[#2d6a4f] dark:text-[#52b788]" />
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--text-ink)] flex items-center space-x-2.5">
+          <BookOpen className="w-6 h-6 text-[var(--mint-dark)]" />
           <span>Quản lý Môn học & Chỉ tiêu</span>
         </h1>
-        <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+        <p className="text-xs text-[var(--text-subtle)] mt-1">
           Thiết lập số giờ mục tiêu và mức độ ưu tiên để AI tự động phân bổ lịch học phù hợp.
         </p>
       </div>

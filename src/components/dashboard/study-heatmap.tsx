@@ -26,11 +26,11 @@ export const HEATMAP_CONFIG = {
     LEVEL_3_MAX: 120, // 60 - 120m
   },
   COLORS: {
-    LEVEL_0: "bg-[#eef5f0] dark:bg-[#1a2f22] border-[#dbe7dd] dark:border-[#263d2e]",
-    LEVEL_1: "bg-[#d8ebe0] dark:bg-[#21432f] border-[#b7d8c3] dark:border-[#2f5e43]",
+    LEVEL_0: "bg-[var(--mint-bg)] dark:bg-[#1a2f22] border-[var(--border)]",
+    LEVEL_1: "bg-[var(--mint-bg)] dark:bg-[#21432f] border-[#b7d8c3] dark:border-[#2f5e43]",
     LEVEL_2: "bg-[#9cd1b1] dark:bg-[#2b583f] border-[#74c69d] dark:border-[#3c7857]",
     LEVEL_3: "bg-[#52b788] dark:bg-[#387654] border-[#40916c] text-white",
-    LEVEL_4: "bg-[#2d6a4f] dark:bg-[#52b788] border-[#1b4332] text-white shadow-2xs",
+    LEVEL_4: "bg-[var(--mint)] border-[#1b4332] text-white shadow-2xs",
   },
 };
 
@@ -175,18 +175,18 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
   };
 
   return (
-    <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow overflow-hidden">
+    <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] soft-card-shadow overflow-hidden">
       {/* Header with Title and Filters */}
-      <CardHeader className="p-6 pb-4 border-b border-[#dbe7dd]/60 dark:border-[#263d2e]">
+      <CardHeader className="p-6 pb-4 border-b border-[var(--border)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2d6a4f] dark:bg-[#52b788]" />
-              <CardTitle className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <span className="w-2.5 h-2.5 rounded-full bg-[var(--mint)]" />
+              <CardTitle className="text-base font-bold text-[var(--text-ink)]">
                 Study Activity (Biểu đồ hoạt động học tập)
               </CardTitle>
             </div>
-            <CardDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+            <CardDescription className="text-xs text-[var(--text-subtle)] mt-1">
               Phản ánh 100% thời gian học thực tế qua Study Timer. Nhấp vào bất kỳ ngày nào để xem chi tiết buổi học.
             </CardDescription>
           </div>
@@ -197,7 +197,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
             <select
               value={selectedSubjectId}
               onChange={(e) => setSelectedSubjectId(e.target.value)}
-              className="h-8 rounded-full border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] px-3 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-1 focus:ring-[#2d6a4f]"
+              className="h-8 rounded-full border border-[var(--border)] bg-[var(--bg-muted)] px-3 text-xs font-semibold text-[var(--text-ink)] focus:outline-none focus:ring-1 focus:ring-[#2d6a4f]"
             >
               <option value="all">Tất cả môn học</option>
               {subjects.map((sub) => (
@@ -208,7 +208,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
             </select>
 
             {/* Time Range Filter */}
-            <div className="inline-flex rounded-full p-0.5 bg-[#eef5f0] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e]">
+            <div className="inline-flex rounded-full p-0.5 bg-[var(--mint-bg)] dark:bg-[#142318] border border-[var(--border)]">
               {[
                 { label: "3 tháng", value: "3m" },
                 { label: "6 tháng", value: "6m" },
@@ -219,8 +219,8 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
                   onClick={() => setRange(btn.value)}
                   className={`px-2.5 py-1 text-[11px] font-semibold rounded-full transition-all cursor-pointer ${
                     range === btn.value
-                      ? "bg-[#2d6a4f] text-white shadow-2xs"
-                      : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                      ? "bg-[var(--mint)] text-white shadow-2xs"
+                      : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
                   }`}
                 >
                   {btn.label}
@@ -236,7 +236,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
         <div className="overflow-x-auto pb-2">
           <div className="min-w-max">
             {/* Month Headers */}
-            <div className="flex text-[10px] font-bold text-[#73927d] dark:text-[#8ba393] mb-2 pl-7 relative h-4">
+            <div className="flex text-[10px] font-bold text-[var(--text-muted)] mb-2 pl-7 relative h-4">
               {monthLabels.map((lbl, idx) => (
                 <div
                   key={idx}
@@ -251,7 +251,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
             {/* Grid with Weekday Labels on Left */}
             <div className="flex space-x-1.5 items-start">
               {/* Day of Week Labels */}
-              <div className="flex flex-col space-y-1 text-[9px] font-bold text-[#73927d] dark:text-[#8ba393] pt-0.5 pr-1 select-none">
+              <div className="flex flex-col space-y-1 text-[9px] font-bold text-[var(--text-muted)] pt-0.5 pr-1 select-none">
                 <span className="h-3 leading-3">T2</span>
                 <span className="h-3 leading-3 opacity-0">T3</span>
                 <span className="h-3 leading-3">T4</span>
@@ -313,16 +313,16 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
         </div>
 
         {/* Hover Tooltip / Status Display */}
-        <div className="min-h-[28px] mt-4 flex items-center justify-between text-xs font-medium text-[#526b5c] dark:text-[#a3bda9] border-t border-[#dbe7dd]/60 dark:border-[#263d2e] pt-3">
+        <div className="min-h-[28px] mt-4 flex items-center justify-between text-xs font-medium text-[var(--text-subtle)] border-t border-[var(--border)] pt-3">
           <div>
             {hoveredDay ? (
               <span className="flex items-center space-x-2">
-                <span className="font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                <span className="font-bold text-[var(--text-ink)]">
                   {format(new Date(hoveredDay.date), "dd MMMM yyyy", { locale: vi })}:
                 </span>
                 <span>
                   {hoveredDay.actualMinutes > 0 ? (
-                    <strong className="text-[#2d6a4f] dark:text-[#52b788]">
+                    <strong className="text-[var(--mint-dark)]">
                       {formatHoursMins(hoveredDay.actualMinutes)} ({hoveredDay.sessionsCount} buổi học)
                     </strong>
                   ) : (
@@ -330,7 +330,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
                   )}
                 </span>
                 {hoveredDay.subjects.length > 0 && (
-                  <span className="text-[#73927d] dark:text-[#8ba393]">
+                  <span className="text-[var(--text-muted)]">
                     • {hoveredDay.subjects.map((s) => s.name).join(", ")}
                   </span>
                 )}
@@ -358,16 +358,16 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
       {/* Day Intelligence Modal (Section 24 & 27) */}
       {selectedDayDetail && (
         <Dialog open={!!selectedDayDetail} onOpenChange={(open) => !open && setSelectedDayDetail(null)}>
-          <DialogContent onClose={() => setSelectedDayDetail(null)} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+          <DialogContent onClose={() => setSelectedDayDetail(null)} className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
             <DialogHeader>
-              <div className="flex items-center space-x-2 text-xs font-semibold text-[#2d6a4f] dark:text-[#52b788] mb-1">
+              <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--mint-dark)] mb-1">
                 <Calendar className="w-4 h-4" />
                 <span>Day Intelligence • Nhật ký chi tiết</span>
               </div>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
                 {format(new Date(selectedDayDetail.date), "EEEE, dd MMMM yyyy", { locale: vi })}
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <DialogDescription className="text-xs text-[var(--text-subtle)]">
                 Thống kê chi tiết toàn bộ thời gian học và các phiên học tập trong ngày.
               </DialogDescription>
             </DialogHeader>
@@ -375,29 +375,29 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
             <div className="space-y-4 py-3">
               {/* Summary Stats Cards */}
               <div className="grid grid-cols-3 gap-2.5">
-                <div className="p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-center">
-                  <div className="text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] uppercase">
+                <div className="p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] text-center">
+                  <div className="text-[10px] font-semibold text-[var(--text-subtle)] uppercase">
                     Thực tế học
                   </div>
-                  <div className="text-base font-black text-[#2d6a4f] dark:text-[#52b788] mt-0.5">
+                  <div className="text-base font-black text-[var(--mint-dark)] mt-0.5">
                     {formatHoursMins(selectedDayDetail.actualMinutes)}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-center">
-                  <div className="text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] uppercase">
+                <div className="p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] text-center">
+                  <div className="text-[10px] font-semibold text-[var(--text-subtle)] uppercase">
                     Kế hoạch
                   </div>
-                  <div className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2] mt-0.5">
+                  <div className="text-base font-bold text-[var(--text-ink)] mt-0.5">
                     {formatHoursMins(selectedDayDetail.plannedMinutes)}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-center">
-                  <div className="text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] uppercase">
+                <div className="p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] text-center">
+                  <div className="text-[10px] font-semibold text-[var(--text-subtle)] uppercase">
                     Hoàn thành
                   </div>
-                  <div className="text-base font-bold text-[#2d6a4f] dark:text-[#52b788] mt-0.5">
+                  <div className="text-base font-bold text-[var(--mint-dark)] mt-0.5">
                     {selectedDayDetail.completionPercent}%
                   </div>
                 </div>
@@ -406,23 +406,23 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
               {/* Subject Breakdown */}
               {selectedDayDetail.subjects.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-2">
+                  <h4 className="text-xs font-bold text-[var(--text-ink)] mb-2">
                     Phân bổ môn học trong ngày
                   </h4>
                   <div className="space-y-1.5">
                     {selectedDayDetail.subjects.map((sub) => (
                       <div
                         key={sub.id}
-                        className="flex items-center justify-between text-xs p-2 rounded-xl bg-[#f4f8f5] dark:bg-[#142318]"
+                        className="flex items-center justify-between text-xs p-2 rounded-xl bg-[var(--mint-bg)] dark:bg-[#142318]"
                       >
                         <div className="flex items-center space-x-2">
                           <span
                             className="w-2.5 h-2.5 rounded-full"
                             style={{ backgroundColor: sub.color || "#2d6a4f" }}
                           />
-                          <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">{sub.name}</span>
+                          <span className="font-semibold text-[var(--text-ink)]">{sub.name}</span>
                         </div>
-                        <span className="font-bold text-[#2d6a4f] dark:text-[#52b788]">
+                        <span className="font-bold text-[var(--mint-dark)]">
                           {formatHoursMins(sub.minutes)}
                         </span>
                       </div>
@@ -433,7 +433,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
 
               {/* Sessions List */}
               <div>
-                <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-2 flex items-center justify-between">
+                <h4 className="text-xs font-bold text-[var(--text-ink)] mb-2 flex items-center justify-between">
                   <span>Danh sách phiên học ({selectedDayDetail.sessions.length})</span>
                 </h4>
                 {selectedDayDetail.sessions.length > 0 ? (
@@ -441,15 +441,15 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
                     {selectedDayDetail.sessions.map((sess) => (
                       <div
                         key={sess.id}
-                        className="p-2.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fcfdfc] dark:bg-[#122015] text-xs"
+                        className="p-2.5 rounded-2xl border border-[var(--border)] bg-[#fcfdfc] dark:bg-[#122015] text-xs"
                       >
                         <div className="flex items-center justify-between font-semibold">
-                          <span className="text-[#192e22] dark:text-[#f0f7f2] truncate">{sess.title}</span>
-                          <span className="font-bold text-[#2d6a4f] dark:text-[#52b788] shrink-0 ml-2">
+                          <span className="text-[var(--text-ink)] truncate">{sess.title}</span>
+                          <span className="font-bold text-[var(--mint-dark)] shrink-0 ml-2">
                             {formatHoursMins(sess.actualMinutes)}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                        <div className="flex items-center justify-between text-[11px] text-[var(--text-subtle)] mt-1">
                           <span className="flex items-center space-x-1">
                             <Clock className="w-3 h-3" />
                             <span>
@@ -461,7 +461,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
                           </Badge>
                         </div>
                         {sess.notes && (
-                          <p className="text-[11px] text-[#73927d] dark:text-[#8ba393] italic mt-1 bg-white/60 dark:bg-black/20 p-1.5 rounded-lg">
+                          <p className="text-[11px] text-[var(--text-muted)] italic mt-1 bg-white/60 dark:bg-black/20 p-1.5 rounded-lg">
                             "{sess.notes}"
                           </p>
                         )}
@@ -469,7 +469,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
                     ))}
                   </div>
                 ) : (
-                  <div className="py-6 text-center text-xs text-[#526b5c] dark:text-[#a3bda9] border border-dashed border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl">
+                  <div className="py-6 text-center text-xs text-[var(--text-subtle)] border border-dashed border-[var(--border)] rounded-2xl">
                     Chưa có phiên học nào được ghi nhận trong ngày này.
                   </div>
                 )}
@@ -480,7 +480,7 @@ export function StudyHeatmap({ initialDays = [], days = [], subjects = [] }: Stu
                 <Link href={`/calendar?date=${selectedDayDetail.date}`} className="w-full">
                   <Button
                     variant="outline"
-                    className="w-full rounded-2xl border-[#dbe7dd] text-[#2d6a4f] hover:bg-[#d8ebe0] font-semibold text-xs h-10 space-x-1.5"
+                    className="w-full rounded-2xl border-[var(--border)] text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] font-semibold text-xs h-10 space-x-1.5"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>Xem ngày này trên Lịch học (Calendar)</span>

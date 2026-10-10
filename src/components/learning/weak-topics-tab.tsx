@@ -63,33 +63,33 @@ export function WeakTopicsTab() {
   return (
     <div className="max-w-2xl mx-auto space-y-5">
       {/* Header */}
-      <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 space-y-2 shadow-xs">
-        <h2 className="text-base font-extrabold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-6 space-y-2 shadow-xs">
+        <h2 className="text-base font-extrabold text-[var(--text-ink)] flex items-center space-x-2">
           <span>🧠 Phân tích Điểm yếu & Lỗ hổng Kiến thức</span>
         </h2>
-        <p className="text-xs text-[#73927d]">
+        <p className="text-xs text-[var(--text-muted)]">
           Hệ thống AI tự động theo dõi từng câu hỏi bạn làm sai qua các bài Quiz để phát hiện các chủ đề cần củng cố và đưa thẳng vào Lịch học.
         </p>
       </div>
 
       {scheduledMessage && (
-        <div className="p-3.5 rounded-2xl bg-[#eef8f2] text-[#1b4332] border border-[#b7d8c3] text-xs flex items-center space-x-2 font-medium">
-          <CheckCircle2 className="w-4 h-4 text-[#2d6a4f]" />
+        <div className="p-3.5 rounded-2xl bg-[#eef8f2] text-[var(--mint-dark)] border border-[#b7d8c3] text-xs flex items-center space-x-2 font-medium">
+          <CheckCircle2 className="w-4 h-4 text-[var(--mint-dark)]" />
           <span>{scheduledMessage}</span>
         </div>
       )}
 
       {/* Weak Topics Section */}
-      <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 space-y-4 shadow-xs">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-6 space-y-4 shadow-xs">
         <h3 className="text-xs font-bold uppercase tracking-wider text-[#b87474] flex items-center space-x-1.5">
           <AlertCircle className="w-4 h-4" />
           <span>Chủ đề yếu cần bù giờ (Độ chính xác &lt; 65%)</span>
         </h3>
 
         {loading ? (
-          <div className="py-8 text-center text-xs text-[#73927d]">Đang phân tích dữ liệu...</div>
+          <div className="py-8 text-center text-xs text-[var(--text-muted)]">Đang phân tích dữ liệu...</div>
         ) : weakTopics.length === 0 ? (
-          <div className="p-4 rounded-2xl bg-[#eef8f2] dark:bg-[#14261b] text-xs text-[#2d6a4f] dark:text-[#9fe3ba] font-medium text-center">
+          <div className="p-4 rounded-2xl bg-[#eef8f2] dark:bg-[#14261b] text-xs text-[var(--mint-dark)] dark:text-[#9fe3ba] font-medium text-center">
             🎉 Bạn chưa có chủ đề yếu nào đáng lo ngại! Hãy tiếp tục làm thêm quiz để nhận phân tích chi tiết.
           </div>
         ) : (
@@ -100,10 +100,10 @@ export function WeakTopicsTab() {
                 className="p-4 rounded-2xl border border-[#e8c6c6] dark:border-[#4a2222] bg-[#fdf6f6] dark:bg-[#261616] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
                 <div>
-                  <h4 className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                  <h4 className="font-bold text-sm text-[var(--text-ink)]">
                     {wt.topic}
                   </h4>
-                  <div className="flex items-center space-x-3 text-xs text-[#73927d] mt-1">
+                  <div className="flex items-center space-x-3 text-xs text-[var(--text-muted)] mt-1">
                     <span className="text-[#b87474] font-semibold">
                       Chính xác: {wt.accuracy}%
                     </span>
@@ -116,7 +116,7 @@ export function WeakTopicsTab() {
                   size="sm"
                   onClick={() => handleScheduleStudy(wt.topic)}
                   disabled={schedulingTopic === wt.topic}
-                  className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-full text-xs space-x-1.5 shrink-0"
+                  className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-full text-xs space-x-1.5 shrink-0"
                 >
                   {schedulingTopic === wt.topic ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -133,8 +133,8 @@ export function WeakTopicsTab() {
 
       {/* Strong Topics Section */}
       {strongTopics.length > 0 && (
-        <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-6 space-y-3 shadow-xs">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-[#2d6a4f] flex items-center space-x-1.5">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-6 space-y-3 shadow-xs">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--mint-dark)] flex items-center space-x-1.5">
             <CheckCircle2 className="w-4 h-4" />
             <span>Chủ đề đã nắm vững (Độ chính xác &ge; 65%)</span>
           </h3>
@@ -143,12 +143,12 @@ export function WeakTopicsTab() {
             {strongTopics.map((st, i) => (
               <div
                 key={i}
-                className="p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-xs flex items-center justify-between"
+                className="p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] text-xs flex items-center justify-between"
               >
-                <span className="font-medium text-[#192e22] dark:text-[#f0f7f2] truncate">
+                <span className="font-medium text-[var(--text-ink)] truncate">
                   {st.topic}
                 </span>
-                <span className="font-bold text-[#2d6a4f] dark:text-[#7fc498] shrink-0 ml-2">
+                <span className="font-bold text-[var(--mint-dark)] dark:text-[#7fc498] shrink-0 ml-2">
                   {st.accuracy}%
                 </span>
               </div>

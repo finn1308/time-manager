@@ -536,15 +536,15 @@ export function ResourceManager({
   };
 
   return (
-    <div className="flex flex-col space-y-4 text-[#192e22] dark:text-[#f0f7f2]">
+    <div className="flex flex-col space-y-4 text-[var(--text-ink)]">
       {/* 1. Dynamic Subject & Schedule Switcher Bar */}
-      <div className="p-3 sm:p-3.5 rounded-2xl bg-[#f0f6f2] dark:bg-[#15251b] border border-[#dbe7dd] dark:border-[#263d2e] space-y-2.5">
+      <div className="p-3 sm:p-3.5 rounded-2xl bg-[#f0f6f2] dark:bg-[#15251b] border border-[var(--border)] space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#2d6a4f] dark:text-[#74c69d] flex items-center space-x-1.5">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--mint-dark)] dark:text-[#74c69d] flex items-center space-x-1.5">
             <BookOpen className="w-3.5 h-3.5" />
             <span>Chọn Môn học & Buổi học để quản lý</span>
           </span>
-          <span className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+          <span className="text-[10px] text-[var(--text-subtle)]">
             Tự do chuyển đổi mọi môn & lịch
           </span>
         </div>
@@ -552,13 +552,13 @@ export function ResourceManager({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {/* Subject Dropdown Selector */}
           <div>
-            <label className="block text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+            <label className="block text-[10px] font-semibold text-[var(--text-subtle)] mb-1">
               Môn học:
             </label>
             <select
               value={curSubjectId}
               onChange={(e) => handleSelectSubject(e.target.value)}
-              className="w-full h-9 rounded-xl border border-[#b7d8c3] dark:border-[#263d2e] bg-white dark:bg-[#1a2e21] px-2.5 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+              className="w-full h-9 rounded-xl border border-[#b7d8c3] dark:border-[#263d2e] bg-white dark:bg-[#1a2e21] px-2.5 text-xs font-semibold text-[var(--text-ink)] focus:outline-none focus:ring-2 focus:ring-[#52b788]"
             >
               <option value="">-- Tất cả các môn học --</option>
               {subjectsList.map((s) => (
@@ -571,13 +571,13 @@ export function ResourceManager({
 
           {/* Schedule/Session Dropdown Selector */}
           <div>
-            <label className="block text-[10px] font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+            <label className="block text-[10px] font-semibold text-[var(--text-subtle)] mb-1">
               Lịch học / Buổi học:
             </label>
             <select
               value={curEventId}
               onChange={(e) => handleSelectEvent(e.target.value)}
-              className="w-full h-9 rounded-xl border border-[#b7d8c3] dark:border-[#263d2e] bg-white dark:bg-[#1a2e21] px-2.5 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+              className="w-full h-9 rounded-xl border border-[#b7d8c3] dark:border-[#263d2e] bg-white dark:bg-[#1a2e21] px-2.5 text-xs font-semibold text-[var(--text-ink)] focus:outline-none focus:ring-2 focus:ring-[#52b788]"
             >
               <option value="">-- Tài nguyên chung (Toàn môn) --</option>
               {availableEvents.map((ev) => {
@@ -597,21 +597,21 @@ export function ResourceManager({
       </div>
 
       {/* 2. Target Context Display & Google Drive Status Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-[#dbe7dd] dark:border-[#263d2e] gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-[var(--border)] gap-2">
         <div className="flex items-center space-x-2">
-          <div className="p-2 rounded-xl bg-[#d8ebe0] dark:bg-[#1d3d28] text-[#1b4332] dark:text-[#74c69d]">
+          <div className="p-2 rounded-xl bg-[var(--mint-bg)] dark:bg-[#1d3d28] text-[var(--mint-dark)] dark:text-[#74c69d]">
             <FolderOpen className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+              <span className="font-bold text-sm text-[var(--text-ink)]">
                 {activeSessionTitle}
               </span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#a3bda9] font-medium">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1d3827] dark:text-[#a3bda9] font-medium">
                 {activeSubjectName}
               </span>
             </div>
-            <p className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+            <p className="text-[10px] text-[var(--text-subtle)] mt-0.5">
               Thư mục Google Drive: <code>Study Manager/{activeSubjectName}/{activeSessionTitle}</code>
             </p>
           </div>
@@ -651,7 +651,7 @@ export function ResourceManager({
               variant="outline"
               size="sm"
               onClick={() => setShowDriveConnectModal(true)}
-              className="text-xs h-8 rounded-xl border-dashed border-[#52b788] text-[#1b4332] dark:text-[#74c69d] hover:bg-[#d8ebe0]/40 flex items-center space-x-1.5"
+              className="text-xs h-8 rounded-xl border-dashed border-[#52b788] text-[var(--mint-dark)] dark:text-[#74c69d] hover:bg-[var(--mint-bg)]/40 flex items-center space-x-1.5"
             >
               <Cloud className="w-3.5 h-3.5 text-[#52b788]" />
               <span>Kết nối Google Drive</span>
@@ -661,14 +661,14 @@ export function ResourceManager({
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex rounded-xl bg-[#f0f6f2] dark:bg-[#15251b] p-1 border border-[#dbe7dd] dark:border-[#263d2e]">
+      <div className="flex rounded-xl bg-[#f0f6f2] dark:bg-[#15251b] p-1 border border-[var(--border)]">
         <button
           type="button"
           onClick={() => setActiveTab("resources")}
           className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center justify-center space-x-1.5 ${
             activeTab === "resources"
-              ? "bg-white dark:bg-[#1f3426] text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-              : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+              ? "bg-white dark:bg-[#1f3426] text-[var(--text-ink)] shadow-2xs"
+              : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
           }`}
         >
           <FolderOpen className="w-3.5 h-3.5" />
@@ -679,8 +679,8 @@ export function ResourceManager({
           onClick={() => setActiveTab("notes")}
           className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center justify-center space-x-1.5 ${
             activeTab === "notes"
-              ? "bg-white dark:bg-[#1f3426] text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-              : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+              ? "bg-white dark:bg-[#1f3426] text-[var(--text-ink)] shadow-2xs"
+              : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
           }`}
         >
           <FileText className="w-3.5 h-3.5" />
@@ -695,7 +695,7 @@ export function ResourceManager({
           <form onSubmit={handleAiLinkSubmit} className="space-y-1.5">
             <div className="flex items-center space-x-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#52b788]" />
-              <label className="text-xs font-bold text-[#192e22] dark:text-[#d8ebe0]">
+              <label className="text-xs font-bold text-[var(--text-ink)] dark:text-[#d8ebe0]">
                 AI Study Assistant: Nhận diện Link tự động
               </label>
             </div>
@@ -704,13 +704,13 @@ export function ResourceManager({
                 value={aiLinkText}
                 onChange={(e) => setAiLinkText(e.target.value)}
                 placeholder="Dán link Zoom, Meet, YouTube, Drive hoặc gõ: 'Đây là link Zoom IELTS...'"
-                className="text-xs h-10 rounded-xl bg-white dark:bg-[#16271c] border-[#dbe7dd] dark:border-[#263d2e] placeholder:text-gray-400"
+                className="text-xs h-10 rounded-xl bg-white dark:bg-[#16271c] border-[var(--border)] placeholder:text-gray-400"
                 disabled={aiParsing}
               />
               <Button
                 type="submit"
                 disabled={aiParsing || !aiLinkText.trim()}
-                className="h-10 px-3.5 bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl text-xs font-semibold shrink-0"
+                className="h-10 px-3.5 bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl text-xs font-semibold shrink-0"
               >
                 {aiParsing ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -743,11 +743,11 @@ export function ResourceManager({
           {/* Document Dropzone */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-[#192e22] dark:text-[#d8ebe0] flex items-center space-x-1.5">
+              <label className="text-xs font-bold text-[var(--text-ink)] dark:text-[#d8ebe0] flex items-center space-x-1.5">
                 <Upload className="w-3.5 h-3.5 text-[#52b788]" />
                 <span>📁 Tải tài liệu lên Google Drive</span>
               </label>
-              <span className="text-[10px] text-[#526b5c] dark:text-[#a3bda9]">
+              <span className="text-[10px] text-[var(--text-subtle)]">
                 Tự động lưu: Study Manager/{activeSubjectName}/{activeSessionTitle}
               </span>
             </div>
@@ -763,7 +763,7 @@ export function ResourceManager({
                 handleFileUpload(e.dataTransfer.files);
               }}
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-[#b7d8c3] dark:border-[#284832] bg-[#f8fbf8] dark:bg-[#132417] hover:bg-[#edf7f0] dark:hover:bg-[#172c1c] rounded-2xl p-4 text-center cursor-pointer transition-all active:scale-[0.99] touch-manipulation"
+              className="border-2 border-dashed border-[#b7d8c3] dark:border-[#284832] bg-[var(--bg-muted)] dark:bg-[#132417] hover:bg-[#edf7f0] dark:hover:bg-[#172c1c] rounded-2xl p-4 text-center cursor-pointer transition-all active:scale-[0.99] touch-manipulation"
             >
               <input
                 ref={fileInputRef}
@@ -774,15 +774,15 @@ export function ResourceManager({
                 onChange={(e) => handleFileUpload(e.target.files)}
               />
               <div className="flex flex-col items-center justify-center space-y-1.5">
-                <div className="p-2.5 rounded-full bg-[#d8ebe0] dark:bg-[#1e3827] text-[#1b4332] dark:text-[#52b788]">
+                <div className="p-2.5 rounded-full bg-[var(--mint-bg)] dark:bg-[#1e3827] text-[var(--mint-dark)] dark:text-[#52b788]">
                   <Upload className="w-5 h-5" />
                 </div>
-                <div className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                <div className="text-xs font-semibold text-[var(--text-ink)]">
                   {uploading
                     ? uploadProgress || "Đang tải lên Google Drive..."
                     : "Kéo thả PDF hoặc ảnh vào đây, hoặc chạm để chọn file"}
                 </div>
-                <p className="text-[10px] text-[#73927d]">
+                <p className="text-[10px] text-[var(--text-muted)]">
                   Hỗ trợ: PDF, JPG, PNG, WEBP (File lưu trực tiếp trên Drive, không lưu binary vào DB)
                 </p>
               </div>
@@ -805,21 +805,21 @@ export function ResourceManager({
 
           {/* Attached Resources List */}
           <div className="space-y-2 pt-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)]">
               Danh sách tài liệu & link ({resources.length})
             </h4>
 
             {loading ? (
               <div className="py-6 text-center text-xs text-[#8ba393]">Đang tải tài liệu...</div>
             ) : resources.length === 0 ? (
-              <div className="py-8 text-center rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e] bg-[#f9faf9] dark:bg-[#142318] text-xs text-[#8ba393]">
+              <div className="py-8 text-center rounded-2xl border border-dashed border-[var(--border)] bg-[#f9faf9] dark:bg-[#142318] text-xs text-[#8ba393]">
                 Chưa có tài liệu hoặc link cho mục này.
                 <div className="mt-2">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-xs rounded-xl h-8 text-[#2d6a4f] border-[#b7d8c3]"
+                    className="text-xs rounded-xl h-8 text-[var(--mint-dark)] border-[#b7d8c3]"
                   >
                     <Plus className="w-3.5 h-3.5 mr-1" />
                     Thêm tài liệu / link
@@ -831,7 +831,7 @@ export function ResourceManager({
                 {resources.map((item) => (
                   <div
                     key={item.id}
-                    className="p-3 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:border-[#74a882] transition-all flex items-start justify-between group shadow-2xs"
+                    className="p-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] hover:border-[var(--mint-soft)] transition-all flex items-start justify-between group shadow-2xs"
                   >
                     <a
                       href={item.url}
@@ -844,11 +844,11 @@ export function ResourceManager({
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center space-x-1.5">
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1e3a27] dark:text-[#a3bda9]">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1e3a27] dark:text-[#a3bda9]">
                             {getBadgeLabel(item.subType)}
                           </span>
                         </div>
-                        <p className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] truncate mt-1">
+                        <p className="text-xs font-semibold text-[var(--text-ink)] truncate mt-1">
                           {item.title}
                         </p>
                         <span className="text-[10px] text-[#52b788] hover:underline flex items-center space-x-1 mt-0.5">
@@ -884,14 +884,14 @@ export function ResourceManager({
               value={newNoteText}
               onChange={(e) => setNewNoteText(e.target.value)}
               placeholder="Ghi chú buổi học (ví dụ: Hôm nay học Unit 1, cần xem lại vocabulary...)"
-              className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#52b788]"
             />
             <div className="flex justify-end">
               <Button
                 type="button"
                 onClick={handleAddNote}
                 disabled={!newNoteText.trim() || isSavingNote}
-                className="h-9 px-4 bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl text-xs font-semibold"
+                className="h-9 px-4 bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl text-xs font-semibold"
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
                 Lưu ghi chú
@@ -901,12 +901,12 @@ export function ResourceManager({
 
           {/* Notes List */}
           <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#526b5c] dark:text-[#a3bda9]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)]">
               Ghi chú buổi học ({notes.length})
             </h4>
 
             {notes.length === 0 ? (
-              <div className="py-8 text-center rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e] bg-[#f9faf9] dark:bg-[#142318] text-xs text-[#8ba393]">
+              <div className="py-8 text-center rounded-2xl border border-dashed border-[var(--border)] bg-[#f9faf9] dark:bg-[#142318] text-xs text-[#8ba393]">
                 Chưa có ghi chú nào cho buổi học này.
               </div>
             ) : (
@@ -917,7 +917,7 @@ export function ResourceManager({
                     className={`p-3.5 rounded-2xl border transition-all ${
                       note.isPinned
                         ? "border-[#52b788] bg-[#f4faf6] dark:bg-[#16291d]"
-                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                        : "border-[var(--border)] bg-[var(--bg-surface)]"
                     }`}
                   >
                     {editingNoteId === note.id ? (
@@ -940,7 +940,7 @@ export function ResourceManager({
                           <Button
                             size="sm"
                             onClick={() => handleUpdateNote(note.id, editingNoteText)}
-                            className="h-7 text-xs bg-[#2d6a4f] text-white"
+                            className="h-7 text-xs bg-[var(--mint)] text-white"
                           >
                             Lưu
                           </Button>
@@ -948,7 +948,7 @@ export function ResourceManager({
                       </div>
                     ) : (
                       <div className="flex items-start justify-between">
-                        <p className="text-xs text-[#192e22] dark:text-[#f0f7f2] whitespace-pre-wrap flex-1">
+                        <p className="text-xs text-[var(--text-ink)] whitespace-pre-wrap flex-1">
                           {note.content}
                         </p>
                         <div className="flex items-center space-x-1 ml-2">
@@ -958,7 +958,7 @@ export function ResourceManager({
                             title={note.isPinned ? "Bỏ ghim" : "Ghim ghi chú"}
                             className={`p-1 rounded-lg transition-colors ${
                               note.isPinned
-                                ? "text-[#2d6a4f] bg-[#d8ebe0] dark:bg-[#1d3d28]"
+                                ? "text-[var(--mint-dark)] bg-[var(--mint-bg)] dark:bg-[#1d3d28]"
                                 : "text-gray-400 hover:text-gray-600"
                             }`}
                           >
@@ -997,12 +997,12 @@ export function ResourceManager({
       {/* Duplicate File Prompt Modal */}
       {duplicateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="w-full max-w-sm rounded-[24px] bg-white dark:bg-[#17261c] p-5 shadow-2xl border border-[#dbe7dd] dark:border-[#263d2e] space-y-4">
+          <div className="w-full max-w-sm rounded-[24px] bg-[var(--bg-surface)] p-5 shadow-2xl border border-[var(--border)] space-y-4">
             <div className="flex items-center space-x-2 text-amber-600">
               <AlertCircle className="w-5 h-5 shrink-0" />
               <h3 className="font-bold text-sm">File đã tồn tại trong Google Drive</h3>
             </div>
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-xs text-[var(--text-subtle)]">
               Tài liệu <strong>"{duplicateModal.existingName}"</strong> đã có sẵn trong thư mục Google Drive của buổi học này. Bạn muốn xử lý thế nào?
             </p>
             <div className="flex flex-col space-y-2">
@@ -1013,7 +1013,7 @@ export function ResourceManager({
                   setDuplicateModal(null);
                   handleFileUpload(null, "use_existing", file);
                 }}
-                className="w-full h-10 rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold"
+                className="w-full h-10 rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-semibold"
               >
                 Dùng file có sẵn (Use existing)
               </Button>
@@ -1025,7 +1025,7 @@ export function ResourceManager({
                   setDuplicateModal(null);
                   handleFileUpload(null, "upload_anyway", file);
                 }}
-                className="w-full h-10 rounded-xl border-[#dbe7dd] text-xs font-semibold"
+                className="w-full h-10 rounded-xl border-[var(--border)] text-xs font-semibold"
               >
                 Tải lên bản mới (Upload anyway)
               </Button>
@@ -1045,23 +1045,23 @@ export function ResourceManager({
       {/* Google Drive Connect Information Modal */}
       {showDriveConnectModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-[28px] bg-white dark:bg-[#17261c] p-6 shadow-2xl border border-[#dbe7dd] dark:border-[#263d2e] space-y-4">
+          <div className="w-full max-w-md rounded-[28px] bg-[var(--bg-surface)] p-6 shadow-2xl border border-[var(--border)] space-y-4">
             <div className="flex items-center space-x-2.5">
-              <div className="p-2.5 rounded-2xl bg-[#d8ebe0] dark:bg-[#1d3d28] text-[#1b4332] dark:text-[#52b788]">
+              <div className="p-2.5 rounded-2xl bg-[var(--mint-bg)] dark:bg-[#1d3d28] text-[var(--mint-dark)] dark:text-[#52b788]">
                 <Cloud className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-[#192e22] dark:text-[#f0f7f2]">
+                <h3 className="font-bold text-base text-[var(--text-ink)]">
                   Kết nối Google Drive cá nhân
                 </h3>
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                <p className="text-xs text-[var(--text-subtle)]">
                   Bảo mật • Quyền tối thiểu • Dữ liệu của bạn
                 </p>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd] dark:border-[#263d2e] text-xs space-y-2 text-[#2d4736] dark:text-[#a3bda9]">
-              <p className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="p-3.5 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] text-xs space-y-2 text-[#2d4736] dark:text-[#a3bda9]">
+              <p className="font-semibold text-[var(--text-ink)]">
                 Website cần quyền để làm gì?
               </p>
               <ul className="list-disc list-inside space-y-1 pl-1">
@@ -1077,7 +1077,7 @@ export function ResourceManager({
                 type="button"
                 variant="outline"
                 onClick={() => setShowDriveConnectModal(false)}
-                className="rounded-xl text-xs h-10 border-[#dbe7dd]"
+                className="rounded-xl text-xs h-10 border-[var(--border)]"
               >
                 Để sau
               </Button>
@@ -1085,7 +1085,7 @@ export function ResourceManager({
                 type="button"
                 onClick={handleConnectDrive}
                 disabled={driveConnecting}
-                className="rounded-xl text-xs h-10 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold"
+                className="rounded-xl text-xs h-10 bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white font-semibold"
               >
                 {driveConnecting ? "Đang kết nối..." : "Ủy quyền Google Drive ngay"}
               </Button>

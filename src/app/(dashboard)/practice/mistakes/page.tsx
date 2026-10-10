@@ -143,7 +143,7 @@ export default function MistakeBankPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <Link href="/practice">
-            <Button variant="ghost" size="icon" className="rounded-xl text-[#526b5c]">
+            <Button variant="ghost" size="icon" className="rounded-xl text-[var(--text-subtle)]">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
@@ -151,10 +151,10 @@ export default function MistakeBankPage() {
             <AlertCircle className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h1 className="text-2xl font-bold text-[var(--text-ink)]">
               Ngân hàng lỗi sai (Mistake Bank)
             </h1>
-            <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-sm text-[var(--text-subtle)]">
               Quản lý và ôn tập các câu hỏi từng làm sai từ đề thi, quiz và flashcards
             </p>
           </div>
@@ -181,21 +181,21 @@ export default function MistakeBankPage() {
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Card className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e]">
-            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block">Tổng số lỗi đã ghi</span>
-            <span className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">{stats.total}</span>
+          <Card className="p-4 rounded-2xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e]">
+            <span className="text-xs text-[var(--text-subtle)] block">Tổng số lỗi đã ghi</span>
+            <span className="text-2xl font-bold text-[var(--text-ink)]">{stats.total}</span>
           </Card>
-          <Card className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border-rose-100 dark:border-rose-950/30">
+          <Card className="p-4 rounded-2xl bg-[var(--bg-surface)] border-rose-100 dark:border-rose-950/30">
             <span className="text-xs text-rose-600 dark:text-rose-400 block font-medium">Chưa khắc phục</span>
             <span className="text-2xl font-bold text-rose-600 dark:text-rose-400">{stats.unresolved}</span>
           </Card>
-          <Card className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e]">
+          <Card className="p-4 rounded-2xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e]">
             <span className="text-xs text-emerald-600 dark:text-emerald-400 block font-medium">Đã khắc phục</span>
             <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.resolved}</span>
           </Card>
-          <Card className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border-purple-100 dark:border-[#263d2e]">
+          <Card className="p-4 rounded-2xl bg-[var(--bg-surface)] border-purple-100 dark:border-[#263d2e]">
             <span className="text-xs text-purple-600 dark:text-purple-400 block font-medium">Dạng lỗi phổ biến</span>
-            <span className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2] truncate block mt-1">
+            <span className="text-sm font-bold text-[var(--text-ink)] truncate block mt-1">
               {stats.byErrorType[0]?.errorType ? errorTypeLabels[stats.byErrorType[0].errorType] || "Chưa rõ" : "Chưa có"}
             </span>
           </Card>
@@ -203,10 +203,10 @@ export default function MistakeBankPage() {
       )}
 
       {/* Filter Toolbar */}
-      <Card className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] space-y-3">
+      <Card className="p-4 rounded-2xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] space-y-3">
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 absolute left-3 top-3 text-[#526b5c]" />
+            <Search className="w-4 h-4 absolute left-3 top-3 text-[var(--text-subtle)]" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -246,7 +246,7 @@ export default function MistakeBankPage() {
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-100 dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2]"
+              className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-100 dark:border-[#263d2e] text-[var(--text-ink)]"
             >
               <option value="ALL">Tất cả môn học</option>
               {subjects.map((s) => (
@@ -265,12 +265,12 @@ export default function MistakeBankPage() {
           <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : mistakes.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-[#17261c] rounded-3xl border border-emerald-100 dark:border-[#263d2e] p-8">
+        <div className="text-center py-16 bg-[var(--bg-surface)] rounded-3xl border border-emerald-100 dark:border-[#263d2e] p-8">
           <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-base font-bold text-[var(--text-ink)]">
             Không tìm thấy lỗi sai nào!
           </h3>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1 max-w-sm mx-auto">
+          <p className="text-xs text-[var(--text-subtle)] mt-1 max-w-sm mx-auto">
             Bạn đã khắc phục toàn bộ các câu hỏi đã ghi nhận hoặc không có lỗi sai nào phù hợp với bộ lọc hiện tại.
           </p>
         </div>
@@ -282,7 +282,7 @@ export default function MistakeBankPage() {
               className={`p-5 rounded-2xl border transition-all ${
                 m.isResolved
                   ? "bg-emerald-50/40 dark:bg-emerald-950/10 border-emerald-100 dark:border-[#263d2e] opacity-80"
-                  : "bg-white dark:bg-[#17261c] border-rose-100 dark:border-rose-950/30 shadow-sm"
+                  : "bg-[var(--bg-surface)] border-rose-100 dark:border-rose-950/30 shadow-sm"
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
@@ -297,13 +297,13 @@ export default function MistakeBankPage() {
                       {errorTypeLabels[m.errorType] || m.errorType}
                     </Badge>
                     {m.concept && (
-                      <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] font-mono">
+                      <span className="text-xs text-[var(--text-subtle)] font-mono">
                         • {m.concept}
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2] break-words">
+                  <h3 className="text-base font-bold text-[var(--text-ink)] break-words">
                     {m.question}
                   </h3>
 
@@ -319,7 +319,7 @@ export default function MistakeBankPage() {
                   </div>
 
                   {m.explanation && (
-                    <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] italic pt-1">
+                    <p className="text-xs text-[var(--text-subtle)] italic pt-1">
                       Giải thích: {m.explanation}
                     </p>
                   )}
@@ -360,12 +360,12 @@ export default function MistakeBankPage() {
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
         <DialogContent className="max-w-lg">
           <form onSubmit={handleCreateMistake} className="space-y-4">
-            <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-lg font-bold text-[var(--text-ink)]">
               Ghi nhận lỗi sai vào ngân hàng
             </h2>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Câu hỏi / Đề bài *</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Câu hỏi / Đề bài *</label>
               <Input
                 required
                 value={newQuestion}
@@ -400,11 +400,11 @@ export default function MistakeBankPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Môn học liên quan</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Môn học liên quan</label>
                 <select
                   value={newSubjectId}
                   onChange={(e) => setNewSubjectId(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-[var(--bg-surface)]"
                 >
                   <option value="">-- Chọn môn học --</option>
                   {subjects.map((s) => (
@@ -416,11 +416,11 @@ export default function MistakeBankPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Phân loại lỗi</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Phân loại lỗi</label>
                 <select
                   value={newErrorType}
                   onChange={(e) => setNewErrorType(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-[var(--bg-surface)]"
                 >
                   {Object.entries(errorTypeLabels).map(([k, v]) => (
                     <option key={k} value={k}>
@@ -432,7 +432,7 @@ export default function MistakeBankPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Giải thích & Ghi chú nhớ lâu</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Giải thích & Ghi chú nhớ lâu</label>
               <Input
                 value={newExplanation}
                 onChange={(e) => setNewExplanation(e.target.value)}

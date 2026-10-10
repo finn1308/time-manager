@@ -573,16 +573,16 @@ export default async function DashboardPage() {
           <DailyFlexibleGoals targetDateKey={todayKey} />
 
           {/* Today's Schedule */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <div>
-                <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                  <div className="w-8 h-8 rounded-xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] flex items-center justify-center">
+                <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                  <div className="w-8 h-8 rounded-xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center">
                     <CalendarIcon className="w-4 h-4" />
                   </div>
                   <span>Lịch học hôm nay ({formatVN(todayBase, "dd/MM")})</span>
                 </CardTitle>
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                <p className="text-xs text-[var(--text-subtle)] mt-1">
                   {todayEvents.length > 0
                     ? `Có ${todayEvents.length} buổi học đã lên kế hoạch hôm nay`
                     : "Chưa có lịch học"}
@@ -614,7 +614,7 @@ export default async function DashboardPage() {
                     className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all text-xs ${
                       ev.completed
                         ? "border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/20"
-                        : "border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] hover:border-[#74a882]"
+                        : "border-[var(--border)] bg-[var(--bg-muted)] hover:border-[var(--mint-soft)]"
                     }`}
                     style={{
                       borderLeftColor: ev.completed
@@ -637,7 +637,7 @@ export default async function DashboardPage() {
                             className={`font-bold text-sm truncate ${
                               ev.completed
                                 ? "line-through text-emerald-800/70 dark:text-emerald-300/70"
-                                : "text-[#192e22] dark:text-[#f0f7f2]"
+                                : "text-[var(--text-ink)]"
                             }`}
                           >
                             {ev.title}
@@ -661,9 +661,9 @@ export default async function DashboardPage() {
                             </Badge>
                           )}
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-2 text-[#526b5c] dark:text-[#a3bda9]">
+                        <div className="flex flex-wrap items-center gap-x-2 text-[var(--text-subtle)]">
                           {ev.subject && (
-                            <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                            <span className="font-semibold text-[var(--text-ink)]">
                               {ev.subject.name}
                             </span>
                           )}
@@ -690,7 +690,7 @@ export default async function DashboardPage() {
                           size="sm"
                           className={`font-semibold space-x-1 rounded-xl text-xs ${
                             canStudy && !ev.completed
-                              ? "bg-[#2d6a4f] hover:bg-[#1b4332] text-white"
+                              ? "bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white"
                               : ""
                           }`}
                         >
@@ -713,10 +713,10 @@ export default async function DashboardPage() {
               })}
 
               {todayEvents.length === 0 && (
-                <div className="text-center py-8 text-xs text-[#526b5c] dark:text-[#a3bda9] space-y-2 bg-[#f8fbf8] dark:bg-[#142318] rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e]">
+                <div className="text-center py-8 text-xs text-[var(--text-subtle)] space-y-2 bg-[var(--bg-muted)] rounded-2xl border border-dashed border-[var(--border)]">
                   <p className="font-medium">Chưa có lịch học hôm nay.</p>
                   <Link href="/calendar">
-                    <Button variant="default" size="sm" className="font-semibold bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl">
+                    <Button variant="default" size="sm" className="font-semibold bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl">
                       Xếp lịch tự động bằng AI
                     </Button>
                   </Link>
@@ -726,22 +726,22 @@ export default async function DashboardPage() {
           </Card>
 
           {/* Subject Progress & Statistics (Requirements 2, 4, 5) */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <div>
-                <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                  <div className="w-8 h-8 rounded-xl bg-[#eef5f0] dark:bg-[#1d3827] text-[#40916c] flex items-center justify-center">
+                <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                  <div className="w-8 h-8 rounded-xl bg-[var(--mint-bg)] dark:bg-[#1d3827] text-[#40916c] flex items-center justify-center">
                     <BookOpen className="w-4 h-4" />
                   </div>
                   <span>Thống kê môn học (Mục tiêu • Planned • Actual)</span>
                 </CardTitle>
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                <p className="text-xs text-[var(--text-subtle)] mt-0.5">
                   Phân biệt rõ ràng giữa thời gian đã lên lịch và giờ thực tế bấm giờ
                 </p>
               </div>
 
               <Link href="/subjects">
-                <Button variant="ghost" size="sm" className="text-xs text-[#2d6a4f] dark:text-[#52b788] font-semibold space-x-1">
+                <Button variant="ghost" size="sm" className="text-xs text-[var(--mint-dark)] font-semibold space-x-1">
                   <span>Quản lý môn</span>
                   <ArrowRight className="w-3 h-3" />
                 </Button>
@@ -770,7 +770,7 @@ export default async function DashboardPage() {
                 return (
                   <div
                     key={sub.id}
-                    className="p-4 rounded-[22px] bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e] space-y-3"
+                    className="p-4 rounded-[22px] bg-[var(--bg-muted)] border border-[var(--border)] space-y-3"
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between">
@@ -779,17 +779,17 @@ export default async function DashboardPage() {
                           className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
                           style={{ backgroundColor: sub.color || "#2d6a4f" }}
                         />
-                        <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] truncate">
+                        <span className="font-bold text-sm text-[var(--text-ink)] truncate">
                           {sub.name}
                         </span>
                         {sub.code && (
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-[#dbe7dd]">
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-[var(--border)]">
                             {sub.code}
                           </Badge>
                         )}
                       </div>
 
-                      <span className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] shrink-0">
+                      <span className="text-xs font-bold text-[var(--mint-dark)] shrink-0">
                         {targetH ? `${percentActual}% mục tiêu` : "Không bắt buộc mục tiêu"}
                       </span>
                     </div>
@@ -797,25 +797,25 @@ export default async function DashboardPage() {
                     {/* Core Metrics Grid */}
                     <div className={`grid gap-2 text-xs ${targetH ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2"}`}>
                       {targetH && (
-                        <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                          <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">🎯 Mục tiêu tuần</div>
-                          <div className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2] mt-0.5">{targetH}h</div>
+                        <div className="p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                          <div className="text-[10px] text-[var(--text-muted)]">🎯 Mục tiêu tuần</div>
+                          <div className="font-bold text-sm text-[var(--text-ink)] mt-0.5">{targetH}h</div>
                         </div>
                       )}
 
-                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">📅 Đã lên lịch</div>
-                        <div className="font-bold text-sm text-[#2d6a4f] dark:text-[#52b788] mt-0.5">{plannedH}h</div>
+                      <div className="p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                        <div className="text-[10px] text-[var(--text-muted)]">📅 Đã lên lịch</div>
+                        <div className="font-bold text-sm text-[var(--mint-dark)] mt-0.5">{plannedH}h</div>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                        <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">⏱ Thực tế học</div>
-                        <div className="font-bold text-sm text-[#1b4332] dark:text-[#74c69d] mt-0.5">{actualH}h</div>
+                      <div className="p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                        <div className="text-[10px] text-[var(--text-muted)]">⏱ Thực tế học</div>
+                        <div className="font-bold text-sm text-[var(--mint-dark)] dark:text-[#74c69d] mt-0.5">{actualH}h</div>
                       </div>
 
                       {targetH && (
-                        <div className="p-2.5 rounded-xl bg-white dark:bg-[#17261c] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-                          <div className="text-[10px] text-[#73927d] dark:text-[#8ba393]">⏳ Còn thiếu</div>
+                        <div className="p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border)]">
+                          <div className="text-[10px] text-[var(--text-muted)]">⏳ Còn thiếu</div>
                           <div className="font-bold text-sm text-[#b87474] dark:text-[#f3a4a4] mt-0.5">{remainingH}h</div>
                         </div>
                       )}
@@ -823,14 +823,14 @@ export default async function DashboardPage() {
 
                     {/* Planned vs Actual Comparison Bar */}
                     <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                      <div className="flex justify-between text-[11px] text-[var(--text-subtle)]">
                         <span>So sánh: <strong>{actualH}h thực tế</strong> / <strong>{plannedH}h đã lên lịch</strong></span>
                         <span className="font-semibold">
                           {plannedH > 0 ? `${Math.round((actualH / plannedH) * 100)}% bám sát lịch` : "Chưa có lịch"}
                         </span>
                       </div>
                       {targetH && (
-                        <div className="w-full h-2.5 rounded-full bg-[#eef5f0] dark:bg-[#263d2e] overflow-hidden flex">
+                        <div className="w-full h-2.5 rounded-full bg-[var(--mint-bg)] overflow-hidden flex">
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{
@@ -844,9 +844,9 @@ export default async function DashboardPage() {
 
                     {/* Integrated Vocabulary Metrics if subject has vocabulary */}
                     {(sub as any).vocabWords && (sub as any).vocabWords.length > 0 && (
-                      <div className="mt-2.5 pt-2.5 border-t border-[#dbe7dd]/50 dark:border-[#263d2e] flex items-center justify-between flex-wrap gap-2 text-xs">
-                        <div className="flex items-center space-x-2 text-[#526b5c] dark:text-[#a3bda9]">
-                          <Brain className="w-3.5 h-3.5 text-[#2d6a4f] dark:text-[#52b788]" />
+                      <div className="mt-2.5 pt-2.5 border-t border-[var(--border)]/50 dark:border-[#263d2e] flex items-center justify-between flex-wrap gap-2 text-xs">
+                        <div className="flex items-center space-x-2 text-[var(--text-subtle)]">
+                          <Brain className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
                           <span>Từ vựng: <strong>{(sub as any).vocabWords.length} từ</strong></span>
                           <span>•</span>
                           <span className="text-emerald-600 dark:text-emerald-400 font-bold">
@@ -862,7 +862,7 @@ export default async function DashboardPage() {
                         </div>
                         <Link
                           href="/practice"
-                          className="text-[11px] font-bold text-[#2d6a4f] dark:text-[#52b788] hover:underline flex items-center space-x-1"
+                          className="text-[11px] font-bold text-[var(--mint-dark)] hover:underline flex items-center space-x-1"
                         >
                           <span>Luyện tập ngay</span>
                           <ArrowRight className="w-3 h-3" />
@@ -874,10 +874,10 @@ export default async function DashboardPage() {
               })}
 
               {subjects.length === 0 && (
-                <div className="text-center py-8 text-xs text-[#526b5c] dark:text-[#a3bda9] space-y-2 bg-[#f8fbf8] dark:bg-[#142318] rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e]">
+                <div className="text-center py-8 text-xs text-[var(--text-subtle)] space-y-2 bg-[var(--bg-muted)] rounded-2xl border border-dashed border-[var(--border)]">
                   <p className="font-medium">Thêm môn học đầu tiên để bắt đầu lập kế hoạch.</p>
                   <Link href="/subjects">
-                    <Button variant="default" size="sm" className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl font-semibold">
+                    <Button variant="default" size="sm" className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl font-semibold">
                       Thêm môn học ngay
                     </Button>
                   </Link>
@@ -890,16 +890,16 @@ export default async function DashboardPage() {
         {/* Right: Recent Study Sessions & Smart Daily To-Do (4 Cols) */}
         <div className="lg:col-span-4 space-y-6">
           {/* Smart Daily To-Do Widget */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] soft-card-shadow">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <div>
-                <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                  <div className="w-8 h-8 rounded-xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] flex items-center justify-center">
+                <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                  <div className="w-8 h-8 rounded-xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center">
                     <CheckSquare className="w-4 h-4" />
                   </div>
                   <span>Nhiệm vụ hôm nay</span>
                 </CardTitle>
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                <p className="text-xs text-[var(--text-subtle)] mt-0.5">
                   {todayTasks.length > 0
                     ? `${todayTasks.filter((t) => t.isCompleted).length}/${todayTasks.length} hoàn thành (${todayClosure?.completionRate || (Math.round((todayTasks.filter((t) => t.isCompleted).length / todayTasks.length) * 100))}%)`
                     : "Chưa có nhiệm vụ hôm nay"}
@@ -907,7 +907,7 @@ export default async function DashboardPage() {
               </div>
 
               <Link href="/tasks">
-                <Button variant="ghost" size="sm" className="text-xs text-[#2d6a4f] dark:text-[#52b788] font-bold space-x-1">
+                <Button variant="ghost" size="sm" className="text-xs text-[var(--mint-dark)] font-bold space-x-1">
                   <span>Mở To-Do</span>
                   <ArrowRight className="w-3 h-3" />
                 </Button>
@@ -938,10 +938,10 @@ export default async function DashboardPage() {
               )}
 
               {todayTasks.length === 0 ? (
-                <div className="text-center py-6 text-xs text-[#526b5c] dark:text-[#a3bda9] bg-[#f8fbf8] dark:bg-[#142318] rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e] space-y-2">
+                <div className="text-center py-6 text-xs text-[var(--text-subtle)] bg-[var(--bg-muted)] rounded-2xl border border-dashed border-[var(--border)] space-y-2">
                   <p className="font-medium">Chưa có nhiệm vụ nào cho ngày hôm nay.</p>
                   <Link href="/tasks">
-                    <Button variant="default" size="sm" className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-xl font-semibold">
+                    <Button variant="default" size="sm" className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-xl font-semibold">
                       Thêm nhiệm vụ ngay
                     </Button>
                   </Link>
@@ -953,15 +953,15 @@ export default async function DashboardPage() {
                       key={task.id}
                       className={`flex items-center justify-between p-2.5 rounded-2xl border text-xs transition-all ${
                         task.isCompleted
-                          ? "bg-[#f8fbf8] dark:bg-[#142318]/50 border-[#dbe7dd]/60 dark:border-[#263d2e]/60 opacity-75"
-                          : "bg-white dark:bg-[#17261c] border-[#dbe7dd] dark:border-[#263d2e] hover:border-[#b7d8c3]"
+                          ? "bg-[var(--bg-muted)]/50 border-[var(--border)]/60 opacity-75"
+                          : "bg-[var(--bg-surface)] border-[var(--border)] hover:border-[#b7d8c3]"
                       }`}
                     >
                       <div className="flex items-center space-x-2.5 truncate flex-1 min-w-0">
                         <span
                           className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                             task.isCompleted
-                              ? "bg-[#2d6a4f] border-[#2d6a4f] text-white"
+                              ? "bg-[var(--mint)] border-[var(--mint)] text-white"
                               : "border-[#8fa897] dark:border-[#4d6b56]"
                           }`}
                         >
@@ -970,8 +970,8 @@ export default async function DashboardPage() {
                         <span
                           className={`truncate font-semibold ${
                             task.isCompleted
-                              ? "line-through text-[#73927d]"
-                              : "text-[#192e22] dark:text-[#f0f7f2]"
+                              ? "line-through text-[var(--text-muted)]"
+                              : "text-[var(--text-ink)]"
                           }`}
                         >
                           {task.title}
@@ -994,15 +994,15 @@ export default async function DashboardPage() {
           </Card>
 
           {/* Phiên học gần đây Card */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center space-x-2 text-[#192e22] dark:text-[#f0f7f2]">
-                <div className="w-8 h-8 rounded-xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] flex items-center justify-center">
+              <CardTitle className="text-base flex items-center space-x-2 text-[var(--text-ink)]">
+                <div className="w-8 h-8 rounded-xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center">
                   <Clock className="w-4 h-4" />
                 </div>
                 <span>Phiên học gần đây</span>
               </CardTitle>
-              <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <p className="text-xs text-[var(--text-subtle)]">
                 Ghi nhận thực tế từng giây qua PIP Timer
               </p>
             </CardHeader>
@@ -1013,7 +1013,7 @@ export default async function DashboardPage() {
                 return (
                   <div
                     key={session.id}
-                    className="p-3.5 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] text-xs space-y-1.5 hover:border-[#74a882] transition-colors"
+                    className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)] text-xs space-y-1.5 hover:border-[var(--mint-soft)] transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2 truncate">
@@ -1021,7 +1021,7 @@ export default async function DashboardPage() {
                           className="w-2.5 h-2.5 rounded-full shrink-0"
                           style={{ backgroundColor: session.subject?.color || "#2d6a4f" }}
                         />
-                        <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
+                        <span className="font-bold text-[var(--text-ink)] truncate">
                           {session.subject?.name || "Phiên tự học"}
                         </span>
                       </div>
@@ -1030,7 +1030,7 @@ export default async function DashboardPage() {
                       </Badge>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-[#73927d]">
+                    <div className="flex items-center justify-between text-[11px] text-[var(--text-muted)]">
                       <span>{formatVN(session.actualStart, "dd/MM HH:mm")}</span>
                       {session.productivityScore && (
                         <span className="text-amber-500 font-bold">
@@ -1040,7 +1040,7 @@ export default async function DashboardPage() {
                     </div>
 
                     {session.notes && (
-                      <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] italic border-t border-[#dbe7dd]/70 dark:border-[#263d2e] pt-1.5 mt-1 line-clamp-2">
+                      <p className="text-[11px] text-[var(--text-subtle)] italic border-t border-[var(--border)] pt-1.5 mt-1 line-clamp-2">
                         "{session.notes}"
                       </p>
                     )}
@@ -1049,7 +1049,7 @@ export default async function DashboardPage() {
               })}
 
               {topRecentSessions.length === 0 && (
-                <div className="text-center py-8 text-xs text-[#526b5c] dark:text-[#a3bda9] bg-[#f8fbf8] dark:bg-[#142318] rounded-2xl border border-dashed border-[#dbe7dd] dark:border-[#263d2e]">
+                <div className="text-center py-8 text-xs text-[var(--text-subtle)] bg-[var(--bg-muted)] rounded-2xl border border-dashed border-[var(--border)]">
                   Chưa có dữ liệu thống kê
                 </div>
               )}

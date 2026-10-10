@@ -19,15 +19,15 @@ export function Badge({ className, variant = "default", ...props }: BadgeProps) 
   // All badge variants are harmonized within the Pastel Green / Sage / Mint design system
   const variantStyles = {
     default:
-      "bg-[#eef5f0] text-[#192e22] dark:bg-[#1d3024] dark:text-[#f0f7f2] border border-[#dbe7dd] dark:border-[#263d2e]",
+      "bg-[var(--mint-bg)] text-[var(--text-ink)] dark:bg-[#1d3024] dark:text-[#f0f7f2] border border-[var(--border)]",
     secondary:
-      "bg-[#eef5f0] text-[#526b5c] dark:bg-[#1d3024] dark:text-[#a3bda9]",
+      "bg-[var(--mint-bg)] text-[var(--text-subtle)] dark:bg-[#1d3024] dark:text-[#a3bda9]",
     outline:
-      "border border-[#dbe7dd] dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2] bg-white dark:bg-[#17261c]",
+      "border border-[var(--border)] text-[var(--text-ink)] bg-[var(--bg-surface)]",
     blue: // Re-routed to soft sage-mint
-      "bg-[#d8ebe0] text-[#1b4332] border border-[#b7d8c3] dark:bg-[#1d3827] dark:text-[#9cd1b1] dark:border-[#2a4e37]",
+      "bg-[var(--mint-bg)] text-[var(--mint-dark)] border border-[#b7d8c3] dark:bg-[#1d3827] dark:text-[#9cd1b1] dark:border-[#2a4e37]",
     green: // Pastel botanical green
-      "bg-[#d8ebe0] text-[#2d6a4f] border border-[#b7d8c3] dark:bg-[#1d3827] dark:text-[#74c69d] dark:border-[#2a4e37]",
+      "bg-[var(--mint-bg)] text-[var(--mint-dark)] border border-[#b7d8c3] dark:bg-[#1d3827] dark:text-[#74c69d] dark:border-[#2a4e37]",
     yellow: // Soft olive/moss green
       "bg-[#edf0dc] text-[#595e2b] border border-[#dadfbf] dark:bg-[#2b301c] dark:text-[#d3d89e] dark:border-[#3c4327]",
     purple: // Soft eucalyptus/slate mint
@@ -37,7 +37,7 @@ export function Badge({ className, variant = "default", ...props }: BadgeProps) 
     dark:
       "bg-[#1b4332] text-white dark:bg-[#52b788] dark:text-[#101c14] font-semibold",
     "pill-active":
-      "bg-[#2d6a4f] text-white font-semibold shadow-xs",
+      "bg-[var(--mint)] text-white font-semibold shadow-xs",
   };
 
   return (

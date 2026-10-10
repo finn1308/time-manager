@@ -37,7 +37,7 @@ export default async function SkillAnalyticsPage({ params }: { params: Promise<{
   }
 
   return (
-    <div className="flex-1 bg-[#f8fbf8] dark:bg-[#132217] overflow-y-auto">
+    <div className="flex-1 bg-[var(--bg-muted)] overflow-y-auto">
       <SkillAnalytics initialSkill={skill} />
     </div>
   );

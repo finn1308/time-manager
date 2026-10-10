@@ -139,7 +139,7 @@ export default function KnowledgeGraphPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
           <Link href="/academic">
-            <Button variant="ghost" size="icon" className="rounded-xl text-[#526b5c]">
+            <Button variant="ghost" size="icon" className="rounded-xl text-[var(--text-subtle)]">
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
@@ -147,10 +147,10 @@ export default function KnowledgeGraphPage() {
             <GitBranch className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h1 className="text-2xl font-bold text-[var(--text-ink)]">
               Cây tri thức & Động cơ Tiên quyết (Knowledge Graph)
             </h1>
-            <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-sm text-[var(--text-subtle)]">
               Liên kết logic giữa các chuyên đề và cảnh báo điều kiện tiên quyết trước khi học bài mới
             </p>
           </div>
@@ -193,12 +193,12 @@ export default function KnowledgeGraphPage() {
       )}
 
       {/* Filter Bar */}
-      <Card className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] flex items-center justify-between">
-        <span className="text-xs font-semibold text-[#526b5c]">Lọc theo môn học:</span>
+      <Card className="p-4 rounded-2xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] flex items-center justify-between">
+        <span className="text-xs font-semibold text-[var(--text-subtle)]">Lọc theo môn học:</span>
         <select
           value={selectedSubject}
           onChange={(e) => setSelectedSubject(e.target.value)}
-          className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-100 dark:border-[#263d2e] text-[#192e22] dark:text-[#f0f7f2]"
+          className="text-xs p-2 rounded-xl bg-gray-50 dark:bg-[#1a2f22] border border-emerald-100 dark:border-[#263d2e] text-[var(--text-ink)]"
         >
           <option value="ALL">Tất cả môn học</option>
           {subjects.map((s) => (
@@ -215,12 +215,12 @@ export default function KnowledgeGraphPage() {
           <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : nodes.length === 0 ? (
-        <Card className="text-center py-16 rounded-3xl bg-white dark:bg-[#17261c] border-emerald-100 dark:border-[#263d2e] p-8">
+        <Card className="text-center py-16 rounded-3xl bg-[var(--bg-surface)] border-emerald-100 dark:border-[#263d2e] p-8">
           <GitBranch className="w-12 h-12 text-purple-500 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-lg font-bold text-[var(--text-ink)]">
             Chưa có cấu trúc cây kiến thức!
           </h3>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1 max-w-sm mx-auto mb-5">
+          <p className="text-xs text-[var(--text-subtle)] mt-1 max-w-sm mx-auto mb-5">
             Sử dụng tính năng Syllabus Importer hoặc thêm khái niệm thủ công để tạo sơ đồ tiên quyết.
           </p>
           <Button onClick={() => setShowAddModal(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl">
@@ -235,7 +235,7 @@ export default function KnowledgeGraphPage() {
             return (
               <Card
                 key={node.id}
-                className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border border-emerald-100 dark:border-[#263d2e] shadow-sm space-y-3"
+                className="p-4 rounded-2xl bg-[var(--bg-surface)] border border-emerald-100 dark:border-[#263d2e] shadow-sm space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <Badge variant="outline" className="text-[10px]">
@@ -252,12 +252,12 @@ export default function KnowledgeGraphPage() {
                   </Badge>
                 </div>
 
-                <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2] line-clamp-2">
+                <h3 className="text-sm font-bold text-[var(--text-ink)] line-clamp-2">
                   {node.title}
                 </h3>
 
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between text-[11px] text-[#526b5c] dark:text-[#a3bda9]">
+                  <div className="flex items-center justify-between text-[11px] text-[var(--text-subtle)]">
                     <span>Mức độ làm chủ</span>
                     <span className="font-bold text-emerald-600">{mastery}%</span>
                   </div>
@@ -270,7 +270,7 @@ export default function KnowledgeGraphPage() {
                 </div>
 
                 {node.subject && (
-                  <span className="text-[10px] text-[#526b5c] dark:text-[#a3bda9] block truncate">
+                  <span className="text-[10px] text-[var(--text-subtle)] block truncate">
                     Môn: {node.subject.name}
                   </span>
                 )}
@@ -284,12 +284,12 @@ export default function KnowledgeGraphPage() {
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
         <DialogContent className="max-w-md">
           <form onSubmit={handleCreateNode} className="space-y-4">
-            <h2 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-base font-bold text-[var(--text-ink)]">
               Thêm khái niệm / chuyên đề mới
             </h2>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Tên khái niệm *</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Tên khái niệm *</label>
               <Input
                 required
                 value={title}
@@ -301,7 +301,7 @@ export default function KnowledgeGraphPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Chương / Tuần</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Chương / Tuần</label>
                 <Input
                   value={chapter}
                   onChange={(e) => setChapter(e.target.value)}
@@ -310,11 +310,11 @@ export default function KnowledgeGraphPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#526b5c]">Môn học</label>
+                <label className="text-xs font-medium text-[var(--text-subtle)]">Môn học</label>
                 <select
                   value={subjectId}
                   onChange={(e) => setSubjectId(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                  className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-[var(--bg-surface)]"
                 >
                   <option value="">-- Chọn môn --</option>
                   {subjects.map((s) => (
@@ -342,17 +342,17 @@ export default function KnowledgeGraphPage() {
       <Dialog open={showLinkModal} onOpenChange={setShowLinkModal}>
         <DialogContent className="max-w-md">
           <form onSubmit={handleLinkPrerequisite} className="space-y-4">
-            <h2 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h2 className="text-base font-bold text-[var(--text-ink)]">
               Thiết lập quan hệ điều kiện tiên quyết
             </h2>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Khái niệm cần học (Target)</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Khái niệm cần học (Target)</label>
               <select
                 required
                 value={nodeId}
                 onChange={(e) => setNodeId(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                className="w-full text-xs p-2.5 rounded-xl border border-emerald-100 dark:border-[#263d2e] bg-[var(--bg-surface)]"
               >
                 <option value="">-- Chọn khái niệm --</option>
                 {nodes.map((n) => (
@@ -369,7 +369,7 @@ export default function KnowledgeGraphPage() {
                 required
                 value={prerequisiteId}
                 onChange={(e) => setPrerequisiteId(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-purple-200 dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+                className="w-full text-xs p-2.5 rounded-xl border border-purple-200 dark:border-[#263d2e] bg-[var(--bg-surface)]"
               >
                 <option value="">-- Chọn điều kiện tiên quyết --</option>
                 {nodes
@@ -383,7 +383,7 @@ export default function KnowledgeGraphPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#526b5c]">Mức độ làm chủ yêu cầu tối thiểu</label>
+              <label className="text-xs font-medium text-[var(--text-subtle)]">Mức độ làm chủ yêu cầu tối thiểu</label>
               <Input
                 type="number"
                 step="0.05"
@@ -393,7 +393,7 @@ export default function KnowledgeGraphPage() {
                 onChange={(e) => setRequiredMastery(Number(e.target.value))}
                 className="rounded-xl text-xs"
               />
-              <span className="text-[10px] text-[#526b5c] block">
+              <span className="text-[10px] text-[var(--text-subtle)] block">
                 Mặc định 0.6 (Nắm vững 60% kiến thức trước khi học tiếp)
               </span>
             </div>

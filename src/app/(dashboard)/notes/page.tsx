@@ -275,32 +275,32 @@ export default function NotesPage() {
   const renderMarkdownPreview = (text: string) => {
     const lines = text.split("\n");
     return (
-      <div className="space-y-2 text-[#192e22] dark:text-[#f0f7f2] leading-relaxed select-text font-sans">
+      <div className="space-y-2 text-[var(--text-ink)] leading-relaxed select-text font-sans">
         {lines.map((line, idx) => {
           if (line.startsWith("# ")) {
             return (
-              <h1 key={idx} className="text-2xl font-black text-[#192e22] dark:text-[#f0f7f2] mt-4 mb-2 pb-1 border-b border-[#dbe7dd] dark:border-[#263d2e]">
+              <h1 key={idx} className="text-2xl font-black text-[var(--text-ink)] mt-4 mb-2 pb-1 border-b border-[var(--border)]">
                 {line.replace("# ", "")}
               </h1>
             );
           }
           if (line.startsWith("## ")) {
             return (
-              <h2 key={idx} className="text-xl font-bold text-[#192e22] dark:text-[#f0f7f2] mt-3 mb-1">
+              <h2 key={idx} className="text-xl font-bold text-[var(--text-ink)] mt-3 mb-1">
                 {line.replace("## ", "")}
               </h2>
             );
           }
           if (line.startsWith("### ")) {
             return (
-              <h3 key={idx} className="text-base font-bold text-[#2d6a4f] dark:text-[#52b788] mt-2 mb-1">
+              <h3 key={idx} className="text-base font-bold text-[var(--mint-dark)] mt-2 mb-1">
                 {line.replace("### ", "")}
               </h3>
             );
           }
           if (line.startsWith("> ")) {
             return (
-              <blockquote key={idx} className="border-l-4 border-[#2d6a4f] pl-3 py-1 my-1.5 italic text-[#526b5c] dark:text-[#a3bda9] bg-[#eef5f0]/60 dark:bg-[#1d3024]/40 rounded-r-xl">
+              <blockquote key={idx} className="border-l-4 border-[var(--mint)] pl-3 py-1 my-1.5 italic text-[var(--text-subtle)] bg-[var(--mint-bg)]/60 dark:bg-[#1d3024]/40 rounded-r-xl">
                 {line.replace("> ", "")}
               </blockquote>
             );
@@ -313,7 +313,7 @@ export default function NotesPage() {
                   type="checkbox"
                   checked={isChecked}
                   readOnly
-                  className="rounded text-[#2d6a4f]"
+                  className="rounded text-[var(--mint-dark)]"
                 />
                 <span className={isChecked ? "line-through opacity-60" : ""}>
                   {line.replace(/- \[[ x]\] /, "")}
@@ -329,7 +329,7 @@ export default function NotesPage() {
             );
           }
           if (line.startsWith("---")) {
-            return <hr key={idx} className="border-t border-[#dbe7dd] dark:border-[#263d2e] my-3" />;
+            return <hr key={idx} className="border-t border-[var(--border)] my-3" />;
           }
           if (!line.trim()) {
             return <div key={idx} className="h-2" />;
@@ -349,24 +349,24 @@ export default function NotesPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#86e2a8] text-xs font-bold mb-1.5">
-            <FileText className="w-3.5 h-3.5 text-[#2d6a4f] dark:text-[#52b788]" />
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] text-xs font-bold mb-1.5">
+            <FileText className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
             <span>NOTION-STYLE KNOWLEDGE BASE</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-ink)]">
             Ghi chú & Cơ sở tri thức (Notes)
           </h1>
         </div>
 
         <div className="flex items-center space-x-2 flex-wrap gap-2">
           {/* Mobile view toggle */}
-          <div className="flex lg:hidden items-center p-1 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-xs">
+          <div className="flex lg:hidden items-center p-1 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] text-xs">
             <button
               onClick={() => setMobileViewTab("list")}
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 mobileViewTab === "list"
-                  ? "bg-[#2d6a4f] text-white shadow-2xs"
-                  : "text-[#526b5c] dark:text-[#a3bda9]"
+                  ? "bg-[var(--mint)] text-white shadow-2xs"
+                  : "text-[var(--text-subtle)]"
               }`}
             >
               Danh sách ({notes.length})
@@ -375,8 +375,8 @@ export default function NotesPage() {
               onClick={() => setMobileViewTab("editor")}
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 mobileViewTab === "editor"
-                  ? "bg-[#2d6a4f] text-white shadow-2xs"
-                  : "text-[#526b5c] dark:text-[#a3bda9]"
+                  ? "bg-[var(--mint)] text-white shadow-2xs"
+                  : "text-[var(--text-subtle)]"
               }`}
             >
               Soạn thảo
@@ -385,7 +385,7 @@ export default function NotesPage() {
 
           <Button
             onClick={handleCreateNewNote}
-            className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold space-x-1.5 h-9"
+            className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold space-x-1.5 h-9"
           >
             <Plus className="w-4 h-4" />
             <span>Tạo mới</span>
@@ -397,23 +397,23 @@ export default function NotesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Column: Notes List (4 cols) */}
         <div className={`lg:col-span-4 space-y-3 ${mobileViewTab === "editor" && selectedNoteId ? "hidden lg:block" : "block"}`}>
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-sm space-y-3">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-sm space-y-3">
             {/* Search & Subject filter */}
             <div className="space-y-2">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-[#73927d] absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-3.5 h-3.5 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm ghi chú..."
-                  className="pl-8 rounded-xl border-[#dbe7dd] text-xs h-8"
+                  className="pl-8 rounded-xl border-[var(--border)] text-xs h-8"
                 />
               </div>
 
               <select
                 value={filterSubjectId}
                 onChange={(e) => setFilterSubjectId(e.target.value)}
-                className="w-full rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] px-2.5 py-1.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] px-2.5 py-1.5 text-xs text-[var(--text-ink)]"
               >
                 <option value="ALL">Tất cả môn học</option>
                 {subjects.map((s) => (
@@ -429,8 +429,8 @@ export default function NotesPage() {
               {/* Pinned Section */}
               {pinnedNotes.length > 0 && (
                 <div className="space-y-1">
-                  <div className="flex items-center space-x-1 text-[10px] font-bold text-[#73927d] uppercase tracking-wider px-1">
-                    <Pin className="w-3 h-3 text-[#2d6a4f]" />
+                  <div className="flex items-center space-x-1 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider px-1">
+                    <Pin className="w-3 h-3 text-[var(--mint-dark)]" />
                     <span>Đã ghim ({pinnedNotes.length})</span>
                   </div>
                   {pinnedNotes.map((note) => (
@@ -439,8 +439,8 @@ export default function NotesPage() {
                       onClick={() => selectNote(note)}
                       className={`p-2.5 rounded-2xl border text-xs cursor-pointer transition-all ${
                         selectedNoteId === note.id
-                          ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] font-bold text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-                          : "border-[#dbe7dd]/70 dark:border-[#263d2e] hover:bg-[#f8fbf8] dark:hover:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9]"
+                          ? "border-[var(--mint)] bg-[var(--mint-bg)] font-bold text-[var(--text-ink)] shadow-2xs"
+                          : "border-[var(--border)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318] text-[var(--text-subtle)]"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
@@ -452,7 +452,7 @@ export default function NotesPage() {
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
-                      <div className="text-[10px] text-[#73927d] mt-0.5 truncate">
+                      <div className="text-[10px] text-[var(--text-muted)] mt-0.5 truncate">
                         {note.subject?.name || "Không gắn môn"}
                       </div>
                     </div>
@@ -462,11 +462,11 @@ export default function NotesPage() {
 
               {/* Regular Notes Section */}
               <div className="space-y-1">
-                <div className="text-[10px] font-bold text-[#73927d] uppercase tracking-wider px-1">
+                <div className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider px-1">
                   Tất cả ({regularNotes.length})
                 </div>
                 {regularNotes.length === 0 && pinnedNotes.length === 0 ? (
-                  <div className="p-6 text-center text-xs text-[#73927d] italic">
+                  <div className="p-6 text-center text-xs text-[var(--text-muted)] italic">
                     Chưa có ghi chú nào.
                   </div>
                 ) : (
@@ -476,8 +476,8 @@ export default function NotesPage() {
                       onClick={() => selectNote(note)}
                       className={`p-2.5 rounded-2xl border text-xs cursor-pointer transition-all ${
                         selectedNoteId === note.id
-                          ? "border-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024] font-bold text-[#192e22] dark:text-[#f0f7f2] shadow-2xs"
-                          : "border-[#dbe7dd]/70 dark:border-[#263d2e] hover:bg-[#f8fbf8] dark:hover:bg-[#142318] text-[#526b5c] dark:text-[#a3bda9]"
+                          ? "border-[var(--mint)] bg-[var(--mint-bg)] font-bold text-[var(--text-ink)] shadow-2xs"
+                          : "border-[var(--border)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#142318] text-[var(--text-subtle)]"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
@@ -489,7 +489,7 @@ export default function NotesPage() {
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
-                      <div className="text-[10px] text-[#73927d] mt-0.5 truncate">
+                      <div className="text-[10px] text-[var(--text-muted)] mt-0.5 truncate">
                         {note.subject?.name || "Ghi chú tự do"} • {new Date(note.updatedAt).toLocaleDateString("vi-VN")}
                       </div>
                     </div>
@@ -503,20 +503,20 @@ export default function NotesPage() {
         {/* Right Column: Notion-style Editor Pane (8 cols) */}
         <div className={`lg:col-span-8 ${mobileViewTab === "list" ? "hidden lg:block" : "block"}`}>
           {selectedNoteId ? (
-            <Card className="rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 sm:p-8 shadow-sm space-y-4 min-h-[640px] flex flex-col justify-between">
+            <Card className="rounded-[30px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 sm:p-8 shadow-sm space-y-4 min-h-[640px] flex flex-col justify-between">
               <div className="space-y-4">
                 {/* Save status & View switcher */}
-                <div className="flex items-center justify-between text-xs pb-3 border-b border-[#dbe7dd]/60 dark:border-[#263d2e] flex-wrap gap-2">
+                <div className="flex items-center justify-between text-xs pb-3 border-b border-[var(--border)] flex-wrap gap-2">
                   <div className="flex items-center space-x-2">
                     <button
                       type="button"
                       onClick={() => setMobileViewTab("list")}
-                      className="lg:hidden px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-gray-800 text-[#2d6a4f] dark:text-[#52b788] font-bold text-xs flex items-center gap-1 cursor-pointer"
+                      className="lg:hidden px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-gray-800 text-[var(--mint-dark)] font-bold text-xs flex items-center gap-1 cursor-pointer"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
                       <span>Danh sách</span>
                     </button>
-                    <span className="text-[11px] font-semibold text-[#73927d]">
+                    <span className="text-[11px] font-semibold text-[var(--text-muted)]">
                       {saveStatus === "saving" ? "Đang lưu..." : saveStatus === "saved" ? "✓ Đã lưu" : "Chưa lưu"}
                     </span>
                     <button
@@ -529,7 +529,7 @@ export default function NotesPage() {
                       className={`p-1.5 rounded-xl border text-xs flex items-center space-x-1 cursor-pointer transition-colors ${
                         isPinned
                           ? "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/60"
-                          : "border-[#dbe7dd] text-[#73927d] hover:bg-[#eef5f0]"
+                          : "border-[var(--border)] text-[var(--text-muted)] hover:bg-[var(--mint-bg)]"
                       }`}
                     >
                       <Pin className="w-3 h-3" />
@@ -548,12 +548,12 @@ export default function NotesPage() {
                   </div>
 
                   {/* Mode switcher */}
-                  <div className="flex items-center space-x-1 p-0.5 bg-[#f4f8f5] dark:bg-[#101c14] border border-[#dbe7dd] dark:border-[#263d2e] rounded-xl text-[11px] font-bold">
+                  <div className="flex items-center space-x-1 p-0.5 bg-[var(--mint-bg)] dark:bg-[#101c14] border border-[var(--border)] rounded-xl text-[11px] font-bold">
                     <button
                       type="button"
                       onClick={() => setViewMode("edit")}
                       className={`px-2.5 py-1 rounded-lg transition-all ${
-                        viewMode === "edit" ? "bg-[#2d6a4f] text-white" : "text-[#73927d]"
+                        viewMode === "edit" ? "bg-[var(--mint)] text-white" : "text-[var(--text-muted)]"
                       }`}
                     >
                       Soạn thảo
@@ -562,7 +562,7 @@ export default function NotesPage() {
                       type="button"
                       onClick={() => setViewMode("split")}
                       className={`px-2.5 py-1 rounded-lg transition-all ${
-                        viewMode === "split" ? "bg-[#2d6a4f] text-white" : "text-[#73927d]"
+                        viewMode === "split" ? "bg-[var(--mint)] text-white" : "text-[var(--text-muted)]"
                       }`}
                     >
                       Song song
@@ -571,7 +571,7 @@ export default function NotesPage() {
                       type="button"
                       onClick={() => setViewMode("preview")}
                       className={`px-2.5 py-1 rounded-lg transition-all ${
-                        viewMode === "preview" ? "bg-[#2d6a4f] text-white" : "text-[#73927d]"
+                        viewMode === "preview" ? "bg-[var(--mint)] text-white" : "text-[var(--text-muted)]"
                       }`}
                     >
                       Xem trước
@@ -588,13 +588,13 @@ export default function NotesPage() {
                     triggerSave({ title: e.target.value });
                   }}
                   placeholder="Tiêu đề trang ghi chú..."
-                  className="w-full text-2xl sm:text-3xl font-black text-[#192e22] dark:text-[#f0f7f2] bg-transparent border-none outline-none focus:ring-0 placeholder:text-[#b0c4b6]"
+                  className="w-full text-2xl sm:text-3xl font-black text-[var(--text-ink)] bg-transparent border-none outline-none focus:ring-0 placeholder:text-[#b0c4b6]"
                 />
 
                 {/* Metadata Links Bar (Subject, Goal, Task) */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#132217] border border-[#dbe7dd] dark:border-[#223829] text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)] dark:border-[#223829] text-xs">
                   <div>
-                    <span className="block text-[10px] font-bold text-[#73927d] mb-1">
+                    <span className="block text-[10px] font-bold text-[var(--text-muted)] mb-1">
                       Môn học liên kết:
                     </span>
                     <select
@@ -603,7 +603,7 @@ export default function NotesPage() {
                         setSubjectId(e.target.value);
                         triggerSave({ subjectId: e.target.value });
                       }}
-                      className="w-full rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-1.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                      className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-1.5 text-xs text-[var(--text-ink)]"
                     >
                       <option value="">(Chưa gắn môn)</option>
                       {subjects.map((s) => (
@@ -615,7 +615,7 @@ export default function NotesPage() {
                   </div>
 
                   <div>
-                    <span className="block text-[10px] font-bold text-[#73927d] mb-1">
+                    <span className="block text-[10px] font-bold text-[var(--text-muted)] mb-1">
                       Mục tiêu (Goal):
                     </span>
                     <select
@@ -624,7 +624,7 @@ export default function NotesPage() {
                         setGoalId(e.target.value);
                         triggerSave({ goalId: e.target.value });
                       }}
-                      className="w-full rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-1.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                      className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-1.5 text-xs text-[var(--text-ink)]"
                     >
                       <option value="">(Không gắn mục tiêu)</option>
                       {goals.map((g) => (
@@ -636,7 +636,7 @@ export default function NotesPage() {
                   </div>
 
                   <div>
-                    <span className="block text-[10px] font-bold text-[#73927d] mb-1">
+                    <span className="block text-[10px] font-bold text-[var(--text-muted)] mb-1">
                       Task công việc:
                     </span>
                     <select
@@ -645,7 +645,7 @@ export default function NotesPage() {
                         setTaskId(e.target.value);
                         triggerSave({ taskId: e.target.value });
                       }}
-                      className="w-full rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-1.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                      className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-1.5 text-xs text-[var(--text-ink)]"
                     >
                       <option value="">(Không gắn task)</option>
                       {tasks.map((t) => (
@@ -659,11 +659,11 @@ export default function NotesPage() {
 
                 {/* Tags row */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <TagIcon className="w-3.5 h-3.5 text-[#73927d]" />
+                  <TagIcon className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                   {tags.map((t) => (
                     <span
                       key={t}
-                      className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1e3827] dark:text-[#86e2a8] text-[10px] font-bold"
+                      className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1e3827] dark:text-[#86e2a8] text-[10px] font-bold"
                     >
                       <span>#{t}</span>
                       <button
@@ -681,12 +681,12 @@ export default function NotesPage() {
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={handleAddTag}
-                    className="text-xs bg-transparent border-none outline-none text-[#526b5c] placeholder:text-[#8ba393] w-36"
+                    className="text-xs bg-transparent border-none outline-none text-[var(--text-subtle)] placeholder:text-[#8ba393] w-36"
                   />
                 </div>
 
                 {/* Rich Block Inserter Toolbar */}
-                <div className="flex flex-wrap items-center gap-1 p-1.5 rounded-2xl bg-[#f4f8f5] dark:bg-[#101c14] border border-[#dbe7dd] dark:border-[#263d2e] text-xs">
+                <div className="flex flex-wrap items-center gap-1 p-1.5 rounded-2xl bg-[var(--mint-bg)] dark:bg-[#101c14] border border-[var(--border)] text-xs">
                   <button
                     type="button"
                     onClick={() => insertTextAtCursor("# ")}
@@ -784,13 +784,13 @@ export default function NotesPage() {
                         triggerSave({ content: e.target.value });
                       }}
                       placeholder="Viết nội dung bài học bằng Markdown hoặc phím tắt ở trên..."
-                      className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#fdfefe] dark:bg-[#142318] p-4 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#52b788] text-[#192e22] dark:text-[#f0f7f2] leading-relaxed resize-y"
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[#fdfefe] dark:bg-[#142318] p-4 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#52b788] text-[var(--text-ink)] leading-relaxed resize-y"
                     />
                   )}
 
                   {/* Notion-style Live Preview */}
                   {(viewMode === "preview" || viewMode === "split") && (
-                    <div className="rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#121f15] p-5 overflow-y-auto max-h-[460px]">
+                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-muted)] dark:bg-[#121f15] p-5 overflow-y-auto max-h-[460px]">
                       {renderMarkdownPreview(content)}
                     </div>
                   )}
@@ -798,19 +798,19 @@ export default function NotesPage() {
               </div>
             </Card>
           ) : (
-            <Card className="rounded-[30px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-16 text-center space-y-3">
-              <div className="w-14 h-14 rounded-3xl bg-[#eef5f0] text-[#2d6a4f] flex items-center justify-center mx-auto mb-2">
+            <Card className="rounded-[30px] border border-[var(--border)] bg-[var(--bg-surface)] p-16 text-center space-y-3">
+              <div className="w-14 h-14 rounded-3xl bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center mx-auto mb-2">
                 <FileText className="w-7 h-7" />
               </div>
-              <h3 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <h3 className="text-base font-bold text-[var(--text-ink)]">
                 Chọn một trang ghi chú hoặc tạo trang mới
               </h3>
-              <p className="text-xs text-[#526b5c] max-w-sm mx-auto">
+              <p className="text-xs text-[var(--text-subtle)] max-w-sm mx-auto">
                 Cơ sở tri thức Notion hỗ trợ Markdown, ghim trang, gắn nhãn #tags và liên kết chặt chẽ với Goal & Task.
               </p>
               <Button
                 onClick={handleCreateNewNote}
-                className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold"
+                className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold"
               >
                 + Tạo ghi chú ngay
               </Button>

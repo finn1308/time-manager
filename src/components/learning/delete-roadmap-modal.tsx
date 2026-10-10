@@ -54,10 +54,10 @@ export function DeleteRoadmapModal({
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+            <h3 className="text-lg font-black text-[var(--text-ink)]">
               Delete this learning roadmap?
             </h3>
-            <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-0.5 line-clamp-1">
+            <p className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693] mt-0.5 line-clamp-1">
               &quot;{roadmapTitle}&quot;
             </p>
           </div>
@@ -77,7 +77,7 @@ export function DeleteRoadmapModal({
             <li>Learning progress & Quiz attempts</li>
             <li>AI-generated quizzes & content liên quan</li>
           </ul>
-          <p className="text-[11px] text-[#2d6a4f] dark:text-[#52b788] font-semibold pt-1">
+          <p className="text-[11px] text-[var(--mint-dark)] font-semibold pt-1">
             ✓ Nhật ký thời gian học thực tế (Study Sessions) đã tích lũy vẫn được bảo toàn an toàn.
           </p>
         </div>
@@ -94,7 +94,7 @@ export function DeleteRoadmapModal({
             variant="outline"
             disabled={loading}
             onClick={() => onOpenChange(false)}
-            className="rounded-full text-xs px-5 border-[#dbe7dd] dark:border-[#263d2e] cursor-pointer"
+            className="rounded-full text-xs px-5 border-[var(--border)] cursor-pointer"
           >
             Cancel
           </Button>

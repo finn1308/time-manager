@@ -280,17 +280,17 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
       {/* Header & Filter Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2.5">
-            <BarChart3 className="w-6 h-6 text-[#2d6a4f] dark:text-[#52b788]" />
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-ink)] flex items-center space-x-2.5">
+            <BarChart3 className="w-6 h-6 text-[var(--mint-dark)]" />
             <span>Phân tích hiệu suất học tập (Analytics)</span>
           </h1>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+          <p className="text-xs text-[var(--text-subtle)] mt-1">
             Đo lường kỷ luật học tập, chất lượng phiên Deep Focus và so sánh kế hoạch với thực tế.
           </p>
         </div>
 
         {/* Time Filter Pills */}
-        <div className="flex items-center space-x-1.5 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl shadow-2xs overflow-x-auto max-w-full">
+        <div className="flex items-center space-x-1.5 p-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl shadow-2xs overflow-x-auto max-w-full">
           {[
             { id: "7", label: "7 ngày" },
             { id: "30", label: "30 ngày" },
@@ -301,8 +301,8 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
               <button
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   range === pill.id
-                    ? "bg-[#2d6a4f] text-white shadow-2xs"
-                    : "text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f4f8f5]"
+                    ? "bg-[var(--mint)] text-white shadow-2xs"
+                    : "text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                 }`}
               >
                 {pill.label}
@@ -325,49 +325,49 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
 
       {/* Deep Focus Quality Metrics (Section 36) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-          <div className="flex items-center space-x-2 text-[10px] font-bold text-[#73927d] uppercase">
-            <Clock className="w-3.5 h-3.5 text-[#2d6a4f]" />
+        <div className="p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+          <div className="flex items-center space-x-2 text-[10px] font-bold text-[var(--text-muted)] uppercase">
+            <Clock className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
             <span>Thời lượng phiên TB</span>
           </div>
-          <div className="mt-1 text-xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="mt-1 text-xl font-black text-[var(--text-ink)]">
             {avgSessionMinutes} <span className="text-xs font-normal opacity-80">phút/phiên</span>
           </div>
-          <p className="text-[10px] text-[#73927d] mt-1">Chuẩn Pomodoro tối ưu</p>
+          <p className="text-[10px] text-[var(--text-muted)] mt-1">Chuẩn Pomodoro tối ưu</p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-          <div className="flex items-center space-x-2 text-[10px] font-bold text-[#73927d] uppercase">
+        <div className="p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+          <div className="flex items-center space-x-2 text-[10px] font-bold text-[var(--text-muted)] uppercase">
             <Zap className="w-3.5 h-3.5 text-amber-500 fill-current" />
             <span>Tỷ lệ Deep Focus</span>
           </div>
           <div className="mt-1 text-xl font-black text-amber-600 dark:text-amber-400">
             {deepFocusRate}%
           </div>
-          <p className="text-[10px] text-[#73927d] mt-1">Phiên {'>='} 25p không gián đoạn</p>
+          <p className="text-[10px] text-[var(--text-muted)] mt-1">Phiên {'>='} 25p không gián đoạn</p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-          <div className="flex items-center space-x-2 text-[10px] font-bold text-[#73927d] uppercase">
+        <div className="p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+          <div className="flex items-center space-x-2 text-[10px] font-bold text-[var(--text-muted)] uppercase">
             <Sun className="w-3.5 h-3.5 text-orange-500" />
             <span>Khung giờ vàng</span>
           </div>
-          <div className="mt-1 text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
+          <div className="mt-1 text-xs font-bold text-[var(--text-ink)] truncate">
             {goldenPeriod}
           </div>
-          <p className="text-[10px] text-[#73927d] mt-1">Năng lượng tập trung cao nhất</p>
+          <p className="text-[10px] text-[var(--text-muted)] mt-1">Năng lượng tập trung cao nhất</p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs">
-          <div className="flex items-center space-x-2 text-[10px] font-bold text-[#73927d] uppercase">
+        <div className="p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs">
+          <div className="flex items-center space-x-2 text-[10px] font-bold text-[var(--text-muted)] uppercase">
             <Star className="w-3.5 h-3.5 text-yellow-500 fill-current" />
             <span>Đánh giá năng suất TB</span>
           </div>
-          <div className="mt-1 text-xl font-black text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-1">
+          <div className="mt-1 text-xl font-black text-[var(--text-ink)] flex items-center space-x-1">
             <span>{avgProductivityScore}</span>
             <span className="text-xs text-yellow-500">★</span>
           </div>
-          <p className="text-[10px] text-[#73927d] mt-1">Thang điểm 5 sao tự đánh giá</p>
+          <p className="text-[10px] text-[var(--text-muted)] mt-1">Thang điểm 5 sao tự đánh giá</p>
         </div>
       </div>
 
@@ -379,9 +379,9 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
         <StudyHeatmap days={heatmapDays} />
 
         {/* Subject Breakdown Card */}
-        <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]">
+        <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)]">
           <CardHeader>
-            <CardTitle className="text-base text-[#192e22] dark:text-[#f0f7f2]">
+            <CardTitle className="text-base text-[var(--text-ink)]">
               Phân bổ thời gian theo môn học
             </CardTitle>
           </CardHeader>
@@ -391,15 +391,15 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
               const percent = totalActualSeconds > 0 ? Math.round((sb.seconds / totalActualSeconds) * 100) : 0;
 
               return (
-                <div key={i} className="space-y-1.5 p-3 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e]">
+                <div key={i} className="space-y-1.5 p-3 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)]">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center space-x-2 truncate">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: sb.color }} />
-                      <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
+                      <span className="font-bold text-[var(--text-ink)] truncate">
                         {sb.name}
                       </span>
                     </div>
-                    <span className="font-mono text-[#526b5c] dark:text-[#a3bda9] font-semibold">
+                    <span className="font-mono text-[var(--text-subtle)] font-semibold">
                       {hours} giờ ({percent}%)
                     </span>
                   </div>
@@ -435,7 +435,7 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
             <p className="text-[11px] text-white/80">AI phân tích điểm mạnh, điểm yếu và gợi ý lịch tuần tới.</p>
           </div>
           <Link href="/weekly-review">
-            <Button className="rounded-2xl bg-white text-[#1b4332] hover:bg-[#d8ebe0] text-xs font-bold space-x-1 shrink-0">
+            <Button className="rounded-2xl bg-white text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] text-xs font-bold space-x-1 shrink-0">
               <span>Mở Review</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>
@@ -443,16 +443,16 @@ export default async function AnalyticsPage(props: AnalyticsPageProps) {
         </div>
 
         {/* What-If Simulator Banner */}
-        <div className="p-5 rounded-[26px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-5 rounded-[26px] bg-[var(--bg-surface)] border border-[var(--border)] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center space-x-2 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+            <div className="flex items-center space-x-2 text-xs font-bold text-[var(--mint-dark)]">
               <Target className="w-4 h-4" />
               <span>WHAT-IF SCENARIOS</span>
             </div>
-            <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <h3 className="text-sm font-bold text-[var(--text-ink)]">
               Mô phỏng kịch bản What-If
             </h3>
-            <p className="text-[11px] text-[#73927d]">
+            <p className="text-[11px] text-[var(--text-muted)]">
               Thử nghiệm dời ngày thi, thêm môn học hoặc nghỉ đột xuất trước khi lưu lịch.
             </p>
           </div>

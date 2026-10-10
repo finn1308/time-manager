@@ -148,7 +148,7 @@ export function AiSchedulePreviewModal({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent onClose={onClose} className="max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#d8ebe0] text-[#1b4332] text-xs font-bold w-fit mb-2">
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] text-xs font-bold w-fit mb-2">
             <Sparkles className="w-3.5 h-3.5 text-[var(--mint-dark)]" />
             <span>AI STUDY SCHEDULER</span>
           </div>
@@ -247,7 +247,7 @@ export function AiSchedulePreviewModal({
               {/* Recommended Slots for Flexible Goals */}
               {results.recommendedSlotsForFlexibleGoals && results.recommendedSlotsForFlexibleGoals.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-[var(--border)] space-y-1.5">
-                  <div className="text-[11px] font-bold text-[#1b4332] dark:text-[#74c69d] flex items-center space-x-1.5">
+                  <div className="text-[11px] font-bold text-[var(--mint-dark)] dark:text-[#74c69d] flex items-center space-x-1.5">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Gợi ý khung giờ rảnh cho Mục tiêu linh hoạt (Không tự ý gán vào lịch):</span>
                   </div>
@@ -258,7 +258,7 @@ export function AiSchedulePreviewModal({
                         <span className="text-[var(--mint-dark)] font-mono">
                           {formatVN(new Date(rec.recommendedStart), "dd/MM • HH:mm")}
                         </span>
-                        <div className="text-[10px] text-[#526b5c] dark:text-[#8ba393] truncate">{rec.reason}</div>
+                        <div className="text-[10px] text-[var(--text-subtle)] dark:text-[#8ba393] truncate">{rec.reason}</div>
                       </div>
                     ))}
                   </div>
@@ -333,7 +333,7 @@ export function AiSchedulePreviewModal({
 
                       <div className="text-right shrink-0">
                         <div className="flex items-center space-x-1 font-mono font-bold text-[var(--text-ink)]">
-                          <Clock className="w-3.5 h-3.5 text-[#73927d]" />
+                          <Clock className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                           <span>
                             {formatVN(new Date(event.startTime), "EEEE, dd/MM • HH:mm")} – {formatVN(new Date(event.endTime), "HH:mm")}
                           </span>

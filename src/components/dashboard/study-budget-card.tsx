@@ -32,17 +32,17 @@ export function StudyBudgetCard({
   const studyDebt = Math.max(0, Math.round((weeklyBudgetHours - weeklyActualHours) * 10) / 10);
 
   return (
-    <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] soft-card-shadow">
+    <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] soft-card-shadow">
       <CardHeader className="p-6 pb-3 flex flex-row items-center justify-between">
         <div className="flex items-center space-x-2.5">
-          <div className="w-9 h-9 rounded-2xl bg-[#d8ebe0] dark:bg-[#1d3827] text-[#2d6a4f] dark:text-[#9cd1b1] flex items-center justify-center shadow-2xs">
+          <div className="w-9 h-9 rounded-2xl bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:text-[#9cd1b1] flex items-center justify-center shadow-2xs">
             <Wallet className="w-5 h-5" />
           </div>
           <div>
-            <CardTitle className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <CardTitle className="text-base font-bold text-[var(--text-ink)]">
               Ngân sách học tập tuần (Study Budget)
             </CardTitle>
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-xs text-[var(--text-subtle)]">
               Quản lý hạn mức thời gian và kiểm soát nợ thời gian học (Study Debt)
             </p>
           </div>
@@ -55,25 +55,25 @@ export function StudyBudgetCard({
 
       <CardContent className="p-6 pt-2 space-y-4">
         {/* Progress Bar & Numbers */}
-        <div className="space-y-1.5 p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#142318] border border-[#dbe7dd]/80 dark:border-[#263d2e]">
+        <div className="space-y-1.5 p-4 rounded-2xl bg-[var(--bg-muted)] border border-[var(--border)]">
           <div className="flex items-center justify-between text-xs font-semibold">
-            <span className="text-[#192e22] dark:text-[#f0f7f2]">
+            <span className="text-[var(--text-ink)]">
               Tiến độ tuần:{" "}
-              <strong className="text-[#2d6a4f] dark:text-[#52b788]">
+              <strong className="text-[var(--mint-dark)]">
                 {weeklyActualHours.toFixed(1)}h / {weeklyBudgetHours.toFixed(1)}h
               </strong>
             </span>
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">{percent}%</span>
+            <span className="text-[var(--text-subtle)]">{percent}%</span>
           </div>
 
           <div className="w-full h-2.5 rounded-full bg-[#dbe7dd] dark:bg-[#263d2e] overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-300 bg-[#2d6a4f] dark:bg-[#52b788]"
+              className="h-full rounded-full transition-all duration-300 bg-[var(--mint)]"
               style={{ width: `${percent}%` }}
             />
           </div>
 
-          <div className="flex items-center justify-between text-[11px] text-[#526b5c] dark:text-[#a3bda9] pt-1">
+          <div className="flex items-center justify-between text-[11px] text-[var(--text-subtle)] pt-1">
             <span>
               {studyDebt > 0 ? (
                 <span className="text-amber-700 dark:text-amber-400 font-semibold flex items-center space-x-1">
@@ -81,7 +81,7 @@ export function StudyBudgetCard({
                   Study Debt: Cần bù {studyDebt}h trong các ngày còn lại của tuần
                 </span>
               ) : (
-                <span className="text-[#2d6a4f] dark:text-[#52b788] font-semibold flex items-center space-x-1">
+                <span className="text-[var(--mint-dark)] font-semibold flex items-center space-x-1">
                   <CheckCircle2 className="w-3.5 h-3.5 inline mr-1" />
                   Xuất sắc! Bạn đã hoàn thành 100% chỉ tiêu ngân sách tuần này.
                 </span>
@@ -93,25 +93,25 @@ export function StudyBudgetCard({
         {/* Subject Breakdown (Section 30) */}
         {subjectsBreakdown.length > 0 && (
           <div>
-            <div className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-2 flex items-center justify-between">
+            <div className="text-xs font-bold text-[var(--text-ink)] mb-2 flex items-center justify-between">
               <span>Phân bổ thời gian thực tế tuần này (Breakdown)</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {subjectsBreakdown.map((sub) => (
                 <div
                   key={sub.id}
-                  className="p-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#122015] text-xs flex items-center justify-between"
+                  className="p-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#122015] text-xs flex items-center justify-between"
                 >
                   <div className="flex items-center space-x-2 truncate">
                     <span
                       className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: sub.color || "#2d6a4f" }}
                     />
-                    <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2] truncate">
+                    <span className="font-semibold text-[var(--text-ink)] truncate">
                       {sub.name}
                     </span>
                   </div>
-                  <span className="font-mono font-bold text-[#2d6a4f] dark:text-[#52b788] shrink-0 ml-1">
+                  <span className="font-mono font-bold text-[var(--mint-dark)] shrink-0 ml-1">
                     {sub.actualHours.toFixed(1)}h
                   </span>
                 </div>

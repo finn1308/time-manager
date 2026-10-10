@@ -294,13 +294,13 @@ export function WeekView({
           <div className="flex items-center space-x-1">
             <button
               onClick={() => setCurrentWeekRef(subWeeks(currentWeekRef, 1))}
-              className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer transition-colors"
+              className="p-2 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-subtle)] cursor-pointer transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setCurrentWeekRef(addWeeks(currentWeekRef, 1))}
-              className="p-2 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer transition-colors"
+              className="p-2 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-subtle)] cursor-pointer transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -330,7 +330,7 @@ export function WeekView({
             }}
             size="sm"
             variant="outline"
-            className="rounded-full text-xs font-semibold cursor-pointer border-[#b7d8c3] text-[#1b4332] dark:text-[#74c69d]"
+            className="rounded-full text-xs font-semibold cursor-pointer border-[#b7d8c3] text-[var(--mint-dark)] dark:text-[#74c69d]"
           >
             <Plus className="w-3.5 h-3.5 mr-1" />
             <span>Thêm Lịch</span>
@@ -364,7 +364,7 @@ export function WeekView({
           <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
           <div className="flex items-center space-x-1.5">
             <span className="text-[var(--text-subtle)]">Đạt: </span>
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1f3828] dark:text-[#74c69d]">
+            <span className="px-2 py-0.5 rounded-full font-bold bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1f3828] dark:text-[#74c69d]">
               {weekProgressPct}%
             </span>
           </div>
@@ -392,7 +392,7 @@ export function WeekView({
               onDrop={(e) => handleDropOnDay(e, day.dateKey)}
               className={`flex flex-col rounded-[24px] border transition-all soft-card-shadow ${
                 day.isToday
-                  ? "border-[#52b788] bg-[#d8ebe0]/20 dark:bg-[#1d3827]/20 ring-2 ring-[#52b788]/20"
+                  ? "border-[#52b788] bg-[var(--mint-bg)]/20 dark:bg-[#1d3827]/20 ring-2 ring-[#52b788]/20"
                   : "border-[var(--border)] bg-[var(--bg-surface)]"
               }`}
             >
@@ -400,7 +400,7 @@ export function WeekView({
               <div
                 className={`p-3 border-b text-[var(--text-subtle)]enter rounded-t-[24px] relative ${
                   day.isToday
-                    ? "border-[#b7d8c3] bg-[#d8ebe0]/50 dark:bg-[#1d3827]/40"
+                    ? "border-[#b7d8c3] bg-[var(--mint-bg)]/50 dark:bg-[#1d3827]/40"
                     : "border-[var(--border)]/80 dark:border-[#263d2e]"
                 }`}
               >
@@ -416,7 +416,7 @@ export function WeekView({
                       setIsEventModalOpen(true);
                     }}
                     title={`Thêm lịch cho ${day.dayName}`}
-                    className="p-1 rounded-full text-[#73927d] hover:text-[#1b4332] hover:bg-[#d8ebe0] cursor-pointer transition-colors"
+                    className="p-1 rounded-full text-[var(--text-muted)] hover:text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] cursor-pointer transition-colors"
                   >
                     <Plus className="w-3 h-3" />
                   </button>
@@ -462,7 +462,7 @@ export function WeekView({
                       <Lock className="w-3 h-3 shrink-0 text-[#a3a86c]" />
                       <span className="font-bold truncate text-[11px]">{bs.title}</span>
                     </div>
-                    <p className="font-mono text-[10px] text-[#73927d] mt-0.5">
+                    <p className="font-mono text-[10px] text-[var(--text-muted)] mt-0.5">
                       {bs.startTime} - {bs.endTime} (Khóa)
                     </p>
                   </div>
@@ -590,7 +590,7 @@ export function WeekView({
                               setIsEventModalOpen(true);
                             }}
                             title="Xem tài liệu & link buổi học"
-                            className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-[#d8ebe0] dark:bg-[#1c3826] text-[#1b4332] dark:text-[#a3bda9] text-[10px] font-medium hover:bg-[#b7d8c3] transition-colors"
+                            className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-md bg-[var(--mint-bg)] dark:bg-[#1c3826] text-[var(--mint-dark)] dark:text-[#a3bda9] text-[10px] font-medium hover:bg-[#b7d8c3] transition-colors"
                           >
                             <FolderOpen className="w-2.5 h-2.5" />
                             <span>{resourceCount} files</span>
@@ -626,7 +626,7 @@ export function WeekView({
 
                       {/* Time and Quick Start Study Timer */}
                       <div className="flex items-center justify-between mt-2 pt-1 border-t border-[var(--border)]/60 dark:border-[#263d2e]">
-                        <span className="font-mono text-[10px] font-medium text-[#73927d]">
+                        <span className="font-mono text-[10px] font-medium text-[var(--text-muted)]">
                           {(ev as any).isAllDay ? `Tự do trong ngày (${(ev as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(ev.startTime), "HH:mm")} - ${formatVN(new Date(ev.endTime), "HH:mm")}`}
                         </span>
 
@@ -635,7 +635,7 @@ export function WeekView({
                             type="button"
                             onClick={(e) => handleQuickResize(e, ev, -15)}
                             title="Giảm 15 phút"
-                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[#526b5c] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[var(--border)]/60"
+                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[var(--text-subtle)] hover:bg-[var(--mint-bg)] transition-opacity cursor-pointer border border-[var(--border)]/60"
                           >
                             -15m
                           </button>
@@ -643,7 +643,7 @@ export function WeekView({
                             type="button"
                             onClick={(e) => handleQuickResize(e, ev, 15)}
                             title="Tăng 15 phút"
-                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[var(--mint-dark)] hover:bg-[#eef5f0] transition-opacity cursor-pointer border border-[var(--border)]/60"
+                            className="opacity-0 group-hover:opacity-100 px-1 py-0.5 rounded text-[9px] font-bold text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] transition-opacity cursor-pointer border border-[var(--border)]/60"
                           >
                             +15m
                           </button>
@@ -663,7 +663,7 @@ export function WeekView({
                                 );
                               }}
                               title="Bắt đầu tự học ngay môn này"
-                              className="p-1 rounded-full bg-[#d8ebe0] text-[#1b4332] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
+                              className="p-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] hover:bg-[#b7d8c3] cursor-pointer transition-colors shadow-2xs"
                             >
                               <Play className="w-2.5 h-2.5 fill-current ml-0.2" />
                             </button>

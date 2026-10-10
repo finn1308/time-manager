@@ -100,27 +100,27 @@ export default function LearningHubPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Top Navigation Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#dbe7dd] dark:border-[#263d2e] pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border)] pb-4">
         <div>
-          <h1 className="text-2xl font-black text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2.5">
-            <span className="p-2 rounded-2xl bg-[#d8ebe0] dark:bg-[#1e3b28] text-[#2d6a4f] dark:text-[#52b788]">
+          <h1 className="text-2xl font-black text-[var(--text-ink)] flex items-center space-x-2.5">
+            <span className="p-2 rounded-2xl bg-[var(--mint-bg)] dark:bg-[#1e3b28] text-[var(--mint-dark)]">
               <Sparkles className="w-5 h-5" />
             </span>
             <span>Study Bunny Gamified Quest</span>
           </h1>
-          <p className="text-xs text-[#526b5c] dark:text-[#8aa693] mt-1">
+          <p className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693] mt-1">
             Biến tài liệu học tập & PDF thành Lộ trình chinh phục mục tiêu theo ngày, làm quiz tương tác và mở khóa kiến thức.
           </p>
         </div>
 
         {/* Tab Switcher Pills */}
-        <div className="flex items-center space-x-1 p-1 bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl text-xs font-bold overflow-x-auto shadow-2xs">
+        <div className="flex items-center space-x-1 p-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl text-xs font-bold overflow-x-auto shadow-2xs">
           <button
             onClick={() => setActiveTab("ROADMAP")}
             className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
               activeTab === "ROADMAP"
-                ? "bg-[#2d6a4f] text-white shadow-xs"
-                : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+                ? "bg-[var(--mint)] text-white shadow-xs"
+                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
             }`}
           >
             <Map className="w-3.5 h-3.5" />
@@ -131,8 +131,8 @@ export default function LearningHubPage() {
             onClick={() => setActiveTab("CREATE")}
             className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
               activeTab === "CREATE"
-                ? "bg-[#2d6a4f] text-white shadow-xs"
-                : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+                ? "bg-[var(--mint)] text-white shadow-xs"
+                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
             }`}
           >
             <PlusCircle className="w-3.5 h-3.5" />
@@ -143,8 +143,8 @@ export default function LearningHubPage() {
             onClick={() => setActiveTab("LEADERBOARD")}
             className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
               activeTab === "LEADERBOARD"
-                ? "bg-[#2d6a4f] text-white shadow-xs"
-                : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+                ? "bg-[var(--mint)] text-white shadow-xs"
+                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
             }`}
           >
             <Trophy className="w-3.5 h-3.5" />
@@ -155,8 +155,8 @@ export default function LearningHubPage() {
             onClick={() => setActiveTab("WEAK_TOPICS")}
             className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer ${
               activeTab === "WEAK_TOPICS"
-                ? "bg-[#2d6a4f] text-white shadow-xs"
-                : "text-[#526b5c] hover:text-[#192e22] dark:text-[#8aa693]"
+                ? "bg-[var(--mint)] text-white shadow-xs"
+                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:text-[#8aa693]"
             }`}
           >
             <span>🧠</span>
@@ -170,7 +170,7 @@ export default function LearningHubPage() {
         <div
           className={`p-3.5 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-xs transition-all ${
             notification.type === "success"
-              ? "bg-[#eef7ee] dark:bg-[#1a3322] text-[#2d6a4f] dark:text-[#7fc498] border border-[#b7d8c3] dark:border-[#2d6a4f]"
+              ? "bg-[#eef7ee] dark:bg-[#1a3322] text-[var(--mint-dark)] dark:text-[#7fc498] border border-[#b7d8c3] dark:border-[var(--mint)]"
               : "bg-[#fef2f2] dark:bg-[#331c1c] text-[#dc2626] dark:text-[#f87171] border border-[#fecaca] dark:border-[#522222]"
           }`}
         >
@@ -190,27 +190,27 @@ export default function LearningHubPage() {
       {/* Main Content Area */}
       {loading ? (
         <div className="py-24 text-center space-y-3">
-          <Loader2 className="w-8 h-8 animate-spin text-[#2d6a4f] mx-auto" />
-          <p className="text-xs text-[#73927d]">Đang tải dữ liệu học tập...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-[var(--mint-dark)] mx-auto" />
+          <p className="text-xs text-[var(--text-muted)]">Đang tải dữ liệu học tập...</p>
         </div>
       ) : activeTab === "ROADMAP" ? (
         roadmaps.length === 0 ? (
           // ================= EMPTY STATE (Section 43 in prompt) =================
-          <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-[30px] p-10 text-center space-y-5 max-w-lg mx-auto shadow-xs">
-            <div className="w-16 h-16 rounded-3xl bg-[#d8ebe0] dark:bg-[#1e3827] text-[#2d6a4f] dark:text-[#52b788] mx-auto flex items-center justify-center text-3xl shadow-xs">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-[30px] p-10 text-center space-y-5 max-w-lg mx-auto shadow-xs">
+            <div className="w-16 h-16 rounded-3xl bg-[var(--mint-bg)] dark:bg-[#1e3827] text-[var(--mint-dark)] mx-auto flex items-center justify-center text-3xl shadow-xs">
               🐰✨
             </div>
             <div className="space-y-1">
-              <h2 className="text-lg font-black text-[#192e22] dark:text-[#f0f7f2]">
+              <h2 className="text-lg font-black text-[var(--text-ink)]">
                 Biến tài liệu học tập thành trải nghiệm tương tác!
               </h2>
-              <p className="text-xs text-[#526b5c] dark:text-[#8aa693] leading-relaxed">
+              <p className="text-xs text-[var(--text-subtle)] dark:text-[#8aa693] leading-relaxed">
                 Tải lên PDF hoặc dán nội dung bài học để AI tự động trích xuất cấu trúc, tạo lộ trình theo ngày và thiết kế bộ Quiz chất lượng cao.
               </p>
             </div>
             <Button
               onClick={() => setActiveTab("CREATE")}
-              className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-full px-6 text-xs font-bold space-x-1.5 shadow-sm"
+              className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-full px-6 text-xs font-bold space-x-1.5 shadow-sm"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Tạo Lộ trình Chinh phục đầu tiên</span>
@@ -221,15 +221,15 @@ export default function LearningHubPage() {
             {/* Multiple Roadmaps Selector if user has > 1 */}
             {roadmaps.length > 1 && (
               <div className="flex items-center space-x-2 overflow-x-auto pb-1">
-                <span className="text-xs font-bold text-[#526b5c] shrink-0">Chọn môn:</span>
+                <span className="text-xs font-bold text-[var(--text-subtle)] shrink-0">Chọn môn:</span>
                 {roadmaps.map((r) => (
                   <button
                     key={r.id}
                     onClick={() => setSelectedRoadmapId(r.id)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
                       selectedRoadmapId === r.id
-                        ? "bg-[#2d6a4f] text-white shadow-xs"
-                        : "bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c]"
+                        ? "bg-[var(--mint)] text-white shadow-xs"
+                        : "bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-subtle)]"
                     }`}
                   >
                     {r.title} ({r.completedStages}/{r.totalStages})

@@ -226,7 +226,7 @@ export function WhatIfSimulatorModal({
           <Button
             type="submit"
             variant="outline"
-            className="w-full rounded-2xl border-[var(--border)] text-[var(--mint-dark)] hover:bg-[#d8ebe0] font-semibold text-xs h-10 space-x-1.5"
+            className="w-full rounded-2xl border-[var(--border)] text-[var(--mint-dark)] hover:bg-[var(--mint-bg)] font-semibold text-xs h-10 space-x-1.5"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Chạy mô phỏng kịch bản (Simulate)</span>
@@ -289,7 +289,7 @@ export function WhatIfSimulatorModal({
             type="button"
             variant="ghost"
             onClick={onClose}
-            className="rounded-2xl text-[#526b5c] text-xs"
+            className="rounded-2xl text-[var(--text-subtle)] text-xs"
           >
             Đóng
           </Button>

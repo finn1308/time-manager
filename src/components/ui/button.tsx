@@ -13,17 +13,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       default:
-        "rounded-full bg-[#2d6a4f] text-white hover:bg-[#1b4332] shadow-sm hover:shadow-md",
+        "rounded-full bg-[var(--mint)] text-white hover:bg-[#1b4332] shadow-sm hover:shadow-md",
       pill:
-        "rounded-full bg-white text-[#192e22] border border-[#dbe7dd] hover:border-[#b7d1be] hover:bg-[#eef5f0] shadow-xs",
+        "rounded-full bg-white text-[var(--text-ink)] border border-[var(--border)] hover:border-[#b7d1be] hover:bg-[var(--mint-bg)] shadow-xs",
       notion:
-        "rounded-full bg-white dark:bg-[#17261c] text-[#192e22] dark:text-[#f0f7f2] border border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] shadow-xs",
+        "rounded-full bg-[var(--bg-surface)] text-[var(--text-ink)] border border-[var(--border)] hover:bg-[var(--mint-soft)] shadow-xs",
       secondary:
-        "rounded-full bg-[#eef5f0] dark:bg-[#1d3024] text-[#192e22] dark:text-[#f0f7f2] hover:bg-[#d8ebe0] dark:hover:bg-[#274431]",
+        "rounded-full bg-[var(--mint-bg)] text-[var(--text-ink)] hover:bg-[var(--mint-bg)] dark:hover:bg-[#274431]",
       outline:
-        "rounded-full border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#192e22] dark:text-[#f0f7f2] shadow-xs",
+        "rounded-full border border-[var(--border)] bg-[var(--bg-surface)] hover:bg-[var(--mint-soft)] text-[var(--text-ink)] shadow-xs",
       ghost:
-        "rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#192e22] dark:text-[#f0f7f2]",
+        "rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-ink)]",
       destructive:
         "rounded-full bg-[#b87474] text-white hover:bg-[#a66363] shadow-sm",
       amber:

@@ -112,10 +112,10 @@ export function SyllabusImporterModal({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <h2 className="text-lg font-bold text-[var(--text-ink)]">
                 Syllabus Importer - Bóc tách Đề cương môn học bằng AI
               </h2>
-              <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+              <p className="text-xs text-[var(--text-subtle)]">
                 Tự động nhận diện môn học, số tín chỉ, chuyên đề tuần, bài tập và kỳ thi
               </p>
             </div>
@@ -124,7 +124,7 @@ export function SyllabusImporterModal({
           {step === "INPUT" ? (
             <div className="space-y-4 pt-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                <label className="text-xs font-semibold text-[var(--text-ink)]">
                   Dán nội dung đề cương môn học (Syllabus) vào đây:
                 </label>
                 <textarea
@@ -142,7 +142,7 @@ Tuần 5: Bài tập thực hành số 1
 Tuần 8: Thi giữa kỳ (30%)
 Tuần 10: Bài tập lớn cài đặt cây nhị phân (20%)
 Tuần 15: Thi cuối kỳ (40%)`}
-                  className="w-full text-xs p-3 rounded-2xl border border-emerald-100 dark:border-[#263d2e] bg-gray-50/50 dark:bg-[#1a2f22] text-[#192e22] dark:text-[#f0f7f2] focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                  className="w-full text-xs p-3 rounded-2xl border border-emerald-100 dark:border-[#263d2e] bg-gray-50/50 dark:bg-[#1a2f22] text-[var(--text-ink)] focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
                 />
               </div>
 
@@ -173,11 +173,11 @@ Tuần 15: Thi cuối kỳ (40%)`}
                   </Badge>
                 </div>
                 {parsedData?.lecturer && (
-                  <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                  <p className="text-xs text-[var(--text-subtle)]">
                     Giảng viên: <span className="font-semibold">{parsedData.lecturer}</span>
                   </p>
                 )}
-                <div className="flex items-center gap-3 text-xs text-[#526b5c] dark:text-[#a3bda9] pt-1">
+                <div className="flex items-center gap-3 text-xs text-[var(--text-subtle)] pt-1">
                   <span>Chuyên đề: {parsedData?.weeklyTopics?.length || 0} bài</span>
                   <span>Bài tập: {parsedData?.assignments?.length || 0}</span>
                   <span>Kỳ thi: {parsedData?.exams?.length || 0}</span>
@@ -186,7 +186,7 @@ Tuần 15: Thi cuối kỳ (40%)`}
 
               {/* Confirmation Checkboxes */}
               <div className="space-y-2 text-xs">
-                <span className="font-bold text-[#192e22] dark:text-[#f0f7f2] block">
+                <span className="font-bold text-[var(--text-ink)] block">
                   Chọn các mục bạn muốn tự động tạo:
                 </span>
                 <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl hover:bg-emerald-50/40">

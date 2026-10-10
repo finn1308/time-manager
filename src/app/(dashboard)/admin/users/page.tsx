@@ -35,17 +35,17 @@ export default async function AdminUsersPage() {
           <ShieldCheck className="w-6 h-6 text-slate-600 dark:text-slate-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">Quản trị người dùng</h1>
-          <p className="text-sm text-[#526b5c] dark:text-[#a3bda9]">
+          <h1 className="text-2xl font-bold text-[var(--text-ink)]">Quản trị người dùng</h1>
+          <p className="text-sm text-[var(--text-subtle)]">
             Danh sách tất cả người dùng trong hệ thống
           </p>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] rounded-3xl overflow-hidden shadow-2xs">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-2xs">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-[#526b5c] uppercase bg-[#f4f8f5] dark:bg-[#1d3024] dark:text-[#a3bda9] border-b border-[#dbe7dd] dark:border-[#263d2e]">
+            <thead className="text-xs text-[var(--text-subtle)] uppercase bg-[var(--mint-bg)] dark:bg-[#1d3024] dark:text-[#a3bda9] border-b border-[var(--border)]">
               <tr>
                 <th className="px-6 py-4 font-semibold">Tài khoản</th>
                 <th className="px-6 py-4 font-semibold">Vai trò</th>
@@ -55,15 +55,15 @@ export default async function AdminUsersPage() {
             </thead>
             <tbody>
               {users.map((u) => (
-                <tr key={u.id} className="border-b border-[#dbe7dd] dark:border-[#263d2e] hover:bg-[#f8fbf8] dark:hover:bg-[#1b2b1f] transition-colors last:border-0">
+                <tr key={u.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-muted)] dark:hover:bg-[#1b2b1f] transition-colors last:border-0">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold shrink-0">
                         {u.name ? u.name.charAt(0).toUpperCase() : <UserIcon className="w-4 h-4" />}
                       </div>
                       <div>
-                        <div className="font-bold text-[#192e22] dark:text-[#f0f7f2]">{u.name || "Chưa cập nhật"}</div>
-                        <div className="text-xs text-[#526b5c] dark:text-[#a3bda9]">{u.email}</div>
+                        <div className="font-bold text-[var(--text-ink)]">{u.name || "Chưa cập nhật"}</div>
+                        <div className="text-xs text-[var(--text-subtle)]">{u.email}</div>
                       </div>
                     </div>
                   </td>
@@ -72,10 +72,10 @@ export default async function AdminUsersPage() {
                       {u.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-mono font-medium text-[#2d6a4f] dark:text-[#52b788]">
+                  <td className="px-6 py-4 font-mono font-medium text-[var(--mint-dark)]">
                     {u.xp} XP
                   </td>
-                  <td className="px-6 py-4 text-[#526b5c] dark:text-[#a3bda9]">
+                  <td className="px-6 py-4 text-[var(--text-subtle)]">
                     {new Date(u.createdAt).toLocaleDateString("vi-VN")}
                   </td>
                 </tr>

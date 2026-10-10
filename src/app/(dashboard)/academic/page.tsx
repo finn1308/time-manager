@@ -342,8 +342,8 @@ export default function AcademicHubPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <RefreshCw className="w-8 h-8 text-[#2d6a4f] animate-spin" />
-        <p className="text-sm font-medium text-[#526b5c] dark:text-[#a3bda9]">
+        <RefreshCw className="w-8 h-8 text-[var(--mint-dark)] animate-spin" />
+        <p className="text-sm font-medium text-[var(--text-subtle)]">
           Đang tải dữ liệu hồ sơ học thuật 4 năm...
         </p>
       </div>
@@ -360,7 +360,7 @@ export default function AcademicHubPage() {
         <p className="text-sm">{error}</p>
         <button
           onClick={fetchAcademicData}
-          className="mt-4 px-4 py-2 bg-[#2d6a4f] text-white rounded-xl text-sm font-medium hover:bg-[#1b4332] transition-colors"
+          className="mt-4 px-4 py-2 bg-[var(--mint)] text-white rounded-xl text-sm font-medium hover:bg-[#1b4332] transition-colors"
         >
           Thử lại
         </button>
@@ -466,7 +466,7 @@ export default function AcademicHubPage() {
       {/* 4-Year Academic OS Subsystem Quick Links */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
         <Link href="/academic">
-          <Badge className="bg-[#2d6a4f] text-white py-1.5 px-3 rounded-xl cursor-pointer">
+          <Badge className="bg-[var(--mint)] text-white py-1.5 px-3 rounded-xl cursor-pointer">
             🎓 Học kỳ & Môn học
           </Badge>
         </Link>
@@ -512,8 +512,8 @@ export default function AcademicHubPage() {
                   }}
                   className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all flex items-center space-x-2 whitespace-nowrap shadow-sm ${
                     isSelected
-                      ? "bg-[#2d6a4f] text-white shadow-[#2d6a4f]/20"
-                      : "bg-white dark:bg-[#18281d] text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#ebf4ee] dark:hover:bg-[#1e3425] border border-[#dbe7dd] dark:border-[#263d2e]"
+                      ? "bg-[var(--mint)] text-white shadow-[#2d6a4f]/20"
+                      : "bg-white dark:bg-[#18281d] text-[var(--text-subtle)] hover:bg-[#ebf4ee] dark:hover:bg-[#1e3425] border border-[var(--border)]"
                   }`}
                 >
                   <Calendar className="w-3.5 h-3.5" />
@@ -532,7 +532,7 @@ export default function AcademicHubPage() {
               setNewYearName(`Năm ${(years.length || 0) + 1}`);
               setShowAddYearModal(true);
             }}
-            className="px-3.5 py-2 rounded-2xl border border-dashed border-[#52b788] text-[#2d6a4f] dark:text-[#52b788] hover:bg-[#52b788]/10 text-xs font-semibold flex items-center space-x-1.5 transition-all whitespace-nowrap shrink-0"
+            className="px-3.5 py-2 rounded-2xl border border-dashed border-[#52b788] text-[var(--mint-dark)] hover:bg-[#52b788]/10 text-xs font-semibold flex items-center space-x-1.5 transition-all whitespace-nowrap shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Thêm năm học</span>
@@ -541,9 +541,9 @@ export default function AcademicHubPage() {
 
         {/* Current Year & Semesters Container */}
         {currentYear ? (
-          <div className="bg-white dark:bg-[#142318] rounded-3xl p-6 sm:p-8 border border-[#dbe7dd] dark:border-[#263d2e] shadow-sm space-y-6">
+          <div className="bg-white dark:bg-[#142318] rounded-3xl p-6 sm:p-8 border border-[var(--border)] shadow-sm space-y-6">
             {/* Semester Tabs Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#dbe7dd]/80 dark:border-[#263d2e]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
               <div className="flex items-center space-x-3 overflow-x-auto pb-1">
                 {currentYear.semesters.map((sem) => {
                   const isSelected = sem.id === currentSemester?.id;
@@ -553,8 +553,8 @@ export default function AcademicHubPage() {
                       onClick={() => setSelectedSemesterId(sem.id)}
                       className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all relative ${
                         isSelected
-                          ? "bg-[#ebf4ee] dark:bg-[#1e3425] text-[#2d6a4f] dark:text-[#74c69d]"
-                          : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22] dark:hover:text-white"
+                          ? "bg-[#ebf4ee] dark:bg-[#1e3425] text-[var(--mint-dark)] dark:text-[#74c69d]"
+                          : "text-[var(--text-subtle)] hover:text-[var(--text-ink)] dark:hover:text-white"
                       }`}
                     >
                       <div className="flex items-center space-x-1.5">
@@ -563,7 +563,7 @@ export default function AcademicHubPage() {
                           <CheckCircle2 className="w-3.5 h-3.5 text-[#52b788]" />
                         )}
                         {sem.status === "ACTIVE" && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#52b788]/20 text-[#2d6a4f] dark:text-[#74c69d]">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#52b788]/20 text-[var(--mint-dark)] dark:text-[#74c69d]">
                             Hiện tại
                           </span>
                         )}
@@ -577,7 +577,7 @@ export default function AcademicHubPage() {
                     setNewSemesterName(`Học kỳ ${(currentYear.semesters.length || 0) + 1}`);
                     setShowAddSemesterModal(true);
                   }}
-                  className="px-3 py-1.5 text-xs text-[#2d6a4f] dark:text-[#52b788] hover:underline font-semibold flex items-center space-x-1"
+                  className="px-3 py-1.5 text-xs text-[var(--mint-dark)] hover:underline font-semibold flex items-center space-x-1"
                 >
                   <Plus className="w-3 h-3" />
                   <span>Thêm học kỳ</span>
@@ -613,7 +613,7 @@ export default function AcademicHubPage() {
                       resetCourseForm();
                       setShowAddCourseModal(true);
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-[#2d6a4f] text-white text-xs font-semibold hover:bg-[#1b4332] transition-all flex items-center space-x-1.5 shadow-sm"
+                    className="px-3.5 py-2 rounded-xl bg-[var(--mint)] text-white text-xs font-semibold hover:bg-[#1b4332] transition-all flex items-center space-x-1.5 shadow-sm"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Thêm môn học</span>
@@ -624,33 +624,33 @@ export default function AcademicHubPage() {
 
             {/* Current Semester Summary Cards */}
             {currentSemester && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#f8fbf8] dark:bg-[#101b13] p-4 rounded-2xl border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[var(--bg-muted)] dark:bg-[#101b13] p-4 rounded-2xl border border-[var(--border)]">
                 <div>
-                  <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9]">
+                  <span className="text-[11px] font-medium text-[var(--text-subtle)]">
                     GPA Học kỳ (Hệ 4)
                   </span>
-                  <p className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] mt-0.5">
+                  <p className="text-lg font-bold text-[var(--text-ink)] mt-0.5">
                     {currentSemester.gpa4 !== null ? currentSemester.gpa4.toFixed(2) : "Đang học"}
                   </p>
                 </div>
                 <div>
-                  <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9]">
+                  <span className="text-[11px] font-medium text-[var(--text-subtle)]">
                     GPA Học kỳ (Hệ 10)
                   </span>
-                  <p className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] mt-0.5">
+                  <p className="text-lg font-bold text-[var(--text-ink)] mt-0.5">
                     {currentSemester.gpa10 !== null ? currentSemester.gpa10.toFixed(1) : "Đang học"}
                   </p>
                 </div>
                 <div>
-                  <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9]">
+                  <span className="text-[11px] font-medium text-[var(--text-subtle)]">
                     Số tín chỉ đăng ký
                   </span>
-                  <p className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] mt-0.5">
+                  <p className="text-lg font-bold text-[var(--text-ink)] mt-0.5">
                     {currentSemester.subjects.reduce((sum, s) => sum + (s.credits || 0), 0)} tín chỉ
                   </p>
                 </div>
                 <div>
-                  <span className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9]">
+                  <span className="text-[11px] font-medium text-[var(--text-subtle)]">
                     Trạng thái học kỳ
                   </span>
                   <div className="mt-0.5">
@@ -680,11 +680,11 @@ export default function AcademicHubPage() {
                 {currentSemester.subjects.map((sub) => (
                   <div
                     key={sub.id}
-                    className="p-5 rounded-2xl bg-white dark:bg-[#18281d] border border-[#dbe7dd] dark:border-[#263d2e] hover:border-[#52b788] transition-all flex flex-col justify-between group shadow-sm"
+                    className="p-5 rounded-2xl bg-white dark:bg-[#18281d] border border-[var(--border)] hover:border-[#52b788] transition-all flex flex-col justify-between group shadow-sm"
                   >
                     <div>
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#ebf4ee] dark:bg-[#203626] text-[#2d6a4f] dark:text-[#74c69d]">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#ebf4ee] dark:bg-[#203626] text-[var(--mint-dark)] dark:text-[#74c69d]">
                           {sub.code || "MÔN HỌC"}
                         </span>
                         <div className="flex items-center space-x-1">
@@ -699,21 +699,21 @@ export default function AcademicHubPage() {
                               setCourseGrade(sub.courseGrade !== null ? String(sub.courseGrade) : "");
                               setCourseStatus(sub.status || "ACTIVE");
                             }}
-                            className="p-1 rounded text-[#526b5c] dark:text-[#a3bda9] hover:text-[#2d6a4f] hover:bg-[#ebf4ee] dark:hover:bg-[#203626] transition-colors"
+                            className="p-1 rounded text-[var(--text-subtle)] hover:text-[var(--mint-dark)] hover:bg-[#ebf4ee] dark:hover:bg-[#203626] transition-colors"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
 
-                      <h3 className="font-bold text-base text-[#192e22] dark:text-[#f0f7f2] line-clamp-2">
+                      <h3 className="font-bold text-base text-[var(--text-ink)] line-clamp-2">
                         {sub.name}
                       </h3>
 
-                      <div className="mt-3 space-y-1.5 text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                      <div className="mt-3 space-y-1.5 text-xs text-[var(--text-subtle)]">
                         <div className="flex items-center justify-between">
                           <span>Số tín chỉ:</span>
-                          <span className="font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                          <span className="font-semibold text-[var(--text-ink)]">
                             {sub.credits} TC
                           </span>
                         </div>
@@ -733,22 +733,22 @@ export default function AcademicHubPage() {
                     </div>
 
                     {/* Grade Section */}
-                    <div className="mt-4 pt-3 border-t border-[#dbe7dd]/70 dark:border-[#263d2e] flex items-center justify-between">
+                    <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between">
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-[#526b5c] dark:text-[#a3bda9]">
+                        <span className="text-[10px] uppercase font-bold text-[var(--text-subtle)]">
                           Kết quả
                         </span>
                         <div className="flex items-baseline space-x-1.5">
-                          <span className="text-base font-bold text-[#2d6a4f] dark:text-[#74c69d]">
+                          <span className="text-base font-bold text-[var(--mint-dark)] dark:text-[#74c69d]">
                             {sub.courseGrade !== null ? sub.courseGrade.toFixed(1) : "—"}
                           </span>
                           {sub.letterGrade && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#2d6a4f] text-white">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[var(--mint)] text-white">
                               {sub.letterGrade}
                             </span>
                           )}
                           {sub.gradePoints !== null && (
-                            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+                            <span className="text-xs text-[var(--text-subtle)]">
                               ({sub.gradePoints.toFixed(1)}/4)
                             </span>
                           )}
@@ -769,12 +769,12 @@ export default function AcademicHubPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 border border-dashed border-[#dbe7dd] dark:border-[#263d2e] rounded-2xl space-y-3">
-                <BookOpen className="w-10 h-10 text-[#526b5c] dark:text-[#a3bda9] mx-auto opacity-50" />
-                <h4 className="text-sm font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+              <div className="text-center py-12 border border-dashed border-[var(--border)] rounded-2xl space-y-3">
+                <BookOpen className="w-10 h-10 text-[var(--text-subtle)] mx-auto opacity-50" />
+                <h4 className="text-sm font-semibold text-[var(--text-ink)]">
                   Chưa có môn học nào trong học kỳ này
                 </h4>
-                <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] max-w-sm mx-auto">
+                <p className="text-xs text-[var(--text-subtle)] max-w-sm mx-auto">
                   Hãy thêm các môn học bạn đã đăng ký để hệ thống tính toán tín chỉ và điểm GPA.
                 </p>
                 <button
@@ -782,7 +782,7 @@ export default function AcademicHubPage() {
                     resetCourseForm();
                     setShowAddCourseModal(true);
                   }}
-                  className="px-4 py-2 rounded-xl bg-[#2d6a4f] text-white text-xs font-semibold hover:bg-[#1b4332] transition-all inline-flex items-center space-x-1.5"
+                  className="px-4 py-2 rounded-xl bg-[var(--mint)] text-white text-xs font-semibold hover:bg-[#1b4332] transition-all inline-flex items-center space-x-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Thêm môn học đầu tiên</span>
@@ -791,10 +791,10 @@ export default function AcademicHubPage() {
             )}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white dark:bg-[#142318] rounded-3xl border border-[#dbe7dd] dark:border-[#263d2e] p-6">
-            <Calendar className="w-12 h-12 text-[#2d6a4f] mx-auto mb-3 opacity-60" />
+          <div className="text-center py-12 bg-white dark:bg-[#142318] rounded-3xl border border-[var(--border)] p-6">
+            <Calendar className="w-12 h-12 text-[var(--mint-dark)] mx-auto mb-3 opacity-60" />
             <h3 className="font-bold text-lg">Chưa thiết lập năm học</h3>
-            <p className="text-sm text-[#526b5c] dark:text-[#a3bda9] max-w-md mx-auto mt-1 mb-4">
+            <p className="text-sm text-[var(--text-subtle)] max-w-md mx-auto mt-1 mb-4">
               Bắt đầu tạo Năm 1 để quản lý toàn diện quá trình học tập 4 năm đại học của bạn.
             </p>
             <button
@@ -803,7 +803,7 @@ export default function AcademicHubPage() {
                 setNewYearName("Năm 1");
                 setShowAddYearModal(true);
               }}
-              className="px-5 py-2.5 rounded-2xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1b4332] transition-all"
+              className="px-5 py-2.5 rounded-2xl bg-[var(--mint)] text-white text-sm font-semibold hover:bg-[#1b4332] transition-all"
             >
               Khởi tạo Năm 1
             </button>
@@ -812,21 +812,21 @@ export default function AcademicHubPage() {
       </div>
 
       {/* 4-Year Transcript Table (Persistent Historical Record) */}
-      <div className="bg-white dark:bg-[#142318] rounded-3xl p-6 sm:p-8 border border-[#dbe7dd] dark:border-[#263d2e] shadow-sm space-y-4">
+      <div className="bg-white dark:bg-[#142318] rounded-3xl p-6 sm:p-8 border border-[var(--border)] shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
-              <Layers className="w-5 h-5 text-[#2d6a4f]" />
+            <h2 className="text-lg font-bold text-[var(--text-ink)] flex items-center space-x-2">
+              <Layers className="w-5 h-5 text-[var(--mint-dark)]" />
               <span>Bảng điểm tổng hợp 4 năm (Academic Transcript)</span>
             </h2>
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            <p className="text-xs text-[var(--text-subtle)]">
               Dữ liệu học thuật được bảo toàn xuyên suốt các học kỳ mà không bị reset.
             </p>
           </div>
           <Link
             href="/api/export?format=csv&entity=courses"
             target="_blank"
-            className="text-xs text-[#2d6a4f] dark:text-[#52b788] hover:underline font-semibold flex items-center space-x-1"
+            className="text-xs text-[var(--mint-dark)] hover:underline font-semibold flex items-center space-x-1"
           >
             <span>Xuất CSV bảng điểm</span>
             <ExternalLink className="w-3 h-3" />
@@ -835,7 +835,7 @@ export default function AcademicHubPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-[#f8fbf8] dark:bg-[#101b13] text-[#526b5c] dark:text-[#a3bda9] uppercase text-[10px] tracking-wider border-y border-[#dbe7dd] dark:border-[#263d2e]">
+            <thead className="bg-[var(--bg-muted)] dark:bg-[#101b13] text-[var(--text-subtle)] uppercase text-[10px] tracking-wider border-y border-[var(--border)]">
               <tr>
                 <th className="py-3 px-4">Năm học</th>
                 <th className="py-3 px-4">Học kỳ</th>
@@ -849,8 +849,8 @@ export default function AcademicHubPage() {
             <tbody className="divide-y divide-[#dbe7dd]/60 dark:divide-[#263d2e]">
               {years.flatMap((year) =>
                 year.semesters.map((sem) => (
-                  <tr key={sem.id} className="hover:bg-[#f8fbf8] dark:hover:bg-[#18281d] transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-[#192e22] dark:text-[#f0f7f2]">
+                  <tr key={sem.id} className="hover:bg-[var(--bg-muted)] dark:hover:bg-[#18281d] transition-colors">
+                    <td className="py-3.5 px-4 font-semibold text-[var(--text-ink)]">
                       {year.name}
                     </td>
                     <td className="py-3.5 px-4">{sem.name}</td>
@@ -858,10 +858,10 @@ export default function AcademicHubPage() {
                     <td className="py-3.5 px-4 text-center font-bold">
                       {sem.subjects.reduce((sum, s) => sum + (s.credits || 0), 0)} TC
                     </td>
-                    <td className="py-3.5 px-4 text-center font-semibold text-[#2d6a4f] dark:text-[#74c69d]">
+                    <td className="py-3.5 px-4 text-center font-semibold text-[var(--mint-dark)] dark:text-[#74c69d]">
                       {sem.gpa10 !== null ? sem.gpa10.toFixed(2) : "—"}
                     </td>
-                    <td className="py-3.5 px-4 text-center font-bold text-[#2d6a4f] dark:text-[#74c69d]">
+                    <td className="py-3.5 px-4 text-center font-bold text-[var(--mint-dark)] dark:text-[#74c69d]">
                       {sem.gpa4 !== null ? sem.gpa4.toFixed(2) : "—"}
                     </td>
                     <td className="py-3.5 px-4 text-center">
@@ -886,11 +886,11 @@ export default function AcademicHubPage() {
       {/* MODAL: Thêm Năm Học */}
       {showAddYearModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">Thêm Năm học mới</h3>
+          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[var(--border)] shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold text-[var(--text-ink)]">Thêm Năm học mới</h3>
             <form onSubmit={handleAddYear} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                   Tên năm học
                 </label>
                 <input
@@ -898,13 +898,13 @@ export default function AcademicHubPage() {
                   value={newYearName}
                   onChange={(e) => setNewYearName(e.target.value)}
                   placeholder="Ví dụ: Năm 3 (2025 - 2026)"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                   Thứ tự năm
                 </label>
                 <input
@@ -913,7 +913,7 @@ export default function AcademicHubPage() {
                   max={10}
                   value={newYearNumber}
                   onChange={(e) => setNewYearNumber(parseInt(e.target.value, 10))}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   required
                 />
               </div>
@@ -922,13 +922,13 @@ export default function AcademicHubPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddYearModal(false)}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[#526b5c] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[var(--text-subtle)] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
+                  className="px-5 py-2 rounded-xl bg-[var(--mint)] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
                 >
                   Tạo năm học
                 </button>
@@ -941,11 +941,11 @@ export default function AcademicHubPage() {
       {/* MODAL: Thêm Học Kỳ */}
       {showAddSemesterModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">Thêm Học kỳ mới</h3>
+          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[var(--border)] shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold text-[var(--text-ink)]">Thêm Học kỳ mới</h3>
             <form onSubmit={handleAddSemester} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                   Tên học kỳ
                 </label>
                 <input
@@ -953,19 +953,19 @@ export default function AcademicHubPage() {
                   value={newSemesterName}
                   onChange={(e) => setNewSemesterName(e.target.value)}
                   placeholder="Ví dụ: Học kỳ 2"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                   Loại học kỳ
                 </label>
                 <select
                   value={newSemesterType}
                   onChange={(e) => setNewSemesterType(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                 >
                   <option value="FALL">Học kỳ 1 (Thu)</option>
                   <option value="SPRING">Học kỳ 2 (Xuân)</option>
@@ -978,13 +978,13 @@ export default function AcademicHubPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddSemesterModal(false)}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[#526b5c] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[var(--text-subtle)] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
+                  className="px-5 py-2 rounded-xl bg-[var(--mint)] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
                 >
                   Tạo học kỳ
                 </button>
@@ -997,14 +997,14 @@ export default function AcademicHubPage() {
       {/* MODAL: Thêm / Sửa Môn Học & Nhập Điểm */}
       {(showAddCourseModal || showEditCourseModal) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-lg w-full p-6 border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-lg w-full p-6 border border-[var(--border)] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-bold text-[var(--text-ink)]">
               {showEditCourseModal ? "Cập nhật môn học & Nhập điểm" : "Thêm môn học vào học kỳ"}
             </h3>
 
             <form onSubmit={handleSaveCourse} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                   Tên môn học *
                 </label>
                 <input
@@ -1012,14 +1012,14 @@ export default function AcademicHubPage() {
                   value={courseName}
                   onChange={(e) => setCourseName(e.target.value)}
                   placeholder="Ví dụ: Cấu trúc dữ liệu và giải thuật"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                     Mã môn (Mã học phần)
                   </label>
                   <input
@@ -1027,12 +1027,12 @@ export default function AcademicHubPage() {
                     value={courseCode}
                     onChange={(e) => setCourseCode(e.target.value)}
                     placeholder="Ví dụ: IT3011"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                     Số tín chỉ
                   </label>
                   <input
@@ -1041,7 +1041,7 @@ export default function AcademicHubPage() {
                     max={12}
                     value={courseCredits}
                     onChange={(e) => setCourseCredits(parseInt(e.target.value, 10))}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                     required
                   />
                 </div>
@@ -1049,7 +1049,7 @@ export default function AcademicHubPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                     Giảng viên phụ trách
                   </label>
                   <input
@@ -1057,12 +1057,12 @@ export default function AcademicHubPage() {
                     value={courseLecturer}
                     onChange={(e) => setCourseLecturer(e.target.value)}
                     placeholder="TS. Nguyễn Văn A"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                     Phòng học / Giảng đường
                   </label>
                   <input
@@ -1070,20 +1070,20 @@ export default function AcademicHubPage() {
                     value={courseRoom}
                     onChange={(e) => setCourseRoom(e.target.value)}
                     placeholder="D9-401"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   />
                 </div>
               </div>
 
               {/* Grade & Status */}
-              <div className="p-4 rounded-2xl bg-[#f8fbf8] dark:bg-[#18281d] border border-[#dbe7dd]/80 dark:border-[#263d2e] space-y-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#2d6a4f] dark:text-[#74c69d]">
+              <div className="p-4 rounded-2xl bg-[var(--bg-muted)] dark:bg-[#18281d] border border-[var(--border)] space-y-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--mint-dark)] dark:text-[#74c69d]">
                   Kết quả học tập & Điểm số (Thang 10)
                 </span>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-medium text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                    <label className="text-xs font-medium text-[var(--text-subtle)] block mb-1">
                       Điểm tổng kết môn (Hệ 10)
                     </label>
                     <input
@@ -1094,21 +1094,21 @@ export default function AcademicHubPage() {
                       value={courseGrade}
                       onChange={(e) => setCourseGrade(e.target.value)}
                       placeholder="VD: 8.5"
-                      className="w-full px-3.5 py-2 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#101b13] text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                      className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-white dark:bg-[#101b13] text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                     />
-                    <p className="text-[10px] text-[#526b5c] mt-1">
+                    <p className="text-[10px] text-[var(--text-subtle)] mt-1">
                       Hệ thống tự quy đổi ra Điểm chữ (A, B+, B...) và Hệ 4.
                     </p>
                   </div>
 
                   <div>
-                    <label className="text-xs font-medium text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                    <label className="text-xs font-medium text-[var(--text-subtle)] block mb-1">
                       Trạng thái môn
                     </label>
                     <select
                       value={courseStatus}
                       onChange={(e) => setCourseStatus(e.target.value)}
-                      className="w-full px-3.5 py-2 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#101b13] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                      className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-white dark:bg-[#101b13] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                     >
                       <option value="ACTIVE">Đang học</option>
                       <option value="COMPLETED">Đã hoàn thành</option>
@@ -1126,13 +1126,13 @@ export default function AcademicHubPage() {
                     setShowAddCourseModal(false);
                     setShowEditCourseModal(null);
                   }}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[#526b5c] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[var(--text-subtle)] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
+                  className="px-5 py-2 rounded-xl bg-[var(--mint)] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
                 >
                   Lưu môn học
                 </button>
@@ -1145,17 +1145,17 @@ export default function AcademicHubPage() {
       {/* MODAL: Kết Chuyển Học Kỳ (Semester Transition) */}
       {showTransitionModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xl space-y-4">
-            <div className="flex items-center space-x-3 text-[#2d6a4f] dark:text-[#74c69d]">
+          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[var(--border)] shadow-2xl space-y-4">
+            <div className="flex items-center space-x-3 text-[var(--mint-dark)] dark:text-[#74c69d]">
               <Archive className="w-6 h-6" />
               <h3 className="text-lg font-bold">Kết chuyển & Chốt học kỳ</h3>
             </div>
 
-            <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] leading-relaxed">
+            <p className="text-xs text-[var(--text-subtle)] leading-relaxed">
               Bạn đang chốt học kỳ <strong>{showTransitionModal.name}</strong>. Hệ thống sẽ:
             </p>
 
-            <ul className="text-xs text-[#526b5c] dark:text-[#a3bda9] space-y-1.5 list-disc list-inside bg-[#f8fbf8] dark:bg-[#101b13] p-3.5 rounded-2xl border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+            <ul className="text-xs text-[var(--text-subtle)] space-y-1.5 list-disc list-inside bg-[var(--bg-muted)] dark:bg-[#101b13] p-3.5 rounded-2xl border border-[var(--border)]">
               <li>Tự động tính toán điểm GPA (Hệ 10 & Hệ 4) và số tín chỉ đạt được.</li>
               <li>Cập nhật tiến độ tốt nghiệp tổng 4 năm (Cumulative GPA).</li>
               <li>Chuyển trạng thái học kỳ thành <strong>COMPLETED</strong>.</li>
@@ -1165,19 +1165,19 @@ export default function AcademicHubPage() {
             </ul>
 
             <div className="space-y-3 pt-2">
-              <label className="flex items-center space-x-2 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] cursor-pointer">
+              <label className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-ink)] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={autoCreateNext}
                   onChange={(e) => setAutoCreateNext(e.target.checked)}
-                  className="rounded text-[#2d6a4f] focus:ring-[#52b788]"
+                  className="rounded text-[var(--mint-dark)] focus:ring-[#52b788]"
                 />
                 <span>Tự động khởi tạo học kỳ tiếp theo</span>
               </label>
 
               {autoCreateNext && (
                 <div>
-                  <label className="text-[11px] font-medium text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                  <label className="text-[11px] font-medium text-[var(--text-subtle)] block mb-1">
                     Tên học kỳ tiếp theo
                   </label>
                   <input
@@ -1185,7 +1185,7 @@ export default function AcademicHubPage() {
                     value={nextSemesterTitle}
                     onChange={(e) => setNextSemesterTitle(e.target.value)}
                     placeholder="Ví dụ: Học kỳ 2"
-                    className="w-full px-3 py-2 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-xs focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   />
                 </div>
               )}
@@ -1195,14 +1195,14 @@ export default function AcademicHubPage() {
               <button
                 type="button"
                 onClick={() => setShowTransitionModal(null)}
-                className="px-4 py-2 rounded-xl text-sm font-semibold text-[#526b5c] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-semibold text-[var(--text-subtle)] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
               >
                 Hủy
               </button>
               <button
                 type="button"
                 onClick={handleTransitionSemester}
-                className="px-5 py-2 rounded-xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
+                className="px-5 py-2 rounded-xl bg-[var(--mint)] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
               >
                 Xác nhận kết chuyển
               </button>
@@ -1214,14 +1214,14 @@ export default function AcademicHubPage() {
       {/* MODAL: Cấu hình mục tiêu chương trình đào tạo */}
       {showEditDegreeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <div className="bg-white dark:bg-[#142318] rounded-3xl max-w-md w-full p-6 border border-[var(--border)] shadow-2xl space-y-4">
+            <h3 className="text-lg font-bold text-[var(--text-ink)]">
               Cấu hình mục tiêu 4 năm đại học
             </h3>
 
             <form onSubmit={handleSaveDegree} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                   Chuyên ngành đào tạo
                 </label>
                 <input
@@ -1229,13 +1229,13 @@ export default function AcademicHubPage() {
                   value={editMajor}
                   onChange={(e) => setEditMajor(e.target.value)}
                   placeholder="Công nghệ Thông tin"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                   Trường đại học
                 </label>
                 <input
@@ -1243,13 +1243,13 @@ export default function AcademicHubPage() {
                   value={editUniversity}
                   onChange={(e) => setEditUniversity(e.target.value)}
                   placeholder="Đại học Bách Khoa"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                     Tổng tín chỉ yêu cầu
                   </label>
                   <input
@@ -1258,13 +1258,13 @@ export default function AcademicHubPage() {
                     max={250}
                     value={editTargetCredits}
                     onChange={(e) => setEditTargetCredits(parseInt(e.target.value, 10))}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] block mb-1">
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1">
                     Mục tiêu GPA (Hệ 4)
                   </label>
                   <input
@@ -1274,7 +1274,7 @@ export default function AcademicHubPage() {
                     max={4.0}
                     value={editTargetGpa}
                     onChange={(e) => setEditTargetGpa(parseFloat(e.target.value))}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-white dark:bg-[#18281d] text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788]"
                     required
                   />
                 </div>
@@ -1284,13 +1284,13 @@ export default function AcademicHubPage() {
                 <button
                   type="button"
                   onClick={() => setShowEditDegreeModal(false)}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[#526b5c] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-[var(--text-subtle)] hover:bg-gray-100 dark:hover:bg-[#1e3425] transition-colors"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
+                  className="px-5 py-2 rounded-xl bg-[var(--mint)] text-white text-sm font-semibold hover:bg-[#1b4332] transition-colors"
                 >
                   Lưu cấu hình
                 </button>

@@ -168,7 +168,7 @@ export default function PracticeReviewPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-medium text-[#526b5c] dark:text-[#a3bda9]">
+        <p className="text-sm font-medium text-[var(--text-subtle)]">
           Đang chuẩn bị danh sách ôn tập hôm nay...
         </p>
       </div>
@@ -181,22 +181,22 @@ export default function PracticeReviewPage() {
         <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950/60 rounded-3xl flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400 shadow-md">
           <Award className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-black text-[#192e22] dark:text-[#f0f7f2]">
+        <h1 className="text-3xl font-black text-[var(--text-ink)]">
           Hoàn thành xuất sắc phiên ôn tập!
         </h1>
-        <p className="text-[#526b5c] dark:text-[#a3bda9] max-w-md mx-auto text-sm sm:text-base leading-relaxed">
+        <p className="text-[var(--text-subtle)] max-w-md mx-auto text-sm sm:text-base leading-relaxed">
           {completedItems > 0
             ? `Bạn đã ôn tập ${completedItems} mục kiến thức. Kết quả đã được cập nhật vào Spaced Repetition và Thống kê giờ học (StudyRecord).`
             : "Hôm nay không còn mục nào đến hạn ôn tập. Bạn có thể thêm lỗi sai mới hoặc ôn luyện các môn học!"}
         </p>
 
         <div className="flex items-center justify-center gap-4 py-4">
-          <div className="p-4 bg-white dark:bg-[#17261c] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-xs min-w-[120px]">
-            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block font-bold">Kinh nghiệm</span>
+          <div className="p-4 bg-[var(--bg-surface)] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-xs min-w-[120px]">
+            <span className="text-xs text-[var(--text-subtle)] block font-bold">Kinh nghiệm</span>
             <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">+{earnedXp || 50} XP</span>
           </div>
-          <div className="p-4 bg-white dark:bg-[#17261c] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-xs min-w-[120px]">
-            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9] block font-bold">Đã ôn tập</span>
+          <div className="p-4 bg-[var(--bg-surface)] rounded-2xl border border-emerald-100 dark:border-[#263d2e] shadow-xs min-w-[120px]">
+            <span className="text-xs text-[var(--text-subtle)] block font-bold">Đã ôn tập</span>
             <span className="text-2xl font-black text-purple-600 dark:text-purple-400">
               {completedItems || reviewQueue.length} mục
             </span>
@@ -205,7 +205,7 @@ export default function PracticeReviewPage() {
 
         <div className="flex items-center justify-center gap-3 pt-4">
           <Link href="/practice">
-            <Button variant="outline" className="rounded-2xl font-bold border-[#dbe7dd] dark:border-[#263d2e]">
+            <Button variant="outline" className="rounded-2xl font-bold border-[var(--border)]">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Về Trung tâm Luyện tập
             </Button>
@@ -217,7 +217,7 @@ export default function PracticeReviewPage() {
               setIsFinished(false);
               fetchReviewItems();
             }}
-            className="bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl font-bold shadow-xs"
+            className="bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl font-bold shadow-xs"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Luyện tập tiếp
@@ -232,14 +232,14 @@ export default function PracticeReviewPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-20 animate-in fade-in duration-300">
       {/* Top Rounded Pill Bar matching LuyenTu reference screenshot 4 & 5 */}
-      <div className="rounded-full border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-[#17261c] px-5 py-3 flex items-center justify-between shadow-2xs">
+      <div className="rounded-full border-2 border-gray-300 dark:border-gray-700 bg-[var(--bg-surface)] px-5 py-3 flex items-center justify-between shadow-2xs">
         {/* Left: XP Coin badge + Counter */}
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/50 text-xs font-black">
             <Coins className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
             <span>+10 XP</span>
           </div>
-          <span className="text-xs font-extrabold text-[#192e22] dark:text-[#f0f7f2]">
+          <span className="text-xs font-extrabold text-[var(--text-ink)]">
             {currentIndex + 1} / {reviewQueue.length}
           </span>
         </div>
@@ -386,13 +386,13 @@ export default function PracticeReviewPage() {
         {!showAnswer ? (
           <Button
             onClick={() => setShowAnswer(true)}
-            className="w-full py-6 text-base font-extrabold bg-[#2d6a4f] hover:bg-[#1b4332] text-white rounded-2xl shadow-md cursor-pointer transition-all active:scale-[0.99]"
+            className="w-full py-6 text-base font-extrabold bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white rounded-2xl shadow-md cursor-pointer transition-all active:scale-[0.99]"
           >
             Hiện đáp án (Nhấn Space)
           </Button>
         ) : (
           <div className="space-y-3">
-            <span className="text-xs text-center font-bold text-[#526b5c] dark:text-[#a3bda9] block">
+            <span className="text-xs text-center font-bold text-[var(--text-subtle)] block">
               Bạn nhớ khái niệm này ở mức độ nào? (Nhấn phím 1 - 4)
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -400,7 +400,7 @@ export default function PracticeReviewPage() {
               <button
                 onClick={() => handleRate(1, false)}
                 disabled={submitting}
-                className="p-3.5 rounded-2xl border-2 border-rose-400 bg-white dark:bg-[#17261c] text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
+                className="p-3.5 rounded-2xl border-2 border-rose-400 bg-[var(--bg-surface)] text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
               >
                 <div className="flex items-center space-x-1">
                   <X className="w-4 h-4 stroke-[3]" />
@@ -413,7 +413,7 @@ export default function PracticeReviewPage() {
               <button
                 onClick={() => handleRate(2, true)}
                 disabled={submitting}
-                className="p-3.5 rounded-2xl border-2 border-amber-400 bg-white dark:bg-[#17261c] text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
+                className="p-3.5 rounded-2xl border-2 border-amber-400 bg-[var(--bg-surface)] text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
               >
                 <span>Khá khó (2)</span>
                 <span className="text-[10px] text-gray-400 font-normal">Cần ôn thêm</span>
@@ -423,7 +423,7 @@ export default function PracticeReviewPage() {
               <button
                 onClick={() => handleRate(3, true)}
                 disabled={submitting}
-                className="p-3.5 rounded-2xl border-2 border-sky-400 bg-white dark:bg-[#17261c] text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
+                className="p-3.5 rounded-2xl border-2 border-sky-400 bg-[var(--bg-surface)] text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/30 transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-2xs active:scale-95 cursor-pointer"
               >
                 <span>Đã nhớ (3)</span>
                 <span className="text-[10px] text-gray-400 font-normal">Khá ổn</span>
@@ -433,7 +433,7 @@ export default function PracticeReviewPage() {
               <button
                 onClick={() => handleRate(4, true)}
                 disabled={submitting}
-                className="p-3.5 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 cursor-pointer"
+                className="p-3.5 rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white transition-all font-extrabold text-sm flex flex-col items-center justify-center space-y-1 shadow-md active:scale-95 cursor-pointer"
               >
                 <div className="flex items-center space-x-1">
                   <Check className="w-4 h-4 stroke-[3]" />

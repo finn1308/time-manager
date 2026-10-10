@@ -156,13 +156,13 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
           <div className="flex items-center space-x-1">
             <button
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-              className="p-1.5 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-subtle)] cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-              className="p-1.5 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c] cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-subtle)] cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -221,7 +221,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                   onClick={() => setSelectedDay(d)}
                   className={`min-h-[52px] sm:min-h-[90px] p-1 sm:p-2 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                     isSelected
-                      ? "border-[#52b788] bg-[#d8ebe0]/30 dark:bg-[#1d3827]/40 ring-2 ring-[#52b788]/20"
+                      ? "border-[#52b788] bg-[var(--mint-bg)]/30 dark:bg-[#1d3827]/40 ring-2 ring-[#52b788]/20"
                       : isToday
                       ? "border-[#52b788]/60 bg-[#edf7f0]/40 dark:bg-[#16271c]"
                       : isCurrentMonth
@@ -241,7 +241,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                     </span>
 
                     {dayEvs.length > 0 && (
-                      <span className="text-[9px] sm:text-[10px] font-mono font-semibold px-1 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#203c2a] dark:text-[#a3bda9]">
+                      <span className="text-[9px] sm:text-[10px] font-mono font-semibold px-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#203c2a] dark:text-[#a3bda9]">
                         {dayEvs.length}
                       </span>
                     )}
@@ -262,7 +262,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                         );
                       })}
                       {dayEvs.length > 3 && (
-                        <span className="text-[7px] text-[#73927d] leading-none">+</span>
+                        <span className="text-[7px] text-[var(--text-muted)] leading-none">+</span>
                       )}
                     </div>
 
@@ -284,7 +284,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                         );
                       })}
                       {dayEvs.length > 2 && (
-                        <div className="text-[8px] text-[#73927d] pl-1">
+                        <div className="text-[8px] text-[var(--text-muted)] pl-1">
                           +{dayEvs.length - 2} buổi khác
                         </div>
                       )}
@@ -381,7 +381,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
                       </div>
                     )}
 
-                    <div className="font-mono text-[10px] text-[#73927d] mt-1">
+                    <div className="font-mono text-[10px] text-[var(--text-muted)] mt-1">
                       {(ev as any).isAllDay ? `Tự do trong ngày (${(ev as any).plannedDurationMinutes || 60}p)` : `${formatVN(new Date(ev.startTime), "HH:mm")} - ${formatVN(new Date(ev.endTime), "HH:mm")}`}
                     </div>
                   </div>
@@ -436,7 +436,7 @@ export function MonthView({ initialEvents = [], subjects = [], onEventsChange }:
           <span className="text-[#dbe7dd] dark:text-[#263d2e]">•</span>
           <div className="flex items-center space-x-1.5">
             <span className="text-[var(--text-subtle)]">Đạt: </span>
-            <span className="px-2 py-0.5 rounded-full font-bold bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1f3828] dark:text-[#74c69d]">
+            <span className="px-2 py-0.5 rounded-full font-bold bg-[var(--mint-bg)] text-[var(--mint-dark)] dark:bg-[#1f3828] dark:text-[#74c69d]">
               {monthProgressPct}%
             </span>
           </div>

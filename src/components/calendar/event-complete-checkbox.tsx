@@ -108,7 +108,7 @@ export function EventCompleteCheckbox({
         className={`${sizeClasses[size]} shrink-0 flex items-center justify-center border transition-all duration-200 ${
           completed
             ? "bg-[var(--mint)] border-[var(--mint)] dark:border-[#52b788] text-white shadow-xs"
-            : "bg-white dark:bg-[#1a2e21] border-[var(--mint-soft)] group-hover:border-[var(--mint)] group-hover:bg-[#eef5f0] dark:group-hover:bg-[#233d2c]"
+            : "bg-white dark:bg-[#1a2e21] border-[var(--mint-soft)] group-hover:border-[var(--mint)] group-hover:bg-[var(--mint-bg)] dark:group-hover:bg-[#233d2c]"
         }`}
       >
         {loading ? (

@@ -388,13 +388,13 @@ export default function HabitsPage() {
 
       {/* 2. Tabs Switcher: Thói quen & Kho huy hiệu */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-1 p-1 bg-[#eef5f0] dark:bg-[#142318] rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] w-fit">
+        <div className="flex items-center space-x-1 p-1 bg-[var(--mint-bg)] dark:bg-[#142318] rounded-2xl border border-[var(--border)] w-fit">
           <button
             onClick={() => setActiveTab("HABITS")}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
               activeTab === "HABITS"
-                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                ? "bg-[var(--mint)] text-white shadow-2xs"
+                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
             }`}
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -405,8 +405,8 @@ export default function HabitsPage() {
             onClick={() => setActiveTab("BADGES")}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-2 ${
               activeTab === "BADGES"
-                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                : "text-[#526b5c] dark:text-[#a3bda9] hover:text-[#192e22]"
+                ? "bg-[var(--mint)] text-white shadow-2xs"
+                : "text-[var(--text-subtle)] hover:text-[var(--text-ink)]"
             }`}
           >
             <Award className="w-3.5 h-3.5" />
@@ -417,7 +417,7 @@ export default function HabitsPage() {
         {activeTab === "HABITS" && (
           <Button
             onClick={() => handleOpenModal()}
-            className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-semibold space-x-1.5 shadow-2xs"
+            className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-semibold space-x-1.5 shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Thêm thói quen</span>
@@ -430,15 +430,15 @@ export default function HabitsPage() {
         <div className="space-y-4">
           {/* Week Navigator */}
           <div className="flex items-center justify-between px-2">
-            <div className="flex items-center space-x-2 text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
-              <Calendar className="w-4 h-4 text-[#2d6a4f]" />
+            <div className="flex items-center space-x-2 text-xs font-bold text-[var(--text-ink)]">
+              <Calendar className="w-4 h-4 text-[var(--mint-dark)]" />
               <span>
                 Tuần: {weekDays[0].date}/{weekDays[0].month} — {weekDays[6].date}/{weekDays[6].month}
               </span>
               {weekOffset !== 0 && (
                 <button
                   onClick={() => setWeekOffset(0)}
-                  className="ml-2 text-[11px] text-[#2d6a4f] hover:underline flex items-center space-x-1"
+                  className="ml-2 text-[11px] text-[var(--mint-dark)] hover:underline flex items-center space-x-1"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Về tuần này</span>
@@ -449,13 +449,13 @@ export default function HabitsPage() {
             <div className="flex items-center space-x-1">
               <button
                 onClick={() => setWeekOffset((p) => p - 1)}
-                className="w-8 h-8 rounded-full border border-[#dbe7dd] dark:border-[#263d2e] flex items-center justify-center hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c]"
+                className="w-8 h-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:bg-[var(--mint-soft)] text-[var(--text-subtle)]"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setWeekOffset((p) => p + 1)}
-                className="w-8 h-8 rounded-full border border-[#dbe7dd] dark:border-[#263d2e] flex items-center justify-center hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#526b5c]"
+                className="w-8 h-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:bg-[var(--mint-soft)] text-[var(--text-subtle)]"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -463,9 +463,9 @@ export default function HabitsPage() {
           </div>
 
           {/* Matrix Card */}
-          <div className="bg-white dark:bg-[#17261c] rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] shadow-2xs overflow-hidden">
+          <div className="bg-[var(--bg-surface)] rounded-[28px] border border-[var(--border)] shadow-2xs overflow-hidden">
             {/* Header row */}
-            <div className="grid grid-cols-12 gap-2 p-4 border-b border-[#dbe7dd]/80 dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#132217] text-xs font-bold text-[#526b5c] dark:text-[#a3bda9]">
+            <div className="grid grid-cols-12 gap-2 p-4 border-b border-[var(--border)] bg-[var(--bg-muted)] text-xs font-bold text-[var(--text-subtle)]">
               <div className="col-span-5 md:col-span-5 flex items-center space-x-2">
                 <span>Thói quen</span>
               </div>
@@ -475,8 +475,8 @@ export default function HabitsPage() {
                     key={d.dateKey}
                     className={`flex flex-col items-center py-1 rounded-xl ${
                       d.isToday
-                        ? "bg-[#2d6a4f] text-white font-bold"
-                        : "text-[#526b5c] dark:text-[#a3bda9]"
+                        ? "bg-[var(--mint)] text-white font-bold"
+                        : "text-[var(--text-subtle)]"
                     }`}
                   >
                     <span className="text-[10px] uppercase">{d.name}</span>
@@ -507,7 +507,7 @@ export default function HabitsPage() {
                       </div>
                       <div className="truncate">
                         <div className="flex items-center space-x-2 truncate">
-                          <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
+                          <span className="text-xs font-bold text-[var(--text-ink)] truncate">
                             {habit.title}
                           </span>
                           {habit.subject && (
@@ -523,7 +523,7 @@ export default function HabitsPage() {
                           )}
                         </div>
 
-                        <div className="flex items-center space-x-2 text-[10px] text-[#73927d] dark:text-[#8ba393]">
+                        <div className="flex items-center space-x-2 text-[10px] text-[var(--text-muted)]">
                           <span className="flex items-center space-x-0.5 text-amber-600 dark:text-amber-400 font-semibold">
                             <Flame className="w-3 h-3 fill-current" />
                             <span>{habit.streak}d</span>
@@ -544,8 +544,8 @@ export default function HabitsPage() {
                             onClick={() => handleToggle(habit.id, d.dateKey)}
                             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                               isDone
-                                ? "bg-[#2d6a4f] text-white shadow-2xs scale-105"
-                                : "border-2 border-[#dbe7dd] dark:border-[#263d2e] hover:border-[#52b788] text-transparent hover:text-[#52b788]/40"
+                                ? "bg-[var(--mint)] text-white shadow-2xs scale-105"
+                                : "border-2 border-[var(--border)] hover:border-[#52b788] text-transparent hover:text-[#52b788]/40"
                             }`}
                             title={`${habit.title} (${d.name} ${d.date}/${d.month}) - ${isDone ? "Đã làm" : "Chưa làm"}`}
                           >
@@ -560,18 +560,18 @@ export default function HabitsPage() {
 
               {habits.length === 0 && !loading && (
                 <div className="py-12 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] flex items-center justify-center mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
-                  <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                  <h3 className="text-sm font-bold text-[var(--text-ink)]">
                     Chưa có thói quen nào
                   </h3>
-                  <p className="text-xs text-[#73927d] max-w-sm mx-auto">
+                  <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto">
                     Tạo thói quen học tập hàng ngày để rèn luyện tính kỷ luật và nhận điểm kinh nghiệm XP!
                   </p>
                   <Button
                     onClick={() => handleOpenModal()}
-                    className="rounded-2xl bg-[#2d6a4f] text-white text-xs font-semibold"
+                    className="rounded-2xl bg-[var(--mint)] text-white text-xs font-semibold"
                   >
                     <Plus className="w-3.5 h-3.5 mr-1.5" />
                     Thêm thói quen đầu tiên
@@ -600,8 +600,8 @@ export default function HabitsPage() {
                 onClick={() => setBadgeCategory(cat.id)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
                   badgeCategory === cat.id
-                    ? "bg-[#2d6a4f] text-white"
-                    : "bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-[#526b5c] hover:bg-[#f4f8f5]"
+                    ? "bg-[var(--mint)] text-white"
+                    : "bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                 }`}
               >
                 {cat.label}
@@ -620,7 +620,7 @@ export default function HabitsPage() {
                   className={`p-5 rounded-[26px] border transition-all ${
                     isUnlocked
                       ? "bg-gradient-to-br from-[#ffffff] to-[#f4f8f5] dark:from-[#17261c] dark:to-[#122016] border-[#52b788]/60 shadow-xs"
-                      : "bg-white/60 dark:bg-[#17261c]/60 border-[#dbe7dd] dark:border-[#263d2e] opacity-70"
+                      : "bg-white/60 dark:bg-[#17261c]/60 border-[var(--border)] opacity-70"
                   }`}
                 >
                   <div className="flex items-start space-x-4">
@@ -628,7 +628,7 @@ export default function HabitsPage() {
                       className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
                         isUnlocked
                           ? "bg-gradient-to-tr from-[#2d6a4f] to-[#52b788] text-white shadow-sm"
-                          : "bg-[#eef5f0] dark:bg-[#1d3024] text-[#8ba393]"
+                          : "bg-[var(--mint-bg)] text-[#8ba393]"
                       }`}
                     >
                       {badge.icon === "Flame" && <Flame className="w-6 h-6" />}
@@ -646,32 +646,32 @@ export default function HabitsPage() {
 
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                        <h4 className="text-xs font-bold text-[var(--text-ink)]">
                           {badge.name}
                         </h4>
                         {isUnlocked && (
-                          <span className="text-[10px] font-bold text-[#2d6a4f] dark:text-[#52b788] bg-[#d8ebe0] dark:bg-[#1d3827] px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-[var(--mint-dark)] bg-[var(--mint-bg)] px-2 py-0.5 rounded-full">
                             Đạt được
                           </span>
                         )}
                       </div>
 
-                      <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] leading-tight">
+                      <p className="text-[11px] text-[var(--text-subtle)] leading-tight">
                         {badge.description}
                       </p>
 
                       {/* Progress bar */}
                       <div className="pt-2 space-y-1">
-                        <div className="flex justify-between text-[10px] font-medium text-[#73927d]">
+                        <div className="flex justify-between text-[10px] font-medium text-[var(--text-muted)]">
                           <span>Tiến độ</span>
                           <span>
                             {badge.currentProgress} / {badge.maxProgress}
                           </span>
                         </div>
-                        <div className="w-full h-1.5 bg-[#eef5f0] dark:bg-[#1d3024] rounded-full overflow-hidden">
+                        <div className="w-full h-1.5 bg-[var(--mint-bg)] rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-300 ${
-                              isUnlocked ? "bg-[#2d6a4f]" : "bg-[#8ba393]"
+                              isUnlocked ? "bg-[var(--mint)]" : "bg-[#8ba393]"
                             }`}
                             style={{ width: `${badge.progressPercent}%` }}
                           />
@@ -688,16 +688,16 @@ export default function HabitsPage() {
 
       {/* 5. Create / Edit Habit Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent onClose={() => setIsModalOpen(false)} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-2xl">
+        <DialogContent onClose={() => setIsModalOpen(false)} className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-2xl">
           <form onSubmit={handleSaveHabit} className="space-y-4">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+              <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
                 {editingHabit ? "Chỉnh sửa thói quen" : "Tạo thói quen mới"}
               </DialogTitle>
             </DialogHeader>
 
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Tên thói quen *
               </label>
               <Input
@@ -706,30 +706,30 @@ export default function HabitsPage() {
                 placeholder="VD: Đọc sách 20 phút, Học từ vựng, Ngồi thiền..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="rounded-2xl border-[#dbe7dd] text-xs h-10"
+                className="rounded-2xl border-[var(--border)] text-xs h-10"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Ghi chú hoặc mục tiêu cụ thể
               </label>
               <Input
                 placeholder="VD: Đọc ít nhất 10 trang trước khi ngủ..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="rounded-2xl border-[#dbe7dd] text-xs h-9"
+                className="rounded-2xl border-[var(--border)] text-xs h-9"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
                 Môn học liên quan (tùy chọn)
               </label>
               <select
                 value={subjectId}
                 onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 text-xs text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 text-xs text-[var(--text-ink)]"
               >
                 <option value="">(Không gắn môn học)</option>
                 {subjects.map((s) => (
@@ -742,7 +742,7 @@ export default function HabitsPage() {
 
             {/* Target Days selector */}
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1.5">
                 Các ngày thực hiện trong tuần
               </label>
               <div className="flex items-center space-x-1.5">
@@ -761,8 +761,8 @@ export default function HabitsPage() {
                     onClick={() => toggleTargetDay(d.id)}
                     className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       targetDays.includes(d.id)
-                        ? "bg-[#2d6a4f] text-white shadow-2xs"
-                        : "bg-[#eef5f0] dark:bg-[#1d3024] text-[#73927d]"
+                        ? "bg-[var(--mint)] text-white shadow-2xs"
+                        : "bg-[var(--mint-bg)] text-[var(--text-muted)]"
                     }`}
                   >
                     {d.label}
@@ -773,7 +773,7 @@ export default function HabitsPage() {
 
             {/* Color selector */}
             <div>
-              <label className="block text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] mb-1.5">
+              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1.5">
                 Màu sắc nhận diện
               </label>
               <div className="flex items-center space-x-2">
@@ -814,7 +814,7 @@ export default function HabitsPage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold"
+                className="rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold"
               >
                 {saving ? "Đang lưu..." : "Lưu thói quen"}
               </Button>

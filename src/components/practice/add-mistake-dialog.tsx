@@ -77,9 +77,9 @@ export function AddMistakeDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+      <DialogContent className="max-w-lg rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
+          <DialogTitle className="text-lg font-bold text-[var(--text-ink)] flex items-center space-x-2">
             <span className="p-2 rounded-xl bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400">
               <AlertCircle className="w-5 h-5" />
             </span>
@@ -95,7 +95,7 @@ export function AddMistakeDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#526b5c] dark:text-[#a3bda9]">
+            <label className="text-xs font-bold text-[var(--text-subtle)]">
               Câu hỏi / Bài toán / Khái niệm sai *
             </label>
             <Input
@@ -103,7 +103,7 @@ export function AddMistakeDialog({
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="VD: Đạo hàm của hàm số y = ln(x) là gì?"
-              className="rounded-xl border-[#dbe7dd] dark:border-[#263d2e]"
+              className="rounded-xl border-[var(--border)]"
             />
           </div>
 
@@ -136,13 +136,13 @@ export function AddMistakeDialog({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#526b5c] dark:text-[#a3bda9]">
+              <label className="text-xs font-bold text-[var(--text-subtle)]">
                 Môn học liên quan
               </label>
               <select
                 value={subjectId}
                 onChange={(e) => setSubjectId(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full text-xs p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-ink)]"
               >
                 <option value="">-- Chọn môn học --</option>
                 {subjects.map((s) => (
@@ -154,13 +154,13 @@ export function AddMistakeDialog({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#526b5c] dark:text-[#a3bda9]">
+              <label className="text-xs font-bold text-[var(--text-subtle)]">
                 Phân loại nguyên nhân lỗi
               </label>
               <select
                 value={errorType}
                 onChange={(e) => setErrorType(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-[#192e22] dark:text-[#f0f7f2]"
+                className="w-full text-xs p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-ink)]"
               >
                 {Object.entries(errorTypeLabels).map(([k, v]) => (
                   <option key={k} value={k}>
@@ -172,14 +172,14 @@ export function AddMistakeDialog({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#526b5c] dark:text-[#a3bda9]">
+            <label className="text-xs font-bold text-[var(--text-subtle)]">
               Giải thích & Ghi chú để tránh lặp lại
             </label>
             <Input
               value={explanation}
               onChange={(e) => setExplanation(e.target.value)}
               placeholder="VD: Đạo hàm ln(u) = u'/u, với u = x thì u' = 1 nên kết quả là 1/x..."
-              className="rounded-xl border-[#dbe7dd] dark:border-[#263d2e]"
+              className="rounded-xl border-[var(--border)]"
             />
           </div>
 

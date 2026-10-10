@@ -17,7 +17,7 @@ export function PracticePinnedCard({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center space-x-2 text-sm font-extrabold text-[#192e22] dark:text-[#f0f7f2]">
+      <div className="flex items-center space-x-2 text-sm font-extrabold text-[var(--text-ink)]">
         <Pin className="w-4 h-4 text-rose-500 fill-rose-500" />
         <span>Lộ trình & Chế độ đã ghim</span>
       </div>
@@ -25,7 +25,7 @@ export function PracticePinnedCard({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Pinned Card with Amber border matching LuyenTu reference screenshot */}
         <Link href="/practice/review" className="block group">
-          <div className="p-5 rounded-[26px] bg-white dark:bg-[#17261c] border-2 border-amber-400 hover:border-amber-500 shadow-sm hover:shadow-md transition-all relative flex flex-col justify-between h-full">
+          <div className="p-5 rounded-[26px] bg-[var(--bg-surface)] border-2 border-amber-400 hover:border-amber-500 shadow-sm hover:shadow-md transition-all relative flex flex-col justify-between h-full">
             {/* Top row */}
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -37,10 +37,10 @@ export function PracticePinnedCard({
                 </div>
               </div>
 
-              <h3 className="text-base font-extrabold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+              <h3 className="text-base font-extrabold text-[var(--text-ink)] group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
                 Ôn tập tổng hợp hôm nay
               </h3>
-              <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1 line-clamp-2">
+              <p className="text-xs text-[var(--text-subtle)] mt-1 line-clamp-2">
                 Tổng hợp flashcards, câu làm sai và khái niệm đến hạn trong 1 phiên tập trung.
               </p>
 
@@ -57,7 +57,7 @@ export function PracticePinnedCard({
 
             {/* Bottom Progress Bar */}
             <div className="mt-5 pt-3 border-t border-gray-100 dark:border-gray-800/60">
-              <div className="flex items-center justify-between text-[11px] font-bold text-[#526b5c] dark:text-[#a3bda9] mb-1.5">
+              <div className="flex items-center justify-between text-[11px] font-bold text-[var(--text-subtle)] mb-1.5">
                 <span>Tiến độ ôn</span>
                 <span>{percent}%</span>
               </div>

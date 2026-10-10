@@ -143,7 +143,7 @@ export function PracticeCatalogGrid({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <h3 className="text-base font-extrabold text-[#192e22] dark:text-[#f0f7f2]">
+          <h3 className="text-base font-extrabold text-[var(--text-ink)]">
             Chế độ luyện tập & Môn học
           </h3>
           <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
@@ -153,12 +153,12 @@ export function PracticeCatalogGrid({
       </div>
 
       {totalVisible === 0 ? (
-        <div className="p-12 rounded-[28px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] text-center space-y-3">
+        <div className="p-12 rounded-[28px] bg-[var(--bg-surface)] border border-[var(--border)] text-center space-y-3">
           <BookOpen className="w-10 h-10 text-gray-400 mx-auto stroke-[1.5]" />
-          <h4 className="text-base font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h4 className="text-base font-bold text-[var(--text-ink)]">
             Không tìm thấy mục luyện tập phù hợp
           </h4>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] max-w-sm mx-auto">
+          <p className="text-xs text-[var(--text-subtle)] max-w-sm mx-auto">
             Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm để khám phá các bài luyện tập khác.
           </p>
         </div>
@@ -170,7 +170,7 @@ export function PracticeCatalogGrid({
             return (
               <Link key={mod.id} href={mod.href} className="block group">
                 <div
-                  className={`p-5 rounded-[26px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] ${mod.borderHover} shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-full relative`}
+                  className={`p-5 rounded-[26px] bg-[var(--bg-surface)] border border-[var(--border)] ${mod.borderHover} shadow-2xs hover:shadow-md transition-all flex flex-col justify-between h-full relative`}
                 >
                   <div>
                     {/* Top row: Icon & Badge */}
@@ -189,10 +189,10 @@ export function PracticeCatalogGrid({
                       )}
                     </div>
 
-                    <h4 className="text-base font-extrabold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-[#2d6a4f] dark:group-hover:text-[#52b788] transition-colors">
+                    <h4 className="text-base font-extrabold text-[var(--text-ink)] group-hover:text-[var(--mint-dark)] dark:group-hover:text-[#52b788] transition-colors">
                       {mod.title}
                     </h4>
-                    <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1.5 leading-relaxed line-clamp-2">
+                    <p className="text-xs text-[var(--text-subtle)] mt-1.5 leading-relaxed line-clamp-2">
                       {mod.description}
                     </p>
 
@@ -206,7 +206,7 @@ export function PracticeCatalogGrid({
 
                   {/* Bottom Progress Bar matching LuyenTu */}
                   <div className="mt-5 pt-3 border-t border-gray-100 dark:border-gray-800/80">
-                    <div className="flex items-center justify-between text-[11px] font-bold text-[#526b5c] dark:text-[#a3bda9] mb-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-[var(--text-subtle)] mb-1.5">
                       <span>Tiến độ hoàn thành</span>
                       <span>{mod.progress}%</span>
                     </div>
@@ -232,7 +232,7 @@ export function PracticeCatalogGrid({
               return (
                 <div
                   key={sub.id}
-                  className="p-5 rounded-[26px] bg-white dark:bg-[#17261c] border border-[#dbe7dd] dark:border-[#263d2e] hover:border-emerald-400 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group relative"
+                  className="p-5 rounded-[26px] bg-[var(--bg-surface)] border border-[var(--border)] hover:border-emerald-400 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group relative"
                 >
                   <div>
                     {/* Header */}
@@ -267,10 +267,10 @@ export function PracticeCatalogGrid({
                       </button>
                     </div>
 
-                    <h4 className="text-base font-extrabold text-[#192e22] dark:text-[#f0f7f2] group-hover:text-emerald-600 transition-colors">
+                    <h4 className="text-base font-extrabold text-[var(--text-ink)] group-hover:text-emerald-600 transition-colors">
                       {sub.name}
                     </h4>
-                    <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-1">
+                    <p className="text-xs text-[var(--text-subtle)] mt-1">
                       Mã môn: <strong className="font-mono">{sub.code || "CHUNG"}</strong> • Luyện tập và ghi nhận thời gian thực tế
                     </p>
 
@@ -291,7 +291,7 @@ export function PracticeCatalogGrid({
                   <div className="mt-5 pt-3 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-between">
                     <Link
                       href={`/subjects`}
-                      className="text-xs font-bold text-[#2d6a4f] dark:text-[#52b788] hover:underline flex items-center space-x-1"
+                      className="text-xs font-bold text-[var(--mint-dark)] hover:underline flex items-center space-x-1"
                     >
                       <span>Xem chi tiết môn học</span>
                       <ArrowRight className="w-3.5 h-3.5" />

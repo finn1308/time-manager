@@ -79,7 +79,7 @@ export function DailyAiBriefing() {
               <Sparkles className="w-3 h-3 mr-1 inline" />
               DAILY AI BRIEFING
             </Badge>
-            <span className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+            <span className="text-xs text-[var(--text-subtle)]">
               {new Date().toLocaleDateString("vi-VN", {
                 weekday: "long",
                 day: "numeric",
@@ -88,11 +88,11 @@ export function DailyAiBriefing() {
             </span>
           </div>
 
-          <h2 className="text-lg sm:text-xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <h2 className="text-lg sm:text-xl font-bold text-[var(--text-ink)]">
             {getGreeting()} Kế hoạch học tập tối ưu hôm nay
           </h2>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[#526b5c] dark:text-[#a3bda9]">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[var(--text-subtle)]">
             <span className="flex items-center gap-1">
               <Award className="w-3.5 h-3.5 text-emerald-600" />
               {data.dueReviewsCount} mục cần ôn tập

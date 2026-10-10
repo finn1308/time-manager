@@ -36,7 +36,7 @@ export default async function SkillRoadmapPage({ params }: { params: { id: strin
   }
 
   return (
-    <div className="flex-1 bg-[#f8fbf8] dark:bg-[#132217] overflow-y-auto">
+    <div className="flex-1 bg-[var(--bg-muted)] overflow-y-auto">
       <RoadmapView initialSkill={skill} />
     </div>
   );
