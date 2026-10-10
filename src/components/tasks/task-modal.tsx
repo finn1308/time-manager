@@ -241,17 +241,58 @@ export function TaskModal({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[var(--text-ink)] mb-1">
-                Dự kiến (phút)
-              </label>
-              <Input
-                type="number"
-                min={5}
-                step={5}
-                value={estimatedMinutes}
-                onChange={(e) => setEstimatedMinutes(parseInt(e.target.value, 10) || 60)}
-                className="rounded-2xl border-[var(--border)] text-xs"
-              />
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-[var(--text-ink)]">
+                  Dự kiến (phút)
+                </label>
+                <span className="text-[11px] font-mono font-bold text-[var(--mint-dark)]">
+                  {estimatedMinutes} phút
+                </span>
+              </div>
+              <div className="relative">
+                <Input
+                  type="number"
+                  min={1}
+                  max={1440}
+                  step={1}
+                  value={estimatedMinutesInput}
+                  onChange={(e) => {
+                    setEstimatedMinutesInput(e.target.value);
+                    const parsed = parseInt(e.target.value, 10);
+                    if (!isNaN(parsed) && parsed > 0) setEstimatedMinutes(parsed);
+                  }}
+                  onBlur={() => {
+                    const parsed = parseInt(estimatedMinutesInput, 10);
+                    const clamped = Math.max(1, Math.min(1440, isNaN(parsed) ? estimatedMinutes : parsed));
+                    setEstimatedMinutes(clamped);
+                    setEstimatedMinutesInput(String(clamped));
+                  }}
+                  className="rounded-2xl border-[var(--border)] text-xs font-mono font-bold pr-10"
+                  placeholder="VD: 28"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-[var(--text-subtle)] pointer-events-none">
+                  phút
+                </span>
+              </div>
+              <div className="flex items-center gap-1 flex-wrap pt-1.5">
+                {[15, 25, 28, 30, 45, 60, 90].map((mins) => (
+                  <button
+                    key={mins}
+                    type="button"
+                    onClick={() => {
+                      setEstimatedMinutes(mins);
+                      setEstimatedMinutesInput(String(mins));
+                    }}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-colors cursor-pointer ${
+                      estimatedMinutes === mins
+                        ? "bg-[var(--mint)] text-white border-[var(--mint)]"
+                        : "bg-[var(--bg-muted)] border-[var(--border)] text-[var(--text-subtle)] hover:border-[var(--mint)]"
+                    }`}
+                  >
+                    {mins === 25 ? "25p (Pomo)" : mins === 28 ? "28p" : `${mins}p`}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
