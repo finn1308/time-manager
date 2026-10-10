@@ -41,6 +41,43 @@ import { usePipTimer } from "../timer/pip-timer-provider";
 import { EventCompleteCheckbox } from "./event-complete-checkbox";
 
 import { toast } from "sonner";
+
+function addMinutesToTimeString(timeStr: string, minutes: number): string {
+  if (!timeStr || !timeStr.includes(":")) return "";
+  const [hStr, mStr] = timeStr.split(":");
+  const h = parseInt(hStr, 10);
+  const m = parseInt(mStr, 10);
+  if (isNaN(h) || isNaN(m)) return "";
+  let total = h * 60 + m + minutes;
+  total = (total % 1440 + 1440) % 1440;
+  const newH = Math.floor(total / 60);
+  const newM = total % 60;
+  return `${String(newH).padStart(2, "0")}:${String(newM).padStart(2, "0")}`;
+}
+
+function calcMinutesBetweenTimes(startStr: string, endStr: string): number {
+  if (!startStr || !endStr || !startStr.includes(":") || !endStr.includes(":")) return 60;
+  const [sh, sm] = startStr.split(":").map((v) => parseInt(v, 10));
+  const [eh, em] = endStr.split(":").map((v) => parseInt(v, 10));
+  if (isNaN(sh) || isNaN(sm) || isNaN(eh) || isNaN(em)) return 60;
+  let diff = (eh * 60 + em) - (sh * 60 + sm);
+  if (diff <= 0) diff += 1440;
+  return diff;
+}
+
+function formatDurationLabelVN(minutes: number): string {
+  if (!minutes || minutes <= 0) return "0 phút";
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h > 0 && m > 0) {
+    return `${h} giờ ${m} phút (${minutes} phút)`;
+  }
+  if (h > 0) {
+    return `${h} giờ (${minutes} phút)`;
+  }
+  return `${minutes} phút`;
+}
+
 interface EventModalProps {
   open: boolean;
   onClose: () => void;
