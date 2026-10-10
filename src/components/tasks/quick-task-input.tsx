@@ -60,10 +60,10 @@ export function QuickTaskInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-2.5 sm:p-3 shadow-2xs transition-all focus-within:border-[#2d6a4f] focus-within:shadow-sm"
+      className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-surface)] p-2.5 sm:p-3 shadow-2xs transition-all focus-within:border-[var(--mint)] focus-within:shadow-sm"
     >
       <div className="flex items-center space-x-2">
-        <div className="w-7 h-7 rounded-full bg-[#eef5f0] dark:bg-[#1d3024] text-[#2d6a4f] dark:text-[#52b788] flex items-center justify-center shrink-0">
+        <div className="w-7 h-7 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] flex items-center justify-center shrink-0">
           <Plus className="w-4 h-4" />
         </div>
 
@@ -87,7 +87,7 @@ export function QuickTaskInput({
           type="submit"
           size="sm"
           disabled={!title.trim() || isSubmitting}
-          className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold px-3.5 h-8 shrink-0 cursor-pointer shadow-2xs active:scale-95 transition-all"
+          className="rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold px-3.5 h-8 shrink-0 cursor-pointer shadow-2xs active:scale-95 transition-all"
         >
           <Send className="w-3.5 h-3.5 mr-1" />
           <span>{isSubmitting ? "Lưu..." : "Thêm"}</span>
@@ -96,13 +96,13 @@ export function QuickTaskInput({
 
       {/* Quick configuration pills when active */}
       {showOptions && (
-        <div className="mt-2.5 pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] flex items-center justify-between gap-2 flex-wrap text-xs">
+        <div className="mt-2.5 pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e] flex items-center justify-between gap-2 flex-wrap text-xs">
           <div className="flex items-center space-x-2 flex-wrap gap-y-1.5">
             {/* Subject Selector */}
             <select
               value={subjectId || ""}
               onChange={(e) => setSubjectId(e.target.value || null)}
-              className="rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#132217] px-2.5 py-1 text-[11px] font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-ink)] focus:outline-none"
             >
               <option value="">Chung (Không môn)</option>
               {subjects.map((sub) => (
@@ -116,7 +116,7 @@ export function QuickTaskInput({
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as any)}
-              className="rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#132217] px-2.5 py-1 text-[11px] font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-ink)] focus:outline-none"
             >
               <option value="MEDIUM">Ưu tiên: Trung bình</option>
               <option value="HIGH">Ưu tiên: Cao ⚡</option>
@@ -128,7 +128,7 @@ export function QuickTaskInput({
             <select
               value={estimatedMinutes}
               onChange={(e) => setEstimatedMinutes(parseInt(e.target.value, 10))}
-              className="rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#132217] px-2.5 py-1 text-[11px] font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none"
+              className="rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-ink)] focus:outline-none"
             >
               <option value={15}>15 phút</option>
               <option value={30}>30 phút</option>
@@ -146,7 +146,7 @@ export function QuickTaskInput({
             className={`flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[11px] font-semibold transition-colors cursor-pointer ${
               isImportant
                 ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
-                : "text-[#73927d] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024]"
+                : "text-[var(--text-muted)] hover:bg-[var(--mint-soft)]"
             }`}
           >
             <Star className={`w-3.5 h-3.5 ${isImportant ? "fill-amber-500 text-amber-500" : ""}`} />

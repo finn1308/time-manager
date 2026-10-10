@@ -73,7 +73,7 @@ export function TaskCard({
       case "LOW":
         return <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 font-medium text-[10px]">Thấp</span>;
       default:
-        return <span className="px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#86e2a8] font-semibold text-[10px]">Trung bình</span>;
+        return <span className="px-2 py-0.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] font-semibold text-[10px]">Trung bình</span>;
     }
   };
 
@@ -85,10 +85,10 @@ export function TaskCard({
   return (
     <Card className={`rounded-[22px] border transition-all p-3.5 shadow-2xs group hover:shadow-sm ${
       task.isCompleted
-        ? "border-[#dbe7dd] dark:border-[#263d2e] bg-[#fbfdfc] dark:bg-[#142318]/60 opacity-75"
+        ? "border-[var(--border)] bg-[var(--bg-muted)] opacity-75"
         : isBlocked
         ? "border-amber-200 dark:border-amber-900/40 bg-amber-50/30 dark:bg-amber-950/10"
-        : "border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c]"
+        : "border-[var(--border)] bg-[var(--bg-surface)]"
     }`}>
       {/* Top row: Subject, Priority & Actions */}
       <div className="flex items-center justify-between gap-2 mb-2">
@@ -113,7 +113,7 @@ export function TaskCard({
           <button
             onClick={() => onEdit(task)}
             title="Chỉnh sửa task"
-            className="p-1 rounded-lg text-[#73927d] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] hover:text-[#2d6a4f] cursor-pointer"
+            className="p-1 rounded-lg text-[var(--text-muted)] hover:bg-[var(--mint-soft)] hover:text-[var(--mint-dark)] cursor-pointer"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </button>
@@ -134,10 +134,10 @@ export function TaskCard({
           onClick={() => onToggleComplete(task)}
           className={`mt-0.5 w-4 h-4 rounded-md border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${
             task.isCompleted
-              ? "bg-[#2d6a4f] border-[#2d6a4f] text-white"
+              ? "bg-[var(--mint)] border-[var(--mint)] text-white"
               : isBlocked
               ? "border-amber-400 bg-amber-50 dark:bg-amber-950/40"
-              : "border-[#b0c4b6] dark:border-[#385642] hover:border-[#2d6a4f]"
+              : "border-[#b0c4b6] dark:border-[#385642] hover:border-[var(--mint)]"
           }`}
           title={isBlocked ? "Bị chặn bởi task khác" : task.isCompleted ? "Đánh dấu chưa xong" : "Đánh dấu hoàn thành"}
         >
@@ -146,14 +146,14 @@ export function TaskCard({
         </button>
 
         <div className="flex-1 min-w-0">
-          <h4 className={`text-xs font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] leading-snug ${
+          <h4 className={`text-xs font-bold tracking-tight text-[var(--text-ink)] leading-snug ${
             task.isCompleted ? "line-through opacity-70" : ""
           }`}>
             {task.title}
           </h4>
 
           {task.description && (
-            <p className="text-[11px] text-[#526b5c] dark:text-[#a3bda9] mt-0.5 line-clamp-2">
+            <p className="text-[11px] text-[var(--text-subtle)] mt-0.5 line-clamp-2">
               {task.description}
             </p>
           )}
@@ -171,10 +171,10 @@ export function TaskCard({
       )}
 
       {/* Bottom Row: Deadline, Time, Fast Start button */}
-      <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] text-[10px]">
-        <div className="flex items-center space-x-2 text-[#73927d] dark:text-[#8ba393]">
+      <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-[var(--border)]/60 dark:border-[#263d2e] text-[10px]">
+        <div className="flex items-center space-x-2 text-[var(--text-muted)]">
           <span className="flex items-center space-x-1 font-semibold">
-            <Clock className="w-3 h-3 text-[#2d6a4f] dark:text-[#52b788]" />
+            <Clock className="w-3 h-3 text-[var(--mint-dark)]" />
             <span>{task.estimatedMinutes || 60}p</span>
           </span>
 
@@ -202,7 +202,7 @@ export function TaskCard({
           <Button
             size="sm"
             onClick={handleStartStudy}
-            className="h-7 px-2.5 rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-[10px] font-bold space-x-1 cursor-pointer shadow-2xs"
+            className="h-7 px-2.5 rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-[10px] font-bold space-x-1 cursor-pointer shadow-2xs"
             title="Bật Timer tập trung cho task này"
           >
             <Play className="w-2.5 h-2.5 fill-current" />

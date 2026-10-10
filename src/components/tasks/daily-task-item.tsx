@@ -125,8 +125,8 @@ export function DailyTaskItem({
       onMouseLeave={() => setIsHovered(false)}
       className={`group relative flex items-start sm:items-center justify-between gap-3 p-3.5 sm:px-4 sm:py-3 rounded-2xl border transition-all duration-150 ${
         task.isCompleted
-          ? "bg-[#f8fbf8]/70 dark:bg-[#132217]/50 border-[#dbe7dd]/70 dark:border-[#263d2e]/60 opacity-80"
-          : "bg-white dark:bg-[#17261c] border-[#dbe7dd] dark:border-[#263d2e] hover:border-[#b7d8c3] hover:shadow-2xs"
+          ? "bg-[var(--bg-muted)]/70 dark:bg-[#132217]/50 border-[var(--border)]/60 opacity-80"
+          : "bg-[var(--bg-surface)] border-[var(--border)] hover:border-[#b7d8c3] hover:shadow-2xs"
       }`}
     >
       {/* Left: Circular Checkbox + Task Information */}
@@ -137,8 +137,8 @@ export function DailyTaskItem({
           onClick={() => onToggleComplete(task)}
           className={`mt-0.5 sm:mt-0 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 cursor-pointer transition-all duration-150 ${
             task.isCompleted
-              ? "bg-[#2d6a4f] border-[#2d6a4f] text-white shadow-2xs scale-95"
-              : "border-[#8fa897] dark:border-[#4d6b56] hover:border-[#2d6a4f] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024]"
+              ? "bg-[var(--mint)] border-[var(--mint)] text-white shadow-2xs scale-95"
+              : "border-[#8fa897] dark:border-[#4d6b56] hover:border-[var(--mint)] hover:bg-[var(--mint-soft)]"
           }`}
           title={task.isCompleted ? "Đánh dấu chưa hoàn thành" : "Đánh dấu hoàn thành"}
         >
@@ -150,10 +150,10 @@ export function DailyTaskItem({
           <div className="flex items-center space-x-2 flex-wrap gap-y-1">
             <span
               onClick={() => onEdit(task)}
-              className={`text-xs sm:text-sm font-semibold tracking-tight cursor-pointer hover:text-[#2d6a4f] dark:hover:text-[#52b788] transition-colors truncate max-w-full ${
+              className={`text-xs sm:text-sm font-semibold tracking-tight cursor-pointer hover:text-[var(--mint-dark)] dark:hover:text-[#52b788] transition-colors truncate max-w-full ${
                 task.isCompleted
-                  ? "line-through text-[#73927d] dark:text-[#6a8372]"
-                  : "text-[#192e22] dark:text-[#f0f7f2]"
+                  ? "line-through text-[var(--text-muted)] dark:text-[#6a8372]"
+                  : "text-[var(--text-ink)]"
               }`}
             >
               {task.title}
@@ -189,17 +189,17 @@ export function DailyTaskItem({
           </div>
 
           {/* Sub-meta details: notes, scheduled date, deadline */}
-          <div className="flex items-center space-x-3 text-[11px] text-[#73927d] dark:text-[#8ba393] mt-1 flex-wrap gap-y-1">
+          <div className="flex items-center space-x-3 text-[11px] text-[var(--text-muted)] mt-1 flex-wrap gap-y-1">
             {task.description && (
               <span className="flex items-center space-x-1 truncate max-w-xs" title={task.description}>
-                <FileText className="w-3 h-3 text-[#526b5c] shrink-0" />
+                <FileText className="w-3 h-3 text-[var(--text-subtle)] shrink-0" />
                 <span className="truncate">{task.description}</span>
               </span>
             )}
 
             {task.estimatedMinutes > 0 && (
               <span className="flex items-center space-x-1">
-                <Clock className="w-3 h-3 text-[#2d6a4f] dark:text-[#52b788]" />
+                <Clock className="w-3 h-3 text-[var(--mint-dark)]" />
                 <span>{task.estimatedMinutes}p</span>
               </span>
             )}
@@ -227,7 +227,7 @@ export function DailyTaskItem({
           <Button
             size="sm"
             onClick={handleStartStudy}
-            className="h-7 px-2.5 rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-[10px] font-bold space-x-1 cursor-pointer shadow-2xs transition-all active:scale-95"
+            className="h-7 px-2.5 rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-[10px] font-bold space-x-1 cursor-pointer shadow-2xs transition-all active:scale-95"
             title="Bật Timer tập trung cho nhiệm vụ này"
           >
             <Play className="w-2.5 h-2.5 fill-current" />
@@ -242,7 +242,7 @@ export function DailyTaskItem({
           className={`p-1.5 rounded-full transition-colors cursor-pointer ${
             task.isImportant
               ? "text-amber-500 hover:text-amber-600"
-              : "text-[#a3bda9] hover:text-amber-500 hover:bg-[#eef5f0] dark:hover:bg-[#1d3024]"
+              : "text-[#a3bda9] hover:text-amber-500 hover:bg-[var(--mint-soft)]"
           }`}
           title={task.isImportant ? "Bỏ đánh dấu quan trọng" : "Đánh dấu quan trọng"}
         >
@@ -254,13 +254,13 @@ export function DailyTaskItem({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="p-1.5 rounded-full text-[#73927d] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] cursor-pointer"
+              className="p-1.5 rounded-full text-[var(--text-muted)] hover:bg-[var(--mint-soft)] cursor-pointer"
               title="Thao tác khác"
             >
               <MoreHorizontal className="w-4 h-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] p-1.5 text-xs w-48 shadow-lg">
+          <DropdownMenuContent align="end" className="rounded-2xl border-[var(--border)] p-1.5 text-xs w-48 shadow-lg">
             <DropdownMenuItem onClick={() => onEdit(task)} className="rounded-xl cursor-pointer">
               <Edit2 className="w-3.5 h-3.5 mr-2" />
               <span>Chỉnh sửa chi tiết</span>

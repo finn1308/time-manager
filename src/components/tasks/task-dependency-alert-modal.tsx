@@ -22,16 +22,16 @@ export function TaskDependencyAlertModal({
 }: TaskDependencyAlertModalProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-6 shadow-xl">
+      <DialogContent onClose={onClose} className="max-w-md rounded-[28px] border-[var(--border)] bg-[var(--bg-surface)] p-6 shadow-xl">
         <DialogHeader>
           <div className="flex items-center space-x-2 text-xs font-bold text-amber-600 dark:text-amber-400 mb-1">
             <Lock className="w-4 h-4" />
             <span>QUY TẮC PHỤ THUỘC (TASK DEPENDENCY)</span>
           </div>
-          <DialogTitle className="text-lg font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <DialogTitle className="text-lg font-bold text-[var(--text-ink)]">
             Task chưa sẵn sàng hoàn thành
           </DialogTitle>
-          <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
+          <DialogDescription className="text-xs text-[var(--text-subtle)]">
             Task <strong>"{taskTitle}"</strong> được thiết lập phụ thuộc vào các task tiên quyết cần phải hoàn thành trước:
           </DialogDescription>
         </DialogHeader>
@@ -44,7 +44,7 @@ export function TaskDependencyAlertModal({
             >
               <div className="flex items-center space-x-2.5 truncate">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2] truncate">
+                <span className="text-xs font-bold text-[var(--text-ink)] truncate">
                   {bt.title}
                 </span>
               </div>
@@ -53,7 +53,7 @@ export function TaskDependencyAlertModal({
               </span>
             </div>
           ))}
-          <p className="text-[11px] text-[#73927d] dark:text-[#8ba393] pt-1">
+          <p className="text-[11px] text-[var(--text-muted)] pt-1">
             Để tuân thủ tiến trình học tập tối ưu, bạn nên hoàn thành các task trên trước khi tiến hành task này.
           </p>
         </div>
@@ -63,7 +63,7 @@ export function TaskDependencyAlertModal({
             type="button"
             variant="outline"
             onClick={onClose}
-            className="rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-xs font-semibold"
+            className="rounded-2xl border-[var(--border)] text-xs font-semibold"
           >
             Quay lại làm task tiên quyết
           </Button>

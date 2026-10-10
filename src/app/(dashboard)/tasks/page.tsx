@@ -423,15 +423,15 @@ export default function TasksPage() {
       label: "Lịch sử kỷ luật",
       subLabel: "Discipline",
       icon: TrendingUp,
-      color: "text-[#2d6a4f]",
-      activeBg: "bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#86e2a8] border-[#b7d8c3]",
+      color: "text-[var(--mint-dark)]",
+      activeBg: "bg-[var(--mint-bg)] text-[var(--mint-dark)] border-[#b7d8c3]",
     },
   ];
 
   // Kanban Columns
   const kanbanColumns = [
     { id: "INBOX", label: "Inbox", icon: Inbox, color: "text-blue-600 bg-blue-50 dark:bg-blue-950/40" },
-    { id: "TODO", label: "Cần làm (To Do)", icon: ListTodo, color: "text-[#2d6a4f] bg-[#eef5f0] dark:bg-[#1d3024]" },
+    { id: "TODO", label: "Cần làm (To Do)", icon: ListTodo, color: "text-[var(--mint-dark)] bg-[var(--mint-bg)]" },
     { id: "IN_PROGRESS", label: "Đang làm", icon: Clock, color: "text-amber-600 bg-amber-50 dark:bg-amber-950/40" },
     { id: "DONE", label: "Hoàn thành", icon: CheckCircle2, color: "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40" },
   ];
@@ -472,9 +472,9 @@ export default function TasksPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left: Microsoft To Do Lists Menu */}
         <div className="lg:col-span-3 space-y-4">
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3 shadow-2xs">
-            <div className="p-2 pb-3 border-b border-[#dbe7dd]/70 dark:border-[#263d2e]">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#73927d] dark:text-[#8ba393] px-2">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-3 shadow-2xs">
+            <div className="p-2 pb-3 border-b border-[var(--border)]">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] px-2">
                 Danh sách công việc
               </span>
             </div>
@@ -492,7 +492,7 @@ export default function TasksPage() {
                     className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
                       isActive
                         ? `${list.activeBg} font-bold shadow-2xs border`
-                        : "text-[#526b5c] dark:text-[#a3bda9] hover:bg-[#f4f8f5] dark:hover:bg-[#142318] hover:text-[#192e22] dark:hover:text-[#f0f7f2]"
+                        : "text-[var(--text-subtle)] hover:bg-[var(--mint-soft)] hover:text-[var(--text-ink)] dark:hover:text-[#f0f7f2]"
                     }`}
                   >
                     <div className="flex items-center space-x-2.5 truncate">
@@ -501,7 +501,7 @@ export default function TasksPage() {
                     </div>
 
                     {list.id === "today" && stats.totalTasks > 0 && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#86e2a8] font-bold">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] font-bold">
                         {stats.completedTasks}/{stats.totalTasks}
                       </span>
                     )}
@@ -512,8 +512,8 @@ export default function TasksPage() {
           </Card>
 
           {/* Quick Subject Filter in sidebar */}
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-3.5 shadow-2xs hidden lg:block">
-            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#73927d] dark:text-[#8ba393] mb-2 px-1">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-3.5 shadow-2xs hidden lg:block">
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2 px-1">
               <span>Lọc theo môn học</span>
               <Filter className="w-3.5 h-3.5" />
             </div>
@@ -523,8 +523,8 @@ export default function TasksPage() {
                 onClick={() => setSelectedSubjectFilter("ALL")}
                 className={`w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-colors ${
                   selectedSubjectFilter === "ALL"
-                    ? "bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#86e2a8] font-bold"
-                    : "text-[#526b5c] hover:bg-[#f4f8f5]"
+                    ? "bg-[var(--mint-bg)] text-[var(--mint-dark)] font-bold"
+                    : "text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                 }`}
               >
                 Tất cả môn học
@@ -535,8 +535,8 @@ export default function TasksPage() {
                   onClick={() => setSelectedSubjectFilter(sub.id)}
                   className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-colors ${
                     selectedSubjectFilter === sub.id
-                      ? "bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#86e2a8] font-bold"
-                      : "text-[#526b5c] hover:bg-[#f4f8f5]"
+                      ? "bg-[var(--mint-bg)] text-[var(--mint-dark)] font-bold"
+                      : "text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                   }`}
                 >
                   <div className="flex items-center space-x-2 truncate">
@@ -562,11 +562,11 @@ export default function TasksPage() {
           ) : (
             <>
               {/* Workspace Header Card */}
-              <div className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-5 sm:p-6 shadow-2xs space-y-4">
+              <div className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-5 sm:p-6 shadow-2xs space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   {/* Left: View title & Date navigator */}
                   <div>
-                    <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#d8ebe0] dark:bg-[#1d3827] text-[#1b4332] dark:text-[#86e2a8] text-xs font-bold mb-2">
+                    <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] text-xs font-bold mb-2">
                       <Sun className="w-3.5 h-3.5 text-amber-500" />
                       <span>
                         {todoLists.find((l) => l.id === activeList)?.label.toUpperCase()}
@@ -576,7 +576,7 @@ export default function TasksPage() {
                     {activeList === "today" ? (
                       /* Date Navigation Bar */
                       <div className="flex items-center space-x-2 flex-wrap gap-y-2">
-                        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+                        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-ink)]">
                           {formatDateDisplay(selectedDateKey, todayKey)}
                         </h1>
 
@@ -584,14 +584,14 @@ export default function TasksPage() {
                           <button
                             onClick={handlePrevDay}
                             title="Ngày trước"
-                            className="p-1.5 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#73927d] cursor-pointer"
+                            className="p-1.5 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-muted)] cursor-pointer"
                           >
                             <ChevronLeft className="w-4 h-4" />
                           </button>
                           {selectedDateKey !== todayKey && (
                             <button
                               onClick={handleJumpToToday}
-                              className="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#86e2a8] cursor-pointer"
+                              className="px-2.5 py-1 rounded-xl text-xs font-bold bg-[var(--mint-bg)] text-[var(--mint-dark)] cursor-pointer"
                             >
                               Hôm nay
                             </button>
@@ -599,7 +599,7 @@ export default function TasksPage() {
                           <button
                             onClick={handleNextDay}
                             title="Ngày sau"
-                            className="p-1.5 rounded-full hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] text-[#73927d] cursor-pointer"
+                            className="p-1.5 rounded-full hover:bg-[var(--mint-soft)] text-[var(--text-muted)] cursor-pointer"
                           >
                             <ChevronRight className="w-4 h-4" />
                           </button>
@@ -612,17 +612,17 @@ export default function TasksPage() {
                               e.target.value &&
                               setSelectedDateKey(e.target.value)
                             }
-                            className="text-xs px-2 py-1 rounded-xl border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#132217] cursor-pointer ml-1"
+                            className="text-xs px-2 py-1 rounded-xl border border-[var(--border)] bg-[var(--bg-muted)] cursor-pointer ml-1"
                           />
                         </div>
                       </div>
                     ) : (
-                      <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2]">
+                      <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-ink)]">
                         {todoLists.find((l) => l.id === activeList)?.label}
                       </h1>
                     )}
 
-                    <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+                    <p className="text-xs text-[var(--text-subtle)] mt-0.5">
                       {activeList === "today"
                         ? "Quản lý nhiệm vụ tập trung theo ngày, ghi nhận kỷ luật trung thực và chuyển tiếp thông minh."
                         : "Nhiệm vụ được đồng bộ trực tiếp từ một nguồn dữ liệu duy nhất trong hệ thống."}
@@ -638,7 +638,7 @@ export default function TasksPage() {
                         className={`rounded-2xl text-xs font-bold h-9 px-3.5 space-x-1.5 cursor-pointer shadow-sm ${
                           daySummary?.isClosed
                             ? "bg-emerald-700 hover:bg-emerald-800 text-white"
-                            : "bg-[#2d6a4f] hover:bg-[#1b4332] text-white"
+                            : "bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white"
                         }`}
                       >
                         <ShieldCheck className="w-4 h-4" />
@@ -649,13 +649,13 @@ export default function TasksPage() {
                     )}
 
                     {/* View Switcher: List vs Board */}
-                    <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-xs shadow-2xs">
+                    <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] text-xs shadow-2xs">
                       <button
                         onClick={() => setViewMode("list")}
                         className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
                           viewMode === "list"
-                            ? "bg-[#2d6a4f] text-white shadow-2xs"
-                            : "text-[#526b5c] hover:bg-[#eef5f0]"
+                            ? "bg-[var(--mint)] text-white shadow-2xs"
+                            : "text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                         }`}
                       >
                         <List className="w-3.5 h-3.5" />
@@ -665,8 +665,8 @@ export default function TasksPage() {
                         onClick={() => setViewMode("board")}
                         className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
                           viewMode === "board"
-                            ? "bg-[#2d6a4f] text-white shadow-2xs"
-                            : "text-[#526b5c] hover:bg-[#eef5f0]"
+                            ? "bg-[var(--mint)] text-white shadow-2xs"
+                            : "text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
                         }`}
                       >
                         <Kanban className="w-3.5 h-3.5" />
@@ -685,7 +685,7 @@ export default function TasksPage() {
                         });
                         setIsTaskModalOpen(true);
                       }}
-                      className="rounded-2xl bg-[#1b4332] hover:bg-[#11291f] text-white font-bold text-xs h-9 px-3 cursor-pointer"
+                      className="rounded-2xl bg-[var(--mint-dark)] hover:bg-[var(--text-ink)] text-white font-bold text-xs h-9 px-3 cursor-pointer"
                     >
                       <Plus className="w-4 h-4 mr-1" />
                       <span>Chi tiết</span>
@@ -695,13 +695,13 @@ export default function TasksPage() {
 
                 {/* Today's Completion Progress Bar */}
                 {activeList === "today" && (
-                  <div className="pt-2 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] space-y-2">
+                  <div className="pt-2 border-t border-[var(--border)]/60 dark:border-[#263d2e] space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-[#526b5c] dark:text-[#a3bda9]">
+                        <span className="font-semibold text-[var(--text-subtle)]">
                           Tiến độ hoàn thành:
                         </span>
-                        <strong className="text-[#192e22] dark:text-[#f0f7f2]">
+                        <strong className="text-[var(--text-ink)]">
                           {stats.completedTasks}/{stats.totalTasks} nhiệm vụ ({stats.completionRate}%)
                         </strong>
                       </div>
@@ -712,7 +712,7 @@ export default function TasksPage() {
                           <span>Ngày này đã chốt kết quả</span>
                         </span>
                       ) : (
-                        <span className="text-[11px] text-[#73927d]">
+                        <span className="text-[11px] text-[var(--text-muted)]">
                           {stats.uncompletedTasks} nhiệm vụ đang chờ
                         </span>
                       )}
@@ -748,12 +748,12 @@ export default function TasksPage() {
               {/* Search & Filter Bar */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="relative flex-1 max-w-sm">
-                  <Search className="w-4 h-4 text-[#73927d] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Tìm kiếm nhiệm vụ..."
-                    className="pl-9 rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-xs h-9"
+                    className="pl-9 rounded-2xl border-[var(--border)] text-xs h-9"
                   />
                 </div>
 
@@ -761,7 +761,7 @@ export default function TasksPage() {
                   <select
                     value={selectedPriorityFilter}
                     onChange={(e) => setSelectedPriorityFilter(e.target.value)}
-                    className="rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] px-3 py-1.5 text-xs font-semibold text-[#192e22] dark:text-[#f0f7f2] focus:outline-none"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text-ink)] focus:outline-none"
                   >
                     <option value="ALL">Tất cả ưu tiên</option>
                     <option value="URGENT">Khẩn cấp (Urgent)</option>
@@ -786,12 +786,12 @@ export default function TasksPage() {
                 /* Microsoft To Do List View */
                 <div className="space-y-2.5">
                   {filteredTasks.length === 0 ? (
-                    <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-12 text-center">
-                      <CheckCircle2 className="w-10 h-10 text-[#73927d] mx-auto mb-2 opacity-60" />
-                      <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                    <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
+                      <CheckCircle2 className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-2 opacity-60" />
+                      <h3 className="text-sm font-bold text-[var(--text-ink)]">
                         Không có nhiệm vụ nào trong danh sách này
                       </h3>
-                      <p className="text-xs text-[#526b5c] mt-1">
+                      <p className="text-xs text-[var(--text-subtle)] mt-1">
                         Hãy nhập nhanh một nhiệm vụ ở thanh trên và nhấn Enter để lưu!
                       </p>
                     </Card>
@@ -825,19 +825,19 @@ export default function TasksPage() {
                     return (
                       <div
                         key={col.id}
-                        className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-[#f8fbf8] dark:bg-[#142318] p-3.5 space-y-3 shadow-2xs"
+                        className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-muted)] p-3.5 space-y-3 shadow-2xs"
                       >
                         <div className="flex items-center justify-between px-1">
                           <div className="flex items-center space-x-2">
                             <div className={`p-1.5 rounded-xl ${col.color}`}>
                               <Icon className="w-3.5 h-3.5" />
                             </div>
-                            <span className="font-bold text-xs text-[#192e22] dark:text-[#f0f7f2]">
+                            <span className="font-bold text-xs text-[var(--text-ink)]">
                               {col.label}
                             </span>
                             <Badge
                               variant="outline"
-                              className="rounded-full text-[10px] px-2 py-0 font-bold border-[#dbe7dd]"
+                              className="rounded-full text-[10px] px-2 py-0 font-bold border-[var(--border)]"
                             >
                               {colTasks.length}
                             </Badge>
@@ -854,7 +854,7 @@ export default function TasksPage() {
                               });
                               setIsTaskModalOpen(true);
                             }}
-                            className="p-1 rounded-lg text-[#73927d] hover:bg-[#eef5f0] cursor-pointer"
+                            className="p-1 rounded-lg text-[var(--text-muted)] hover:bg-[var(--mint-bg)] cursor-pointer"
                           >
                             <Plus className="w-3.5 h-3.5" />
                           </button>
@@ -862,7 +862,7 @@ export default function TasksPage() {
 
                         <div className="space-y-2.5 min-h-[140px]">
                           {colTasks.length === 0 ? (
-                            <div className="py-8 text-center text-[11px] text-[#73927d] italic">
+                            <div className="py-8 text-center text-[11px] text-[var(--text-muted)] italic">
                               Trống
                             </div>
                           ) : (

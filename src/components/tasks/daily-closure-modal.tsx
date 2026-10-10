@@ -94,21 +94,21 @@ export function DailyClosureModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !submitting && onClose()}>
-      <DialogContent className="sm:max-w-md rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#132217] p-6 shadow-xl">
+      <DialogContent className="sm:max-w-md rounded-[28px] border border-[var(--border)] bg-white dark:bg-[#132217] p-6 shadow-xl">
         <DialogHeader className="space-y-2">
-          <div className="flex items-center space-x-2 text-xs font-bold text-[#2d6a4f] dark:text-[#52b788]">
+          <div className="flex items-center space-x-2 text-xs font-bold text-[var(--mint-dark)]">
             <ShieldCheck className="w-4 h-4" />
             <span className="uppercase tracking-wider">TỔNG KẾT & CHỐT NGÀY KỶ LUẬT</span>
           </div>
 
-          <DialogTitle className="text-xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <DialogTitle className="text-xl font-bold text-[var(--text-ink)]">
             {isAlreadyClosed ? "Kết quả ngày đã chốt" : "Chốt ngày làm việc"}
           </DialogTitle>
 
-          <DialogDescription className="text-xs text-[#526b5c] dark:text-[#a3bda9]">
-            Ngày đang tổng kết: <strong className="text-[#192e22] dark:text-[#f0f7f2]">{formattedDate}</strong>
+          <DialogDescription className="text-xs text-[var(--text-subtle)]">
+            Ngày đang tổng kết: <strong className="text-[var(--text-ink)]">{formattedDate}</strong>
             {closedAt && (
-              <span className="block text-[11px] text-[#73927d] mt-0.5">
+              <span className="block text-[11px] text-[var(--text-muted)] mt-0.5">
                 Đã chốt lúc: {new Date(closedAt).toLocaleTimeString("vi-VN")} ngày {new Date(closedAt).toLocaleDateString("vi-VN")}
               </span>
             )}
@@ -116,10 +116,10 @@ export function DailyClosureModal({
         </DialogHeader>
 
         {/* Progress & Summary Bar */}
-        <div className="my-3 p-4 rounded-2xl bg-[#f4f8f5] dark:bg-[#192e22]/50 border border-[#dbe7dd] dark:border-[#263d2e] space-y-3">
+        <div className="my-3 p-4 rounded-2xl bg-[var(--mint-bg)] dark:bg-[#192e22]/50 border border-[var(--border)] space-y-3">
           <div className="flex items-center justify-between text-xs font-semibold">
-            <span className="text-[#526b5c] dark:text-[#a3bda9]">Tiến độ hoàn thành:</span>
-            <span className="text-[#1b4332] dark:text-[#86e2a8] font-bold text-sm">
+            <span className="text-[var(--text-subtle)]">Tiến độ hoàn thành:</span>
+            <span className="text-[var(--mint-dark)] font-bold text-sm">
               {stats.completedTasks}/{stats.totalTasks} ({stats.completionRate}%)
             </span>
           </div>
@@ -133,15 +133,15 @@ export function DailyClosureModal({
           </div>
 
           <div className="grid grid-cols-3 gap-2 pt-1 text-center text-xs">
-            <div className="p-2 rounded-xl bg-white dark:bg-[#132217] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
-              <div className="text-[10px] text-[#73927d]">Tổng số</div>
-              <div className="font-bold text-[#192e22] dark:text-[#f0f7f2]">{stats.totalTasks}</div>
+            <div className="p-2 rounded-xl bg-white dark:bg-[#132217] border border-[var(--border)]/60 dark:border-[#263d2e]">
+              <div className="text-[10px] text-[var(--text-muted)]">Tổng số</div>
+              <div className="font-bold text-[var(--text-ink)]">{stats.totalTasks}</div>
             </div>
-            <div className="p-2 rounded-xl bg-white dark:bg-[#132217] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+            <div className="p-2 rounded-xl bg-white dark:bg-[#132217] border border-[var(--border)]/60 dark:border-[#263d2e]">
               <div className="text-[10px] text-emerald-600 dark:text-emerald-400">Đã xong</div>
               <div className="font-bold text-emerald-700 dark:text-emerald-300">{stats.completedTasks}</div>
             </div>
-            <div className="p-2 rounded-xl bg-white dark:bg-[#132217] border border-[#dbe7dd]/60 dark:border-[#263d2e]">
+            <div className="p-2 rounded-xl bg-white dark:bg-[#132217] border border-[var(--border)]/60 dark:border-[#263d2e]">
               <div className="text-[10px] text-amber-600 dark:text-amber-400">Chưa xong</div>
               <div className="font-bold text-amber-700 dark:text-amber-300">{stats.uncompletedTasks}</div>
             </div>
@@ -168,7 +168,7 @@ export function DailyClosureModal({
                     key={t.id}
                     className="flex items-center justify-between p-2 rounded-xl bg-white/80 dark:bg-[#132217]/80 text-xs border border-amber-200/60 dark:border-amber-900/40"
                   >
-                    <span className="truncate font-medium text-[#192e22] dark:text-[#f0f7f2] text-[11px]">
+                    <span className="truncate font-medium text-[var(--text-ink)] text-[11px]">
                       {t.title}
                     </span>
                     {t.subject && (
@@ -184,7 +184,7 @@ export function DailyClosureModal({
               </div>
             </div>
 
-            <div className="text-[11px] text-[#73927d] italic text-center">
+            <div className="text-[11px] text-[var(--text-muted)] italic text-center">
               * Lịch sử ngày cũ vẫn giữ nguyên tỷ lệ {stats.completionRate}%, không bị ghi đè.
             </div>
           </div>
@@ -210,7 +210,7 @@ export function DailyClosureModal({
                 variant="outline"
                 disabled={submitting}
                 onClick={() => handleConfirmClosure(false)}
-                className="w-full sm:w-auto flex-1 rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-xs font-semibold text-[#526b5c] hover:bg-[#f4f8f5]"
+                className="w-full sm:w-auto flex-1 rounded-2xl border-[var(--border)] text-xs font-semibold text-[var(--text-subtle)] hover:bg-[var(--mint-bg)]"
               >
                 KHÔNG, GIỮ Ở NGÀY CŨ
               </Button>
@@ -218,7 +218,7 @@ export function DailyClosureModal({
                 type="button"
                 disabled={submitting}
                 onClick={() => handleConfirmClosure(true)}
-                className="w-full sm:w-auto flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold shadow-sm"
+                className="w-full sm:w-auto flex-1 rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold shadow-sm"
               >
                 CÓ, CHUYỂN SANG NGÀY MAI
               </Button>
@@ -230,7 +230,7 @@ export function DailyClosureModal({
                 variant="outline"
                 disabled={submitting}
                 onClick={onClose}
-                className="w-full sm:w-auto flex-1 rounded-2xl border-[#dbe7dd] dark:border-[#263d2e] text-xs font-semibold"
+                className="w-full sm:w-auto flex-1 rounded-2xl border-[var(--border)] text-xs font-semibold"
               >
                 Đóng
               </Button>
@@ -238,7 +238,7 @@ export function DailyClosureModal({
                 type="button"
                 disabled={submitting}
                 onClick={() => handleConfirmClosure(false)}
-                className="w-full sm:w-auto flex-1 rounded-2xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-xs font-bold shadow-sm"
+                className="w-full sm:w-auto flex-1 rounded-2xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-xs font-bold shadow-sm"
               >
                 {isAlreadyClosed ? "CẬP NHẬT CHỐT NGÀY" : "XÁC NHẬN CHỐT NGÀY"}
               </Button>

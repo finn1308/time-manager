@@ -58,23 +58,23 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
       {/* Top Controls: Title & Range Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#192e22] dark:text-[#f0f7f2] flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-[#2d6a4f] dark:text-[#52b788]" />
+          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[var(--text-ink)] flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5 text-[var(--mint-dark)]" />
             <span>Thống kê kỷ luật theo ngày</span>
           </h2>
-          <p className="text-xs text-[#526b5c] dark:text-[#a3bda9] mt-0.5">
+          <p className="text-xs text-[var(--text-subtle)] mt-0.5">
             Bảo toàn trung thực lịch sử hoàn thành từng ngày, theo dõi tỷ lệ kỷ luật và các nhiệm vụ chuyển tiếp.
           </p>
         </div>
 
         {/* Range Selector */}
-        <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] text-xs shadow-2xs self-start sm:self-auto">
+        <div className="flex items-center space-x-1 p-1 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] text-xs shadow-2xs self-start sm:self-auto">
           <button
             onClick={() => setRange("week")}
             className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
               range === "week"
-                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                : "text-[#526b5c] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024]"
+                ? "bg-[var(--mint)] text-white shadow-2xs"
+                : "text-[var(--text-subtle)] hover:bg-[var(--mint-soft)]"
             }`}
           >
             7 ngày qua
@@ -83,8 +83,8 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
             onClick={() => setRange("month")}
             className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
               range === "month"
-                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                : "text-[#526b5c] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024]"
+                ? "bg-[var(--mint)] text-white shadow-2xs"
+                : "text-[var(--text-subtle)] hover:bg-[var(--mint-soft)]"
             }`}
           >
             30 ngày qua
@@ -93,8 +93,8 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
             onClick={() => setRange("all")}
             className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
               range === "all"
-                ? "bg-[#2d6a4f] text-white shadow-2xs"
-                : "text-[#526b5c] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024]"
+                ? "bg-[var(--mint)] text-white shadow-2xs"
+                : "text-[var(--text-subtle)] hover:bg-[var(--mint-soft)]"
             }`}
           >
             Toàn bộ
@@ -105,48 +105,48 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
       {/* Aggregate KPI Cards */}
       {historyData?.metrics && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Card className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-            <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
-              <Award className="w-4 h-4 text-[#2d6a4f] dark:text-[#52b788]" />
+          <Card className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+            <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
+              <Award className="w-4 h-4 text-[var(--mint-dark)]" />
               <span>Tỷ lệ hoàn thành TB</span>
             </div>
-            <div className="text-2xl font-bold text-[#1b4332] dark:text-[#86e2a8]">
+            <div className="text-2xl font-bold text-[var(--mint-dark)]">
               {historyData.metrics.averageCompletionRate}%
             </div>
-            <p className="text-[10px] text-[#73927d] mt-1">Đo lường trung thực theo ngày giao</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Đo lường trung thực theo ngày giao</p>
           </Card>
 
-          <Card className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-            <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+          <Card className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+            <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               <span>Hoàn thành / Đã giao</span>
             </div>
-            <div className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="text-2xl font-bold text-[var(--text-ink)]">
               {historyData.metrics.totalTasksCompleted}/{historyData.metrics.totalTasksRecorded}
             </div>
-            <p className="text-[10px] text-[#73927d] mt-1">Nhiệm vụ trong kỳ thống kê</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Nhiệm vụ trong kỳ thống kê</p>
           </Card>
 
-          <Card className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-            <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+          <Card className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+            <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
               <RotateCcw className="w-4 h-4 text-purple-600" />
               <span>Chuyển tiếp (Rollover)</span>
             </div>
             <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
               {historyData.metrics.totalRollovers}
             </div>
-            <p className="text-[10px] text-[#73927d] mt-1">Nhiệm vụ dời sang ngày tiếp</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Nhiệm vụ dời sang ngày tiếp</p>
           </Card>
 
-          <Card className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 shadow-2xs">
-            <div className="flex items-center space-x-2 text-xs font-semibold text-[#526b5c] dark:text-[#a3bda9] mb-1">
+          <Card className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-2xs">
+            <div className="flex items-center space-x-2 text-xs font-semibold text-[var(--text-subtle)] mb-1">
               <ShieldCheck className="w-4 h-4 text-teal-600" />
               <span>Số ngày đã chốt sổ</span>
             </div>
-            <div className="text-2xl font-bold text-[#192e22] dark:text-[#f0f7f2]">
+            <div className="text-2xl font-bold text-[var(--text-ink)]">
               {historyData.metrics.daysClosedCount} / {historyData.metrics.daysRecordedCount}
             </div>
-            <p className="text-[10px] text-[#73927d] mt-1">Lưu trữ snapshot đóng băng</p>
+            <p className="text-[10px] text-[var(--text-muted)] mt-1">Lưu trữ snapshot đóng băng</p>
           </Card>
         </div>
       )}
@@ -160,12 +160,12 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
             ))}
           </div>
         ) : !historyData?.summaries || historyData.summaries.length === 0 ? (
-          <Card className="rounded-[28px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-12 text-center">
-            <Calendar className="w-10 h-10 text-[#73927d] mx-auto mb-2 opacity-60" />
-            <h3 className="text-sm font-bold text-[#192e22] dark:text-[#f0f7f2]">
+          <Card className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-surface)] p-12 text-center">
+            <Calendar className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-2 opacity-60" />
+            <h3 className="text-sm font-bold text-[var(--text-ink)]">
               Chưa có dữ liệu lịch sử trong khoảng thời gian này
             </h3>
-            <p className="text-xs text-[#526b5c] mt-1">
+            <p className="text-xs text-[var(--text-subtle)] mt-1">
               Tạo và thực hiện các nhiệm vụ hàng ngày để xây dựng chuỗi kỷ luật cá nhân!
             </p>
           </Card>
@@ -178,25 +178,25 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
             return (
               <Card
                 key={daySummary.dateKey}
-                className="rounded-[24px] border border-[#dbe7dd] dark:border-[#263d2e] bg-white dark:bg-[#17261c] p-4 sm:p-5 shadow-2xs hover:shadow-xs transition-all"
+                className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-surface)] p-4 sm:p-5 shadow-2xs hover:shadow-xs transition-all"
               >
                 {/* Header Row: Date & Status */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center space-x-3">
                     <button
                       onClick={() => setExpandedDate(isExpanded ? null : daySummary.dateKey)}
-                      className="p-1 rounded-lg text-[#73927d] hover:bg-[#eef5f0] dark:hover:bg-[#1d3024] cursor-pointer"
+                      className="p-1 rounded-lg text-[var(--text-muted)] hover:bg-[var(--mint-soft)] cursor-pointer"
                     >
                       {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                     </button>
 
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="font-bold text-sm text-[#192e22] dark:text-[#f0f7f2]">
+                        <span className="font-bold text-sm text-[var(--text-ink)]">
                           {formatDateDisplay(daySummary.dateKey, historyData.todayKey)}
                         </span>
                         {isToday && (
-                          <Badge className="rounded-full bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#86e2a8] text-[10px] font-bold">
+                          <Badge className="rounded-full bg-[var(--mint-bg)] text-[var(--mint-dark)] text-[10px] font-bold">
                             Hôm nay
                           </Badge>
                         )}
@@ -214,7 +214,7 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
                       </div>
 
                       {daySummary.closedAt && (
-                        <p className="text-[10px] text-[#73927d] mt-0.5">
+                        <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
                           Đóng sổ: {new Date(daySummary.closedAt).toLocaleTimeString("vi-VN")}{" "}
                           {new Date(daySummary.closedAt).toLocaleDateString("vi-VN")}
                         </p>
@@ -225,16 +225,16 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
                   {/* Right metrics */}
                   <div className="flex items-center space-x-3 sm:space-x-5 pl-7 sm:pl-0">
                     <div className="text-right">
-                      <div className="text-xs font-bold text-[#192e22] dark:text-[#f0f7f2]">
+                      <div className="text-xs font-bold text-[var(--text-ink)]">
                         {hasTasks ? `${daySummary.completedTasks}/${daySummary.totalTasks} nhiệm vụ` : "Không có nhiệm vụ"}
                       </div>
                       {hasTasks ? (
-                        <div className="text-[11px] text-[#73927d]">
+                        <div className="text-[11px] text-[var(--text-muted)]">
                           {daySummary.uncompletedTasks} chưa xong
                           {daySummary.rolledOverTasks > 0 ? ` • ${daySummary.rolledOverTasks} chuyển tiếp` : ""}
                         </div>
                       ) : (
-                        <div className="text-[10px] text-[#73927d]">Ngày nghỉ ngơi</div>
+                        <div className="text-[10px] text-[var(--text-muted)]">Ngày nghỉ ngơi</div>
                       )}
                     </div>
 
@@ -246,7 +246,7 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
                           : daySummary.completionRate >= 80
                           ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
                           : daySummary.completionRate >= 50
-                          ? "bg-[#d8ebe0] text-[#1b4332] dark:bg-[#1d3827] dark:text-[#86e2a8]"
+                          ? "bg-[var(--mint-bg)] text-[var(--mint-dark)]"
                           : "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
                       }`}
                     >
@@ -258,7 +258,7 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
                       <Button
                         size="sm"
                         onClick={() => onTriggerClosureModal(daySummary.dateKey)}
-                        className="rounded-xl bg-[#2d6a4f] hover:bg-[#1b4332] text-white text-[10px] font-bold h-7 px-2.5 cursor-pointer"
+                        className="rounded-xl bg-[var(--mint)] hover:bg-[var(--mint-dark)] text-white text-[10px] font-bold h-7 px-2.5 cursor-pointer"
                       >
                         Chốt ngày
                       </Button>
@@ -278,13 +278,13 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
 
                 {/* Expanded Tasks Snapshot Details */}
                 {isExpanded && (
-                  <div className="mt-4 pt-3 border-t border-[#dbe7dd]/60 dark:border-[#263d2e] space-y-2">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#73927d]">
+                  <div className="mt-4 pt-3 border-t border-[var(--border)]/60 dark:border-[#263d2e] space-y-2">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                       {daySummary.isClosed ? "Snapshot nhiệm vụ tại thời điểm đóng sổ:" : "Danh sách nhiệm vụ thực tế của ngày:"}
                     </div>
 
                     {!daySummary.tasks || daySummary.tasks.length === 0 ? (
-                      <div className="text-xs text-[#73927d] italic py-2">Không có nhiệm vụ nào được ghi nhận.</div>
+                      <div className="text-xs text-[var(--text-muted)] italic py-2">Không có nhiệm vụ nào được ghi nhận.</div>
                     ) : (
                       <div className="space-y-1.5">
                         {daySummary.tasks.map((task: any) => (
@@ -292,8 +292,8 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
                             key={task.id}
                             className={`flex items-center justify-between p-2.5 rounded-xl border text-xs ${
                               task.isCompleted
-                                ? "bg-[#f8fbf8] dark:bg-[#142318]/40 border-[#dbe7dd]/60 dark:border-[#263d2e]/60"
-                                : "bg-white dark:bg-[#17261c] border-amber-200/60 dark:border-amber-900/40"
+                                ? "bg-[var(--bg-muted)]/40 border-[var(--border)]/60 dark:border-[#263d2e]/60"
+                                : "bg-[var(--bg-surface)] border-amber-200/60 dark:border-amber-900/40"
                             }`}
                           >
                             <div className="flex items-center space-x-2 truncate">
@@ -304,7 +304,7 @@ export function DisciplineHistoryView({ onTriggerClosureModal }: DisciplineHisto
                               />
                               <span
                                 className={`truncate font-medium ${
-                                  task.isCompleted ? "line-through text-[#73927d]" : "text-[#192e22] dark:text-[#f0f7f2]"
+                                  task.isCompleted ? "line-through text-[var(--text-muted)]" : "text-[var(--text-ink)]"
                                 }`}
                               >
                                 {task.title}
