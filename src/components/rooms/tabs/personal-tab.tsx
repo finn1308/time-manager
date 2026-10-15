@@ -989,7 +989,7 @@ export function PersonalTab({
         roomId={roomId}
         cardId={selectedTaskId}
         columns={columns}
-        groups={groups}
+        groups={groups.map((g) => ({ id: g.id, name: g.name, color: g.color || null }))}
         labels={labels}
         members={members}
         currentUserId={currentUserId}
