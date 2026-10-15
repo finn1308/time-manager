@@ -935,6 +935,9 @@ export function PersonalTab({
                     {/* Render Posts created by this member (e.g. "Xin chào") */}
                     {memberPosts.map((post) => {
                       const { tag, cleanContent } = extractTagAndContent(post.content);
+                      const postImages = (post.imageUrls && post.imageUrls.length > 0)
+                        ? post.imageUrls
+                        : (post.imageUrl ? [post.imageUrl] : []);
 
                       return (
                         <div
@@ -961,18 +964,12 @@ export function PersonalTab({
                             </div>
                           )}
 
-                          {/* Image Cover */}
-                          {post.imageUrl && (
-                            <div className="rounded-lg overflow-hidden border border-border/60 max-h-44 bg-muted/30">
-                              <img
-                                src={post.imageUrl}
-                                alt="Ảnh đính kèm"
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.target as HTMLElement).style.display = "none";
-                                }}
-                              />
-                            </div>
+                          {/* Image Cover / Multi-Image Gallery */}
+                          {postImages.length > 0 && (
+                            <MultiImageGallery
+                              images={postImages}
+                              onImageClick={(idx) => setLightboxData({ images: postImages, index: idx })}
+                            />
                           )}
 
                           {/* Card Text Content (e.g. "Xin chào") */}
@@ -1082,15 +1079,107 @@ export function PersonalTab({
                           className="w-full px-2.5 py-2 text-xs rounded-lg border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                         />
 
+                        {/* Selected Images Preview Strip (e.g. 6 uploaded photos) */}
+                        {quickAddImageUrls.length > 0 && (
+                          <div className="space-y-1.5 p-2 rounded-xl bg-muted/40 border border-border">
+                            <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium">
+                              <span>Đã chọn {quickAddImageUrls.length} ảnh:</span>
+                              <button
+                                type="button"
+                                onClick={() => setQuickAddImageUrls([])}
+                                className="text-destructive hover:underline text-[10px]"
+                              >
+                                Xóa tất cả
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5">
+                              {quickAddImageUrls.map((url, i) => (
+                                <div
+                                  key={i}
+                                  className="relative group aspect-square rounded-lg overflow-hidden border border-border bg-background"
+                                >
+                                  <img src={url} alt="" className="w-full h-full object-cover" />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setQuickAddImageUrls((prev) => prev.filter((_, idx) => idx !== i))
+                                    }
+                                    className="absolute top-0.5 right-0.5 p-0.5 rounded-full bg-black/70 text-white hover:bg-destructive transition-colors"
+                                    title="Xóa ảnh này"
+                                  >
+                                    <X className="w-2.5 h-2.5" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Hidden file input for multi-image uploads */}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          multiple
+                          accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                          className="hidden"
+                          onChange={(e) => handleUploadFiles(e.target.files)}
+                        />
+
                         {showQuickAttach && (
-                          <div className="space-y-1.5 p-2 rounded-lg bg-muted/40 border border-border text-[11px]">
-                            <Input
-                              placeholder="URL ảnh minh họa (https://...)"
-                              value={quickAddImageUrl}
-                              onChange={(e) => setQuickAddImageUrl(e.target.value)}
-                              className="h-7 text-[11px] bg-background"
-                            />
-                            <div className="grid grid-cols-2 gap-1.5">
+                          <div className="space-y-2 p-2.5 rounded-xl bg-muted/40 border border-border text-[11px]">
+                            {/* Upload Multiple Images Button */}
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-semibold text-foreground">Ảnh đính kèm:</span>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                disabled={uploadingFiles}
+                                onClick={() => fileInputRef.current?.click()}
+                                className="h-7 px-2.5 text-[11px] font-medium rounded-lg gap-1.5 border-dashed border-primary/40 hover:border-primary"
+                              >
+                                {uploadingFiles ? (
+                                  <>
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                                    <span>Đang tải ảnh...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Upload className="w-3.5 h-3.5 text-primary" />
+                                    <span>Tải nhiều ảnh từ máy</span>
+                                  </>
+                                )}
+                              </Button>
+                            </div>
+
+                            {/* Or add Image via URL */}
+                            <div className="flex items-center gap-1.5">
+                              <Input
+                                placeholder="Hoặc dán URL ảnh (https://...)"
+                                value={quickAddImageUrl}
+                                onChange={(e) => setQuickAddImageUrl(e.target.value)}
+                                className="h-7 text-[11px] bg-background flex-1"
+                              />
+                              {quickAddImageUrl.trim() && (
+                                <Button
+                                  type="button"
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => {
+                                    if (quickAddImageUrl.trim()) {
+                                      setQuickAddImageUrls((prev) => [...prev, quickAddImageUrl.trim()]);
+                                      setQuickAddImageUrl("");
+                                    }
+                                  }}
+                                  className="h-7 px-2 text-[10px]"
+                                >
+                                  + Thêm
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Document attachment links */}
+                            <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-border/50">
                               <Input
                                 placeholder="Tên tài liệu"
                                 value={quickAddAttachmentName}
@@ -1205,6 +1294,122 @@ export function PersonalTab({
           fetchPostsAndCards();
         }}
       />
+
+      {/* Fullscreen Lightbox Modal for multi-image viewing */}
+      {lightboxData && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none animate-in fade-in duration-150"
+          onClick={() => setLightboxData(null)}
+        >
+          {/* Top Bar */}
+          <div
+            className="absolute top-4 left-4 right-4 flex items-center justify-between text-white z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-3 py-1 rounded-full bg-white/10 text-xs font-mono font-medium backdrop-blur-md">
+              {lightboxData.index + 1} / {lightboxData.images.length} ảnh
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href={lightboxData.images[lightboxData.index]}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                title="Mở ảnh gốc trong tab mới"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </a>
+              <button
+                type="button"
+                onClick={() => setLightboxData(null)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                title="Đóng (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Center Image Container */}
+          <div
+            className="relative max-w-5xl max-h-[82vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightboxData.images[lightboxData.index]}
+              alt={`Xem ảnh ${lightboxData.index + 1}`}
+              className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl border border-white/10"
+            />
+
+            {/* Prev / Next controls */}
+            {lightboxData.images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxData((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            index: (prev.index - 1 + prev.images.length) % prev.images.length,
+                          }
+                        : null
+                    );
+                  }}
+                  className="absolute -left-2 sm:-left-12 top-1/2 -translate-y-1/2 p-2 sm:p-3 rounded-full bg-black/60 hover:bg-black/90 text-white transition-transform hover:scale-110 backdrop-blur-md"
+                  title="Ảnh trước (←)"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxData((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            index: (prev.index + 1) % prev.images.length,
+                          }
+                        : null
+                    );
+                  }}
+                  className="absolute -right-2 sm:-right-12 top-1/2 -translate-y-1/2 p-2 sm:p-3 rounded-full bg-black/60 hover:bg-black/90 text-white transition-transform hover:scale-110 backdrop-blur-md"
+                  title="Ảnh tiếp theo (→)"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Bottom Thumbnails Strip */}
+          {lightboxData.images.length > 1 && (
+            <div
+              className="absolute bottom-4 flex items-center gap-2 max-w-xl overflow-x-auto p-2 rounded-2xl bg-black/50 backdrop-blur-md z-10 scrollbar-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {lightboxData.images.map((img, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setLightboxData((prev) => (prev ? { ...prev, index: i } : null))}
+                  className={`w-12 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
+                    i === lightboxData.index
+                      ? "border-primary scale-105 shadow-md"
+                      : "border-transparent opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
