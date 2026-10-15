@@ -151,6 +151,32 @@ async function runTestSuite() {
   const roomAdminAuth = await getRoomAuth(room.id, roomAdmin.id);
   assert(roomAdminAuth?.isAdmin === true, "Tài khoản admin phòng có toàn quyền ADMIN trong phạm vi phòng họp");
 
+  // 2.2. Admin Credentials Retrieval & Reset Security Check
+  console.log("\n--- TEST 2.2: Xem lại tài khoản mật khẩu Admin & Quyền truy cập thông tin đăng nhập ---");
+  // Admin can retrieve their credentials
+  const canAdminAccessCreds = (await getRoomAuth(room.id, adminUser.id))?.isAdmin === true;
+  assert(canAdminAccessCreds, "Quản trị viên phòng được phép truy cập xem lại tài khoản admin");
+
+  // Non-admin (outsider) is denied from viewing credentials
+  let outsiderCredsDenied = false;
+  try {
+    await requireRoomRole(room.id, outsiderUser.id, [ROOM_ROLES.ADMIN]);
+  } catch (err: any) {
+    outsiderCredsDenied = true;
+  }
+  assert(outsiderCredsDenied, "Người ngoài bị từ chối xem tài khoản & mật khẩu admin");
+
+  // Reset admin credentials back to 12345678
+  const resetHash = await bcrypt.hash("12345678", 10);
+  await prisma.user.update({
+    where: { id: roomAdmin.id },
+    data: { passwordHash: resetHash, mustChangePassword: true },
+  });
+  const reloadedAdmin = await prisma.user.findUnique({ where: { id: roomAdmin.id } });
+  assert(reloadedAdmin?.mustChangePassword === true, "Đặt lại mật khẩu admin thành công, cờ mustChangePassword được kích hoạt lại");
+  const isResetPwMatch = await bcrypt.compare("12345678", reloadedAdmin!.passwordHash!);
+  assert(isResetPwMatch === true, "Mật khẩu sau khi đặt lại khớp chính xác 12345678");
+
   // 3. Authorization & IDOR Protection
   console.log("\n--- TEST 3: Kiểm tra phân quyền RBAC & Chặn truy cập trái phép (IDOR) ---");
   const adminAuth = await getRoomAuth(room.publicId, adminUser.id);
@@ -368,16 +394,47 @@ async function runTestSuite() {
   assert(completedTasks === 1, "Số nhiệm vụ hoàn thành tính đúng 1 thẻ");
   assert(rate === 100, "Tỷ lệ hoàn thành đạt 100%");
 
-  // 10. Clean-up Test Data
-  console.log("\n--- TEST 10: Dọn dẹp dữ liệu kiểm thử an toàn ---");
+  // 9.1. Room Deletion Authorization & Cascade Verification
+  console.log("\n--- TEST 9.1: Quyền xóa phòng họp & Xóa an toàn Cascade ---");
+  // Member is forbidden from deleting the room
+  let memberDeleteDenied = false;
+  try {
+    await requireRoomRole(room.id, memberUser.id, [ROOM_ROLES.ADMIN]);
+  } catch (err: any) {
+    memberDeleteDenied = true;
+  }
+  assert(memberDeleteDenied, "Thành viên (Member) bị chặn tuyệt đối không được phép xóa phòng họp");
+
+  // Host is forbidden from deleting the room
+  let hostDeleteDenied = false;
+  try {
+    await requireRoomRole(room.id, hostUser.id, [ROOM_ROLES.ADMIN]);
+  } catch (err: any) {
+    hostDeleteDenied = true;
+  }
+  assert(hostDeleteDenied, "Host bị chặn không được phép xóa phòng họp");
+
+  // Admin executes room deletion
+  const adminCanDelete = (await requireRoomRole(room.id, adminUser.id, [ROOM_ROLES.ADMIN]))?.isAdmin === true;
+  assert(adminCanDelete, "Chỉ Admin phòng mới có thẩm quyền xóa phòng họp");
+
+  // Execute cascade delete
   await prisma.meetingRoom.delete({ where: { id: room.id } });
-  await prisma.user.deleteMany({
-    where: { id: { in: [adminUser.id, hostUser.id, memberUser.id, outsiderUser.id, roomAdmin.id] } },
-  });
 
   // Verify room is deleted
   const checkRoom = await prisma.meetingRoom.findUnique({ where: { id: room.id } });
-  assert(checkRoom === null, "Phòng họp và toàn bộ dữ liệu phụ thuộc được dọn dẹp sạch sẽ");
+  assert(checkRoom === null, "Phòng họp đã được xóa hoàn toàn khỏi cơ sở dữ liệu");
+
+  // Verify cascade deletion of dependent cards and columns
+  const remainingCards = await prisma.taskCard.count({ where: { roomId: room.id } });
+  const remainingColumns = await prisma.boardColumn.count({ where: { roomId: room.id } });
+  assert(remainingCards === 0 && remainingColumns === 0, "Toàn bộ thẻ công việc và cột đã được xóa cascade tự động");
+
+  // 10. Clean-up Test Data
+  console.log("\n--- TEST 10: Dọn dẹp tài khoản kiểm thử ---");
+  await prisma.user.deleteMany({
+    where: { id: { in: [adminUser.id, hostUser.id, memberUser.id, outsiderUser.id, roomAdmin.id] } },
+  });
 
   console.log("\n===============================================================");
   console.log(`🎉 KẾT QUẢ KIỂM THỬ: ${passed}/${total} TEST ASSERTIONS PASSED (100%)`);
