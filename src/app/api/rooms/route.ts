@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 import {
   generateRandomRoomPublicId,
   ROOM_ROLES,
@@ -100,9 +101,23 @@ export async function POST(req: Request) {
 
     // Generate secure random publicId
     const publicId = generateRandomRoomPublicId();
+    const adminUsername = `admin_${publicId}`;
+    const adminEmail = `${adminUsername}@room.local`;
+    const defaultPasswordHash = await bcrypt.hash("12345678", 10);
 
-    // Create room with default columns, labels, and owner membership in a single transaction
-    const newRoom = await prisma.$transaction(async (tx) => {
+    // Create room with default columns, labels, and dedicated room admin in a single transaction
+    const { room: newRoom, adminUser } = await prisma.$transaction(async (tx) => {
+      // Create dedicated room admin user
+      const createdAdmin = await tx.user.create({
+        data: {
+          email: adminEmail,
+          name: adminUsername,
+          passwordHash: defaultPasswordHash,
+          mustChangePassword: true,
+          role: "USER", // Non-global admin
+        },
+      });
+
       const room = await tx.meetingRoom.create({
         data: {
           publicId,
@@ -111,21 +126,33 @@ export async function POST(req: Request) {
           description: description || null,
           coverColor,
           coverImage: coverImage || null,
-          ownerId: user.id,
+          ownerId: createdAdmin.id,
           joinPolicy,
           status: "ACTIVE",
         },
       });
 
-      // Add owner as ADMIN membership
+      // Add dedicated admin as ADMIN membership
       await tx.roomMembership.create({
         data: {
           roomId: room.id,
-          userId: user.id,
+          userId: createdAdmin.id,
           role: ROOM_ROLES.ADMIN,
           status: "ACTIVE",
         },
       });
+
+      // Also add the ChronoMind creator as an admin member so they can manage it from their dashboard
+      if (user.id !== createdAdmin.id) {
+        await tx.roomMembership.create({
+          data: {
+            roomId: room.id,
+            userId: user.id,
+            role: ROOM_ROLES.ADMIN,
+            status: "ACTIVE",
+          },
+        });
+      }
 
       // Create default 4 columns
       for (const col of DEFAULT_COLUMNS) {
@@ -152,7 +179,7 @@ export async function POST(req: Request) {
         });
       }
 
-      return room;
+      return { room, adminUser: createdAdmin };
     });
 
     // Record audit event
@@ -162,7 +189,7 @@ export async function POST(req: Request) {
       action: "ROOM_CREATED",
       entityType: "ROOM",
       entityId: newRoom.id,
-      details: { title, subject, publicId },
+      details: { title, subject, publicId, adminUsername },
     });
 
     return NextResponse.json({
@@ -173,6 +200,11 @@ export async function POST(req: Request) {
         title: newRoom.title,
         subject: newRoom.subject,
         role: ROOM_ROLES.ADMIN,
+      },
+      adminCredential: {
+        username: adminUsername,
+        email: adminEmail,
+        tempPassword: "12345678",
       },
     });
   } catch (err: any) {
