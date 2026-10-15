@@ -18,6 +18,7 @@ import {
   History,
   MessageSquare,
   LogOut,
+  KeyRound,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -41,6 +42,7 @@ interface RoomHeaderProps {
   onTabChange: (tab: RoomTab) => void;
   onOpenMembers: () => void;
   onOpenSettings: () => void;
+  onOpenCredentials?: () => void;
   onLogout?: () => void;
   isAdmin: boolean;
   isHost: boolean;
@@ -54,6 +56,7 @@ export function RoomHeader({
   onTabChange,
   onOpenMembers,
   onOpenSettings,
+  onOpenCredentials,
   onLogout,
   isAdmin,
   isHost,
@@ -136,6 +139,20 @@ export function RoomHeader({
             <Users className="w-3.5 h-3.5" />
             <span>Thành viên ({memberCount})</span>
           </Button>
+
+          {isAdmin && onOpenCredentials && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onOpenCredentials}
+              className="h-8 px-2.5 text-xs rounded-xl gap-1.5 text-purple-600 dark:text-purple-400 border-purple-500/20 hover:bg-purple-500/10"
+              title="Xem thông tin đăng nhập Admin phòng"
+            >
+              <KeyRound className="w-3.5 h-3.5" />
+              <span>Tài khoản Admin</span>
+            </Button>
+          )}
 
           {isAdmin && (
             <Button
