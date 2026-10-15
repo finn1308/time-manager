@@ -23,6 +23,7 @@ import {
   AlertCircle,
   Database,
   GitBranch,
+  Users,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
@@ -59,6 +60,16 @@ export function CommandPalette({ open, onClose, onOpenCoach }: CommandPalettePro
       icon: Calendar,
       run: () => {
         router.push("/calendar");
+        onClose();
+      },
+    },
+    {
+      id: "rooms",
+      title: "Phòng họp & Không gian cộng tác (Meeting Rooms)",
+      category: "Điều hướng",
+      icon: Users,
+      run: () => {
+        router.push("/rooms");
         onClose();
       },
     },
