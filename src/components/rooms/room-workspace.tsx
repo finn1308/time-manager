@@ -253,6 +253,15 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
           onRoomUpdated={fetchRoomData}
         />
       )}
+
+      {/* Admin Credentials Modal */}
+      {data.permissions.isAdmin && (
+        <AdminCredentialsModal
+          open={showAdminCredsModal}
+          onClose={() => setShowAdminCredsModal(false)}
+          room={data.room}
+        />
+      )}
     </div>
   );
 }
