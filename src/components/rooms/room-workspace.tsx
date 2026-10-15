@@ -10,6 +10,7 @@ import { ActivityTab } from "./tabs/activity-tab";
 import { MemberManagementModal } from "./modals/member-management-modal";
 import { EditRoomModal } from "./edit-room-modal";
 import { ForcePasswordModal } from "./modals/force-password-modal";
+import { AdminCredentialsModal } from "./modals/admin-credentials-modal";
 import { Loader2, AlertCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -68,6 +69,7 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
   // Modals state
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showAdminCredsModal, setShowAdminCredsModal] = useState(false);
   const [mustChangePassword, setMustChangePassword] = useState(false);
 
   const fetchRoomData = async () => {
@@ -177,6 +179,7 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
         onTabChange={setActiveTab}
         onOpenMembers={() => setShowMembersModal(true)}
         onOpenSettings={() => setShowSettingsModal(true)}
+        onOpenCredentials={() => setShowAdminCredsModal(true)}
         onLogout={handleLogout}
         isAdmin={data.permissions.isAdmin}
         isHost={data.permissions.isHost}
