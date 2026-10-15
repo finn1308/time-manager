@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,9 @@ import {
   X,
   Send,
   MoveRight,
+  Upload,
+  ExternalLink,
+  Image as ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -63,6 +66,11 @@ export function CardDetailModal({
   const [checklist, setChecklist] = useState<Array<{ id: string; text: string; isCompleted: boolean }>>([]);
   const [newChecklistText, setNewChecklistText] = useState("");
 
+  // Attachments
+  const [attachments, setAttachments] = useState<Array<{ id: string; name: string; url: string; size?: number | null; type?: string | null }>>([]);
+  const [uploadingAttachments, setUploadingAttachments] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Comments
   const [comments, setComments] = useState<Array<{ id: string; body: string; createdAt: string; author: { name: string; image?: string | null } }>>([]);
   const [newCommentText, setNewCommentText] = useState("");
@@ -84,6 +92,7 @@ export function CardDetailModal({
         setSelectedLabels([]);
         setSelectedAssignees([]);
         setChecklist([]);
+        setAttachments([]);
         setComments([]);
       }
     }
@@ -105,6 +114,7 @@ export function CardDetailModal({
       setSelectedLabels(c.labelAssignments?.map((la: any) => la.labelId) || []);
       setSelectedAssignees(c.assignees?.map((a: any) => a.membershipId) || []);
       setChecklist(c.checklistItems || []);
+      setAttachments(c.attachments || []);
       setComments(c.comments || []);
     } catch (err: any) {
       toast.error(err.message || "Lỗi tải chi tiết thẻ");
@@ -235,6 +245,67 @@ export function CardDetailModal({
       onCardUpdated?.();
     } catch (err) {
       toast.error("Lỗi xóa mục checklist");
+    }
+  };
+
+  const handleUploadCardFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !cardId) return;
+    setUploadingAttachments(true);
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
+    try {
+      const uploadRes = await fetch(`/api/rooms/${roomId}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok) throw new Error(uploadData.error || "Tải tệp lên thất bại");
+
+      const urls: string[] = uploadData.urls || [];
+      for (let i = 0; i < urls.length; i++) {
+        const file = files[i];
+        const attachRes = await fetch(`/api/rooms/${roomId}/cards/${cardId}/attachments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: file?.name || `Tệp đính kèm ${i + 1}`,
+            url: urls[i],
+            size: file?.size || null,
+            type: file?.type || null,
+          }),
+        });
+        const attachData = await attachRes.json();
+        if (attachRes.ok && attachData.attachment) {
+          setAttachments((prev) => [attachData.attachment, ...prev]);
+        }
+      }
+
+      toast.success(`Đã thêm ${urls.length} tệp đính kèm thành công!`);
+      onCardUpdated?.();
+    } catch (err: any) {
+      toast.error(err.message || "Lỗi thêm tệp đính kèm");
+    } finally {
+      setUploadingAttachments(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDeleteAttachment = async (attachmentId: string) => {
+    if (!cardId) return;
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/cards/${cardId}/attachments?attachmentId=${attachmentId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Xóa tệp thất bại");
+
+      setAttachments((prev) => prev.filter((a) => a.id !== attachmentId));
+      toast.success("Đã xóa tệp đính kèm");
+      onCardUpdated?.();
+    } catch (err: any) {
+      toast.error(err.message || "Lỗi xóa tệp");
     }
   };
 
@@ -513,6 +584,114 @@ export function CardDetailModal({
                     Thêm
                   </Button>
                 </div>
+              </div>
+            )}
+
+            {/* Attachments section (for existing card) */}
+            {isEditing && (
+              <div className="space-y-2 pt-2 border-t border-border">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                    <Paperclip className="w-3.5 h-3.5" />
+                    Tệp & Ảnh đính kèm ({attachments.length})
+                  </label>
+
+                  <div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => handleUploadCardFiles(e.target.files)}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={uploadingAttachments}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="h-7 px-2.5 text-xs gap-1 border-dashed border-primary/40 hover:border-primary"
+                    >
+                      {uploadingAttachments ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                          <span>Đang tải lên...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-3 h-3 text-primary" />
+                          <span>Tải nhiều tệp/ảnh</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {attachments.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    {attachments.map((att) => {
+                      const isImg =
+                        att.type?.startsWith("image/") ||
+                        att.url.match(/\.(jpeg|jpg|png|gif|webp|svg)($|\?)/i);
+
+                      return (
+                        <div
+                          key={att.id}
+                          className="flex items-center justify-between gap-2 p-2 rounded-xl bg-muted/40 hover:bg-muted/70 border border-border transition-colors group"
+                        >
+                          <a
+                            href={att.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 min-w-0 flex-1"
+                          >
+                            {isImg ? (
+                              <img
+                                src={att.url}
+                                alt={att.name}
+                                className="w-8 h-8 rounded-lg object-cover border border-border shrink-0"
+                              />
+                            ) : (
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                <Paperclip className="w-4 h-4" />
+                              </div>
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-medium text-foreground truncate group-hover:text-primary">
+                                {att.name}
+                              </p>
+                              {att.size && (
+                                <p className="text-[10px] text-muted-foreground font-mono">
+                                  {(att.size / 1024).toFixed(0)} KB
+                                </p>
+                              )}
+                            </div>
+                          </a>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <a
+                              href={att.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1 rounded text-muted-foreground hover:text-foreground"
+                              title="Mở tệp"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAttachment(att.id)}
+                              className="p-1 rounded text-muted-foreground hover:text-destructive"
+                              title="Xóa tệp"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
 
