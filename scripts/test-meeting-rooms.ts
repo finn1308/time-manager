@@ -5,6 +5,8 @@
  * IDOR prevention, and real-time tracking calculations.
  */
 
+import fs from "fs";
+import path from "path";
 import { prisma } from "../src/lib/prisma";
 import bcrypt from "bcryptjs";
 import {
@@ -106,6 +108,48 @@ async function runTestSuite() {
   });
 
   assert(!!room.id, "Phòng họp đã được lưu bền vững vào Supabase PostgreSQL");
+
+  // 2.1. Architectural Layout Decoupling & Dedicated Admin Credential Verification
+  console.log("\n--- TEST 2.1: Tách Layout độc lập & Khởi tạo Tài khoản Quản trị phòng ---");
+  const standalonePageExists = fs.existsSync(path.join(process.cwd(), "src/app/rooms/[roomId]/page.tsx"));
+  const dashboardRoomSubrouteExists = fs.existsSync(path.join(process.cwd(), "src/app/(dashboard)/rooms/[roomId]"));
+  const roomLoginFileExists = fs.existsSync(path.join(process.cwd(), "src/components/rooms/room-login.tsx"));
+  const roomLoginContent = roomLoginFileExists ? fs.readFileSync(path.join(process.cwd(), "src/components/rooms/room-login.tsx"), "utf-8") : "";
+
+  assert(standalonePageExists, "Tệp src/app/rooms/[roomId]/page.tsx tồn tại độc lập ngoài (dashboard)");
+  assert(!dashboardRoomSubrouteExists, "Đã loại bỏ hoàn toàn src/app/(dashboard)/rooms/[roomId] để không thừa kế sidebar/topbar");
+  assert(roomLoginFileExists, "Tệp giao diện đăng nhập phòng src/components/rooms/room-login.tsx đã sẵn sàng");
+  assert(roomLoginContent.includes("Chào mừng bạn đến với phòng họp ID = "), "Tiêu đề trang đăng nhập phòng tuân thủ chính xác mẫu bắt buộc trong AGENT.md");
+
+  // Dedicated Room Admin user generated on room creation
+  const roomAdminUsername = `admin_${room.publicId}`;
+  const roomAdminEmail = `${roomAdminUsername}@room.local`;
+  const roomAdmin = await prisma.user.create({
+    data: {
+      email: roomAdminEmail,
+      name: roomAdminUsername,
+      passwordHash: defaultPwHash,
+      role: "USER", // CRITICAL: Isolated to room, never granted global ChronoMind ADMIN
+      mustChangePassword: true,
+    },
+  });
+
+  await prisma.roomMembership.create({
+    data: {
+      roomId: room.id,
+      userId: roomAdmin.id,
+      role: ROOM_ROLES.ADMIN,
+      status: "ACTIVE",
+    },
+  });
+
+  assert(roomAdmin.role === "USER", "Tài khoản admin phòng không được cấp quyền admin toàn hệ thống ChronoMind (role = USER)");
+  assert(roomAdmin.mustChangePassword === true, "Admin phòng mới tạo bắt buộc phải đổi mật khẩu (mustChangePassword = true)");
+  const adminPwValid = await bcrypt.compare("12345678", roomAdmin.passwordHash!);
+  assert(adminPwValid === true, "Mật khẩu tạm ban đầu của admin phòng được thiết lập chuẩn 12345678 và mã hóa an toàn");
+
+  const roomAdminAuth = await getRoomAuth(room.id, roomAdmin.id);
+  assert(roomAdminAuth?.isAdmin === true, "Tài khoản admin phòng có toàn quyền ADMIN trong phạm vi phòng họp");
 
   // 3. Authorization & IDOR Protection
   console.log("\n--- TEST 3: Kiểm tra phân quyền RBAC & Chặn truy cập trái phép (IDOR) ---");
@@ -328,7 +372,7 @@ async function runTestSuite() {
   console.log("\n--- TEST 10: Dọn dẹp dữ liệu kiểm thử an toàn ---");
   await prisma.meetingRoom.delete({ where: { id: room.id } });
   await prisma.user.deleteMany({
-    where: { id: { in: [adminUser.id, hostUser.id, memberUser.id, outsiderUser.id] } },
+    where: { id: { in: [adminUser.id, hostUser.id, memberUser.id, outsiderUser.id, roomAdmin.id] } },
   });
 
   // Verify room is deleted
