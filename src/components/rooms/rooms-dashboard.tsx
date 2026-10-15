@@ -18,9 +18,13 @@ import {
   Loader2,
   Shield,
   Layers,
+  KeyRound,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { CreateRoomModal } from "./create-room-modal";
+import { AdminCredentialsModal } from "./modals/admin-credentials-modal";
+import { DeleteRoomModal } from "./modals/delete-room-modal";
 
 interface RoomSummary {
   id: string;
@@ -45,6 +49,8 @@ export function RoomsDashboard() {
   const [roleFilter, setRoleFilter] = useState<string>("ALL");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedRoomForCreds, setSelectedRoomForCreds] = useState<RoomSummary | null>(null);
+  const [selectedRoomForDelete, setSelectedRoomForDelete] = useState<RoomSummary | null>(null);
 
   const fetchRooms = async () => {
     setLoading(true);

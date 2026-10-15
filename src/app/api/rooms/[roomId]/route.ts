@@ -170,10 +170,25 @@ export async function DELETE(
     const auth = await requireRoomRole(roomId, user.id, [ROOM_ROLES.ADMIN]);
 
     await prisma.$transaction(async (tx) => {
+      const roomToDelete = await tx.meetingRoom.findUnique({
+        where: { id: auth.room.id },
+        select: { id: true, ownerId: true, publicId: true },
+      });
+
       // Cascade delete deletes all memberships, groups, cards, columns, posts, and audits
       await tx.meetingRoom.delete({
         where: { id: auth.room.id },
       });
+
+      // Clean up dedicated room admin account if it ends with @room.local
+      if (roomToDelete?.ownerId) {
+        await tx.user.deleteMany({
+          where: {
+            id: roomToDelete.ownerId,
+            email: { endsWith: "@room.local" },
+          },
+        });
+      }
     });
 
     return NextResponse.json({ success: true, message: "Phòng họp đã được xóa thành công" });
