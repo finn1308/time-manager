@@ -64,7 +64,7 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
   const [activeTab, setActiveTab] = useState<RoomTab>("personal"); // Default: Cá nhân
 
   // Members list for card assignment
-  const [members, setMembers] = useState<Array<{ id: string; userId: string; name: string; image?: string | null }>>([]);
+  const [members, setMembers] = useState<Array<{ id: string; userId: string; name: string; image?: string | null; role?: string; email?: string }>>([]);
 
   // Modals state
   const [showMembersModal, setShowMembersModal] = useState(false);
@@ -93,6 +93,8 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
             userId: m.userId,
             name: m.name,
             image: m.image,
+            role: m.role,
+            email: m.email,
           }))
         );
       }
@@ -191,8 +193,15 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
           <PersonalTab
             roomId={data.room.id}
             groups={data.groups}
+            members={members}
+            columns={data.columns}
+            labels={data.labels}
+            isAdmin={data.permissions.isAdmin}
+            isHost={data.permissions.isHost}
             currentUserId={currentUser.id}
+            currentUser={currentUser}
             mustChangePassword={mustChangePassword}
+            onOpenMembers={() => setShowMembersModal(true)}
           />
         )}
 

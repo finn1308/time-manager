@@ -79,7 +79,7 @@ interface TaskCardItem {
 
 interface PersonalTabProps {
   roomId: string;
-  groups: Array<{ id: string; name: string }>;
+  groups: Array<{ id: string; name: string; color?: string | null }>;
   members?: MemberItem[];
   columns?: Array<{ id: string; name: string; key: string; color?: string | null }>;
   labels?: Array<{ id: string; name: string; color: string }>;
@@ -315,7 +315,7 @@ export function PersonalTab({
 
   // Parse tag from content if prefixed with [Tag]
   const extractTagAndContent = (content: string) => {
-    const match = content.match(/^\[(.*?)\]\s*(.*)$/s);
+    const match = content.match(/^\[(.*?)\]\s*([\s\S]*)$/);
     if (match) {
       return { tag: match[1], cleanContent: match[2] };
     }
