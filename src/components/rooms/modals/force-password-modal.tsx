@@ -61,7 +61,7 @@ export function ForcePasswordModal({ open, onSuccess }: ForcePasswordModalProps)
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent className="max-w-md p-6 border border-amber-500/30 bg-card rounded-2xl shadow-2xl [&>button]:hidden">
         <DialogHeader className="space-y-3">
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
