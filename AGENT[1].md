@@ -67,9 +67,17 @@ Khi mở link phòng họp có ID ngẫu nhiên (`/rooms/<random-room-id>`), ứ
 - [x] Tracking tính toán từ số liệu thực tế, không dùng số liệu mẫu.
 - [x] Nút Đăng xuất (`LogOut`) xóa session phòng và đưa về màn hình đăng nhập phòng.
 
+### Tính năng Xem lại tài khoản Admin & Xóa phòng họp
+- [x] Admin xem lại được tài khoản & mật khẩu tạm bất kỳ lúc nào từ thẻ phòng trong ChronoMind Dashboard và trong Workspace (`AdminCredentialsModal`).
+- [x] API `GET /api/rooms/[roomId]/admin-credentials` bảo vệ phía server, chỉ cho phép ADMIN phòng truy cập.
+- [x] API `POST /api/rooms/[roomId]/admin-credentials` cho phép reset mật khẩu về `12345678` nếu admin quên mật khẩu.
+- [x] Admin xóa được phòng họp trực tiếp từ thẻ phòng với modal xác nhận nhập tên phòng an toàn (`DeleteRoomModal`).
+- [x] API `DELETE /api/rooms/[roomId]` kiểm tra quyền ADMIN, xóa cascade toàn bộ dữ liệu phụ thuộc và dọn dẹp tài khoản admin phòng tự động.
+- [x] Thành viên (Member) và Host bị chặn tuyệt đối không được xóa phòng họp (403 Forbidden).
+
 ### Chất lượng & Kiểm thử
 - [x] `npx tsc --noEmit`: 0 lỗi TypeScript.
-- [x] `npm run test:rooms`: 34/34 assertions PASSED (100%).
-- [x] `npm run test:all`: 13/13 test suites PASSED (Toàn bộ 253 test assertions đỗ 100%).
+- [x] `npm run test:rooms`: 42/42 assertions PASSED (100%).
+- [x] `npm run test:all`: 13/13 test suites PASSED (Toàn bộ 261 test assertions đỗ 100%).
 - [x] `npm run build`: Production build thành công 139 routes Next.js Turbopack.
 - [x] Không làm hồi quy Calendar, Study Timer, Subjects, AI, LUYENTU.
