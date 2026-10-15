@@ -691,6 +691,9 @@ export function PersonalTab({
             <>
               {posts.filter(filterPost).map((post) => {
                 const { tag, cleanContent } = extractTagAndContent(post.content);
+                const postImages = (post.imageUrls && post.imageUrls.length > 0)
+                  ? post.imageUrls
+                  : (post.imageUrl ? [post.imageUrl] : []);
 
                 return (
                   <div
@@ -711,18 +714,12 @@ export function PersonalTab({
                       )}
                     </div>
 
-                    {/* Image Cover */}
-                    {post.imageUrl && (
-                      <div className="rounded-lg overflow-hidden border border-border/60 max-h-48 bg-muted/30">
-                        <img
-                          src={post.imageUrl}
-                          alt="Ảnh đính kèm"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLElement).style.display = "none";
-                          }}
-                        />
-                      </div>
+                    {/* Image Cover / Multi-Image Gallery */}
+                    {postImages.length > 0 && (
+                      <MultiImageGallery
+                        images={postImages}
+                        onImageClick={(idx) => setLightboxData({ images: postImages, index: idx })}
+                      />
                     )}
 
                     {/* Content */}
