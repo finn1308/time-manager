@@ -53,9 +53,10 @@ interface RoomWorkspaceProps {
     name: string | null;
     email: string;
   };
+  onLogout?: () => void;
 }
 
-export function RoomWorkspace({ roomId, currentUser }: RoomWorkspaceProps) {
+export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspaceProps) {
   const [data, setData] = useState<RoomData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

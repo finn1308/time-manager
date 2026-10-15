@@ -17,6 +17,7 @@ import {
   BarChart2,
   History,
   MessageSquare,
+  LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -40,6 +41,7 @@ interface RoomHeaderProps {
   onTabChange: (tab: RoomTab) => void;
   onOpenMembers: () => void;
   onOpenSettings: () => void;
+  onLogout?: () => void;
   isAdmin: boolean;
   isHost: boolean;
 }
@@ -52,6 +54,7 @@ export function RoomHeader({
   onTabChange,
   onOpenMembers,
   onOpenSettings,
+  onLogout,
   isAdmin,
   isHost,
 }: RoomHeaderProps) {
@@ -144,6 +147,20 @@ export function RoomHeader({
             >
               <Settings2 className="w-3.5 h-3.5" />
               <span>Cài đặt</span>
+            </Button>
+          )}
+
+          {onLogout && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onLogout}
+              className="h-8 px-2.5 text-xs rounded-xl gap-1.5 text-muted-foreground hover:text-destructive hover:border-destructive/30"
+              title="Đăng xuất khỏi phòng họp"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Đăng xuất</span>
             </Button>
           )}
         </div>
