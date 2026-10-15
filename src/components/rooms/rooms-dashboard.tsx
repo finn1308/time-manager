@@ -229,23 +229,52 @@ export function RoomsDashboard() {
                 </div>
               </div>
 
-              {/* Action Buttons: Open & Copy Link */}
-              <div className="pt-3 border-t border-border flex items-center justify-between gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => copyLink(room.publicId)}
-                  className="h-8 px-2.5 text-xs rounded-xl gap-1.5"
-                  title="Sao chép liên kết phòng"
-                >
-                  {copiedId === room.publicId ? (
-                    <Check className="w-3.5 h-3.5 text-emerald-500" />
-                  ) : (
-                    <Copy className="w-3.5 h-3.5" />
+              {/* Action Buttons: Open, Copy Link, Admin Creds & Delete */}
+              <div className="pt-3 border-t border-border flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyLink(room.publicId)}
+                    className="h-8 px-2.5 text-xs rounded-xl gap-1.5"
+                    title="Sao chép liên kết phòng"
+                  >
+                    {copiedId === room.publicId ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                    {copiedId === room.publicId ? "Đã chép" : "Sao chép link"}
+                  </Button>
+
+                  {room.role === "ADMIN" && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedRoomForCreds(room)}
+                      className="h-8 px-2.5 text-xs rounded-xl gap-1.5 text-purple-600 dark:text-purple-400 border-purple-500/20 hover:bg-purple-500/10"
+                      title="Xem tài khoản & mật khẩu admin"
+                    >
+                      <KeyRound className="w-3.5 h-3.5" />
+                      <span>Tài khoản Admin</span>
+                    </Button>
                   )}
-                  {copiedId === room.publicId ? "Đã chép" : "Sao chép link"}
-                </Button>
+
+                  {room.role === "ADMIN" && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedRoomForDelete(room)}
+                      className="h-8 w-8 p-0 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      title="Xóa phòng họp"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
+                </div>
 
                 <Link href={`/rooms/${room.publicId}`}>
                   <Button
@@ -268,6 +297,21 @@ export function RoomsDashboard() {
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onRoomCreated={fetchRooms}
+      />
+
+      {/* Admin Credentials Modal */}
+      <AdminCredentialsModal
+        open={!!selectedRoomForCreds}
+        onClose={() => setSelectedRoomForCreds(null)}
+        room={selectedRoomForCreds}
+      />
+
+      {/* Delete Room Modal */}
+      <DeleteRoomModal
+        open={!!selectedRoomForDelete}
+        onClose={() => setSelectedRoomForDelete(null)}
+        room={selectedRoomForDelete}
+        onRoomDeleted={fetchRooms}
       />
     </div>
   );
