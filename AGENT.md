@@ -423,43 +423,31 @@ Tính năng chỉ được coi là hoàn thành khi:
 
 ## 15. Báo cáo cuối cùng của Antigravity
 
-- **Tính năng đã hoàn tất**:
-  1. Mục cấp cao **Phòng họp** trong Sidebar, Bottom Nav (Mobile) và Command Palette (Ctrl/Cmd + K).
-  2. Trang Dashboard `/rooms`: Grid thẻ phòng, tìm kiếm, lọc theo vai trò, modal tạo phòng mới sinh public ID ngẫu nhiên (`rm_...`).
-  3. Không gian phòng họp `/rooms/[roomId]`: Header hiển thị thông tin, link chia sẻ, vai trò, số thành viên và 5 Tabs chính:
-     - **Cá nhân**: Dòng cập nhật bài viết, ghi chú, ảnh, tài liệu đính kèm, bộ lọc Của tôi / Tất cả.
-     - **Nhóm**: Tạo nhóm, xem thành viên nhóm, gửi yêu cầu tham gia nhóm, Host/Admin duyệt/từ chối yêu cầu.
-     - **Bảng công việc**: Bảng Kanban 4 cột mặc định phong cách Trello, nhãn màu pastel, deadline, checklist có progress bar, bình luận, di chuyển thẻ tức thì giữa các cột, chi tiết thẻ modal.
-     - **Tracking**: Thống kê số liệu thực tế tính toán từ cơ sở dữ liệu (tổng thẻ, hoàn thành, quá hạn, tiến độ theo cột, khối lượng công việc theo từng thành viên).
-     - **Hoạt động**: Nhật ký kiểm toán (Audit Trail) ghi nhận mọi thao tác nhạy cảm, loại bỏ tuyệt đối thông tin bí mật.
-  4. Quản lý thành viên & Luồng đổi mật khẩu:
-     - Thêm thành viên hàng loạt hỗ trợ nhiều định dạng dòng.
-     - Mật khẩu tạm ban đầu mặc định `12345678`.
-     - Buộc đổi mật khẩu lần đầu qua `ForcePasswordModal` và API `/api/rooms/auth/change-password`.
-     - Admin có thể reset mật khẩu về tạm thời nhưng không bao giờ xem được mật khẩu thật của thành viên.
-  5. Bảo mật & Chặn IDOR:
-     - Toàn bộ thao tác kiểm tra session và quyền RBAC (ADMIN, HOST, MEMBER) ở server (`src/lib/rooms/room-auth.ts`).
+- **Kiến trúc & Tách Layout độc lập (Fixed Architecture)**:
+  1. **ChronoMind Dashboard (`/rooms`)**: Nằm trong `src/app/(dashboard)/rooms/page.tsx`, sử dụng layout ChronoMind đầy đủ (Sidebar, TopBar). Người dùng tại đây tạo phòng, xem danh sách phòng, sao chép link và thông tin tài khoản admin phòng.
+  2. **Không gian phòng họp độc lập (`/rooms/[roomId]`)**: Đặt tại `src/app/rooms/[roomId]/page.tsx` (bên ngoài group `(dashboard)`), không thừa kế bất kỳ component nào của ChronoMind (không Sidebar, không TopBar, không BottomNav).
+  3. **Màn hình đăng nhập phòng (`RoomLogin`)**: Khi truy cập link phòng khi chưa đăng nhập, hiển thị tiêu đề chuẩn: **"Chào mừng bạn đến với phòng họp ID = <random-room-id>"**, thông tin môn học, form nhập username/password và nút đăng nhập.
+  4. **Tài khoản Admin phòng**: Khi tạo phòng, server tự động cấp tài khoản `admin_<publicId>` với mật khẩu tạm `12345678` (`mustChangePassword: true`, `role: "USER"` không cấp quyền admin ChronoMind), hiển thị thông tin kèm nút sao chép để Admin đăng nhập qua URL phòng.
+  5. **Đổi mật khẩu lần đầu**: Cả Admin phòng và Member được cấp mật khẩu tạm đều bị chặn bởi `ForcePasswordModal` và kiểm tra server-side cho đến khi thiết lập mật khẩu mới.
+  6. **Đăng xuất phòng họp**: Tích hợp nút Đăng xuất trên `RoomHeader` gọi `/api/rooms/[roomId]/auth/logout`, hủy session phòng và đưa người dùng về màn hình đăng nhập phòng.
+  7. **Workspace 5 Tabs Trello**: Cá nhân, Nhóm, Bảng công việc (4 cột Kanban), Tracking thực tế và Nhật ký kiểm toán.
 
 - **Các file chính đã tạo/sửa**:
-  - `prisma/schema.prisma`: Thêm 15 model (`MeetingRoom`, `RoomMembership`, `RoomGroup`, `GroupMembership`, `GroupJoinRequest`, `BoardColumn`, `TaskCard`, `TaskAssignee`, `TaskLabel`, `TaskLabelAssignment`, `TaskChecklistItem`, `TaskComment`, `TaskAttachment`, `RoomActivityPost`, `RoomAuditEvent`) và cờ `mustChangePassword` trên User.
-  - `src/lib/rooms/room-utils.ts`: Hằng số, roles, default columns, pastel labels và sinh random ID `generateRandomRoomPublicId()`.
-  - `src/lib/rooms/room-auth.ts`: Helper xác thực RBAC, kiểm tra IDOR, ghi nhận audit log an toàn.
-  - Các API routes (`src/app/api/rooms/**`): 13 endpoints đầy đủ CRUD phòng, thành viên, nhóm, thẻ, checklist, bình luận, bài viết, tracking, audit và đổi mật khẩu.
-  - Các UI components (`src/components/rooms/**`): Dashboard, Workspace, Header, 5 Tabs (`personal`, `groups`, `board`, `tracking`, `activity`), Modals (`create-room`, `edit-room`, `member-management`, `card-detail`, `create-group`, `force-password`).
-  - Trang giao diện: `src/app/(dashboard)/rooms/page.tsx`, `src/app/(dashboard)/rooms/[roomId]/page.tsx`.
-  - Navigation: `src/components/notion/sidebar.tsx`, `src/components/layout/bottom-nav.tsx`, `src/components/notion/command-palette.tsx`.
-  - Test Suite: `scripts/test-meeting-rooms.ts` & cập nhật `package.json`.
-
-- **Schema & Migration đã áp dụng**:
-  - `npx prisma format` & `npx prisma generate` (Thành công).
-  - `npx prisma db push --accept-data-loss=false` (Đã đồng bộ an toàn 15 bảng vào Supabase PostgreSQL).
-
-- **Biến môi trường mới**:
-  - Không cần thêm biến môi trường mới; tận dụng hoàn toàn hạ tầng Supabase PostgreSQL và JWT Auth hiện có.
+  - `src/app/rooms/[roomId]/page.tsx`: Route độc lập ngoài `(dashboard)`.
+  - `src/components/rooms/standalone-room-client.tsx`: Điều phối trạng thái Login vs Workspace phòng.
+  - `src/components/rooms/room-login.tsx`: Giao diện đăng nhập phòng với tiêu đề bắt buộc.
+  - `src/components/rooms/room-workspace.tsx` & `room-header.tsx`: Bổ sung xử lý đăng xuất (`onLogout`).
+  - `src/lib/rooms/room-session.ts`: Quản lý session riêng của phòng qua JWT cookie `cm_room_session_<roomId>`.
+  - `src/app/api/rooms/[roomId]/auth/login/route.ts`: API đăng nhập phòng.
+  - `src/app/api/rooms/[roomId]/auth/logout/route.ts`: API đăng xuất phòng.
+  - `src/app/api/rooms/[roomId]/auth/me/route.ts`: API kiểm tra phiên đăng nhập phòng.
+  - `src/app/api/rooms/route.ts`: Khởi tạo phòng cùng tài khoản admin phòng (`admin_<publicId>`).
+  - `src/components/rooms/create-room-modal.tsx`: Hiển thị thông tin đăng nhập admin và link sau khi tạo phòng.
+  - `scripts/test-meeting-rooms.ts`: Bổ sung test kiểm thử tách layout và tài khoản admin phòng.
 
 - **Kết quả kiểm thử & Build thực tế**:
   - `npx tsc --noEmit`: Code 0 (0 lỗi TypeScript).
-  - `npm run test:rooms`: 26/26 assertions PASSED (100%).
-  - `npm run test:all`: 13/13 test suites PASSED (Toàn bộ 253 assertions đều đỗ 100%, bảo toàn nguyên vẹn Calendar, LUYENTU, Study Timer, AI Scheduler).
+  - `npm run test:rooms`: 34/34 assertions PASSED (100%).
+  - `npm run test:all`: 13/13 test suites PASSED (Toàn bộ 253 test assertions đỗ 100%, bảo toàn nguyên vẹn Calendar, LUYENTU, Study Timer, AI Scheduler).
   - `npm run build`: Code 0 (Tạo thành công production build 139 routes Next.js Turbopack).
 
