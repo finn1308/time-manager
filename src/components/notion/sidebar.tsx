@@ -20,6 +20,7 @@ import {
   LogOut,
   Sparkles,
   Zap,
+  Users,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
@@ -61,6 +62,17 @@ const navItems = [
     activeText: "var(--peach-dark)",
     iconBg: "var(--peach-bg)",
     iconColor: "var(--peach)",
+  },
+  {
+    label: "Phòng họp",
+    href: "/rooms",
+    icon: Users,
+    colorVar: "lavender",
+    activeBg: "var(--lavender-bg)",
+    activeBorder: "var(--lavender-soft)",
+    activeText: "var(--lavender-dark)",
+    iconBg: "var(--lavender-bg)",
+    iconColor: "var(--lavender)",
   },
   {
     label: "Nhiệm vụ",

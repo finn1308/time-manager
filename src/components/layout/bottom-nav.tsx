@@ -17,6 +17,7 @@ import {
   LogOut,
   Play,
   Sparkles,
+  Users,
 } from "lucide-react";
 import { usePipTimer } from "../timer/pip-timer-provider";
 
@@ -55,6 +56,7 @@ const navItems = [
 // Full drawer items
 const drawerItems = [
   { label: "Dashboard", href: "/", icon: Home, color: "var(--lavender)" },
+  { label: "Phòng họp", href: "/rooms", icon: Users, color: "var(--lavender)" },
   { label: "Lịch học", href: "/calendar", icon: Calendar, color: "var(--peach)" },
   { label: "Nhiệm vụ", href: "/tasks", icon: CheckSquare, color: "var(--mint)" },
   { label: "Môn học", href: "/subjects", icon: BookOpen, color: "var(--sky)" },
