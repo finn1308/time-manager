@@ -31,8 +31,10 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
   const [coverColor, setCoverColor] = useState("lavender");
   const [joinPolicy, setJoinPolicy] = useState("INVITE_ONLY");
   const [loading, setLoading] = useState(false);
-  const [createdRoom, setCreatedRoom] = useState<{ id: string; publicId: string; title: string } | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [createdRoom, setCreatedRoom] = useState<{ id: string; publicId: string; title: string; subject: string } | null>(null);
+  const [adminCredential, setAdminCredential] = useState<{ username: string; email: string; tempPassword: string } | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedCreds, setCopiedCreds] = useState(false);
 
   const resetForm = () => {
     setTitle("");
@@ -41,7 +43,9 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
     setCoverColor("lavender");
     setJoinPolicy("INVITE_ONLY");
     setCreatedRoom(null);
-    setCopied(false);
+    setAdminCredential(null);
+    setCopiedLink(false);
+    setCopiedCreds(false);
   };
 
   const handleClose = () => {
@@ -73,6 +77,7 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
 
       toast.success("Tạo phòng họp thành công!");
       setCreatedRoom(data.room);
+      setAdminCredential(data.adminCredential);
       onRoomCreated?.();
     } catch (err: any) {
       toast.error(err.message || "Lỗi tạo phòng họp");
@@ -90,9 +95,18 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
     if (!createdRoom) return;
     const url = getFullUrl(createdRoom.publicId);
     navigator.clipboard.writeText(url);
-    setCopied(true);
-    toast.success("Đã sao chép liên kết phòng họp vào bộ nhớ tạm");
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedLink(true);
+    toast.success("Đã sao chép liên kết phòng họp");
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const copyCredentials = () => {
+    if (!adminCredential || !createdRoom) return;
+    const text = `Phòng họp: ${createdRoom.title}\nLink: ${getFullUrl(createdRoom.publicId)}\nTên đăng nhập: ${adminCredential.username}\nMật khẩu tạm: ${adminCredential.tempPassword}`;
+    navigator.clipboard.writeText(text);
+    setCopiedCreds(true);
+    toast.success("Đã sao chép thông tin đăng nhập Admin");
+    setTimeout(() => setCopiedCreds(false), 2000);
   };
 
   return (
@@ -103,22 +117,23 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
             <Sparkles className="w-5 h-5" />
           </div>
           <DialogTitle className="text-xl font-bold text-foreground">
-            {createdRoom ? "Phòng họp đã sẵn sàng!" : "Tạo phòng họp mới"}
+            {createdRoom ? "Phòng họp đã khởi tạo thành công!" : "Tạo phòng họp mới"}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             {createdRoom
-              ? "URL ngẫu nhiên bảo mật cao đã được khởi tạo. Bạn có thể sao chép liên kết để mời thành viên."
+              ? "URL ngẫu nhiên độc lập và tài khoản Admin của phòng đã sẵn sàng."
               : "Thiết lập không gian cộng tác riêng tư, quản lý bài tập, nhóm và bảng công việc kiểu Trello."}
           </DialogDescription>
         </DialogHeader>
 
-        {createdRoom ? (
-          <div className="mt-4 space-y-4">
-            <div className="p-4 rounded-xl bg-muted/50 border border-border space-y-2">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Liên kết truy cập phòng:
+        {createdRoom && adminCredential ? (
+          <div className="mt-4 space-y-3.5">
+            {/* Room Link */}
+            <div className="p-3.5 rounded-xl bg-muted/40 border border-border space-y-1.5">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                1. Liên kết truy cập riêng của phòng:
               </span>
-              <div className="flex items-center gap-2 bg-background p-2.5 rounded-lg border border-border">
+              <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-border">
                 <code className="text-xs font-mono text-primary flex-1 truncate select-all">
                   {getFullUrl(createdRoom.publicId)}
                 </code>
@@ -127,17 +142,71 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
                   variant="outline"
                   size="sm"
                   onClick={copyRoomLink}
-                  className="h-8 px-2.5 rounded-md text-xs gap-1.5"
+                  className="h-7 px-2.5 rounded-md text-xs gap-1"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copied ? "Đã chép" : "Sao chép"}
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedLink ? "Đã chép" : "Chép link"}
                 </Button>
               </div>
+            </div>
+
+            {/* Admin Credentials */}
+            <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-[11px]">
+                  2. Tài khoản Admin của phòng:
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={copyCredentials}
+                  className="h-6 px-2 text-[10px] rounded-md gap-1 bg-background"
+                >
+                  {copiedCreds ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                  {copiedCreds ? "Đã chép tài khoản" : "Chép thông tin"}
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
+                <div className="bg-background p-2 rounded-lg border border-border">
+                  <p className="text-[10px] text-muted-foreground uppercase">Tên đăng nhập:</p>
+                  <p className="font-bold text-foreground select-all">{adminCredential.username}</p>
+                </div>
+                <div className="bg-background p-2 rounded-lg border border-border">
+                  <p className="text-[10px] text-muted-foreground uppercase">Mật khẩu tạm:</p>
+                  <p className="font-bold text-primary select-all">{adminCredential.tempPassword}</p>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-muted-foreground italic">
+                * Lưu ý: Mở URL phòng và đăng nhập bằng tài khoản này. Hệ thống sẽ bắt buộc đổi mật khẩu ở lần đăng nhập đầu tiên.
+              </p>
             </div>
 
             <div className="flex items-center gap-2 pt-2">
               <Button
                 type="button"
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1 rounded-xl h-10 text-xs font-medium"
+              >
+                Đóng
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  handleClose();
+                  window.open(`/rooms/${createdRoom.publicId}`, "_blank");
+                }}
+                className="flex-1 rounded-xl h-10 text-xs font-semibold gap-1.5 bg-primary text-primary-foreground"
+              >
+                Mở phòng ngay
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          </div>
+        ) : (
                 variant="outline"
                 onClick={handleClose}
                 className="flex-1 rounded-xl h-10 text-xs font-medium"
