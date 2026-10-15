@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,6 +25,10 @@ import {
   Calendar,
   X,
   UserPlus,
+  ChevronLeft,
+  ChevronRight,
+  Upload,
+  Maximize2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { CardDetailModal } from "../modals/card-detail-modal";
@@ -33,6 +37,7 @@ interface Post {
   id: string;
   content: string;
   imageUrl?: string | null;
+  imageUrls?: string[];
   attachmentUrl?: string | null;
   attachmentName?: string | null;
   createdAt: string;
@@ -138,6 +143,153 @@ const getRoleBadge = (role?: string) => {
   }
 };
 
+// Multi-Image Gallery component with responsive layout (1, 2, 3, 4, 6+ images) and click to view lightbox
+function MultiImageGallery({
+  images,
+  onImageClick,
+}: {
+  images: string[];
+  onImageClick: (index: number) => void;
+}) {
+  if (!images || images.length === 0) return null;
+
+  const count = images.length;
+
+  if (count === 1) {
+    return (
+      <div
+        onClick={() => onImageClick(0)}
+        className="relative group rounded-xl overflow-hidden border border-border/60 max-h-56 bg-muted/30 cursor-pointer"
+      >
+        <img
+          src={images[0]}
+          alt="Ảnh đính kèm"
+          className="w-full h-full max-h-56 object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            (e.target as HTMLElement).style.display = "none";
+          }}
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+          <span className="p-1.5 rounded-full bg-black/60 text-white text-xs backdrop-blur-xs">
+            <Maximize2 className="w-4 h-4" />
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (count === 2) {
+    return (
+      <div className="grid grid-cols-2 gap-1.5 rounded-xl overflow-hidden border border-border/60">
+        {images.map((url, idx) => (
+          <div
+            key={idx}
+            onClick={() => onImageClick(idx)}
+            className="relative group h-32 sm:h-36 bg-muted/30 overflow-hidden cursor-pointer"
+          >
+            <img
+              src={url}
+              alt={`Ảnh ${idx + 1}`}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <span className="p-1.5 rounded-full bg-black/60 text-white text-xs backdrop-blur-xs">
+                <Maximize2 className="w-3.5 h-3.5" />
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (count === 3) {
+    return (
+      <div className="grid grid-cols-3 gap-1.5 rounded-xl overflow-hidden border border-border/60">
+        {images.map((url, idx) => (
+          <div
+            key={idx}
+            onClick={() => onImageClick(idx)}
+            className="relative group h-24 sm:h-28 bg-muted/30 overflow-hidden cursor-pointer"
+          >
+            <img
+              src={url}
+              alt={`Ảnh ${idx + 1}`}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <span className="p-1 rounded-full bg-black/60 text-white text-xs backdrop-blur-xs">
+                <Maximize2 className="w-3 h-3" />
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (count === 4) {
+    return (
+      <div className="grid grid-cols-2 gap-1.5 rounded-xl overflow-hidden border border-border/60">
+        {images.map((url, idx) => (
+          <div
+            key={idx}
+            onClick={() => onImageClick(idx)}
+            className="relative group h-28 bg-muted/30 overflow-hidden cursor-pointer"
+          >
+            <img
+              src={url}
+              alt={`Ảnh ${idx + 1}`}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <span className="p-1 rounded-full bg-black/60 text-white text-xs backdrop-blur-xs">
+                <Maximize2 className="w-3 h-3" />
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // 5, 6, or more images: 3 columns grid (perfect 2 rows of 3 for 6 images)
+  const displayImages = images.slice(0, 6);
+  const remaining = images.length - 6;
+
+  return (
+    <div className="grid grid-cols-3 gap-1.5 rounded-xl overflow-hidden border border-border/60">
+      {displayImages.map((url, idx) => {
+        const isLastAndExtra = idx === 5 && remaining > 0;
+        return (
+          <div
+            key={idx}
+            onClick={() => onImageClick(idx)}
+            className="relative group h-24 bg-muted/30 overflow-hidden cursor-pointer"
+          >
+            <img
+              src={url}
+              alt={`Ảnh ${idx + 1}`}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            {isLastAndExtra ? (
+              <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px] flex items-center justify-center font-bold text-white text-sm">
+                +{remaining}
+              </div>
+            ) : (
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <span className="p-1 rounded-full bg-black/60 text-white text-xs backdrop-blur-xs">
+                  <Maximize2 className="w-3 h-3" />
+                </span>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function PersonalTab({
   roomId,
   groups,
@@ -164,14 +316,40 @@ export function PersonalTab({
   const [quickAddContent, setQuickAddContent] = useState("");
   const [quickAddTag, setQuickAddTag] = useState<string>("");
   const [quickAddImageUrl, setQuickAddImageUrl] = useState("");
+  const [quickAddImageUrls, setQuickAddImageUrls] = useState<string[]>([]);
   const [quickAddAttachmentUrl, setQuickAddAttachmentUrl] = useState("");
   const [quickAddAttachmentName, setQuickAddAttachmentName] = useState("");
   const [showQuickAttach, setShowQuickAttach] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fullscreen Lightbox state
+  const [lightboxData, setLightboxData] = useState<{ images: string[]; index: number } | null>(null);
 
   // Card detail modal state (for task cards)
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [showCardModal, setShowCardModal] = useState(false);
+
+  // Lightbox keyboard navigation
+  useEffect(() => {
+    if (!lightboxData) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setLightboxData(null);
+      } else if (e.key === "ArrowLeft") {
+        setLightboxData((prev) =>
+          prev ? { ...prev, index: (prev.index - 1 + prev.images.length) % prev.images.length } : null
+        );
+      } else if (e.key === "ArrowRight") {
+        setLightboxData((prev) =>
+          prev ? { ...prev, index: (prev.index + 1) % prev.images.length } : null
+        );
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxData]);
 
   const fetchPostsAndCards = async () => {
     setLoading(true);
@@ -226,6 +404,32 @@ export function PersonalTab({
     });
   }, [members, currentUserId, currentUser, isAdmin]);
 
+  const handleUploadFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploadingFiles(true);
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Tải ảnh lên thất bại");
+      if (data.urls && data.urls.length > 0) {
+        setQuickAddImageUrls((prev) => [...prev, ...data.urls]);
+        toast.success(`Đã tải lên ${data.urls.length} ảnh thành công!`);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Lỗi tải ảnh lên");
+    } finally {
+      setUploadingFiles(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   const handleQuickAdd = async (authorUserId: string) => {
     if (!quickAddContent.trim()) return;
 
@@ -241,13 +445,19 @@ export function PersonalTab({
         ? `[${quickAddTag}] ${quickAddContent.trim()}`
         : quickAddContent.trim();
 
+      const allImages = [...quickAddImageUrls];
+      if (quickAddImageUrl.trim() && !allImages.includes(quickAddImageUrl.trim())) {
+        allImages.push(quickAddImageUrl.trim());
+      }
+
       const res = await fetch(`/api/rooms/${roomId}/posts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: finalContent,
           groupId: selectedGroupId || null,
-          imageUrl: quickAddImageUrl.trim() || null,
+          imageUrl: allImages.length > 0 ? allImages[0] : null,
+          imageUrls: allImages,
           attachmentUrl: quickAddAttachmentUrl.trim() || null,
           attachmentName: quickAddAttachmentName.trim() || null,
         }),
@@ -260,6 +470,7 @@ export function PersonalTab({
       setQuickAddContent("");
       setQuickAddTag("");
       setQuickAddImageUrl("");
+      setQuickAddImageUrls([]);
       setQuickAddAttachmentUrl("");
       setQuickAddAttachmentName("");
       setShowQuickAttach(false);

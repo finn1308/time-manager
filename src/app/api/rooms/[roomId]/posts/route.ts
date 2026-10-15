@@ -7,8 +7,9 @@ import { z } from "zod";
 const createPostSchema = z.object({
   content: z.string().min(1, "Nội dung bài viết không được để trống").max(3000),
   groupId: z.string().optional().nullable(),
-  imageUrl: z.string().url().optional().nullable().or(z.literal("")),
-  attachmentUrl: z.string().url().optional().nullable().or(z.literal("")),
+  imageUrl: z.string().optional().nullable().or(z.literal("")),
+  imageUrls: z.array(z.string()).optional().default([]),
+  attachmentUrl: z.string().optional().nullable().or(z.literal("")),
   attachmentName: z.string().max(100).optional().nullable(),
 });
 
@@ -49,19 +50,26 @@ export async function GET(
       orderBy: { createdAt: "desc" },
     });
 
-    const formatted = posts.map((p) => ({
-      id: p.id,
-      content: p.content,
-      imageUrl: p.imageUrl,
-      attachmentUrl: p.attachmentUrl,
-      attachmentName: p.attachmentName,
-      createdAt: p.createdAt,
-      updatedAt: p.updatedAt,
-      author: p.author,
-      group: p.group,
-      isOwner: p.authorId === user.id,
-      canDelete: p.authorId === user.id || auth.isAdmin,
-    }));
+    const formatted = posts.map((p) => {
+      const images = (p.imageUrls && p.imageUrls.length > 0)
+        ? p.imageUrls
+        : (p.imageUrl ? [p.imageUrl] : []);
+
+      return {
+        id: p.id,
+        content: p.content,
+        imageUrl: images.length > 0 ? images[0] : null,
+        imageUrls: images,
+        attachmentUrl: p.attachmentUrl,
+        attachmentName: p.attachmentName,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
+        author: p.author,
+        group: p.group,
+        isOwner: p.authorId === user.id,
+        canDelete: p.authorId === user.id || auth.isAdmin,
+      };
+    });
 
     return NextResponse.json({ posts: formatted });
   } catch (err: any) {
@@ -104,7 +112,14 @@ export async function POST(
       return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
     }
 
-    const { content, groupId, imageUrl, attachmentUrl, attachmentName } = parsed.data;
+    const { content, groupId, imageUrl, imageUrls, attachmentUrl, attachmentName } = parsed.data;
+
+    // Combine imageUrl and imageUrls
+    let allImages = imageUrls ? [...imageUrls] : [];
+    if (imageUrl && !allImages.includes(imageUrl)) {
+      allImages = [imageUrl, ...allImages];
+    }
+    const primaryImage = allImages.length > 0 ? allImages[0] : null;
 
     // If groupId, verify it belongs to room
     if (groupId) {
@@ -122,7 +137,8 @@ export async function POST(
         authorId: user.id,
         groupId: groupId || null,
         content,
-        imageUrl: imageUrl || null,
+        imageUrl: primaryImage,
+        imageUrls: allImages,
         attachmentUrl: attachmentUrl || null,
         attachmentName: attachmentName || null,
       },
@@ -138,7 +154,7 @@ export async function POST(
       action: "POST_CREATED",
       entityType: "POST",
       entityId: post.id,
-      details: { hasImage: !!imageUrl, hasAttachment: !!attachmentUrl },
+      details: { imageCount: allImages.length, hasAttachment: !!attachmentUrl },
     });
 
     return NextResponse.json({

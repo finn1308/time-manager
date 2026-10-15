@@ -2070,6 +2070,7 @@ model RoomActivityPost {
   groupId        String?
   content        String
   imageUrl       String?
+  imageUrls      String[] @default([])
   attachmentUrl  String?
   attachmentName String?
   createdAt      DateTime @default(now())
