@@ -101,6 +101,20 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch(`/api/rooms/${roomId}/auth/logout`, { method: "POST" });
+      toast.success("Đã đăng xuất khỏi phòng họp");
+      if (onLogout) {
+        onLogout();
+      } else {
+        window.location.reload();
+      }
+    } catch {
+      window.location.reload();
+    }
+  };
+
   useEffect(() => {
     fetchRoomData();
   }, [roomId]);
@@ -126,12 +140,19 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
             {error || "Phòng họp không tồn tại hoặc bạn chưa được cấp quyền truy cập."}
           </p>
         </div>
-        <Link href="/rooms">
-          <Button variant="outline" className="text-xs rounded-xl gap-1.5">
+        {onLogout ? (
+          <Button variant="outline" onClick={onLogout} className="text-xs rounded-xl gap-1.5">
             <ArrowLeft className="w-3.5 h-3.5" />
-            Quay lại danh sách phòng
+            Đăng nhập lại
           </Button>
-        </Link>
+        ) : (
+          <Link href="/rooms">
+            <Button variant="outline" className="text-xs rounded-xl gap-1.5">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Quay lại danh sách phòng
+            </Button>
+          </Link>
+        )}
       </div>
     );
   }
@@ -156,6 +177,7 @@ export function RoomWorkspace({ roomId, currentUser, onLogout }: RoomWorkspacePr
         onTabChange={setActiveTab}
         onOpenMembers={() => setShowMembersModal(true)}
         onOpenSettings={() => setShowSettingsModal(true)}
+        onLogout={handleLogout}
         isAdmin={data.permissions.isAdmin}
         isHost={data.permissions.isHost}
       />
