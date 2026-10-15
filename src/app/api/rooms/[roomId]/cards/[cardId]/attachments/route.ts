@@ -86,11 +86,11 @@ export async function POST(
 
     await recordRoomAudit({
       roomId: auth.room.id,
-      userId: user.id,
+      actorId: user.id,
       action: "ATTACHMENT_CREATE",
-      targetType: "TASK_CARD",
-      targetId: cardId,
-      metadata: { attachmentId: attachment.id, name: attachment.name },
+      entityType: "TASK_CARD",
+      entityId: cardId,
+      details: { attachmentId: attachment.id, name: attachment.name },
     });
 
     return NextResponse.json({ attachment }, { status: 201 });
@@ -137,11 +137,11 @@ export async function DELETE(
 
     await recordRoomAudit({
       roomId: auth.room.id,
-      userId: user.id,
+      actorId: user.id,
       action: "ATTACHMENT_DELETE",
-      targetType: "TASK_CARD",
-      targetId: cardId,
-      metadata: { attachmentId, name: attachment.name },
+      entityType: "TASK_CARD",
+      entityId: cardId,
+      details: { attachmentId, name: attachment.name },
     });
 
     return NextResponse.json({ success: true });
