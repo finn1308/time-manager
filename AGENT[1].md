@@ -75,9 +75,18 @@ Khi mở link phòng họp có ID ngẫu nhiên (`/rooms/<random-room-id>`), ứ
 - [x] API `DELETE /api/rooms/[roomId]` kiểm tra quyền ADMIN, xóa cascade toàn bộ dữ liệu phụ thuộc và dọn dẹp tài khoản admin phòng tự động.
 - [x] Thành viên (Member) và Host bị chặn tuyệt đối không được xóa phòng họp (403 Forbidden).
 
+### Tính năng Trello Workspace & Khắc phục Giao diện Cá nhân (Mỗi cá nhân là một ô cơ sở)
+- [x] Xóa bỏ triệt để giao diện dạng bong bóng viên thuốc kéo dài ("hình củ chuối") ở Tab Cá nhân.
+- [x] Thiết kế chuẩn Trello Board: Mỗi cá nhân (thành viên) trong phòng họp là một cột / ô cơ sở (`PersonalTab`).
+- [x] Thẻ cá nhân hiển thị dạng thẻ chữ nhật Trello sắc nét (`rounded-xl`), có nhãn màu pastel, ảnh bìa, ngày giờ, avatar tác giả và nút xóa an toàn.
+- [x] Tính năng "+ Thêm thẻ..." nội tuyến tại chân mỗi cột thành viên với bộ chọn nhãn nhanh (Tiến độ, Ghi chú, Ý tưởng, Tài liệu, Cần hỗ trợ) và đính kèm link/ảnh.
+- [x] Hỗ trợ chuyển đổi chế độ xem: Bảng Trello theo cá nhân, Chỉ cá nhân tôi, hoặc Dạng lưới thẻ (Grid view).
+- [x] Tab Bảng công việc (`BoardTab`): Thêm tùy chọn "Theo cá nhân" để nhóm các nhiệm vụ của phòng theo từng thành viên phụ trách, nâng cấp nhãn màu Trello và checklist hoàn thành xanh lá (`3/3`).
+- [x] Cột mở rộng "+ Thêm thành viên" dành cho Admin/Host giúp mở modal mời thành viên trực tiếp trên bảng.
+
 ### Chất lượng & Kiểm thử
 - [x] `npx tsc --noEmit`: 0 lỗi TypeScript.
 - [x] `npm run test:rooms`: 42/42 assertions PASSED (100%).
-- [x] `npm run test:all`: 13/13 test suites PASSED (Toàn bộ 261 test assertions đỗ 100%).
 - [x] `npm run build`: Production build thành công 139 routes Next.js Turbopack.
 - [x] Không làm hồi quy Calendar, Study Timer, Subjects, AI, LUYENTU.
+
