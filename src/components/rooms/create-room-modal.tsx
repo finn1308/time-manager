@@ -207,26 +207,6 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
             </div>
           </div>
         ) : (
-                variant="outline"
-                onClick={handleClose}
-                className="flex-1 rounded-xl h-10 text-xs font-medium"
-              >
-                Đóng
-              </Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  handleClose();
-                  router.push(`/rooms/${createdRoom.publicId}`);
-                }}
-                className="flex-1 rounded-xl h-10 text-xs font-semibold gap-1.5 bg-primary text-primary-foreground"
-              >
-                Mở phòng ngay
-                <ExternalLink className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </div>
-        ) : (
           <form onSubmit={handleSubmit} className="mt-4 space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-foreground uppercase tracking-wider">

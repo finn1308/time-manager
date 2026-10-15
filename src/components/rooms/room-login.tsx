@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Loader2, Lock, User, AlertCircle, Sparkles, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
@@ -122,9 +121,9 @@ export function RoomLogin({ roomId, roomInfo, onLoginSuccess }: RoomLoginProps) 
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="room-username" className="text-xs font-semibold">
+              <label htmlFor="room-username" className="text-xs font-semibold">
                 Tên đăng nhập / Email
-              </Label>
+              </label>
               <div className="relative">
                 <User className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <Input
@@ -143,9 +142,9 @@ export function RoomLogin({ roomId, roomInfo, onLoginSuccess }: RoomLoginProps) 
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="room-password" className="text-xs font-semibold">
+                <label htmlFor="room-password" className="text-xs font-semibold">
                   Mật khẩu
-                </Label>
+                </label>
                 <span className="text-[10px] text-muted-foreground">
                   (Mật khẩu tạm mặc định: 12345678)
                 </span>
