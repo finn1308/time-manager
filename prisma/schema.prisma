@@ -26,67 +26,75 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts              Account[]
-  sessions              Session[]
-  userApiKeys           UserApiKey[]
-  subjects              Subject[]
-  goals                 Goal[]
-  calendarEvents        CalendarEvent[]
-  studySessions         StudySession[]
-  availabilityRules     AvailabilityRule[]
-  aiPreferences         AiPreferences?
-  userStudyPreferences UserStudyPreferences?
-  userSettings          UserSettings?
-  documents             Document[]
-  learningRoadmaps      LearningRoadmap[]
-  quizzes               Quiz[]
-  quizAttempts          QuizAttempt[]
-  flashcardDecks        FlashcardDeck[]
-  flashcardReviews      FlashcardReview[]
+  accounts               Account[]
+  sessions               Session[]
+  userApiKeys            UserApiKey[]
+  subjects               Subject[]
+  goals                  Goal[]
+  calendarEvents         CalendarEvent[]
+  studySessions          StudySession[]
+  availabilityRules      AvailabilityRule[]
+  aiPreferences          AiPreferences?
+  userStudyPreferences   UserStudyPreferences?
+  userSettings           UserSettings?
+  documents              Document[]
+  learningRoadmaps       LearningRoadmap[]
+  quizzes                Quiz[]
+  quizAttempts           QuizAttempt[]
+  flashcardDecks         FlashcardDeck[]
+  flashcardReviews       FlashcardReview[]
   flashcardStudySessions FlashcardStudySession[]
-  resources             Resource[]
-  studyNotes            StudyNote[]
-  tasks                 Task[]
-  dailyTaskSummaries    DailyTaskSummary[]
-  notes                 Note[]
-  tags                  Tag[]
-  habits                Habit[]
-  notifications         Notification[]
-  weeklyReviews         WeeklyReview[]
-  flexibleStudyGoals    FlexibleStudyGoal[]
-  dailyGoalProgresses   DailyGoalProgress[]
+  resources              Resource[]
+  studyNotes             StudyNote[]
+  tasks                  Task[]
+  dailyTaskSummaries     DailyTaskSummary[]
+  notes                  Note[]
+  tags                   Tag[]
+  habits                 Habit[]
+  notifications          Notification[]
+  weeklyReviews          WeeklyReview[]
+  flexibleStudyGoals     FlexibleStudyGoal[]
+  dailyGoalProgresses    DailyGoalProgress[]
 
   // LUYENTU Vocabulary Platform
-  coins                 Int       @default(100)
-  isPro                 Boolean   @default(false)
-  vocabEnrollments      UserCourseEnrollment[]
-  vocabSetProgresses    UserWordSetProgress[]
-  vocabWordProgresses   UserWordProgress[]
-  vocabStudySessions    VocabStudySession[]
-  userPurchases         UserPurchase[]
-  vocabMasteries        UserVocabularyMastery[]
-  learningEvents        LearningEvent[]
-  aiLearningReports     UserAiLearningReport[]
+  coins               Int                     @default(100)
+  isPro               Boolean                 @default(false)
+  vocabEnrollments    UserCourseEnrollment[]
+  vocabSetProgresses  UserWordSetProgress[]
+  vocabWordProgresses UserWordProgress[]
+  vocabStudySessions  VocabStudySession[]
+  userPurchases       UserPurchase[]
+  vocabMasteries      UserVocabularyMastery[]
+  learningEvents      LearningEvent[]
+  aiLearningReports   UserAiLearningReport[]
 
   // 4-Year Academic OS Relations
-  degreeProgram         DegreeProgram?
-  academicYears         AcademicYear[]
-  semesters             Semester[]
-  skills                Skill[]
-  projects              Project[]
-  certificates          Certificate[]
-  careerApplications    CareerApplication[]
-  auditLogs             AuditLog[]
+  degreeProgram      DegreeProgram?
+  academicYears      AcademicYear[]
+  semesters          Semester[]
+  skills             Skill[]
+  projects           Project[]
+  certificates       Certificate[]
+  careerApplications CareerApplication[]
+  auditLogs          AuditLog[]
 
   // 4-Year University Learning OS Master Models
-  learningProfile       UserLearningMemory?
-  mistakeRecords        MistakeRecord[]
-  examPreparations      ExamPreparation[]
-  assignments           Assignment[]
-  knowledgeNodes        KnowledgeNode[]
-  syllabusImports       SyllabusImport[]
-  backupRecords         BackupRecord[]
-  contentVersions       ContentVersion[]
+  learningProfile  UserLearningMemory?
+  mistakeRecords   MistakeRecord[]
+  examPreparations ExamPreparation[]
+  assignments      Assignment[]
+  knowledgeNodes   KnowledgeNode[]
+  syllabusImports  SyllabusImport[]
+  backupRecords    BackupRecord[]
+  contentVersions  ContentVersion[]
+
+  // Meeting Rooms / Collaborative Workspaces
+  mustChangePassword  Boolean            @default(false)
+  createdMeetingRooms MeetingRoom[]      @relation("RoomOwner")
+  roomMemberships     RoomMembership[]
+  roomActivityPosts   RoomActivityPost[]
+  roomComments        TaskComment[]
+  roomAuditEvents     RoomAuditEvent[]
 }
 
 model Account {
@@ -172,20 +180,20 @@ model AiPreferences {
 }
 
 model UserSettings {
-  id                     String   @id @default(cuid())
-  userId                 String   @unique
-  timezone               String   @default("Asia/Ho_Chi_Minh")
-  weekStartDay           Int      @default(1)
-  language               String   @default("vi")
-  weeklyStudyBudgetHours Float    @default(20.0)
-  examMode               Boolean  @default(false)
-  notificationsEnabled   Boolean  @default(true)
-  autoShareResources     Boolean  @default(false)
-  remindMissingResources Boolean  @default(true)
-  autoDayClosureEnabled   Boolean  @default(false)
+  id                       String   @id @default(cuid())
+  userId                   String   @unique
+  timezone                 String   @default("Asia/Ho_Chi_Minh")
+  weekStartDay             Int      @default(1)
+  language                 String   @default("vi")
+  weeklyStudyBudgetHours   Float    @default(20.0)
+  examMode                 Boolean  @default(false)
+  notificationsEnabled     Boolean  @default(true)
+  autoShareResources       Boolean  @default(false)
+  remindMissingResources   Boolean  @default(true)
+  autoDayClosureEnabled    Boolean  @default(false)
   autoRolloverTasksEnabled Boolean  @default(false)
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -211,49 +219,49 @@ model Subject {
   isArchived        Boolean   @default(false)
 
   // 4-Year Academic Extensions
-  semesterId        String?
-  credits           Int       @default(3)
-  lecturer          String?
-  classroom         String?
-  syllabus          String?   @db.Text
-  status            String    @default("ACTIVE") // PLANNED, ACTIVE, COMPLETED, DROPPED, ARCHIVED
-  midtermScore      Float?
-  finalScore        Float?
-  courseGrade       Float?    // 10.0 scale
-  letterGrade       String?   // A, B+, B, C+, C, D+, D, F
-  gradePoints       Float?    // 4.0 scale
-  gradeWeightJson   String?   @db.Text // {"attendance":10,"midterm":30,"project":20,"final":40}
-  attendanceCount   Int       @default(0)
-  totalSessions     Int       @default(15)
+  semesterId      String?
+  credits         Int     @default(3)
+  lecturer        String?
+  classroom       String?
+  syllabus        String? @db.Text
+  status          String  @default("ACTIVE") // PLANNED, ACTIVE, COMPLETED, DROPPED, ARCHIVED
+  midtermScore    Float?
+  finalScore      Float?
+  courseGrade     Float? // 10.0 scale
+  letterGrade     String? // A, B+, B, C+, C, D+, D, F
+  gradePoints     Float? // 4.0 scale
+  gradeWeightJson String? @db.Text // {"attendance":10,"midterm":30,"project":20,"final":40}
+  attendanceCount Int     @default(0)
+  totalSessions   Int     @default(15)
 
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  semester         Semester?         @relation(fields: [semesterId], references: [id], onDelete: SetNull)
-  goals            Goal[]
-  calendarEvents   CalendarEvent[]
-  studySessions    StudySession[]
-  documents        Document[]
-  learningRoadmaps LearningRoadmap[]
-  quizzes          Quiz[]
-  flashcardDecks   FlashcardDeck[]
-  resources        Resource[]
-  studyNotes       StudyNote[]
-  tasks            Task[]
-  notes            Note[]
-  habits           Habit[]
-  projects         Project[]
-  assignments      Assignment[]
-  mistakeRecords   MistakeRecord[]
-  examPreparations ExamPreparation[]
-  knowledgeNodes   KnowledgeNode[]
-  syllabusImports  SyllabusImport[]
-  vocabCourses     VocabCourse[]
-  wordSets         WordSet[]
-  vocabWords       VocabWord[]
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semester           Semester?           @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+  goals              Goal[]
+  calendarEvents     CalendarEvent[]
+  studySessions      StudySession[]
+  documents          Document[]
+  learningRoadmaps   LearningRoadmap[]
+  quizzes            Quiz[]
+  flashcardDecks     FlashcardDeck[]
+  resources          Resource[]
+  studyNotes         StudyNote[]
+  tasks              Task[]
+  notes              Note[]
+  habits             Habit[]
+  projects           Project[]
+  assignments        Assignment[]
+  mistakeRecords     MistakeRecord[]
+  examPreparations   ExamPreparation[]
+  knowledgeNodes     KnowledgeNode[]
+  syllabusImports    SyllabusImport[]
+  vocabCourses       VocabCourse[]
+  wordSets           WordSet[]
+  vocabWords         VocabWord[]
   vocabStudySessions VocabStudySession[]
-  flexibleGoals    FlexibleStudyGoal[]
+  flexibleGoals      FlexibleStudyGoal[]
 
   @@index([userId])
   @@index([semesterId])
@@ -272,8 +280,8 @@ model Goal {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject          Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject          Subject?        @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   milestoneRecords Milestone[]
   tasks            Task[]
   studySessions    StudySession[]
@@ -325,8 +333,8 @@ model Task {
   order              Int       @default(0)
   isCompleted        Boolean   @default(false)
   completedAt        DateTime?
-  scheduledDate      String?   // "YYYY-MM-DD" in user timezone
-  originalDate       String?   // "YYYY-MM-DD" initial assigned date
+  scheduledDate      String? // "YYYY-MM-DD" in user timezone
+  originalDate       String? // "YYYY-MM-DD" initial assigned date
   isImportant        Boolean   @default(false)
   isRollover         Boolean   @default(false)
   rolloverCount      Int       @default(0)
@@ -359,7 +367,7 @@ model Task {
 model DailyTaskSummary {
   id               String    @id @default(cuid())
   userId           String
-  dateKey          String    // "YYYY-MM-DD" in user timezone
+  dateKey          String // "YYYY-MM-DD" in user timezone
   totalTasks       Int       @default(0)
   completedTasks   Int       @default(0)
   uncompletedTasks Int       @default(0)
@@ -372,7 +380,7 @@ model DailyTaskSummary {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, dateKey])
   @@index([userId, dateKey])
@@ -398,61 +406,61 @@ model TaskDependency {
 // ==============================================================================
 
 model CalendarEvent {
-  id            String   @id @default(cuid())
-  userId        String
-  subjectId     String?
-  taskId        String?
-  skillId       String?
-  skillTaskId   String?
-  title         String
-  description   String?  @db.Text
-  startTime     DateTime
-  endTime       DateTime
-  timezone      String   @default("Asia/Ho_Chi_Minh")
-  type          String   @default("OTHER") // SCHOOL, SELF_STUDY, PERSONAL, EXAM, DEADLINE, OTHER (also supports legacy STUDY, MEETING, BLOCKED)
-  location      String?  @db.Text
-  isLocked      Boolean  @default(false)
-  isFlexible    Boolean  @default(false)
-  isAllDay      Boolean  @default(false)
-  trackStudyTime Boolean @default(true)
-  isAiGenerated Boolean  @default(false)
+  id             String   @id @default(cuid())
+  userId         String
+  subjectId      String?
+  taskId         String?
+  skillId        String?
+  skillTaskId    String?
+  title          String
+  description    String?  @db.Text
+  startTime      DateTime
+  endTime        DateTime
+  timezone       String   @default("Asia/Ho_Chi_Minh")
+  type           String   @default("OTHER") // SCHOOL, SELF_STUDY, PERSONAL, EXAM, DEADLINE, OTHER (also supports legacy STUDY, MEETING, BLOCKED)
+  location       String?  @db.Text
+  isLocked       Boolean  @default(false)
+  isFlexible     Boolean  @default(false)
+  isAllDay       Boolean  @default(false)
+  trackStudyTime Boolean  @default(true)
+  isAiGenerated  Boolean  @default(false)
 
   // Scheduling mode & Flexible Goal link
-  schedulingMode String   @default("FIXED") // FIXED, FLEXIBLE
+  schedulingMode  String  @default("FIXED") // FIXED, FLEXIBLE
   preferredPeriod String? // MORNING, AFTERNOON, EVENING, ANY
-  flexibleGoalId String?
+  flexibleGoalId  String?
 
   // Recurring support
   seriesId       String?
-  recurrence     String          @default("NONE") // NONE, DAILY, WEEKLY, MONTHLY, YEARLY
-  recurrenceRule String?         @db.Text
+  recurrence     String    @default("NONE") // NONE, DAILY, WEEKLY, MONTHLY, YEARLY
+  recurrenceRule String?   @db.Text
   recurrenceEnd  DateTime?
   parentId       String?
   exceptionDate  String?
-  isException    Boolean         @default(false)
-  isCancelled    Boolean         @default(false)
+  isException    Boolean   @default(false)
+  isCancelled    Boolean   @default(false)
 
-  goalId        String?
+  goalId String?
 
   // Completion & Actual Time Tracking
-  completed              Boolean         @default(false)
+  completed              Boolean   @default(false)
   completedAt            DateTime?
   actualDurationMinutes  Int?
   plannedDurationMinutes Int?
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject       Subject?        @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  task          Task?           @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  goal          Goal?           @relation(fields: [goalId], references: [id], onDelete: SetNull)
-  skill         Skill?          @relation(fields: [skillId], references: [id], onDelete: SetNull)
-  skillTask     SkillTask?      @relation(fields: [skillTaskId], references: [id], onDelete: SetNull)
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject?           @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  task          Task?              @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  goal          Goal?              @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  skill         Skill?             @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  skillTask     SkillTask?         @relation(fields: [skillTaskId], references: [id], onDelete: SetNull)
   studySessions StudySession[]
   flexibleGoal  FlexibleStudyGoal? @relation(fields: [flexibleGoalId], references: [id], onDelete: SetNull)
-  parent        CalendarEvent?  @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
-  exceptions    CalendarEvent[] @relation("EventExceptions")
+  parent        CalendarEvent?     @relation("EventExceptions", fields: [parentId], references: [id], onDelete: Cascade)
+  exceptions    CalendarEvent[]    @relation("EventExceptions")
   resources     Resource[]
   studyNotes    StudyNote[]
 
@@ -510,13 +518,13 @@ model StudySession {
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  skill         Skill?         @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  skillTask     SkillTask?     @relation(fields: [skillTaskId], references: [id], onDelete: SetNull)
-  calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: SetNull)
-  task          Task?          @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  goal          Goal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject       Subject?           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  skill         Skill?             @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillTask     SkillTask?         @relation(fields: [skillTaskId], references: [id], onDelete: SetNull)
+  calendarEvent CalendarEvent?     @relation(fields: [calendarEventId], references: [id], onDelete: SetNull)
+  task          Task?              @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  goal          Goal?              @relation(fields: [goalId], references: [id], onDelete: SetNull)
   flexibleGoal  FlexibleStudyGoal? @relation(fields: [flexibleGoalId], references: [id], onDelete: SetNull)
 
   @@index([userId, actualStart])
@@ -729,19 +737,19 @@ model Flashcard {
   // Rich metadata for language learning & study modes
   phonetic        String?
   partOfSpeech    String?
-  exampleSentence String?   @db.Text
-  exampleMeaning  String?   @db.Text
+  exampleSentence String? @db.Text
+  exampleMeaning  String? @db.Text
   imageUrl        String?
   audioUrl        String?
-  correctCount    Int       @default(0)
-  incorrectCount  Int       @default(0)
+  correctCount    Int     @default(0)
+  incorrectCount  Int     @default(0)
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  deck            FlashcardDeck            @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  reviews         FlashcardReview[]
-  studyQuestions  FlashcardStudyQuestion[]
+  deck           FlashcardDeck            @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  reviews        FlashcardReview[]
+  studyQuestions FlashcardStudyQuestion[]
 
   @@index([deckId])
   @@index([status, nextReview])
@@ -763,42 +771,42 @@ model FlashcardReview {
 }
 
 model FlashcardStudySession {
-  id              String                   @id @default(cuid())
+  id              String    @id @default(cuid())
   userId          String
   deckId          String
-  mode            String                   @default("ALL") // ALL, FLASHCARD, QUIZ, LISTENING, TYPING, MATCHING
-  startedAt       DateTime                 @default(now())
+  mode            String    @default("ALL") // ALL, FLASHCARD, QUIZ, LISTENING, TYPING, MATCHING
+  startedAt       DateTime  @default(now())
   completedAt     DateTime?
-  totalQuestions  Int                      @default(0)
-  correctAnswers  Int                      @default(0)
-  wrongAnswers    Int                      @default(0)
-  accuracy        Float                    @default(0)
-  durationSeconds Int                      @default(0)
-  createdAt       DateTime                 @default(now())
-  updatedAt       DateTime                 @updatedAt
+  totalQuestions  Int       @default(0)
+  correctAnswers  Int       @default(0)
+  wrongAnswers    Int       @default(0)
+  accuracy        Float     @default(0)
+  durationSeconds Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  deck            FlashcardDeck            @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  questions       FlashcardStudyQuestion[]
+  user      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck      FlashcardDeck            @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  questions FlashcardStudyQuestion[]
 
   @@index([userId, deckId])
   @@index([userId, startedAt])
 }
 
 model FlashcardStudyQuestion {
-  id             String                @id @default(cuid())
+  id             String   @id @default(cuid())
   sessionId      String
   cardId         String
-  questionType   String                // FLASHCARD, EN_TO_VI, VI_TO_EN, CONTEXT_IMAGE, LISTENING_TYPING, EN_TYPING_VI, VI_TYPING_EN, MATCHING
-  question       String                @db.Text
-  userAnswer     String?               @db.Text
-  correctAnswer  String                @db.Text
+  questionType   String // FLASHCARD, EN_TO_VI, VI_TO_EN, CONTEXT_IMAGE, LISTENING_TYPING, EN_TYPING_VI, VI_TYPING_EN, MATCHING
+  question       String   @db.Text
+  userAnswer     String?  @db.Text
+  correctAnswer  String   @db.Text
   isCorrect      Boolean
-  responseTimeMs Int                   @default(0)
-  createdAt      DateTime              @default(now())
+  responseTimeMs Int      @default(0)
+  createdAt      DateTime @default(now())
 
-  session        FlashcardStudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  card           Flashcard             @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  session FlashcardStudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  card    Flashcard             @relation(fields: [cardId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
   @@index([cardId])
@@ -876,22 +884,22 @@ model NoteTag {
 // ==============================================================================
 
 model Habit {
-  id            String     @id @default(cuid())
+  id            String   @id @default(cuid())
   userId        String
   subjectId     String?
   title         String
   description   String?
-  frequency     String     @default("DAILY") // DAILY, WEEKLY
-  targetDays    String     @default("1,2,3,4,5,6,0")
-  targetValue   Int        @default(1)
-  unit          String     @default("lần")
-  color         String     @default("#2d6a4f")
-  icon          String     @default("Check")
-  streak        Int        @default(0)
-  longestStreak Int        @default(0)
-  isArchived    Boolean    @default(false)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  frequency     String   @default("DAILY") // DAILY, WEEKLY
+  targetDays    String   @default("1,2,3,4,5,6,0")
+  targetValue   Int      @default(1)
+  unit          String   @default("lần")
+  color         String   @default("#2d6a4f")
+  icon          String   @default("Check")
+  streak        Int      @default(0)
+  longestStreak Int      @default(0)
+  isArchived    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject   Subject?   @relation(fields: [subjectId], references: [id], onDelete: SetNull)
@@ -903,7 +911,7 @@ model Habit {
 model HabitLog {
   id        String   @id @default(cuid())
   habitId   String
-  dateKey   String   // "YYYY-MM-DD" in Asia/Ho_Chi_Minh
+  dateKey   String // "YYYY-MM-DD" in Asia/Ho_Chi_Minh
   value     Int      @default(1)
   notes     String?
   createdAt DateTime @default(now())
@@ -923,7 +931,7 @@ model Notification {
   userId       String
   title        String
   message      String
-  type         String    // SESSION_REMINDER, DEADLINE, EXAM, MISSED_SESSION, STREAK, UNFINISHED_TASK
+  type         String // SESSION_REMINDER, DEADLINE, EXAM, MISSED_SESSION, STREAK, UNFINISHED_TASK
   isRead       Boolean   @default(false)
   link         String?
   scheduledFor DateTime?
@@ -941,8 +949,8 @@ model Notification {
 model WeeklyReview {
   id                String   @id @default(cuid())
   userId            String
-  weekStartDate     String   // "YYYY-MM-DD"
-  weekEndDate       String   // "YYYY-MM-DD"
+  weekStartDate     String // "YYYY-MM-DD"
+  weekEndDate       String // "YYYY-MM-DD"
   plannedHours      Float    @default(0.0)
   actualHours       Float    @default(0.0)
   completionRate    Float    @default(0.0)
@@ -967,20 +975,20 @@ model WeeklyReview {
 // ==============================================================================
 
 model Resource {
-  id              String         @id @default(cuid())
+  id              String   @id @default(cuid())
   userId          String
   subjectId       String?
   skillId         String?
   calendarEventId String?
   title           String
-  type            String         // MEETING, STORAGE, LEARNING, OTHER
-  subType         String?        // ZOOM, MEET, TEAMS, GDRIVE, ONEDRIVE, DROPBOX, YOUTUBE, LMS, WEB, FILE_PDF, FILE_IMAGE
-  url             String         @db.Text
-  externalFileId  String?        // Google Drive file ID
+  type            String // MEETING, STORAGE, LEARNING, OTHER
+  subType         String? // ZOOM, MEET, TEAMS, GDRIVE, ONEDRIVE, DROPBOX, YOUTUBE, LMS, WEB, FILE_PDF, FILE_IMAGE
+  url             String   @db.Text
+  externalFileId  String? // Google Drive file ID
   mimeType        String?
   fileSize        Int?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject       Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
@@ -994,14 +1002,14 @@ model Resource {
 }
 
 model StudyNote {
-  id              String         @id @default(cuid())
+  id              String   @id @default(cuid())
   userId          String
   calendarEventId String?
   subjectId       String?
-  content         String         @db.Text
-  isPinned        Boolean        @default(false)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  content         String   @db.Text
+  isPinned        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   calendarEvent CalendarEvent? @relation(fields: [calendarEventId], references: [id], onDelete: Cascade)
@@ -1038,7 +1046,7 @@ model AcademicYear {
   id         String   @id @default(cuid())
   userId     String
   yearNumber Int      @default(1) // 1, 2, 3, 4, 5...
-  name       String   // e.g. "Năm 1", "Năm 2", "Năm học 2024 - 2025"
+  name       String // e.g. "Năm 1", "Năm 2", "Năm học 2024 - 2025"
   startDate  DateTime
   endDate    DateTime
   status     String   @default("ACTIVE") // PLANNED, ACTIVE, COMPLETED, ARCHIVED
@@ -1056,7 +1064,7 @@ model Semester {
   id             String   @id @default(cuid())
   userId         String
   academicYearId String
-  name           String   // e.g. "Học kỳ 1", "Học kỳ 2", "Học kỳ Hè"
+  name           String // e.g. "Học kỳ 1", "Học kỳ 2", "Học kỳ Hè"
   type           String   @default("FALL") // FALL, SPRING, SUMMER, CUSTOM
   startDate      DateTime
   endDate        DateTime
@@ -1078,31 +1086,31 @@ model Semester {
 }
 
 model Skill {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   userId      String
   name        String
-  category    String   @default("TECH") // TECH, LANGUAGE, SOFT, DESIGN, OTHER
-  level       String   @default("INTERMEDIATE") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
-  description String?  @db.Text
-  
+  category    String  @default("TECH") // TECH, LANGUAGE, SOFT, DESIGN, OTHER
+  level       String  @default("INTERMEDIATE") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  description String? @db.Text
+
   // Ultra Learning Fields
-  targetLevel            String?
-  status                 String   @default("NOT_STARTED") // NOT_STARTED, LEARNING, PAUSED, COMPLETED
-  totalPlannedHours      Int?     @default(0)
-  totalActualHours       Int?     @default(0)
-  weeklyHoursCommitment  Int?     @default(0)
-  deadline               DateTime?
-  specificGoal           String?  @db.Text
-  knowledgeMap           Json?    // Stores the AI-generated domain/subskill structure
-  learningStrategy       Json?    // Stores the Metalearning strategy
-  progressPercentage     Int?     @default(0)
-  currentStreak          Int?     @default(0)
-  nextRecommendedAction  String?  @db.Text
+  targetLevel           String?
+  status                String    @default("NOT_STARTED") // NOT_STARTED, LEARNING, PAUSED, COMPLETED
+  totalPlannedHours     Int?      @default(0)
+  totalActualHours      Int?      @default(0)
+  weeklyHoursCommitment Int?      @default(0)
+  deadline              DateTime?
+  specificGoal          String?   @db.Text
+  knowledgeMap          Json? // Stores the AI-generated domain/subskill structure
+  learningStrategy      Json? // Stores the Metalearning strategy
+  progressPercentage    Int?      @default(0)
+  currentStreak         Int?      @default(0)
+  nextRecommendedAction String?   @db.Text
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects       ProjectSkill[]
   phases         SkillPhase[]
   calendarEvents CalendarEvent[]
@@ -1115,67 +1123,67 @@ model Skill {
 }
 
 model SkillPhase {
-  id              String   @id @default(cuid())
-  skillId         String
-  name            String
-  description     String?  @db.Text
-  order           Int      @default(0)
-  status          String   @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, COMPLETED
-  plannedHours    Int      @default(0)
-  actualHours     Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id           String   @id @default(cuid())
+  skillId      String
+  name         String
+  description  String?  @db.Text
+  order        Int      @default(0)
+  status       String   @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, COMPLETED
+  plannedHours Int      @default(0)
+  actualHours  Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  skill           Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  units           SkillUnit[]
+  skill Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  units SkillUnit[]
 }
 
 model SkillUnit {
-  id              String   @id @default(cuid())
-  phaseId         String
-  name            String
-  description     String?  @db.Text
-  order           Int      @default(0)
-  status          String   @default("NOT_STARTED")
-  plannedMinutes  Int      @default(0)
-  actualMinutes   Int      @default(0)
-  masteryLevel    Int      @default(0) // 0-100
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  phaseId        String
+  name           String
+  description    String?  @db.Text
+  order          Int      @default(0)
+  status         String   @default("NOT_STARTED")
+  plannedMinutes Int      @default(0)
+  actualMinutes  Int      @default(0)
+  masteryLevel   Int      @default(0) // 0-100
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  phase           SkillPhase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
-  tasks           SkillTask[]
+  phase SkillPhase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  tasks SkillTask[]
 }
 
 model SkillTask {
-  id              String   @id @default(cuid())
-  unitId          String
-  name            String
-  description     String?  @db.Text
-  taskType        String   @default("PRACTICE") // THEORY, PRACTICE, DRILL, RETRIEVAL, FEEDBACK, PROJECT
-  order           Int      @default(0)
-  status          String   @default("NOT_STARTED")
-  plannedMinutes  Int      @default(30)
-  actualMinutes   Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  unitId         String
+  name           String
+  description    String?  @db.Text
+  taskType       String   @default("PRACTICE") // THEORY, PRACTICE, DRILL, RETRIEVAL, FEEDBACK, PROJECT
+  order          Int      @default(0)
+  status         String   @default("NOT_STARTED")
+  plannedMinutes Int      @default(30)
+  actualMinutes  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  unit            SkillUnit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  assessments     SkillAssessment[]
-  calendarEvents  CalendarEvent[]
-  studySessions   StudySession[]
+  unit           SkillUnit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  assessments    SkillAssessment[]
+  calendarEvents CalendarEvent[]
+  studySessions  StudySession[]
 }
 
 model SkillAssessment {
-  id              String   @id @default(cuid())
-  taskId          String
-  score           Int?     // 0-100
-  feedback        String?  @db.Text
-  weaknesses      Json?    // Weak points identified
-  strengths       Json?
-  createdAt       DateTime @default(now())
+  id         String   @id @default(cuid())
+  taskId     String
+  score      Int? // 0-100
+  feedback   String?  @db.Text
+  weaknesses Json? // Weak points identified
+  strengths  Json?
+  createdAt  DateTime @default(now())
 
-  task            SkillTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task SkillTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 model Project {
@@ -1186,7 +1194,7 @@ model Project {
   description   String?   @db.Text
   repositoryUrl String?
   demoUrl       String?
-  technologies  String?   // Comma-separated or tags
+  technologies  String? // Comma-separated or tags
   status        String    @default("IN_PROGRESS") // PLANNED, IN_PROGRESS, COMPLETED, FEATURED
   startDate     DateTime?
   endDate       DateTime?
@@ -1255,9 +1263,9 @@ model CareerApplication {
 model AuditLog {
   id          String   @id @default(cuid())
   userId      String
-  entityType  String   // CALENDAR_EVENT, SUBJECT, GRADE, SEMESTER, TASK, NOTE
+  entityType  String // CALENDAR_EVENT, SUBJECT, GRADE, SEMESTER, TASK, NOTE
   entityId    String
-  action      String   // CREATE, UPDATE, DELETE, RESTORE, ARCHIVE, TRANSITION
+  action      String // CREATE, UPDATE, DELETE, RESTORE, ARCHIVE, TRANSITION
   detailsJson String?  @db.Text
   createdAt   DateTime @default(now())
 
@@ -1273,8 +1281,8 @@ model AuditLog {
 model VocabCourse {
   id          String   @id @default(cuid())
   slug        String   @unique
-  title       String   // e.g. "A1 (0-3.0)"
-  subtitle    String?  // e.g. "Dành cho người mới bắt đầu học tiếng anh"
+  title       String // e.g. "A1 (0-3.0)"
+  subtitle    String? // e.g. "Dành cho người mới bắt đầu học tiếng anh"
   description String?  @db.Text
   icon        String?  @default("📚")
   coverColor  String?  @default("#10b981")
@@ -1285,8 +1293,8 @@ model VocabCourse {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  subjectId   String?
-  subject     Subject?  @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  subjectId String?
+  subject   Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
 
   wordSets    WordSet[]
   enrollments UserCourseEnrollment[]
@@ -1298,15 +1306,15 @@ model VocabCourse {
 model WordSet {
   id          String   @id @default(cuid())
   courseId    String
-  orderNumber Int      // 1, 2, 3, 4...
-  title       String   // e.g. "Lời chào hỏi", "Số đếm", "Màu sắc"
+  orderNumber Int // 1, 2, 3, 4...
+  title       String // e.g. "Lời chào hỏi", "Số đếm", "Màu sắc"
   description String?  @db.Text
   icon        String?
   isPro       Boolean  @default(false) // PRO lock badge
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  subjectId   String?
+  subjectId      String?
   course         VocabCourse           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   subject        Subject?              @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   words          VocabWord[]
@@ -1321,10 +1329,10 @@ model WordSet {
 model VocabWord {
   id              String   @id @default(cuid())
   wordSetId       String
-  term            String   // English word: "Hello", "Good morning"
-  phonetic        String?  // IPA: "/həˈləʊ/"
-  partOfSpeech    String?  // noun, verb, adjective, phrase, interjection
-  meaning         String   // Vietnamese: "Xin chào"
+  term            String // English word: "Hello", "Good morning"
+  phonetic        String? // IPA: "/həˈləʊ/"
+  partOfSpeech    String? // noun, verb, adjective, phrase, interjection
+  meaning         String // Vietnamese: "Xin chào"
   explanation     String?  @db.Text
   exampleSentence String?  @db.Text // "Hello, nice to meet you!"
   exampleMeaning  String?  @db.Text // "Xin chào, rất vui được gặp bạn!"
@@ -1334,9 +1342,9 @@ model VocabWord {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  subjectId       String?
-  difficulty      String?  @default("B1")
-  topic           String?  @default("General English")
+  subjectId  String?
+  difficulty String? @default("B1")
+  topic      String? @default("General English")
 
   wordSet        WordSet                 @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
   subject        Subject?                @relation(fields: [subjectId], references: [id], onDelete: SetNull)
@@ -1349,13 +1357,13 @@ model VocabWord {
 }
 
 model UserCourseEnrollment {
-  id          String   @id @default(cuid())
-  userId      String
-  courseId    String
-  isPinned    Boolean  @default(false) // Pin button from image: "📌 Đã ghim"
-  isUnlocked  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  userId     String
+  courseId   String
+  isPinned   Boolean  @default(false) // Pin button from image: "📌 Đã ghim"
+  isUnlocked Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   course VocabCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -1383,25 +1391,25 @@ model UserWordSetProgress {
 }
 
 model UserWordProgress {
-  id              String    @id @default(cuid())
-  userId          String
-  wordId          String
-  wordSetId       String
-  status          String    @default("NEW") // "NEW" (chưa học), "LEARNING" (chưa thuộc), "MASTERED" (đã thuộc)
-  isFavorite      Boolean   @default(false)
-  timesStudied    Int       @default(0)
-  correctCount    Int       @default(0)
-  incorrectCount  Int       @default(0)
+  id             String  @id @default(cuid())
+  userId         String
+  wordId         String
+  wordSetId      String
+  status         String  @default("NEW") // "NEW" (chưa học), "LEARNING" (chưa thuộc), "MASTERED" (đã thuộc)
+  isFavorite     Boolean @default(false)
+  timesStudied   Int     @default(0)
+  correctCount   Int     @default(0)
+  incorrectCount Int     @default(0)
 
   // SuperMemo SM-2 Spaced Repetition (Học ngắt quãng)
-  repetition      Int       @default(0)
-  intervalDays    Int       @default(1)
-  easeFactor      Float     @default(2.5)
-  nextReviewDate  DateTime?
-  lastReviewedAt  DateTime?
+  repetition     Int       @default(0)
+  intervalDays   Int       @default(1)
+  easeFactor     Float     @default(2.5)
+  nextReviewDate DateTime?
+  lastReviewedAt DateTime?
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   word VocabWord @relation(fields: [wordId], references: [id], onDelete: Cascade)
@@ -1416,7 +1424,7 @@ model VocabStudySession {
   id              String   @id @default(cuid())
   userId          String
   wordSetId       String
-  mode            String   // FLASHCARD, QUIZ, LISTENING, TYPING, MATCHING, SPECIAL
+  mode            String // FLASHCARD, QUIZ, LISTENING, TYPING, MATCHING, SPECIAL
   totalItems      Int      @default(0)
   correctItems    Int      @default(0)
   accuracy        Float    @default(0)
@@ -1425,7 +1433,7 @@ model VocabStudySession {
   xpEarned        Int      @default(0)
   createdAt       DateTime @default(now())
 
-  subjectId       String?
+  subjectId String?
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   wordSet WordSet  @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
@@ -1439,14 +1447,14 @@ model ShopItem {
   id          String   @id @default(cuid())
   name        String
   description String
-  type        String   // PRO_UNLOCK, STREAK_FREEZE, AVATAR, BADGE, THEME
+  type        String // PRO_UNLOCK, STREAK_FREEZE, AVATAR, BADGE, THEME
   costCoins   Int
   icon        String?
-  metadata    String?  // JSON
+  metadata    String? // JSON
   isAvailable Boolean  @default(true)
   createdAt   DateTime @default(now())
 
-  purchases   UserPurchase[]
+  purchases UserPurchase[]
 }
 
 model UserPurchase {
@@ -1467,46 +1475,46 @@ model UserPurchase {
 // ==============================================================================
 
 model UserVocabularyMastery {
-  id                   String    @id @default(cuid())
-  userId               String
-  vocabularyId         String
+  id           String @id @default(cuid())
+  userId       String
+  vocabularyId String
 
   // Continuous knowledge & confidence scores (0.0 to 1.0)
-  knowledgeScore       Float     @default(0.0)
-  confidenceScore      Float     @default(0.0)
+  knowledgeScore  Float @default(0.0)
+  confidenceScore Float @default(0.0)
 
   // Behavioral signals
-  totalAttempts        Int       @default(0)
-  correctAttempts      Int       @default(0)
-  incorrectAttempts    Int       @default(0)
-  consecutiveCorrect   Int       @default(0)
-  consecutiveIncorrect Int       @default(0)
-  averageResponseTime  Float     @default(0.0) // seconds
+  totalAttempts        Int   @default(0)
+  correctAttempts      Int   @default(0)
+  incorrectAttempts    Int   @default(0)
+  consecutiveCorrect   Int   @default(0)
+  consecutiveIncorrect Int   @default(0)
+  averageResponseTime  Float @default(0.0) // seconds
 
   // Temporal signals
-  lastSeenAt           DateTime?
-  lastCorrectAt        DateTime?
-  lastIncorrectAt      DateTime?
+  lastSeenAt      DateTime?
+  lastCorrectAt   DateTime?
+  lastIncorrectAt DateTime?
 
   // Forgetting & dynamic difficulty
-  forgettingRisk       Float     @default(0.0) // 0.0 (safe) -> 1.0 (imminent forgetting)
-  difficultyScore      Float     @default(0.5) // 0.1 (very easy) -> 1.0 (very hard)
-  memoryStability      Float     @default(1.0) // stability factor S in half-life model (in days)
-  nextReviewAt         DateTime?
+  forgettingRisk  Float     @default(0.0) // 0.0 (safe) -> 1.0 (imminent forgetting)
+  difficultyScore Float     @default(0.5) // 0.1 (very easy) -> 1.0 (very hard)
+  memoryStability Float     @default(1.0) // stability factor S in half-life model (in days)
+  nextReviewAt    DateTime?
 
   // Cross-skill mastery breakdown (0.0 to 1.0)
-  recognitionScore     Float     @default(0.0) // EN -> VN
-  recallScore          Float     @default(0.0) // VN -> EN
-  spellingScore        Float     @default(0.0) // Typing word
-  listeningScore       Float     @default(0.0) // Audio identification
-  usageScore           Float     @default(0.0) // Contextual / sentence usage
+  recognitionScore Float @default(0.0) // EN -> VN
+  recallScore      Float @default(0.0) // VN -> EN
+  spellingScore    Float @default(0.0) // Typing word
+  listeningScore   Float @default(0.0) // Audio identification
+  usageScore       Float @default(0.0) // Contextual / sentence usage
 
   // AI Cognitive analysis fields
-  aiAnalysisNotes      String?   @db.Text
-  lastAiAnalyzedAt     DateTime?
+  aiAnalysisNotes  String?   @db.Text
+  lastAiAnalyzedAt DateTime?
 
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   vocabulary VocabWord @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
@@ -1519,22 +1527,22 @@ model UserVocabularyMastery {
 }
 
 model LearningEvent {
-  id              String    @id @default(cuid())
-  userId          String
-  vocabularyId    String
+  id           String @id @default(cuid())
+  userId       String
+  vocabularyId String
 
-  eventType       String    // VIEW, ANSWER_CORRECT, ANSWER_INCORRECT, SKIPPED, FLASHCARD_REVIEW, QUIZ_COMPLETED, MANUAL_MARK_KNOWN, MANUAL_MARK_UNKNOWN
-  answer          String?   @db.Text
-  isCorrect       Boolean
-  responseTime    Float?    // response duration in seconds
-  questionType    String?   // RECOGNITION, RECALL, SENTENCE_COMPLETION, LISTENING, SPELLING, MATCHING
-  difficulty      Float?    // 0.1 - 1.0
+  eventType    String // VIEW, ANSWER_CORRECT, ANSWER_INCORRECT, SKIPPED, FLASHCARD_REVIEW, QUIZ_COMPLETED, MANUAL_MARK_KNOWN, MANUAL_MARK_UNKNOWN
+  answer       String? @db.Text
+  isCorrect    Boolean
+  responseTime Float? // response duration in seconds
+  questionType String? // RECOGNITION, RECALL, SENTENCE_COMPLETION, LISTENING, SPELLING, MATCHING
+  difficulty   Float? // 0.1 - 1.0
 
   previousMastery Float?
   newMastery      Float?
-  metadata        String?   @db.Text // JSON metadata
+  metadata        String? @db.Text // JSON metadata
 
-  createdAt       DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   vocabulary VocabWord @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
@@ -1545,18 +1553,18 @@ model LearningEvent {
 }
 
 model UserAiLearningReport {
-  id                    String    @id @default(cuid())
-  userId                String
+  id     String @id @default(cuid())
+  userId String
 
   strongestArea         String
   weakestArea           String
-  wordsNeedingAttention String    @db.Text // JSON string
-  wordsImprovingRapidly String    @db.Text // JSON string
-  recommendedFocus      String    @db.Text
-  cognitiveInsights     String?   @db.Text
+  wordsNeedingAttention String  @db.Text // JSON string
+  wordsImprovingRapidly String  @db.Text // JSON string
+  recommendedFocus      String  @db.Text
+  cognitiveInsights     String? @db.Text
   providerUsed          String?
 
-  createdAt             DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -1593,7 +1601,7 @@ model MistakeRecord {
   id              String    @id @default(cuid())
   userId          String
   subjectId       String?
-  sourceType      String    // QUIZ, EXAM, FLASHCARD, TYPING, PRACTICE, AI_SESSION, DOCUMENT
+  sourceType      String // QUIZ, EXAM, FLASHCARD, TYPING, PRACTICE, AI_SESSION, DOCUMENT
   sourceId        String?
   question        String    @db.Text
   correctAnswer   String    @db.Text
@@ -1620,23 +1628,23 @@ model MistakeRecord {
 }
 
 model ExamPreparation {
-  id                  String    @id @default(cuid())
+  id                  String   @id @default(cuid())
   userId              String
   subjectId           String?
   title               String
   examDate            DateTime
-  targetScore         Float     @default(8.5)
-  currentScore        Float     @default(5.0)
-  availableStudyHours Float     @default(40.0)
-  currentPhase        String    @default("FOUNDATION") // FOUNDATION, WEAK_TOPIC_RECOVERY, PRACTICE, MOCK_EXAM, FINAL_REVIEW
-  readinessScore      Float     @default(0.0) // 0 to 100%
-  estimatedScore      Float     @default(5.0)
-  weakTopicsJson      String?   @db.Text // ["Limits", "Integration by parts"]
-  studyPlanJson       String?   @db.Text // structured phases and daily tasks
-  riskLevel           String    @default("MODERATE") // LOW, MODERATE, HIGH, CRITICAL
-  status              String    @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  targetScore         Float    @default(8.5)
+  currentScore        Float    @default(5.0)
+  availableStudyHours Float    @default(40.0)
+  currentPhase        String   @default("FOUNDATION") // FOUNDATION, WEAK_TOPIC_RECOVERY, PRACTICE, MOCK_EXAM, FINAL_REVIEW
+  readinessScore      Float    @default(0.0) // 0 to 100%
+  estimatedScore      Float    @default(5.0)
+  weakTopicsJson      String?  @db.Text // ["Limits", "Integration by parts"]
+  studyPlanJson       String?  @db.Text // structured phases and daily tasks
+  riskLevel           String   @default("MODERATE") // LOW, MODERATE, HIGH, CRITICAL
+  status              String   @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   subject Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
@@ -1735,7 +1743,7 @@ model BackupRecord {
   userId          String
   version         String   @default("1.0")
   sizeBytes       Int      @default(0)
-  modulesIncluded String   // "ALL" or comma-separated list
+  modulesIncluded String // "ALL" or comma-separated list
   checksum        String?
   createdAt       DateTime @default(now())
 
@@ -1747,7 +1755,7 @@ model BackupRecord {
 model ContentVersion {
   id            String   @id @default(cuid())
   userId        String
-  entityType    String   // NOTE, ROADMAP, FLASHCARD_DECK
+  entityType    String // NOTE, ROADMAP, FLASHCARD_DECK
   entityId      String
   versionNumber Int      @default(1)
   snapshotJson  String   @db.Text
@@ -1780,12 +1788,12 @@ model FlexibleStudyGoal {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subject         Subject?       @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  skill           Skill?         @relation(fields: [skillId], references: [id], onDelete: SetNull)
-  studySessions   StudySession[]
-  calendarEvents  CalendarEvent[]
-  dailyRecords    DailyGoalProgress[]
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject        Subject?            @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  skill          Skill?              @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  studySessions  StudySession[]
+  calendarEvents CalendarEvent[]
+  dailyRecords   DailyGoalProgress[]
 
   @@index([userId, status])
   @@index([subjectId])
@@ -1793,24 +1801,302 @@ model FlexibleStudyGoal {
 }
 
 model DailyGoalProgress {
-  id            String            @id @default(cuid())
+  id            String    @id @default(cuid())
   userId        String
   goalId        String
-  dateKey       String            // "YYYY-MM-DD" in Asia/Ho_Chi_Minh
-  targetMinutes Int               // Snapshot of target duration for this day
-  actualMinutes Int               @default(0) // Actual minutes studied for this day
-  completed     Boolean           @default(false)
+  dateKey       String // "YYYY-MM-DD" in Asia/Ho_Chi_Minh
+  targetMinutes Int // Snapshot of target duration for this day
+  actualMinutes Int       @default(0) // Actual minutes studied for this day
+  completed     Boolean   @default(false)
   completedAt   DateTime?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goal          FlexibleStudyGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  user User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal FlexibleStudyGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
   @@unique([goalId, dateKey])
   @@index([userId, dateKey])
   @@index([goalId])
 }
 
+// ==========================================
+// MEETING ROOMS / COLLABORATIVE WORKSPACES
+// ==========================================
 
+model MeetingRoom {
+  id          String    @id @default(cuid())
+  publicId    String    @unique // secure random high-entropy unguessable room slug
+  title       String
+  subject     String
+  description String?
+  coverColor  String?   @default("indigo")
+  coverImage  String?
+  ownerId     String
+  status      String    @default("ACTIVE") // ACTIVE, ARCHIVED, LOCKED
+  joinPolicy  String    @default("INVITE_ONLY") // OPEN, APPROVAL_REQUIRED, INVITE_ONLY
+  settings    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  archivedAt  DateTime?
 
+  owner User @relation("RoomOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  memberships RoomMembership[]
+  groups      RoomGroup[]
+  columns     BoardColumn[]
+  cards       TaskCard[]
+  posts       RoomActivityPost[]
+  auditEvents RoomAuditEvent[]
+  labels      TaskLabel[]
+
+  @@index([ownerId])
+  @@index([publicId])
+  @@index([status])
+}
+
+model RoomMembership {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  role      String   @default("MEMBER") // ADMIN, HOST, MEMBER
+  status    String   @default("ACTIVE") // ACTIVE, PENDING_PASSWORD_CHANGE, DEACTIVATED
+  invitedBy String?
+  joinedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room MeetingRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  groupMemberships GroupMembership[]
+  joinRequests     GroupJoinRequest[]
+  assignedCards    TaskAssignee[]
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+  @@index([role])
+}
+
+model RoomGroup {
+  id          String   @id @default(cuid())
+  roomId      String
+  name        String
+  description String?
+  color       String?  @default("blue")
+  joinPolicy  String   @default("APPROVAL_REQUIRED") // OPEN, APPROVAL_REQUIRED, INVITE_ONLY
+  createdBy   String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  room MeetingRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  memberships  GroupMembership[]
+  joinRequests GroupJoinRequest[]
+  cards        TaskCard[]
+  posts        RoomActivityPost[]
+
+  @@index([roomId])
+}
+
+model GroupMembership {
+  id           String   @id @default(cuid())
+  groupId      String
+  membershipId String
+  status       String   @default("ACTIVE")
+  joinedAt     DateTime @default(now())
+  approvedBy   String?
+
+  group      RoomGroup      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  membership RoomMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, membershipId])
+  @@index([groupId])
+  @@index([membershipId])
+}
+
+model GroupJoinRequest {
+  id           String    @id @default(cuid())
+  groupId      String
+  membershipId String
+  status       String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  note         String?
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  group      RoomGroup      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  membership RoomMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@index([membershipId])
+  @@index([status])
+}
+
+model BoardColumn {
+  id        String   @id @default(cuid())
+  roomId    String
+  name      String
+  key       String // CONTENT, IN_PROGRESS, COMPLETED, TRACKING, or custom
+  color     String?  @default("slate")
+  sortOrder Int      @default(0)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room  MeetingRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  cards TaskCard[]
+
+  @@index([roomId, sortOrder])
+}
+
+model TaskCard {
+  id          String    @id @default(cuid())
+  roomId      String
+  columnId    String
+  groupId     String?
+  creatorId   String
+  title       String
+  description String?
+  dueAt       DateTime?
+  sortOrder   Int       @default(0)
+  isCompleted Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  archivedAt  DateTime?
+
+  room   MeetingRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  column BoardColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  group  RoomGroup?  @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  assignees        TaskAssignee[]
+  labelAssignments TaskLabelAssignment[]
+  checklistItems   TaskChecklistItem[]
+  comments         TaskComment[]
+  attachments      TaskAttachment[]
+
+  @@index([roomId, columnId, sortOrder])
+  @@index([creatorId])
+  @@index([groupId])
+}
+
+model TaskAssignee {
+  id           String @id @default(cuid())
+  taskId       String
+  membershipId String
+
+  task       TaskCard       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  membership RoomMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, membershipId])
+  @@index([taskId])
+  @@index([membershipId])
+}
+
+model TaskLabel {
+  id     String @id @default(cuid())
+  roomId String
+  name   String
+  color  String @default("lavender") // lavender, peach, mint, sky, rose, amber
+
+  room        MeetingRoom           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  assignments TaskLabelAssignment[]
+
+  @@index([roomId])
+}
+
+model TaskLabelAssignment {
+  id      String @id @default(cuid())
+  taskId  String
+  labelId String
+
+  task  TaskCard  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  label TaskLabel @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, labelId])
+  @@index([taskId])
+  @@index([labelId])
+}
+
+model TaskChecklistItem {
+  id          String    @id @default(cuid())
+  taskId      String
+  text        String
+  isCompleted Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  completedBy String?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  task TaskCard @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, sortOrder])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task   TaskCard @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+}
+
+model TaskAttachment {
+  id        String   @id @default(cuid())
+  taskId    String
+  name      String
+  url       String
+  size      Int?
+  type      String?
+  createdAt DateTime @default(now())
+
+  task TaskCard @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+}
+
+model RoomActivityPost {
+  id             String   @id @default(cuid())
+  roomId         String
+  authorId       String
+  groupId        String?
+  content        String
+  imageUrl       String?
+  attachmentUrl  String?
+  attachmentName String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  room   MeetingRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  author User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  group  RoomGroup?  @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  @@index([roomId, createdAt])
+  @@index([authorId])
+  @@index([groupId])
+}
+
+model RoomAuditEvent {
+  id         String   @id @default(cuid())
+  roomId     String
+  actorId    String?
+  action     String // CARD_CREATED, CARD_MOVED, MEMBER_ADDED, ROLE_UPDATED, PASSWORD_RESET, GROUP_CREATED, GROUP_REQUEST_APPROVED, ROOM_UPDATED
+  entityType String // CARD, MEMBER, GROUP, ROOM, POST
+  entityId   String?
+  details    Json?
+  createdAt  DateTime @default(now())
+
+  room  MeetingRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  actor User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([roomId, createdAt])
+  @@index([actorId])
+}
