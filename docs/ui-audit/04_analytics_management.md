@@ -12,7 +12,7 @@
 - **Header**: Tiêu đề trang, 2 nút hành động: `Tạo bộ thẻ bằng AI` (`Sparkles`) và `+ Tạo bộ thẻ mới`.
 - **Thanh thống kê nhanh**: Tổng số bộ thẻ, tổng số thẻ ghi nhớ, số thẻ cần ôn tập hôm nay.
 - **Lưới các Bộ Thẻ (Decks Grid)**: Mỗi thẻ đại diện cho một bộ flashcard:
-  - Tên bộ thẻ, môn học liên kết (badge màu sắc).
+  - Tên bộ thẻ, chmôn học liên kết (badge màu sắc).
   - Mô tả bộ thẻ.
   - Số lượng thẻ bên trong (vd: `10 thẻ`).
   - Số thẻ đã thuộc (Mastered) vs Số thẻ đang học (Learning) vs Thẻ mới (New).

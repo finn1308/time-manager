@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+limport { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { rescheduleTodaySchedule } from "@/lib/scheduling/reschedule-engine";
 
